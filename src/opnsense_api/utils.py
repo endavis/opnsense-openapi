@@ -1,5 +1,21 @@
 """Shared utility functions for opnsense_api."""
 
+import re
+
+VERSION_PATTERN = re.compile(r"^v?\d+\.\d+(\.\d+)?$")
+
+
+def validate_version(version: str) -> bool:
+    """Validate OPNsense version string format.
+
+    Args:
+        version: Version string to validate (e.g., "24.7", "24.7.1", "v24.7")
+
+    Returns:
+        True if valid, False otherwise
+    """
+    return bool(VERSION_PATTERN.match(version))
+
 
 def to_snake_case(name: str) -> str:
     """Convert PascalCase or camelCase to snake_case.

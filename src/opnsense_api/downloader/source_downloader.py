@@ -5,6 +5,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from ..utils import validate_version
+
 logger = logging.getLogger(__name__)
 
 
@@ -34,8 +36,14 @@ class SourceDownloader:
             Path to controllers directory
 
         Raises:
+            ValueError: If version string format is invalid
             RuntimeError: If download or git operations fail
         """
+        if not validate_version(version):
+            raise ValueError(
+                f"Invalid version format: {version}. "
+                "Expected format: XX.X or XX.X.X (e.g., 24.7, 24.7.1)"
+            )
         version_dir = self.cache_dir / version
         controllers_dir = version_dir / self.CONTROLLERS_PATH
 
