@@ -81,7 +81,16 @@ class OpenApiGenerator:
         model_schema = self._get_model_schema(controller)
 
         for endpoint in controller.endpoints:
-            path = f"/{module}/{ctrl_name}/{self._to_snake_case(endpoint.name)}"
+            # Build path with path parameters (e.g., {uuid})
+            path_params = self._get_path_params(endpoint.parameters)
+            other_params = [p for p in endpoint.parameters if p not in path_params]
+
+            base_path = f"/{module}/{ctrl_name}/{self._to_snake_case(endpoint.name)}"
+            if path_params:
+                path = base_path + "/" + "/".join(f"{{{p}}}" for p in path_params)
+            else:
+                path = base_path
+
             method = endpoint.method.lower()
 
             # Determine response schema
@@ -101,23 +110,40 @@ class OpenApiGenerator:
                 },
             }
 
-            if endpoint.parameters:
+            # Add path parameters
+            if path_params:
+                operation["parameters"] = [
+                    {
+                        "name": param,
+                        "in": "path",
+                        "required": True,
+                        "schema": {"type": "string"},
+                    }
+                    for param in path_params
+                ]
+
+            # Add query params or request body for remaining params
+            if other_params:
                 if method == "get":
-                    operation["parameters"] = [
+                    query_params = [
                         {
                             "name": param,
                             "in": "query",
                             "required": False,
                             "schema": {"type": "string"},
                         }
-                        for param in endpoint.parameters
+                        for param in other_params
                     ]
+                    if "parameters" in operation:
+                        operation["parameters"].extend(query_params)
+                    else:
+                        operation["parameters"] = query_params
                 else:
                     # Use model schema for request body if available
                     request_schema: dict[str, Any] = {
                         "type": "object",
                         "properties": {
-                            param: {"type": "string"} for param in endpoint.parameters
+                            param: {"type": "string"} for param in other_params
                         },
                     }
                     if model_schema and self._is_model_endpoint(endpoint.name):
@@ -128,6 +154,19 @@ class OpenApiGenerator:
                     }
 
             spec["paths"][path] = {method: operation}
+
+    def _get_path_params(self, parameters: list[str]) -> list[str]:
+        """Identify which parameters should be path parameters.
+
+        Args:
+            parameters: List of parameter names
+
+        Returns:
+            List of parameter names that should be in the path
+        """
+        # Common path parameter patterns in OPNsense
+        path_param_names = {"uuid", "id", "name", "number", "index"}
+        return [p for p in parameters if p.lower() in path_param_names]
 
     def _get_model_schema(self, controller: ApiController) -> dict[str, Any] | None:
         """Get JSON schema for controller's model.
