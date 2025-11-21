@@ -1,0 +1,69 @@
+"""Command-line interface for the OPNsense API wrapper toolkit."""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Annotated
+
+import typer
+
+from . import __version__
+from .downloader import SourceDownloader
+
+app = typer.Typer(help="Generate and inspect OPNsense API wrappers.")
+
+
+def _version_callback(show_version: bool) -> None:
+    if show_version:
+        typer.echo(__version__)
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    _: Annotated[
+        bool,
+        typer.Option(
+            "--version",
+            is_eager=True,
+            help="Print the current opnsense-api version and exit.",
+            callback=_version_callback,
+        ),
+    ] = False,
+) -> None:
+    """Global CLI options."""
+
+
+@app.command()
+def download(
+    version: Annotated[str, typer.Argument(help="OPNsense release tag, e.g. 24.7")],
+    dest: Annotated[
+        Path | None,
+        typer.Option(
+            "--dest",
+            "-d",
+            help="Directory for cached controller sources (defaults to tmp/opnsense_source).",
+        ),
+    ] = None,
+    force: Annotated[
+        bool,
+        typer.Option("--force/--no-force", help="Re-download files even when cached."),
+    ] = False,
+) -> None:
+    """Download controller files for the specified firmware release."""
+
+    downloader = SourceDownloader(cache_dir=dest)
+    try:
+        controllers_path = downloader.download(version, force=force)
+    except RuntimeError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.secho(
+        f"Stored controller files for {version} under {controllers_path}",
+        fg=typer.colors.GREEN,
+    )
+
+
+if __name__ == "__main__":  # pragma: no cover
+    app()

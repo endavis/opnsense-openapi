@@ -1,0 +1,154 @@
+"""Tests for PHP controller parser."""
+
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import pytest
+
+from opnsense_api.parser import ControllerParser
+
+
+@pytest.fixture
+def sample_controller() -> str:
+    """Sample PHP controller content for testing."""
+    return '''<?php
+namespace OPNsense\\Firewall\\Api;
+
+use OPNsense\\Base\\ApiControllerBase;
+
+/**
+ * Class AliasUtilController
+ */
+class AliasUtilController extends ApiControllerBase
+{
+    /**
+     * Find aliases
+     * @return array
+     */
+    public function findAliasAction()
+    {
+        return $this->searchBase("alias", $this->request->getPost());
+    }
+
+    /**
+     * Add new alias
+     * @param string $uuid
+     * @return array
+     */
+    public function addAction($uuid)
+    {
+        return $this->addBase("alias", $uuid);
+    }
+
+    /**
+     * Update alias settings
+     * @return array
+     */
+    public function setAction()
+    {
+        return $this->setBase("alias");
+    }
+}
+'''
+
+
+def test_parse_controller_basic(sample_controller: str) -> None:
+    """Test parsing a basic controller file."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        # Create temporary controller file
+        api_dir = Path(tmpdir) / "Api"
+        api_dir.mkdir()
+        controller_file = api_dir / "AliasUtilController.php"
+        controller_file.write_text(sample_controller)
+
+        # Parse the controller
+        controller = parser.parse_controller_file(controller_file)
+
+        assert controller is not None
+        assert controller.module == "Firewall"
+        assert controller.controller == "AliasUtil"
+        assert controller.base_class == "ApiControllerBase"
+        assert len(controller.endpoints) == 3
+
+
+def test_parse_endpoints(sample_controller: str) -> None:
+    """Test parsing endpoint methods from controller."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        api_dir = Path(tmpdir) / "Api"
+        api_dir.mkdir()
+        controller_file = api_dir / "AliasUtilController.php"
+        controller_file.write_text(sample_controller)
+
+        controller = parser.parse_controller_file(controller_file)
+
+        assert controller is not None
+
+        # Check findAlias endpoint
+        find_endpoint = next(e for e in controller.endpoints if e.name == "findAlias")
+        assert find_endpoint.method == "GET"
+        assert find_endpoint.description == "Find aliases"
+        assert find_endpoint.parameters == []
+
+        # Check add endpoint
+        add_endpoint = next(e for e in controller.endpoints if e.name == "add")
+        assert add_endpoint.method == "POST"
+        assert add_endpoint.description == "Add new alias"
+        assert add_endpoint.parameters == ["uuid"]
+
+        # Check set endpoint
+        set_endpoint = next(e for e in controller.endpoints if e.name == "set")
+        assert set_endpoint.method == "POST"
+        assert set_endpoint.description == "Update alias settings"
+
+
+def test_parse_directory() -> None:
+    """Test parsing multiple controllers in a directory."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        # Create multiple controller files
+        firewall_api = Path(tmpdir) / "Firewall" / "Api"
+        firewall_api.mkdir(parents=True)
+
+        (firewall_api / "TestController.php").write_text('''<?php
+namespace OPNsense\\Firewall\\Api;
+use OPNsense\\Base\\ApiControllerBase;
+
+class TestController extends ApiControllerBase
+{
+    public function getAction() {}
+}
+''')
+
+        system_api = Path(tmpdir) / "System" / "Api"
+        system_api.mkdir(parents=True)
+
+        (system_api / "InfoController.php").write_text('''<?php
+namespace OPNsense\\System\\Api;
+use OPNsense\\Base\\ApiControllerBase;
+
+class InfoController extends ApiControllerBase
+{
+    public function versionAction() {}
+}
+''')
+
+        controllers = parser.parse_directory(Path(tmpdir))
+
+        assert len(controllers) == 2
+        modules = {c.module for c in controllers}
+        assert modules == {"Firewall", "System"}
+
+
+def test_to_snake_case() -> None:
+    """Test snake_case conversion."""
+    parser = ControllerParser()
+
+    assert parser._to_snake_case("findAlias") == "find_alias"
+    assert parser._to_snake_case("AliasUtil") == "alias_util"
+    assert parser._to_snake_case("get") == "get"
+    assert parser._to_snake_case("setItem") == "set_item"
