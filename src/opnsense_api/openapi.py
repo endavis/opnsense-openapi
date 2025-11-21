@@ -8,7 +8,11 @@ from typing import Any
 from urllib.parse import urlencode, urlparse
 
 import requests
+import urllib3
 from jsonschema import ValidationError, validate
+
+# Suppress SSL warnings for self-signed certificates (common in OPNsense)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class APIWrapper:
