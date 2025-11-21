@@ -7,6 +7,7 @@ import pytest
 
 from opnsense_api.generator import CodeGenerator
 from opnsense_api.parser import ApiController, ApiEndpoint
+from opnsense_api.utils import to_class_name, to_snake_case
 
 
 @pytest.fixture
@@ -82,17 +83,13 @@ def test_generate_basic(sample_controllers: list[ApiController]) -> None:
 
 def test_to_class_name() -> None:
     """Test class name conversion."""
-    generator = CodeGenerator(Path("tmp"))
-
-    assert generator._to_class_name("firewall") == "Firewall"
-    assert generator._to_class_name("system_info") == "SystemInfo"
-    assert generator._to_class_name("api") == "Api"
+    assert to_class_name("firewall") == "Firewall"
+    assert to_class_name("system_info") == "SystemInfo"
+    assert to_class_name("api") == "Api"
 
 
 def test_to_snake_case() -> None:
     """Test snake_case conversion."""
-    generator = CodeGenerator(Path("tmp"))
-
-    assert generator._to_snake_case("AliasUtil") == "alias_util"
-    assert generator._to_snake_case("Info") == "info"
-    assert generator._to_snake_case("findAlias") == "find_alias"
+    assert to_snake_case("AliasUtil") == "alias_util"
+    assert to_snake_case("Info") == "info"
+    assert to_snake_case("findAlias") == "find_alias"

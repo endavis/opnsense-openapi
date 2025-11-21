@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 import pytest
 
 from opnsense_api.parser import ControllerParser
+from opnsense_api.utils import to_snake_case
 
 
 @pytest.fixture
@@ -146,9 +147,7 @@ class InfoController extends ApiControllerBase
 
 def test_to_snake_case() -> None:
     """Test snake_case conversion."""
-    parser = ControllerParser()
-
-    assert parser._to_snake_case("findAlias") == "find_alias"
-    assert parser._to_snake_case("AliasUtil") == "alias_util"
-    assert parser._to_snake_case("get") == "get"
-    assert parser._to_snake_case("setItem") == "set_item"
+    assert to_snake_case("findAlias") == "find_alias"
+    assert to_snake_case("AliasUtil") == "alias_util"
+    assert to_snake_case("get") == "get"
+    assert to_snake_case("setItem") == "set_item"

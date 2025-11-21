@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import TextIO
 
 from ..parser import ApiController, ApiEndpoint
+from ..utils import to_class_name, to_snake_case
 
 
 class CodeGenerator:
@@ -55,12 +56,12 @@ class CodeGenerator:
 
             # Import all module classes
             for module_name in sorted(modules.keys()):
-                f.write(f"from .{module_name} import {self._to_class_name(module_name)}\n")
+                f.write(f"from .{module_name} import {to_class_name(module_name)}\n")
 
             f.write("\n__all__ = [\n")
             f.write('    "OPNsenseClient",\n')
             for module_name in sorted(modules.keys()):
-                f.write(f'    "{self._to_class_name(module_name)}",\n')
+                f.write(f'    "{to_class_name(module_name)}",\n')
             f.write("]\n")
 
     def _generate_module(self, module_name: str, controllers: list[ApiController]) -> None:
@@ -71,7 +72,7 @@ class CodeGenerator:
             controllers: List of controllers in this module
         """
         module_path = self.output_dir / f"{module_name}.py"
-        class_name = self._to_class_name(module_name)
+        class_name = to_class_name(module_name)
 
         with module_path.open("w") as f:
             # Write header
@@ -92,7 +93,7 @@ class CodeGenerator:
 
             # Create properties for each controller
             for controller in controllers:
-                controller_var = self._to_snake_case(controller.controller)
+                controller_var = to_snake_case(controller.controller)
                 f.write(f"        self.{controller_var} = self.{controller.controller}(client)\n")
 
             f.write("\n")
@@ -121,7 +122,7 @@ class CodeGenerator:
 
         f.write("        def __init__(self, client: OPNsenseClient) -> None:\n")
         f.write("            self._client = client\n")
-        controller_snake = self._to_snake_case(controller.controller)
+        controller_snake = to_snake_case(controller.controller)
         f.write(f'            self._module = "{module_name}"\n')
         f.write(f'            self._controller = "{controller_snake}"\n\n')
 
@@ -138,7 +139,7 @@ class CodeGenerator:
             f: File object to write to
             endpoint: Endpoint to generate method for
         """
-        method_name = self._to_snake_case(endpoint.name)
+        method_name = to_snake_case(endpoint.name)
         param_sig = ", ".join(f"{p}: Any" for p in endpoint.parameters)
         if param_sig:
             param_sig = f", {param_sig}"
@@ -163,7 +164,7 @@ class CodeGenerator:
 
         f.write("                self._module,\n")
         f.write("                self._controller,\n")
-        f.write(f'                "{self._to_snake_case(endpoint.name)}",\n')
+        f.write(f'                "{to_snake_case(endpoint.name)}",\n')
 
         if endpoint.method == "POST" and endpoint.parameters:
             # For POST, pass parameters as JSON
@@ -171,31 +172,3 @@ class CodeGenerator:
             f.write(f"                json={{{json_params}}},\n")
 
         f.write("            )\n\n")
-
-    def _to_class_name(self, name: str) -> str:
-        """Convert name to PascalCase class name.
-
-        Args:
-            name: Name to convert
-
-        Returns:
-            PascalCase class name
-        """
-        return "".join(word.capitalize() for word in name.split("_"))
-
-    def _to_snake_case(self, name: str) -> str:
-        """Convert PascalCase or camelCase to snake_case.
-
-        Args:
-            name: Name to convert
-
-        Returns:
-            snake_case name
-        """
-        # Insert underscore before uppercase letters
-        result = ""
-        for i, char in enumerate(name):
-            if char.isupper() and i > 0:
-                result += "_"
-            result += char.lower()
-        return result
