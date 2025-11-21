@@ -18,6 +18,8 @@ class APIWrapper:
         api_json_file: str,
         base_url: str,
         auth_header: dict[str, str] | None = None,
+        api_key: str | None = None,
+        api_secret: str | None = None,
         timeout: float = 30.0,
         session: Optional[requests.Session] = None,
         base_api_path: str = "",
@@ -28,8 +30,12 @@ class APIWrapper:
         :type api_json_file: str
         :param base_url: the base url for the api
         :type base_url: str
-        :param auth_header: the auth header to use
+        :param auth_header: the auth header to use (alternative to api_key/api_secret)
         :type auth_header: dict[str, str] | None
+        :param api_key: OPNsense API key for basic auth
+        :type api_key: str | None
+        :param api_secret: OPNsense API secret for basic auth
+        :type api_secret: str | None
         :param timeout: the timeout value
         :type timeout: float
         :param session: an already existing session to use
@@ -59,20 +65,19 @@ class APIWrapper:
         if not self.base_api_path:
             logging.warning(f"No base api path found for base_url: {base_url}")
 
-        if not auth_header:
-            auth_header = {}
-
         # Networking defaults
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.session = session or requests.Session()
-        # Default headers (can be extended per request)
-        default_headers = {
-            "Content-Type": "application/json",
-        }
 
-        self.session.headers.update(default_headers)
-        self.session.headers.update(auth_header)
+        # Set up authentication
+        if api_key and api_secret:
+            self.session.auth = (api_key, api_secret)
+        elif auth_header:
+            self.session.headers.update(auth_header)
+
+        # Default headers (can be extended per request)
+        self.session.headers.update({"Content-Type": "application/json"})
 
     # -------------------------- Internal helpers ---------------------------
 
