@@ -204,13 +204,7 @@ class APIWrapper:
                     value = self._build_sample_from_schema(sub)
                 else:
                     value = None
-                # include comments for required
                 sample[name] = value
-                # If description present, tack on a pseudo-comment key (human readable)
-                if "description" in sub:
-                    sample[f"__desc__{name}"] = sub["description"]
-                if name in required:
-                    sample[f"__required__{name}"] = True
             return sample
         if t == "array":
             return [self._build_sample_from_schema(schema.get("items", {}))]
