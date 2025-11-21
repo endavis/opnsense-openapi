@@ -1,7 +1,7 @@
 [project]
-name = "opnsense-api"
+name = "opnsense-openapi"
 version = "0.1.0"
-description = "Auto-generated Python wrapper for OPNsense API"
+description = "OpenAPI-based Python client for OPNsense with bundled specs"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -20,7 +20,7 @@ dev = [
 ]
 
 [project.scripts]
-opnsense-gen = "opnsense_api.cli:app"
+opnsense-openapi = "opnsense_api.cli:app"
 
 [build-system]
 requires = ["hatchling"]
