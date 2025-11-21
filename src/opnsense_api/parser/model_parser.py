@@ -1,9 +1,12 @@
 """Parse OPNsense model XML files to extract field definitions."""
 
+import logging
 import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -69,7 +72,8 @@ class ModelParser:
         try:
             tree = ET.parse(file_path)
             root = tree.getroot()
-        except ET.ParseError:
+        except ET.ParseError as e:
+            logger.warning("Failed to parse XML file %s: %s", file_path, e)
             return None
 
         if root.tag != "model":
