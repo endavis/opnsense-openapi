@@ -1,9 +1,18 @@
 """Base client for OPNsense API communication."""
 
+import json
 from typing import Any
 from urllib.parse import urljoin
 
 import httpx
+
+
+class APIResponseError(Exception):
+    """Raised when API response cannot be parsed as JSON."""
+
+    def __init__(self, message: str, response_text: str) -> None:
+        super().__init__(message)
+        self.response_text = response_text
 
 
 class OPNsenseClient:
@@ -77,11 +86,17 @@ class OPNsenseClient:
 
         Raises:
             httpx.HTTPError: On HTTP errors
+            APIResponseError: If response is not valid JSON
         """
         url = self._build_url(module, controller, command, *params)
         response = self._client.get(url, params=query)
         response.raise_for_status()
-        return response.json()
+        try:
+            return response.json()
+        except json.JSONDecodeError as e:
+            raise APIResponseError(
+                f"Invalid JSON response from {url}: {e}", response.text
+            ) from e
 
     def post(
         self,
@@ -105,11 +120,17 @@ class OPNsenseClient:
 
         Raises:
             httpx.HTTPError: On HTTP errors
+            APIResponseError: If response is not valid JSON
         """
         url = self._build_url(module, controller, command, *params)
         response = self._client.post(url, json=json)
         response.raise_for_status()
-        return response.json()
+        try:
+            return response.json()
+        except json.JSONDecodeError as e:
+            raise APIResponseError(
+                f"Invalid JSON response from {url}: {e}", response.text
+            ) from e
 
     def close(self) -> None:
         """Close the HTTP client."""

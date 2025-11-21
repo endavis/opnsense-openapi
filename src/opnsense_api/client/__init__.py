@@ -1,5 +1,5 @@
 """Base HTTP client for OPNsense API."""
 
-from .base import OPNsenseClient
+from .base import APIResponseError, OPNsenseClient
 
-__all__ = ["OPNsenseClient"]
+__all__ = ["APIResponseError", "OPNsenseClient"]
