@@ -38,7 +38,8 @@ class OpenApiGenerator:
         Returns:
             Path to generated OpenAPI JSON file
         """
-        # Parse models if directory provided
+        # Clear and parse models
+        self.models = {}
         if models_dir:
             self.models = self.model_parser.parse_directory(models_dir)
 
