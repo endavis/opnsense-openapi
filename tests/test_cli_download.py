@@ -1,8 +1,12 @@
+"""Tests for CLI commands."""
+
 from pathlib import Path
 
 from typer.testing import CliRunner
 
+from opnsense_api import __version__
 from opnsense_api.cli import app
+from opnsense_api.parser import ApiController, ApiEndpoint
 
 
 runner = CliRunner()
@@ -35,3 +39,53 @@ def test_download_command_failure(tmp_path, monkeypatch):
 
     assert result.exit_code == 1
     assert "boom" in result.stderr
+
+
+def test_version_option():
+    """Test --version option."""
+    result = runner.invoke(app, ["--version"])
+    assert result.exit_code == 0
+    assert __version__ in result.stdout
+
+
+def test_generate_command_success(tmp_path, monkeypatch):
+    """Test generate command success."""
+    controllers_path = tmp_path / "controllers"
+    controllers_path.mkdir()
+
+    def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
+        return controllers_path
+
+    def fake_parse_directory(self, path):  # noqa: ANN001
+        return [
+            ApiController(
+                module="Test",
+                controller="TestCtrl",
+                base_class="ApiControllerBase",
+                endpoints=[
+                    ApiEndpoint(name="get", method="GET", description="Get", parameters=[])
+                ],
+            )
+        ]
+
+    monkeypatch.setattr("opnsense_api.cli.SourceDownloader.download", fake_download)
+    monkeypatch.setattr("opnsense_api.cli.ControllerParser.parse_directory", fake_parse_directory)
+
+    output_dir = tmp_path / "output"
+    result = runner.invoke(app, ["generate", "24.7", "--output", str(output_dir)])
+
+    assert result.exit_code == 0
+    assert "Generated" in result.stdout
+
+
+def test_generate_command_download_failure(tmp_path, monkeypatch):
+    """Test generate command when download fails."""
+    def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
+        raise RuntimeError("download failed")
+
+    monkeypatch.setattr("opnsense_api.cli.SourceDownloader.download", fake_download)
+
+    result = runner.invoke(app, ["generate", "24.7", "--output", str(tmp_path)])
+
+    assert result.exit_code == 1
+    assert "download failed" in result.stderr
