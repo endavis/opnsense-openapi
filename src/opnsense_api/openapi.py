@@ -271,6 +271,61 @@ class APIWrapper:
 
         return describe(resolved)
 
+    def get_response_schema_for_endpoint(
+        self,
+        path_template: str,
+        method: str = "GET",
+        status_code: str = "200",
+        human_readable: bool = True,
+    ) -> dict[str, Any] | str | None:
+        """Return the response schema for the given endpoint.
+
+        If human_readable=True, return a compact dict describing fields
+        (type/required/enum/description), plus a 'sample' field with a minimal example.
+        """
+        resolved = self._get_response_schema(path_template, method, status_code)
+
+        if not resolved:
+            return None
+
+        if not human_readable:
+            return resolved
+
+        def describe(schema: dict[str, Any]) -> dict[str, Any]:
+            info: dict[str, Any] = {"type": schema.get("type", "object")}
+            props = schema.get("properties", {})
+            required = set(schema.get("required", []))
+            fields: dict[str, Any] = {}
+            for name, sub in props.items():
+                sub = self._resolve_refs(sub)
+                fields[name] = {
+                    "type": sub.get(
+                        "type", "object" if "properties" in sub else "unknown"
+                    ),
+                    "required": name in required,
+                    "description": sub.get("description"),
+                }
+                if "enum" in sub:
+                    fields[name]["enum"] = list(sub["enum"])
+            info["fields"] = fields
+            info["sample"] = self._build_sample_from_schema(schema)
+            return info
+
+        return describe(resolved)
+
+    def _get_response_schema(
+        self, path_template: str, method: str, status_code: str = "200"
+    ) -> dict[str, Any] | None:
+        """Return the resolved JSON Schema dict for the response if present."""
+        op = self._get_operation(path_template, method)
+        responses = op.get("responses", {})
+        response = responses.get(status_code, {})
+        content = response.get("content", {}).get("application/json", {})
+        schema = content.get("schema")
+        if not schema:
+            return None
+        return self._resolve_refs(schema)
+
     def validate_body(
         self,
         path_template: str,
