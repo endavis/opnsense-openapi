@@ -75,7 +75,7 @@ def generate(
         typer.Option(
             "--output",
             "-o",
-            help="Output directory for generated OpenAPI spec (defaults to current dir).",
+            help="Output directory for generated OpenAPI spec (defaults to specs/).",
         ),
     ] = None,
     cache: Annotated[
@@ -92,7 +92,12 @@ def generate(
     ] = False,
 ) -> None:
     """Generate OpenAPI spec for the specified OPNsense version."""
-    output_dir = output or Path(".")
+    # Default to specs/ directory in package
+    if output is None:
+        output_dir = Path(__file__).parent / "specs"
+    else:
+        output_dir = output
+    output_dir.mkdir(parents=True, exist_ok=True)
     downloader = SourceDownloader(cache_dir=cache)
 
     # Download source
