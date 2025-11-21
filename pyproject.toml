@@ -17,6 +17,8 @@ dev = [
     "ruff>=0.3.0",
     "mypy>=1.8.0",
     "pygments>=2.17,<2.19",
+    "build>=1.0.0",
+    "twine>=5.0.0",
 ]
 
 [project.scripts]
@@ -28,9 +30,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/opnsense_api"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"src/opnsense_api/specs" = "opnsense_api/specs"
+include = ["src/opnsense_api/specs/*.json"]
 
 [tool.black]
 line-length = 100
