@@ -1,0 +1,7 @@
+# Copy this file to .envrc.local and fill in your credentials
+# .envrc.local is gitignored and will not be committed
+
+# OPNsense API credentials
+export OPNSENSE_URL="https://your-opnsense-host"
+export OPNSENSE_API_KEY="your-api-key"
+export OPNSENSE_API_SECRET="your-api-secret"

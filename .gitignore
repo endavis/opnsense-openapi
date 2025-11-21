@@ -60,3 +60,6 @@ Thumbs.db
 
 # Claude
 .claude/
+
+# direnv local secrets
+.envrc.local
