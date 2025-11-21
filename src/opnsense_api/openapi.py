@@ -4,10 +4,11 @@
 
 import json
 import logging
+from typing import Any
+from urllib.parse import urlencode, urlparse
+
 import requests
-from typing import Any, Dict, List, Optional, Tuple, Union
-from jsonschema import validate, ValidationError
-from urllib.parse import urlencode
+from jsonschema import ValidationError, validate
 
 
 class APIWrapper:
@@ -21,7 +22,7 @@ class APIWrapper:
         api_key: str | None = None,
         api_secret: str | None = None,
         timeout: float = 30.0,
-        session: Optional[requests.Session] = None,
+        session: requests.Session | None = None,
         base_api_path: str = "",
     ):
         """Initialize the class.
@@ -45,7 +46,7 @@ class APIWrapper:
         """
         # Load the API spec
         with open(api_json_file, encoding="utf-8") as f:
-            self.api_spec: Dict[str, Any] = json.load(f)
+            self.api_spec: dict[str, Any] = json.load(f)
 
         self.base_api_path = base_api_path
         if not base_api_path:
@@ -57,7 +58,6 @@ class APIWrapper:
                 server_url = self.api_spec["servers"][0].get("url", "")
                 # Extract path portion from server URL (e.g., "https://{host}/api" -> "/api")
                 if "/" in server_url:
-                    from urllib.parse import urlparse
                     parsed = urlparse(server_url)
                     if parsed.path:
                         self.base_api_path = parsed.path
@@ -81,7 +81,7 @@ class APIWrapper:
 
     # -------------------------- Internal helpers ---------------------------
 
-    def _get_operation(self, api_path: str, method: str) -> Dict[str, Any]:
+    def _get_operation(self, api_path: str, method: str) -> dict[str, Any]:
         """Get the operation for an API path.
 
         :param api_path: the api path to use, such as /storage/assets
@@ -125,7 +125,7 @@ class APIWrapper:
         return schema
 
     def _format_path(
-        self, path_template: str, path_params: Optional[Dict[str, Any]]
+        self, path_template: str, path_params: dict[str, Any] | None
     ) -> str:
         """Replace placeholders like {id} in the path template with provided values.
 
@@ -140,7 +140,7 @@ class APIWrapper:
 
     def _extract_parameters(
         self, path_template: str, method: str
-    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         """Return (path_params, query_params) lists from the spec entry."""
         op = self._get_operation(path_template, method)
         params = op.get("parameters", []) or []
@@ -150,7 +150,7 @@ class APIWrapper:
 
     def _get_request_schema(
         self, path_template: str, method: str
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Return the resolved JSON Schema dict for the request body if present.
 
         Only supports application/json for simplicity.
@@ -172,7 +172,7 @@ class APIWrapper:
             return None
         return self._resolve_refs(schema)
 
-    def _build_sample_from_schema(self, schema: Dict[str, Any]) -> Any:
+    def _build_sample_from_schema(self, schema: dict[str, Any]) -> Any:
         """Heuristic sample generator for a JSON Schema object.
 
         Produces a minimal readable skeleton with placeholder values.
@@ -227,9 +227,9 @@ class APIWrapper:
 
     # ------------------------------ Public API ------------------------------
 
-    def list_endpoints(self) -> List[Tuple[str, str, Optional[str]]]:
+    def list_endpoints(self) -> list[tuple[str, str, str | None]]:
         """Return list of (path, METHOD, summary) triples for quick discovery."""
-        items: List[Tuple[str, str, Optional[str]]] = []
+        items: list[tuple[str, str, str | None]] = []
         for path in self.api_spec["paths"]:
 
             methods = self.api_spec["paths"].get(path, {})
@@ -248,7 +248,7 @@ class APIWrapper:
 
     def get_request_schema_for_endpoint(
         self, path_template: str, method: str = "GET", human_readable: bool = True
-    ) -> Optional[Union[Dict[str, Any], str]]:
+    ) -> dict[str, Any] | str | None:
         """Return the requestBody schema for the given endpoint.
 
         If human_readable=True, return a compact dict describing fields
@@ -263,11 +263,11 @@ class APIWrapper:
         if not human_readable:
             return resolved
 
-        def describe(schema: Dict[str, Any]) -> Dict[str, Any]:
-            info: Dict[str, Any] = {"type": schema.get("type", "object")}
+        def describe(schema: dict[str, Any]) -> dict[str, Any]:
+            info: dict[str, Any] = {"type": schema.get("type", "object")}
             props = schema.get("properties", {})
             required = set(schema.get("required", []))
-            fields: Dict[str, Any] = {}
+            fields: dict[str, Any] = {}
             for name, sub in props.items():
                 sub = self._resolve_refs(sub)
                 fields[name] = {
@@ -289,7 +289,7 @@ class APIWrapper:
         self,
         path_template: str,
         method: str = "GET",
-        body: Optional[Dict[str, Any]] = None,
+        body: dict[str, Any] | None = None,
     ) -> bool:
         """Validate 'body' against the endpoint's resolved schema (if any).
 
@@ -309,7 +309,7 @@ class APIWrapper:
 
     def suggest_parameters(
         self, path_template: str, method: str = "GET"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Return a human-readable structure.
 
         - path_params: name, type, required, description
@@ -322,7 +322,7 @@ class APIWrapper:
         op = self._get_operation(path_template, method)
         path_params, query_params = self._extract_parameters(path_template, method)
 
-        def simplify(param: Dict[str, Any]) -> Dict[str, Any]:
+        def simplify(param: dict[str, Any]) -> dict[str, Any]:
             sch = param.get("schema", {})
             return {
                 "name": param.get("name"),
@@ -354,10 +354,10 @@ class APIWrapper:
         self,
         path_template: str,
         method: str = "GET",
-        path_params: Optional[Dict[str, Any]] = None,
-        query_params: Optional[Dict[str, Any]] = None,
-        body: Optional[Dict[str, Any]] = None,
-        additional_headers: Optional[Dict[str, str]] = None,
+        path_params: dict[str, Any] | None = None,
+        query_params: dict[str, Any] | None = None,
+        body: dict[str, Any] | None = None,
+        additional_headers: dict[str, str] | None = None,
     ) -> Any:
         """Make the HTTP call.
 
