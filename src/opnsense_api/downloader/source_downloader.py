@@ -1,8 +1,11 @@
 """Download OPNsense source code from GitHub."""
 
+import logging
 import shutil
 import subprocess
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class SourceDownloader:
@@ -38,15 +41,15 @@ class SourceDownloader:
 
         # Check if already downloaded
         if controllers_dir.exists() and not force:
-            print(f"Using cached source for version {version}")
+            logger.info("Using cached source for version %s", version)
             return controllers_dir
 
         # Clean up if forcing re-download
         if version_dir.exists() and force:
-            print(f"Removing cached source for version {version}")
+            logger.info("Removing cached source for version %s", version)
             shutil.rmtree(version_dir)
 
-        print(f"Downloading OPNsense {version} source from GitHub...")
+        logger.info("Downloading OPNsense %s source from GitHub...", version)
 
         # Clone repository with specific tag/branch
         try:
@@ -69,7 +72,7 @@ class SourceDownloader:
                 f"Controllers directory not found after download: {controllers_dir}"
             )
 
-        print(f"Successfully downloaded to {controllers_dir}")
+        logger.info("Successfully downloaded to %s", controllers_dir)
         return controllers_dir
 
     def _git_clone_tag(self, tag: str, target_dir: Path) -> None:
@@ -141,10 +144,10 @@ class SourceDownloader:
         if version:
             version_dir = self.cache_dir / version
             if version_dir.exists():
-                print(f"Cleaning cache for version {version}")
+                logger.info("Cleaning cache for version %s", version)
                 shutil.rmtree(version_dir)
         else:
             if self.cache_dir.exists():
-                print("Cleaning all cached sources")
+                logger.info("Cleaning all cached sources")
                 shutil.rmtree(self.cache_dir)
                 self.cache_dir.mkdir(parents=True, exist_ok=True)
