@@ -89,15 +89,16 @@ class APIWrapper:
         :param method: the method (get, put, etc)
         :type method: str
         :return: various info about the path and method
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
+        :raises KeyError: if path or method not found in spec
         """
         method = method.lower()
-        path = self.api_spec["paths"].get(api_path, {})
-        if not path:
-            logging.error(f"_get_operation: did not find {api_path}")
-        operation = path.get(method, {})
-        if not operation:
-            logging.error(f"_get_operation: could not find {operation} for {api_path}")
+        path = self.api_spec["paths"].get(api_path)
+        if path is None:
+            raise KeyError(f"Path not found in API spec: {api_path}")
+        operation = path.get(method)
+        if operation is None:
+            raise KeyError(f"Method '{method.upper()}' not found for path: {api_path}")
         return operation
 
     def _resolve_ref(self, ref: str) -> Any:
@@ -156,18 +157,9 @@ class APIWrapper:
         Only supports application/json for simplicity.
         """
         op = self._get_operation(path_template, method)
-
-        content = (
-            op.get("requestBody", {}).get("content", {}).get("application/json", {})
-        )
-
-        if not content:
-            logging.error(
-                f"_get_request_schema: no content for {path_template}:{method}"
-            )
-
+        request_body = op.get("requestBody", {})
+        content = request_body.get("content", {}).get("application/json", {})
         schema = content.get("schema")
-
         if not schema:
             return None
         return self._resolve_refs(schema)
