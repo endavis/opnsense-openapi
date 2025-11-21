@@ -154,7 +154,9 @@ class OpenApiGenerator:
                         "content": {"application/json": {"schema": request_schema}}
                     }
 
-            spec["paths"][path] = {method: operation}
+            if path not in spec["paths"]:
+                spec["paths"][path] = {}
+            spec["paths"][path][method] = operation
 
     def _get_path_params(self, parameters: list[str]) -> list[str]:
         """Identify which parameters should be path parameters.
