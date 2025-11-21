@@ -9,6 +9,8 @@ import typer
 
 from . import __version__
 from .downloader import SourceDownloader
+from .generator import OpenApiGenerator
+from .parser import ControllerParser
 
 app = typer.Typer(help="Generate and inspect OPNsense API wrappers.")
 
@@ -63,6 +65,65 @@ def download(
         f"Stored controller files for {version} under {controllers_path}",
         fg=typer.colors.GREEN,
     )
+
+
+@app.command()
+def generate(
+    version: Annotated[str, typer.Argument(help="OPNsense release tag, e.g. 24.7")],
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            "--output",
+            "-o",
+            help="Output directory for generated OpenAPI spec (defaults to current dir).",
+        ),
+    ] = None,
+    cache: Annotated[
+        Path | None,
+        typer.Option(
+            "--cache",
+            "-c",
+            help="Directory for cached source files (defaults to tmp/opnsense_source).",
+        ),
+    ] = None,
+    force: Annotated[
+        bool,
+        typer.Option("--force/--no-force", help="Re-download source even when cached."),
+    ] = False,
+) -> None:
+    """Generate OpenAPI spec for the specified OPNsense version."""
+    output_dir = output or Path(".")
+    downloader = SourceDownloader(cache_dir=cache)
+
+    # Download source
+    try:
+        typer.echo(f"Downloading OPNsense {version} source...")
+        controllers_path = downloader.download(version, force=force)
+    except RuntimeError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    # Derive models path from controllers path
+    # controllers: .../src/opnsense/mvc/app/controllers/OPNsense
+    # models:      .../src/opnsense/mvc/app/models/OPNsense
+    models_path = controllers_path.parent.parent / "models" / "OPNsense"
+
+    # Parse controllers
+    typer.echo("Parsing controllers...")
+    parser = ControllerParser()
+    controllers = parser.parse_directory(controllers_path)
+    typer.echo(f"  Found {len(controllers)} controllers")
+
+    # Generate OpenAPI spec
+    typer.echo("Generating OpenAPI specification...")
+    generator = OpenApiGenerator(output_dir)
+    output_file = generator.generate(
+        controllers,
+        version,
+        models_dir=models_path if models_path.exists() else None,
+    )
+
+    typer.secho(f"Generated {output_file}", fg=typer.colors.GREEN)
 
 
 if __name__ == "__main__":  # pragma: no cover
