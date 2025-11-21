@@ -83,10 +83,13 @@ class APIWrapper:
         # Default headers (can be extended per request)
         self.session.headers.update({"Content-Type": "application/json"})
 
+        # Cache for operation lookups
+        self._operation_cache: dict[tuple[str, str], dict[str, Any]] = {}
+
     # -------------------------- Internal helpers ---------------------------
 
     def _get_operation(self, api_path: str, method: str) -> dict[str, Any]:
-        """Get the operation for an API path.
+        """Get the operation for an API path (cached).
 
         :param api_path: the api path to use, such as /storage/assets
         :type api_path: str
@@ -97,12 +100,19 @@ class APIWrapper:
         :raises KeyError: if path or method not found in spec
         """
         method = method.lower()
+        cache_key = (api_path, method)
+
+        if cache_key in self._operation_cache:
+            return self._operation_cache[cache_key]
+
         path = self.api_spec["paths"].get(api_path)
         if path is None:
             raise KeyError(f"Path not found in API spec: {api_path}")
         operation = path.get(method)
         if operation is None:
             raise KeyError(f"Method '{method.upper()}' not found for path: {api_path}")
+
+        self._operation_cache[cache_key] = operation
         return operation
 
     def _resolve_ref(self, ref: str) -> Any:
