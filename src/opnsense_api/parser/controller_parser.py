@@ -41,7 +41,7 @@ class ControllerParser:
 
     # Pattern to extract class definition
     CLASS_PATTERN = re.compile(
-        r"class\s+(\w+Controller)\s+extends\s+(Api\w+(?:ControllerBase|Controller))"
+        r"class\s+(\w+Controller)\s+extends\s+(Api\w*(?:ControllerBase|Controller))"
     )
 
     # Pattern to extract public methods (actions)
