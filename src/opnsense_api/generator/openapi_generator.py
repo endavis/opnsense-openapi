@@ -63,7 +63,7 @@ class OpenApiGenerator:
             self._add_controller_paths(spec, controller)
 
         output_path = self.output_dir / f"opnsense-{version}.json"
-        with output_path.open("w") as f:
+        with output_path.open("w", encoding="utf-8") as f:
             json.dump(spec, f, indent=2)
 
         return output_path

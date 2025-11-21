@@ -50,7 +50,7 @@ class CodeGenerator:
         """
         init_path = self.output_dir / "__init__.py"
 
-        with init_path.open("w") as f:
+        with init_path.open("w", encoding="utf-8") as f:
             f.write(f'"""Generated OPNsense API client for version {version}."""\n\n')
             f.write("from opnsense_api.client import OPNsenseClient\n\n")
 
@@ -74,7 +74,7 @@ class CodeGenerator:
         module_path = self.output_dir / f"{module_name}.py"
         class_name = to_class_name(module_name)
 
-        with module_path.open("w") as f:
+        with module_path.open("w", encoding="utf-8") as f:
             # Write header
             f.write(f'"""OPNsense {class_name} API module."""\n\n')
             f.write("from typing import Any\n\n")
