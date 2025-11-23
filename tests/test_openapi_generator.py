@@ -61,7 +61,7 @@ def test_generator_creates_output_dir() -> None:
     """Test that generator creates output directory if needed."""
     with TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir) / "nested" / "output"
-        generator = OpenApiGenerator(output_dir)
+        _ = OpenApiGenerator(output_dir)  # Side effect: creates directory
         assert output_dir.exists()
 
 

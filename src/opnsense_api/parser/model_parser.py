@@ -202,24 +202,24 @@ class ModelParser:
         properties = {}
         required = []
 
-        for field in model.fields[container]:
-            json_type = self.FIELD_TYPE_MAP.get(field.field_type, "string")
+        for model_field in model.fields[container]:
+            json_type = self.FIELD_TYPE_MAP.get(model_field.field_type, "string")
 
             prop: dict = {"type": json_type}
 
-            if field.options:
-                prop["enum"] = list(field.options.keys())
+            if model_field.options:
+                prop["enum"] = list(model_field.options.keys())
 
-            if field.default is not None:
-                prop["default"] = field.default
+            if model_field.default is not None:
+                prop["default"] = model_field.default
 
-            if field.multiple:
+            if model_field.multiple:
                 prop = {"type": "array", "items": prop}
 
-            properties[field.name] = prop
+            properties[model_field.name] = prop
 
-            if field.required:
-                required.append(field.name)
+            if model_field.required:
+                required.append(model_field.name)
 
         schema: dict = {"type": "object", "properties": properties}
         if required:
