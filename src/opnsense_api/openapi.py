@@ -397,9 +397,7 @@ class APIWrapper:
             return True
         except ValidationError as e:
             field_path = ".".join(str(p) for p in e.path) if e.path else "root"
-            schema_path = (
-                ".".join(str(p) for p in e.schema_path) if e.schema_path else "N/A"
-            )
+            schema_path = ".".join(str(p) for p in e.schema_path) if e.schema_path else "N/A"
             logging.error(
                 f"Request body validation error at '{field_path}': {e.message}. "
                 f"Schema path: {schema_path}"

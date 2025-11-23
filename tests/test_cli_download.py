@@ -1,6 +1,5 @@
 """Tests for CLI commands."""
 
-
 from typer.testing import CliRunner
 
 from opnsense_api import __version__

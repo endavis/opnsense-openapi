@@ -2,7 +2,7 @@
 
 import pytest
 
-from opnsense_api import get_spec_path, list_available_specs
+from opnsense_api import find_best_matching_spec, get_spec_path, list_available_specs
 
 
 def test_list_available_specs() -> None:
@@ -26,5 +26,29 @@ def test_get_spec_path_invalid() -> None:
     """Test error when spec not found."""
     with pytest.raises(FileNotFoundError) as exc_info:
         get_spec_path("99.99.99")
-    assert "No spec for version" in str(exc_info.value)
-    assert "Available:" in str(exc_info.value)
+    assert "No spec" in str(exc_info.value)
+    assert "Available" in str(exc_info.value)
+
+
+def test_find_best_matching_spec_exact() -> None:
+    """Test finding best match with exact version."""
+    specs = list_available_specs()
+    if "24.7.1" in specs:
+        path = find_best_matching_spec("24.7.1")
+        assert path.name == "opnsense-24.7.1.json"
+        assert path.exists()
+
+
+def test_find_best_matching_spec_fallback() -> None:
+    """Test finding best match with non-existent patch version."""
+    # Should find the highest 24.7.x
+    path = find_best_matching_spec("24.7.999")
+    assert path.name.startswith("opnsense-24.7.")
+    assert path.exists()
+
+
+def test_find_best_matching_spec_no_match() -> None:
+    """Test finding best match with no suitable version."""
+    with pytest.raises(FileNotFoundError) as exc_info:
+        find_best_matching_spec("99.99.99")
+    assert "No spec found" in str(exc_info.value)
