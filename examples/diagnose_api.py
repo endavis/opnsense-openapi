@@ -27,40 +27,54 @@ def main() -> None:
         auth=(api_key, api_secret), verify=verify_ssl, timeout=30.0, follow_redirects=True
     )
 
-    # Common API endpoints to test
+    # Common API endpoints to test - trying both GET and POST
     test_endpoints = [
         # Firmware/version endpoints
-        ("core", "firmware", "status"),
-        ("core", "firmware", "info"),
-        ("core", "firmware", "check"),
-        ("firmware", "status", "status"),
-        ("firmware", "status", "info"),
+        ("GET", "core", "firmware", "status"),
+        ("POST", "core", "firmware", "status"),
+        ("GET", "core", "firmware", "info"),
+        ("POST", "core", "firmware", "info"),
+        ("POST", "core", "firmware", "check"),
+        ("GET", "firmware", "status", "get"),
+        ("POST", "firmware", "status", "get"),
         # System endpoints
-        ("diagnostics", "system", "systemInformation"),
-        ("system", "status", "info"),
-        ("core", "system", "status"),
+        ("GET", "diagnostics", "system", "systemInformation"),
+        ("POST", "diagnostics", "system", "systemInformation"),
+        ("GET", "core", "system", "status"),
+        ("POST", "core", "system", "status"),
         # Simple test endpoints
-        ("diagnostics", "interface", "getInterfaceNames"),
-        ("firewall", "alias", "searchItem"),
-        ("firewall", "alias_util", "findAlias"),
+        ("GET", "diagnostics", "interface", "getInterfaceNames"),
+        ("POST", "diagnostics", "interface", "getInterfaceNames"),
+        ("GET", "firewall", "alias", "searchItem"),
+        ("POST", "firewall", "alias", "searchItem"),
+        ("GET", "firewall", "alias_util", "list"),
+        ("POST", "firewall", "alias_util", "list"),
     ]
 
-    print("Testing common API endpoints:\n")
+    print("Testing common API endpoints (GET and POST):\n")
     successful_endpoints = []
 
-    for module, controller, command in test_endpoints:
+    for method, module, controller, command in test_endpoints:
         url = f"{base_url.rstrip('/')}/api/{module}/{controller}/{command}"
         try:
-            response = client.get(url)
+            if method == "GET":
+                response = client.get(url)
+            else:  # POST
+                response = client.post(url)
+
             status = response.status_code
 
             if status == 200:
                 result = "✓ SUCCESS"
-                successful_endpoints.append((module, controller, command, response.json()))
+                try:
+                    data = response.json()
+                    successful_endpoints.append((method, module, controller, command, data))
+                except:
+                    successful_endpoints.append((method, module, controller, command, {"text": response.text}))
             elif status == 401:
-                result = "✗ UNAUTHORIZED (check credentials)"
+                result = "✗ UNAUTHORIZED"
             elif status == 403:
-                result = "✗ FORBIDDEN (insufficient permissions)"
+                result = "✗ FORBIDDEN"
             elif status == 404:
                 result = "✗ NOT FOUND"
             elif status == 400:
@@ -68,16 +82,16 @@ def main() -> None:
             else:
                 result = f"? {status}"
 
-            print(f"{result:30} {module}/{controller}/{command}")
+            print(f"{method:4} {result:20} {module}/{controller}/{command}")
 
         except Exception as e:
-            print(f"✗ ERROR: {str(e)[:50]:30} {module}/{controller}/{command}")
+            print(f"{method:4} ✗ ERROR: {str(e)[:40]:20} {module}/{controller}/{command}")
 
     # Show successful endpoints in detail
     if successful_endpoints:
         print("\n=== Successful Endpoints (with data) ===\n")
-        for module, controller, command, data in successful_endpoints:
-            print(f"{module}/{controller}/{command}:")
+        for method, module, controller, command, data in successful_endpoints:
+            print(f"{method} {module}/{controller}/{command}:")
 
             # Look for version information
             if "product_version" in data:
@@ -87,6 +101,12 @@ def main() -> None:
                     print(f"  → Found version: {data['product']['product_version']}")
                 if "product_name" in data["product"]:
                     print(f"  → Product name: {data['product']['product_name']}")
+
+            # Check for version in other common locations
+            if "version" in data:
+                print(f"  → Found version: {data['version']}")
+            if "system" in data and isinstance(data["system"], dict) and "version" in data["system"]:
+                print(f"  → Found version: {data['system']['version']}")
 
             # Show first few keys of response
             if isinstance(data, dict):
