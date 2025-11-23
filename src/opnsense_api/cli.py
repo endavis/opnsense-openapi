@@ -179,7 +179,7 @@ def serve_docs(
 
     # Import Flask dependencies (only when needed)
     try:
-        from flask import Flask, jsonify, redirect
+        from flask import Flask, jsonify, redirect, request, make_response
         from flask_swagger_ui import get_swaggerui_blueprint
     except ImportError:
         typer.secho(
@@ -243,6 +243,25 @@ def serve_docs(
     # Create Flask app
     flask_app = Flask(__name__)
 
+    # Initialize OPNsense client for proxy if credentials are available
+    opnsense_client = None
+    opnsense_url = os.getenv("OPNSENSE_URL")
+    api_key = os.getenv("OPNSENSE_API_KEY")
+    api_secret = os.getenv("OPNSENSE_API_SECRET")
+
+    if opnsense_url and api_key and api_secret:
+        try:
+            from .client import OPNsenseClient
+            opnsense_client = OPNsenseClient(
+                base_url=opnsense_url,
+                api_key=api_key,
+                api_secret=api_secret,
+                verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true",
+            )
+            typer.echo(f"✓ Proxy enabled for {opnsense_url}")
+        except Exception as e:
+            typer.secho(f"⚠ Could not initialize proxy client: {e}", fg=typer.colors.YELLOW)
+
     # Configure Swagger UI
     swagger_url = "/api/docs"
     api_url = "/api/spec"
@@ -269,7 +288,73 @@ def serve_docs(
 
         with open(spec_path) as f:
             spec = json.load(f)
+
+        # If proxy is enabled, update server URL to use the proxy
+        if opnsense_client:
+            spec["servers"] = [
+                {
+                    "url": f"http://{host}:{port}/proxy",
+                    "description": "Local proxy to OPNsense instance"
+                }
+            ]
+
         return jsonify(spec)
+
+    # Proxy endpoint to forward requests to OPNsense instance
+    @flask_app.route("/proxy/<path:api_path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+    def proxy(api_path):
+        """Proxy requests to the actual OPNsense instance."""
+        if not opnsense_client:
+            return jsonify({
+                "error": "Proxy not configured",
+                "message": "Set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET environment variables"
+            }), 503
+
+        try:
+            # Build full URL to OPNsense instance
+            url = f"{opnsense_client.base_url}/api/{api_path}"
+
+            # Get request data
+            json_data = request.get_json(silent=True) if request.is_json else None
+            params = dict(request.args)
+
+            # Forward the request using the underlying httpx client
+            httpx_response = opnsense_client._client.request(
+                method=request.method,
+                url=url,
+                params=params,
+                json=json_data,
+            )
+            httpx_response.raise_for_status()
+
+            # Parse response as JSON
+            response_data = httpx_response.json()
+
+            # Create response with CORS headers
+            response = make_response(jsonify(response_data))
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+
+            return response
+
+        except Exception as e:
+            error_response = jsonify({
+                "error": "Proxy request failed",
+                "message": str(e)
+            })
+            error_response.headers["Access-Control-Allow-Origin"] = "*"
+            return error_response, 500
+
+    # Handle OPTIONS requests for CORS preflight
+    @flask_app.route("/proxy/<path:api_path>", methods=["OPTIONS"])
+    def proxy_options(api_path):
+        """Handle CORS preflight requests."""
+        response = make_response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     # Root redirect
     @flask_app.route("/")
@@ -283,6 +368,13 @@ def serve_docs(
     typer.echo("=" * 70)
     typer.echo(f"\n📖 Open your browser to: http://{host}:{port}/api/docs")
     typer.echo(f"📄 Serving spec for version: {version_to_use}")
+
+    if opnsense_client:
+        typer.secho(f"\n✅ Proxy enabled - 'Try it out' will execute against: {opnsense_url}", fg=typer.colors.GREEN)
+    else:
+        typer.secho("\n⚠️  Proxy disabled - 'Try it out' will not work", fg=typer.colors.YELLOW)
+        typer.echo("   Set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET to enable")
+
     typer.echo("\n💡 Tip: Use Ctrl+C to stop the server\n")
 
     flask_app.run(host=host, port=port, debug=False)
