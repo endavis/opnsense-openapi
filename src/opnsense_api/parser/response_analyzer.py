@@ -465,23 +465,46 @@ class ResponseAnalyzer:
         # Different types - return a union-like schema (just use string as fallback)
         return {"type": "string"}
 
-    def _trace_variable(self, method_body: str, var_name: str) -> str | None:
-        """Trace a variable back to its assignment.
+    def _trace_variable(
+        self, method_body: str, var_name: str, depth: int = 0, max_depth: int = 5
+    ) -> str | None:
+        """Trace a variable back to its assignment recursively.
 
         Args:
             method_body: Method body content
             var_name: Variable name (e.g., "$result")
+            depth: Current recursion depth
+            max_depth: Maximum recursion depth to prevent infinite loops
 
         Returns:
             Assignment expression or None
         """
+        if depth >= max_depth:
+            return None
+
         # Look for $varname = expression;
         # Pattern: $varname = ... (up to semicolon)
         pattern = rf"{re.escape(var_name)}\s*=\s*([^;]+);"
         matches = re.findall(pattern, method_body, re.DOTALL)
 
-        if matches:
-            # Return the last assignment (most recent)
-            return matches[-1].strip()
+        if not matches:
+            return None
 
-        return None
+        # Get the last assignment (most recent)
+        assignment = matches[-1].strip()
+
+        # If the assignment is another variable, trace it recursively
+        # Handle both simple assignment ($a = $b) and with method calls ($a = $b->foo())
+        if assignment.startswith("$"):
+            # Extract just the variable name (first token)
+            next_var = assignment.split()[0]
+            # Remove any trailing operators or method calls
+            next_var = re.match(r"(\$\w+)", next_var)
+            if next_var:
+                next_var = next_var.group(1)
+                # Recursively trace this variable
+                traced = self._trace_variable(method_body, next_var, depth + 1, max_depth)
+                if traced:
+                    return traced
+
+        return assignment
