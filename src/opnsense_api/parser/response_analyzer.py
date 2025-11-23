@@ -229,19 +229,63 @@ class ResponseAnalyzer:
         # Pattern: "key" => value or 'key' => value
         properties = {}
 
-        # Find all quoted keys
-        key_pattern = r'["\'](\w+)["\']\s*=>'
-        keys = re.findall(key_pattern, return_expr)
+        # Find all quoted keys with their values
+        # Match: "key" => value, up to comma or end of array
+        key_value_pattern = r'["\'](\w+)["\']\s*=>\s*([^,\]\)]+)'
+        matches = re.findall(key_value_pattern, return_expr)
 
-        for key in keys:
-            # Try to infer type from the value
-            # This is very basic - just marks them as strings for now
-            properties[key] = {"type": "string"}
+        for key, value in matches:
+            value = value.strip()
+
+            # Infer type from value
+            schema = self._infer_value_type(value)
+            properties[key] = schema
 
         if properties:
             return {"type": "object", "properties": properties}
 
         return None
+
+    def _infer_value_type(self, value: str) -> dict[str, Any]:
+        """Infer JSON schema type from PHP value expression.
+
+        Args:
+            value: PHP value expression (e.g., "42", "true", "'string'", "[]")
+
+        Returns:
+            JSON Schema for the value
+        """
+        value = value.strip()
+
+        # Boolean literals
+        if value in ("true", "false"):
+            return {"type": "boolean"}
+
+        # Null literal
+        if value == "null":
+            return {"type": "null"}
+
+        # Integer literals (simple numeric pattern)
+        if re.match(r"^-?\d+$", value):
+            return {"type": "integer"}
+
+        # Float literals
+        if re.match(r"^-?\d+\.\d+$", value):
+            return {"type": "number"}
+
+        # Array literals
+        if value.startswith("[") or value.startswith("array("):
+            # Could be array of objects or simple array
+            return {"type": "array", "items": {"type": "object"}}
+
+        # String literals (quoted)
+        if (value.startswith('"') and value.endswith('"')) or (
+            value.startswith("'") and value.endswith("'")
+        ):
+            return {"type": "string"}
+
+        # Variable or expression - default to string
+        return {"type": "string"}
 
     def _match_simple_patterns(self, return_expr: str) -> dict[str, Any] | None:
         """Match simple return patterns.
