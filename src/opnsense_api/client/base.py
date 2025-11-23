@@ -270,22 +270,28 @@ class OPNsenseClient:
 
     @property
     def api(self) -> Any:
-        """Get the generated API client with full type hints.
+        """Get the generated API client with version-agnostic access.
 
-        Auto-detects the OPNsense version and returns the appropriate generated
-        client. Provides full IDE autocomplete and type checking.
+        Auto-detects the OPNsense version and returns a dynamic API wrapper
+        that doesn't require version-specific imports.
 
         Returns:
-            Generated client for the detected version
+            GeneratedAPI wrapper for version-agnostic access
 
         Raises:
             RuntimeError: If no version is available or no generated client exists
 
-        Example:
-            >>> client = OPNsenseClient(...)
-            >>> # Full type hints and autocomplete!
-            >>> from opnsense_api.generated.v25_7_6.op_nsense_api_client.api.core import core_firmware_info
-            >>> result = core_firmware_info.sync(client=client.api)
+        Example (No version-specific imports needed!):
+            >>> client = OPNsenseClient(..., auto_detect_version=True)
+            >>> api = client.api
+            >>>
+            >>> # Call any API function without knowing the version
+            >>> info = api.core.firmware_info()  # Auto-calls sync()
+            >>> aliases = api.firewall.alias_search_item()
+            >>>
+            >>> # Or use explicit methods
+            >>> info = api.core.firmware_info.sync()
+            >>> response = api.core.firmware_info.sync_detailed()
         """
         # Determine which version to use
         version = self._spec_version or self._detected_version
@@ -302,13 +308,16 @@ class OPNsenseClient:
 
         try:
             import importlib
+            from .generated_api import GeneratedAPI
+
             generated = importlib.import_module(module_path)
 
             # Create a Client instance and inject our authenticated httpx client
             api_client = generated.Client(base_url=f"{self.base_url}/api")
             api_client.set_httpx_client(self._client)
 
-            return api_client
+            # Wrap in GeneratedAPI for version-agnostic access
+            return GeneratedAPI(api_client, version)
 
         except ImportError as e:
             raise RuntimeError(
