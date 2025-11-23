@@ -24,11 +24,11 @@ uv run openapi-python-client generate \
   --overwrite
 ```
 
-### 2. Use With Auto-Detection
+### 2. Use With Auto-Detection (Version-Agnostic!)
 
 ```python
 import os
-from opnsense_api.client import OPNsenseClient
+from opnsense_api import OPNsenseClient
 
 # Client auto-detects version from your OPNsense instance
 client = OPNsenseClient(
@@ -39,25 +39,22 @@ client = OPNsenseClient(
     auto_detect_version=True,  # Magic!
 )
 
-# Get the version-specific generated client
-api = client.api  # Returns generated client for detected version
+# Get the version-agnostic API wrapper
+api = client.api
 
-# Use the generated API functions with full type hints
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import (
-    core_firmware_info,
-    core_firmware_status,
-)
-
-# IDE autocomplete works perfectly!
-info = core_firmware_info.sync(client=api)
-status = core_firmware_status.sync(client=api)
+# Call any API function - NO version-specific imports needed! 🎉
+info = api.core.firmware_info()
+status = api.core.firmware_status()
+aliases = api.firewall.alias_search_item()
 
 print(f"OPNsense version: {info.product_version}")
 ```
 
+**Key Advantage:** Your code works across different OPNsense versions without any changes!
+
 ## Using client.api - Detailed Examples
 
-The `client.api` property returns a generated client that gives you full type safety and IDE support.
+The `client.api` property returns a version-agnostic API wrapper that provides dynamic access to all generated functions without needing version-specific imports.
 
 ### Basic Usage Pattern
 
@@ -73,73 +70,73 @@ client = OPNsenseClient(
     auto_detect_version=True,
 )
 
-# Get the generated client
-api = client.api
+# Get the version-agnostic API wrapper
+api = client.api  # No version in code!
 ```
 
-### Calling API Functions
+### Calling API Functions (Version-Agnostic)
 
-Each endpoint becomes a Python module with multiple functions:
+Access any endpoint without knowing the version:
 
 ```python
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
-
-# sync() - Returns parsed data or None
-info = core_firmware_info.sync(client=api)
+# Simple calls - automatically uses sync()
+info = api.core.firmware_info()
 if info:
     print(f"Version: {info.product_version}")
 
-# sync_detailed() - Returns full Response object
-from opnsense_api.generated.v25_7_6.opnsense_api_client.types import Response
-response = core_firmware_info.sync_detailed(client=api)
+# Explicit sync() call
+info = api.core.firmware_info.sync()
+
+# Get detailed response with status code
+response = api.core.firmware_info.sync_detailed()
 print(f"Status: {response.status_code}")
 print(f"Data: {response.parsed}")
+
+# Pass parameters
+alias = api.firewall.alias_get_item(uuid="some-uuid")
 ```
+
+**Works across all OPNsense versions** - whether 24.7, 25.7.6, or future versions!
 
 ### Working with Different Endpoints
 
 ```python
-# Firewall operations
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.firewall import (
-    firewall_alias_search_item,
-    firewall_alias_get_item,
-)
-
-# Search for aliases
-aliases = firewall_alias_search_item.sync(client=api)
-
-# Get specific alias by UUID
-alias_detail = firewall_alias_get_item.sync(client=api, uuid="some-uuid-here")
+# Firewall operations - no imports needed!
+aliases = api.firewall.alias_search_item()
+alias_detail = api.firewall.alias_get_item(uuid="some-uuid-here")
 
 # Core system operations
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import (
-    core_firmware_check,
-    core_firmware_upgrade,
-)
+updates = api.core.firmware_check()
+upgrade_result = api.core.firmware_upgrade()
 
-# Check for updates
-updates = core_firmware_check.sync(client=api)
+# Auth operations
+users = api.auth.user_search()
+user = api.auth.user_get(uuid="user-uuid")
 
-# Upgrade system (returns upgrade status)
-upgrade_result = core_firmware_upgrade.sync(client=api)
+# Any module/function combination works!
+# Pattern: api.<module>.<function>(<params>)
 ```
 
 ### Async/Await Support
 
-All functions have async versions:
+All functions have async versions - no version-specific imports needed:
 
 ```python
 import asyncio
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
+from opnsense_api import OPNsenseClient
+
+# Initialize client (outside async context)
+client = OPNsenseClient(..., auto_detect_version=True)
+api = client.api
 
 async def get_firmware_info():
     # Use asyncio() for parsed data
-    info = await core_firmware_info.asyncio(client=api)
+    info = await api.core.firmware_info.asyncio()
     return info
 
 # Or asyncio_detailed() for full response
 async def get_firmware_info_detailed():
-    response = await core_firmware_info.asyncio_detailed(client=api)
+    response = await api.core.firmware_info.asyncio_detailed()
     return response
 
 # Run async code
@@ -148,33 +145,42 @@ info = asyncio.run(get_firmware_info())
 
 ### Error Handling
 
+Error handling works with version-agnostic access - the client auto-loads the correct error types:
+
 ```python
-from opnsense_api.generated.v25_7_6.opnsense_api_client import errors
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
+import httpx
+from opnsense_api import OPNsenseClient
+
+client = OPNsenseClient(..., auto_detect_version=True)
+api = client.api
 
 try:
-    info = core_firmware_info.sync(client=api)
+    info = api.core.firmware_info()
     if info is None:
         print("Request succeeded but returned no data")
     else:
         print(f"Version: {info.product_version}")
 
-except errors.UnexpectedStatus as e:
-    print(f"Unexpected status code: {e.status_code}")
-    print(f"Response content: {e.content}")
-
-except httpx.TimeoutException:
-    print("Request timed out")
-
-except httpx.HTTPError as e:
-    print(f"HTTP error occurred: {e}")
+except Exception as e:
+    # Check for common error types
+    if hasattr(e, 'status_code'):
+        print(f"Unexpected status code: {e.status_code}")
+        if hasattr(e, 'content'):
+            print(f"Response content: {e.content}")
+    elif isinstance(e, httpx.TimeoutException):
+        print("Request timed out")
+    elif isinstance(e, httpx.HTTPError):
+        print(f"HTTP error occurred: {e}")
+    else:
+        raise
 ```
 
 ### Context Manager Usage
 
+Context managers work seamlessly with version-agnostic access:
+
 ```python
 from opnsense_api import OPNsenseClient
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
 
 # Client automatically closes connections when exiting context
 with OPNsenseClient(
@@ -185,29 +191,28 @@ with OPNsenseClient(
     auto_detect_version=True,
 ) as client:
     api = client.api
-    info = core_firmware_info.sync(client=api)
+
+    # No version-specific imports needed!
+    info = api.core.firmware_info()
     print(f"Version: {info.product_version}")
 # Connection closed automatically here
 ```
 
 ### Multiple API Calls
 
-```python
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import (
-    core_firmware_info,
-    core_firmware_status,
-)
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.firewall import (
-    firewall_alias_search_item,
-)
+Multiple calls reuse the same authenticated connection automatically:
 
-# The generated client reuses the same authenticated HTTP connection
+```python
+from opnsense_api import OPNsenseClient
+
+# Initialize once
+client = OPNsenseClient(..., auto_detect_version=True)
 api = client.api
 
-# All these use the same connection
-firmware_info = core_firmware_info.sync(client=api)
-firmware_status = core_firmware_status.sync(client=api)
-aliases = firewall_alias_search_item.sync(client=api)
+# All these use the same authenticated HTTP connection - no imports needed!
+firmware_info = api.core.firmware_info()
+firmware_status = api.core.firmware_status()
+aliases = api.firewall.alias_search_item()
 
 print(f"System version: {firmware_info.product_version}")
 print(f"Status: {firmware_status}")
@@ -220,7 +225,7 @@ print(f"Aliases count: {len(aliases.rows) if aliases else 0}")
 
 ```python
 # Your IDE knows exactly what's available
-result = core_firmware_info.sync(client=api)
+result = api.core.firmware_info()
 # ↑ IDE shows: CoreFirmwareInfoResponse200 | None
 
 # Autocomplete shows all fields
@@ -240,12 +245,13 @@ info.product_version  # ✅ Correct
 
 ```python
 # Generated code raises clear exceptions
-from opnsense_api.generated.v25_7_6.opnsense_api_client import errors
-
 try:
-    result = core_firmware_info.sync(client=api)
-except errors.UnexpectedStatus as e:
-    print(f"API returned status {e.status_code}: {e.content}")
+    result = api.core.firmware_info()
+except Exception as e:
+    if hasattr(e, 'status_code') and hasattr(e, 'content'):
+        print(f"API returned status {e.status_code}: {e.content}")
+    else:
+        raise
 ```
 
 ## Legacy Wrapper (Still Supported)
@@ -350,10 +356,9 @@ Existing code continues to work:
 client = OPNsenseClient(...)
 result = client.get("core", "firmware", "info")
 
-# New code - gradually migrate
+# New code - gradually migrate (no version-specific imports!)
 api = client.api
-from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
-result = core_firmware_info.sync(client=api)
+result = api.core.firmware_info()
 ```
 
 Both can coexist in the same codebase!
