@@ -61,7 +61,7 @@ class OPNsenseClient:
             auth=(api_key, api_secret),
             verify=verify_ssl,
             timeout=timeout,
-            headers={"Content-Type": "application/json"},
+            follow_redirects=True,
         )
 
         # OpenAPI wrapper (lazily initialized)
@@ -147,7 +147,9 @@ class OPNsenseClient:
             APIResponseError: If response is not valid JSON
         """
         url = self._build_url(module, controller, command, *params)
-        response = self._client.post(url, json=json)
+        # Set Content-Type header for POST requests with JSON body
+        headers = {"Content-Type": "application/json"} if json else {}
+        response = self._client.post(url, json=json, headers=headers)
         response.raise_for_status()
         try:
             return response.json()
