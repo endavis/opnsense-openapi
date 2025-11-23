@@ -207,11 +207,22 @@ class ModelParser:
 
             prop: dict = {"type": json_type}
 
+            # Handle enum fields
             if model_field.options:
-                prop["enum"] = list(model_field.options.keys())
+                enum_values = list(model_field.options.keys())
 
+                # If there's a default value, ensure it's in the enum
+                if model_field.default is not None and model_field.default not in enum_values:
+                    # Add default to enum values if not already present
+                    enum_values.append(model_field.default)
+
+                prop["enum"] = enum_values
+
+            # Convert default value to proper JSON type
             if model_field.default is not None:
-                prop["default"] = model_field.default
+                prop["default"] = self._convert_default_value(
+                    model_field.default, json_type
+                )
 
             if model_field.multiple:
                 prop = {"type": "array", "items": prop}
@@ -226,6 +237,33 @@ class ModelParser:
             schema["required"] = required
 
         return schema
+
+    def _convert_default_value(self, default_str: str, json_type: str) -> str | int | float | bool:
+        """Convert default value string to proper JSON type.
+
+        Args:
+            default_str: Default value as string from XML
+            json_type: Target JSON type
+
+        Returns:
+            Converted value with proper type
+        """
+        if json_type == "boolean":
+            # Convert "0"/"1" or "Y"/"N" to boolean
+            return default_str.lower() in ("1", "y", "yes", "true")
+        elif json_type == "integer":
+            try:
+                return int(default_str)
+            except ValueError:
+                return default_str
+        elif json_type == "number":
+            try:
+                return float(default_str)
+            except ValueError:
+                return default_str
+        else:
+            # String type - return as-is
+            return default_str
 
     def parse_directory(self, directory: Path) -> dict[str, ModelDefinition]:
         """Parse all model XML files in a directory.
