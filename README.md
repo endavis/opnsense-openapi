@@ -8,11 +8,12 @@ This tool downloads OPNsense source code from GitHub, parses PHP controller file
 
 ## Features
 
-- **Version-specific**: Generate wrappers for any OPNsense version
-- **Automatic parsing**: Extracts endpoints from PHP controller source code
-- **Type hints**: Generated code uses Python 3.12+ type annotations
-- **Structured clients**: Organized by module and controller
-- **HTTP method detection**: Intelligently determines GET vs POST based on endpoint names
+- **Version-agnostic API**: Auto-detects OPNsense version, no version-specific imports needed
+- **Full type hints**: Generated code uses Python 3.12+ type annotations with Pydantic models
+- **OpenAPI-based**: Generates OpenAPI 3.0 specs from OPNsense PHP source code
+- **IDE support**: Complete autocomplete and type checking in modern IDEs
+- **Async support**: Built-in async/await support for all endpoints
+- **Battle-tested**: Uses openapi-python-client for reliable code generation
 
 ## Installation
 
@@ -44,28 +45,33 @@ The `download` command clones the `opnsense/core` repository at the requested ta
 caches it under `tmp/opnsense_source/<version>/`, and extracts the controller
 files that later steps of the wrapper pipeline will parse.
 
-> Wrapper generation is still under construction; the example below shows how the
-> produced client library will eventually be consumed.
-
 ### Use Generated Wrapper
 
 ```python
-from opnsense_api.client import OPNsenseClient
-from generated.firewall import Firewall
+import os
+from opnsense_api import OPNsenseClient
 
-# Initialize client
+# Initialize client with auto-detection
 client = OPNsenseClient(
-    base_url="https://opnsense.local",
-    api_key="your-api-key",
-    api_secret="your-api-secret",
-    verify_ssl=True
+    base_url=os.getenv("OPNSENSE_URL"),
+    api_key=os.getenv("OPNSENSE_API_KEY"),
+    api_secret=os.getenv("OPNSENSE_API_SECRET"),
+    verify_ssl=False,
+    auto_detect_version=True,  # Automatically detect OPNsense version
 )
 
-# Use generated API
-firewall = Firewall(client)
-aliases = firewall.alias_util.find_alias()
-print(aliases)
+# Get version-agnostic API wrapper
+api = client.api
+
+# Call any API function - no version-specific imports needed!
+info = api.core.firmware_info()
+aliases = api.firewall.alias_search_item()
+
+print(f"OPNsense version: {info.product_version}")
+print(f"Aliases: {aliases.rows if aliases else []}")
 ```
+
+See [GENERATED_CLIENT_USAGE.md](GENERATED_CLIENT_USAGE.md) for complete documentation.
 
 ## CLI Commands
 
@@ -151,33 +157,44 @@ OPNsense API URLs follow the pattern:
 ```
 
 For example:
-- PHP: `OPNsense\Firewall\Api\AliasUtilController::findAliasAction()`
-- URL: `/api/firewall/alias_util/findAlias`
-- Python: `firewall.alias_util.find_alias()`
+- PHP: `OPNsense\Firewall\Api\AliasController::searchItemAction()`
+- URL: `/api/firewall/alias/searchItem`
+- Python: `api.firewall.alias_search_item()`
+
+The version-agnostic wrapper automatically maps Python function names to API endpoints.
 
 ## Example: Generated Code Structure
 
 ```
-generated/
-├── __init__.py
-├── firewall.py
-│   └── class Firewall
-│       └── class AliasUtil
-│           ├── find_alias()
-│           ├── get()
-│           └── set()
-└── system.py
-    └── class System
-        └── class Info
-            └── version()
+src/opnsense_api/
+├── generated/
+│   └── v25_7_6/                    # Version-specific generated client
+│       └── opnsense_api_client/
+│           ├── __init__.py
+│           ├── client.py           # HTTP client
+│           ├── models/             # Response models
+│           └── api/                # API endpoints
+│               ├── core/           # Core module
+│               │   ├── core_firmware_info.py
+│               │   └── core_firmware_status.py
+│               └── firewall/       # Firewall module
+│                   ├── firewall_alias_search_item.py
+│                   └── firewall_alias_get_item.py
+└── client/
+    ├── base.py                     # OPNsenseClient with auto-detection
+    └── generated_api.py            # Version-agnostic wrapper
+
+# Users access via version-agnostic API:
+# api.core.firmware_info()
+# api.firewall.alias_search_item()
 ```
 
 ## Limitations
 
-- Requires git to be installed for downloading source
-- PHP parameter types not fully captured (uses `Any`)
-- Some complex endpoints may need manual adjustment
-- Documentation extraction is best-effort from PHP docblocks
+- Requires git to be installed for downloading OPNsense source
+- Generated clients must be pre-built for each OPNsense version
+- Some complex XML model definitions may not parse perfectly
+- Requires access to OPNsense instance for version auto-detection
 
 ## Contributing
 
