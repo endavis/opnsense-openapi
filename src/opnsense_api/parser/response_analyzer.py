@@ -172,6 +172,7 @@ class ResponseAnalyzer:
 
         for return_expr in returns:
             return_expr = return_expr.strip()
+            original_return_expr = return_expr  # Keep original for plain array detection
 
             # Check if it's a variable - trace back to assignment
             if return_expr.startswith("$"):
@@ -187,6 +188,12 @@ class ResponseAnalyzer:
 
             # Check for service action patterns
             schema = self._match_service_action(method_body, return_expr)
+            if schema:
+                schemas.append(schema)
+                continue
+
+            # Check for plain array patterns using original expression
+            schema = self._match_plain_array(method_body, original_return_expr)
             if schema:
                 schemas.append(schema)
                 continue
@@ -281,6 +288,48 @@ class ResponseAnalyzer:
                 },
                 "required": ["result"],
             }
+
+        return None
+
+    def _match_plain_array(self, method_body: str, return_expr: str) -> dict[str, Any] | None:
+        """Match plain array construction patterns.
+
+        Args:
+            method_body: Full method body (to check for array building)
+            return_expr: Return expression from PHP
+
+        Returns:
+            Plain array schema or None
+        """
+        # Check if return expr is a simple variable
+        if not return_expr.startswith("$"):
+            return None
+
+        # Extract variable name
+        var_match = re.match(r"(\$\w+)", return_expr)
+        if not var_match:
+            return None
+
+        var_name = var_match.group(1)
+
+        # Look for patterns that indicate this is a plain array:
+        # 1. $var = [];
+        # 2. $var[] = ...;
+        # 3. array_push($var, ...);
+        patterns = [
+            rf"{re.escape(var_name)}\s*=\s*\[\s*\];",  # $result = [];
+            rf"{re.escape(var_name)}\s*=\s*array\(\s*\);",  # $result = array();
+            rf"{re.escape(var_name)}\[\s*\]\s*=",  # $result[] = ...;
+            rf"array_push\s*\(\s*{re.escape(var_name)}",  # array_push($result, ...);
+        ]
+
+        for pattern in patterns:
+            if re.search(pattern, method_body):
+                return {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of items",
+                }
 
         return None
 
