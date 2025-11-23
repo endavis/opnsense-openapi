@@ -27,7 +27,8 @@ class ResponseAnalyzer:
         "getBase": {
             "type": "object",
             "description": "Returns model data under a key matching the model name",
-            # Note: Actual structure depends on the model, but always has one top-level key
+            "additionalProperties": True,
+            # Note: The object has a single top-level key (model name) containing the model data
         },
         "setBase": {
             "type": "object",
