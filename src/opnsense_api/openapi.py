@@ -14,6 +14,9 @@ from jsonschema import ValidationError, validate
 class APIWrapper:
     """Tiny OpenAPI wrapper client for path/param discovery + calling endpoints."""
 
+    # Constants
+    CONTENT_TYPE_JSON = "application/json"
+
     def __init__(
         self,
         api_json_file: str,
@@ -73,7 +76,7 @@ class APIWrapper:
             self.session.headers.update(auth_header)
 
         # Default headers (can be extended per request)
-        self.session.headers.update({"Content-Type": "application/json"})
+        self.session.headers.update({"Content-Type": self.CONTENT_TYPE_JSON})
 
         # Cache for operation lookups
         self._operation_cache: dict[tuple[str, str], dict[str, Any]] = {}
@@ -166,7 +169,7 @@ class APIWrapper:
         """
         op = self._get_operation(path_template, method)
         request_body = op.get("requestBody", {})
-        content = request_body.get("content", {}).get("application/json", {})
+        content = request_body.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
         schema = content.get("schema")
         if not schema:
             return None
@@ -314,7 +317,7 @@ class APIWrapper:
         op = self._get_operation(path_template, method)
         responses = op.get("responses", {})
         response = responses.get(status_code, {})
-        content = response.get("content", {}).get("application/json", {})
+        content = response.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
         schema = content.get("schema")
         if not schema:
             return None
