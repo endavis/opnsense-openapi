@@ -117,8 +117,7 @@ class APIWrapper:
         if not ref.startswith("#"):
             return {}
 
-        keys = ref.split("/")
-        del keys[0]  # delete the #
+        keys = ref.split("/")[1:]  # Skip the # at the beginning
 
         new_ref = self.api_spec
         for key in keys:
