@@ -184,6 +184,11 @@ class ResponseAnalyzer:
             if schema:
                 return schema
 
+            # Check for service action patterns (before generic array literal parsing)
+            schema = self._match_service_action(method_body, return_expr)
+            if schema:
+                return schema
+
             # Check for array literals
             schema = self._parse_array_literal(return_expr)
             if schema:
@@ -209,6 +214,65 @@ class ResponseAnalyzer:
         for base_method, schema in self.BASE_METHOD_SCHEMAS.items():
             if f"$this->{base_method}(" in return_expr:
                 return schema.copy()
+
+        return None
+
+    def _match_service_action(self, method_body: str, return_expr: str) -> dict[str, Any] | None:
+        """Match service control action patterns.
+
+        Args:
+            method_body: Full method body (to check for Backend calls)
+            return_expr: Return expression from PHP
+
+        Returns:
+            Service action schema or None
+        """
+        # Check if method uses Backend()->configdRun or configdpRun
+        has_backend_call = (
+            "Backend()" in method_body
+            and ("configdRun" in method_body or "configdpRun" in method_body)
+        )
+
+        if not has_backend_call:
+            return None
+
+        # Check if return contains status or result with typical service values
+        # Pattern: ['status' => 'ok'], ['result' => 'failed'], etc.
+        if ('"status"' in return_expr or "'status'" in return_expr) and (
+            '"ok"' in return_expr
+            or "'ok'" in return_expr
+            or '"failed"' in return_expr
+            or "'failed'" in return_expr
+        ):
+            return {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": ["ok", "failed"],
+                        "description": "Service action status",
+                    }
+                },
+                "required": ["status"],
+            }
+
+        if ('"result"' in return_expr or "'result'" in return_expr) and (
+            '"ok"' in return_expr
+            or "'ok'" in return_expr
+            or '"failed"' in return_expr
+            or "'failed'" in return_expr
+        ):
+            return {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "string",
+                        "enum": ["ok", "failed"],
+                        "description": "Service action result",
+                    }
+                },
+                "required": ["result"],
+            }
 
         return None
 
