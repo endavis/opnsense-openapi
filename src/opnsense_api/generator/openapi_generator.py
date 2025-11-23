@@ -110,12 +110,15 @@ class OpenApiGenerator:
             inferred_schema = self._infer_response_schema(controller, endpoint)
             if inferred_schema:
                 response_schema = inferred_schema
-                logger.debug(
-                    f"Inferred schema for {controller.module}/{ctrl_name}/{endpoint.name}"
+                logger.info(
+                    f"✓ Inferred schema for {controller.module}/{ctrl_name}/{endpoint.name}"
                 )
             # Strategy 2: Use model schema for model endpoints
             elif model_schema and self._is_model_endpoint(endpoint.name):
                 response_schema = model_schema
+                logger.debug(
+                    f"Using model schema for {controller.module}/{ctrl_name}/{endpoint.name}"
+                )
 
             operation: dict[str, Any] = {
                 "operationId": f"{module}_{ctrl_name}_{to_snake_case(endpoint.name)}",
@@ -234,33 +237,43 @@ class OpenApiGenerator:
         Returns:
             Inferred JSON Schema or None
         """
+        logger.debug(f"_infer_response_schema called for {controller.module}/{controller.controller}/{endpoint.name}")
+        logger.debug(f"  controllers_dir: {self.controllers_dir}")
+
         if not self.controllers_dir:
+            logger.debug("  No controllers_dir set - skipping inference")
             return None
 
         # Construct path to controller file
-        # Path: controllers_dir/OPNsense/{Module}/Api/{Controller}Controller.php
+        # Note: controllers_dir already points to .../controllers/OPNsense
+        # Path: controllers_dir/{Module}/Api/{Controller}Controller.php
         controller_file = (
             self.controllers_dir
-            / "OPNsense"
             / controller.module
             / "Api"
             / f"{controller.controller}Controller.php"
         )
 
+        logger.debug(f"  Looking for file: {controller_file}")
+        logger.debug(f"  File exists: {controller_file.exists()}")
+
         if not controller_file.exists():
-            logger.debug(f"Controller file not found: {controller_file}")
+            logger.debug(f"  Controller file not found: {controller_file}")
             return None
 
         # Method name is endpoint name + "Action"
         method_name = f"{endpoint.name}Action"
+        logger.debug(f"  Method name: {method_name}")
 
         try:
             schema = self.response_analyzer.infer_response_schema(controller_file, method_name)
             if schema:
                 logger.info(
-                    f"Inferred response schema for {controller.module}::{controller.controller}::{method_name}"
+                    f"✓ Inferred response schema for {controller.module}::{controller.controller}::{method_name}"
                 )
+            else:
+                logger.debug(f"  No schema inferred for {method_name}")
             return schema
         except Exception as e:
-            logger.debug(f"Failed to infer schema for {method_name}: {e}")
+            logger.warning(f"Failed to infer schema for {method_name}: {e}")
             return None
