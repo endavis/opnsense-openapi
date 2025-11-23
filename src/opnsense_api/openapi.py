@@ -24,6 +24,7 @@ class APIWrapper:
         timeout: float = 30.0,
         session: httpx.Client | None = None,
         base_api_path: str = "",
+        verify_ssl: bool = False,
     ):
         """Initialize the APIWrapper client.
 
@@ -36,6 +37,7 @@ class APIWrapper:
             timeout: The timeout value in seconds
             session: An already existing httpx.Client session to use
             base_api_path: The base path of all API paths
+            verify_ssl: Whether to verify SSL certificates (default False for self-signed certs)
         """
         # Load the API spec
         with open(api_json_file, encoding="utf-8") as f:
@@ -61,7 +63,8 @@ class APIWrapper:
         # Networking defaults
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
-        self.session = session or httpx.Client(verify=False)
+        self.verify_ssl = verify_ssl
+        self.session = session or httpx.Client(verify=verify_ssl)
 
         # Set up authentication
         if api_key and api_secret:
