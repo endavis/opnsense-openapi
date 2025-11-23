@@ -45,9 +45,7 @@ class ControllerParser:
     )
 
     # Pattern to extract public methods (actions)
-    METHOD_PATTERN = re.compile(
-        r"public\s+function\s+(\w+Action)\s*\(([^)]*)\)", re.MULTILINE
-    )
+    METHOD_PATTERN = re.compile(r"public\s+function\s+(\w+Action)\s*\(([^)]*)\)", re.MULTILINE)
 
     # Pattern to extract docblock comments
     DOCBLOCK_PATTERN = re.compile(r"/\*\*\s*(.*?)\s*\*/", re.DOTALL)

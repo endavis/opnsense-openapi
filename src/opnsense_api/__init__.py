@@ -22,9 +22,7 @@ def get_spec_path(version: str) -> Path:
     spec_path = SPECS_DIR / f"opnsense-{version}.json"
     if not spec_path.exists():
         available = list_available_specs()
-        raise FileNotFoundError(
-            f"No spec for version {version}. Available: {available}"
-        )
+        raise FileNotFoundError(f"No spec for version {version}. Available: {available}")
     return spec_path
 
 
@@ -36,7 +34,4 @@ def list_available_specs() -> list[str]:
     """
     if not SPECS_DIR.exists():
         return []
-    return [
-        p.stem.replace("opnsense-", "")
-        for p in SPECS_DIR.glob("opnsense-*.json")
-    ]
+    return [p.stem.replace("opnsense-", "") for p in SPECS_DIR.glob("opnsense-*.json")]

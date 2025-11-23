@@ -83,7 +83,7 @@ class CodeGenerator:
             # Write main module class
             f.write(f"class {class_name}:\n")
             f.write(f'    """{class_name} API module.\n\n')
-            f.write(f"    Contains controllers:\n")
+            f.write("    Contains controllers:\n")
             for controller in controllers:
                 f.write(f"    - {controller.controller}\n")
             f.write('    """\n\n')

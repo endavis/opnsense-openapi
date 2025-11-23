@@ -4,11 +4,62 @@
 
 import json
 import logging
-from typing import Any
+from typing import Any, TypedDict
 from urllib.parse import urlencode, urlparse
 
 import httpx
 from jsonschema import ValidationError, validate
+
+
+class EndpointInfo(TypedDict):
+    """Information about an API endpoint."""
+
+    path: str
+    method: str
+    summary: str | None
+
+
+class ParameterInfo(TypedDict, total=False):
+    """Information about an API parameter.
+
+    Note: 'in' field uses string key to avoid Python keyword conflict.
+    """
+
+    name: str | None
+    type: str | None
+    required: bool
+    description: str | None
+    enum: list[Any] | None
+    format: str | None
+
+
+class SuggestedParameters(TypedDict):
+    """Complete parameter information for an endpoint."""
+
+    path: str
+    method: str
+    summary: str | None
+    path_params: list[ParameterInfo]
+    query_params: list[ParameterInfo]
+    headers: dict[str, str]
+    body_sample: Any
+
+
+class FieldInfo(TypedDict):
+    """Information about a schema field."""
+
+    type: str
+    required: bool
+    description: str | None
+    enum: list[Any] | None
+
+
+class SchemaDescription(TypedDict):
+    """Human-readable schema description."""
+
+    type: str
+    fields: dict[str, FieldInfo]
+    sample: Any
 
 
 class APIWrapper:
@@ -144,9 +195,7 @@ class APIWrapper:
             return [self._resolve_refs(item) for item in schema]
         return schema
 
-    def _format_path(
-        self, path_template: str, path_params: dict[str, Any] | None
-    ) -> str:
+    def _format_path(self, path_template: str, path_params: dict[str, Any] | None) -> str:
         """Replace placeholders like {id} in the path template with provided values.
 
         Also tolerates {{id}} just in case.
@@ -168,9 +217,7 @@ class APIWrapper:
         query_params = [p for p in params if p.get("in") == "query"]
         return path_params, query_params
 
-    def _get_request_schema(
-        self, path_template: str, method: str
-    ) -> dict[str, Any] | None:
+    def _get_request_schema(self, path_template: str, method: str) -> dict[str, Any] | None:
         """Return the resolved JSON Schema dict for the request body if present.
 
         Only supports application/json for simplicity.
@@ -193,7 +240,6 @@ class APIWrapper:
             return self._build_sample_from_schema(schema["oneOf"][0])
         if t == "object" or ("properties" in schema):
             props = schema.get("properties", {})
-            required = set(schema.get("required", []))
             sample = {}
             for name, sub in props.items():
                 sub = self._resolve_refs(sub)
@@ -230,7 +276,7 @@ class APIWrapper:
         # Default fallback:
         return {}
 
-    def _describe_schema(self, schema: dict[str, Any]) -> dict[str, Any]:
+    def _describe_schema(self, schema: dict[str, Any]) -> SchemaDescription:
         """Convert a JSON Schema into a human-readable description.
 
         Args:
@@ -239,22 +285,22 @@ class APIWrapper:
         Returns:
             A dict with type, fields (name/type/required/description/enum), and sample
         """
-        info: dict[str, Any] = {"type": schema.get("type", "object")}
         props = schema.get("properties", {})
         required = set(schema.get("required", []))
-        fields: dict[str, Any] = {}
+        fields: dict[str, FieldInfo] = {}
         for name, sub in props.items():
             sub = self._resolve_refs(sub)
-            fields[name] = {
-                "type": sub.get("type", "object" if "properties" in sub else "unknown"),
-                "required": name in required,
-                "description": sub.get("description"),
-            }
-            if "enum" in sub:
-                fields[name]["enum"] = list(sub["enum"])
-        info["fields"] = fields
-        info["sample"] = self._build_sample_from_schema(schema)
-        return info
+            fields[name] = FieldInfo(
+                type=sub.get("type", "object" if "properties" in sub else "unknown"),
+                required=name in required,
+                description=sub.get("description"),
+                enum=list(sub["enum"]) if "enum" in sub else None,
+            )
+        return SchemaDescription(
+            type=schema.get("type", "object"),
+            fields=fields,
+            sample=self._build_sample_from_schema(schema),
+        )
 
     # ------------------------------ Public API ------------------------------
 
@@ -279,7 +325,7 @@ class APIWrapper:
 
     def get_request_schema_for_endpoint(
         self, path_template: str, method: str = "GET", human_readable: bool = True
-    ) -> dict[str, Any] | str | None:
+    ) -> SchemaDescription | dict[str, Any] | None:
         """Return the requestBody schema for the given endpoint.
 
         If human_readable=True, return a compact dict describing fields
@@ -302,7 +348,7 @@ class APIWrapper:
         method: str = "GET",
         status_code: str = "200",
         human_readable: bool = True,
-    ) -> dict[str, Any] | str | None:
+    ) -> SchemaDescription | dict[str, Any] | None:
         """Return the response schema for the given endpoint.
 
         If human_readable=True, return a compact dict describing fields
@@ -351,15 +397,16 @@ class APIWrapper:
             return True
         except ValidationError as e:
             field_path = ".".join(str(p) for p in e.path) if e.path else "root"
+            schema_path = (
+                ".".join(str(p) for p in e.schema_path) if e.schema_path else "N/A"
+            )
             logging.error(
                 f"Request body validation error at '{field_path}': {e.message}. "
-                f"Schema path: {'.'.join(str(p) for p in e.schema_path) if e.schema_path else 'N/A'}"
+                f"Schema path: {schema_path}"
             )
             return False
 
-    def suggest_parameters(
-        self, path_template: str, method: str = "GET"
-    ) -> dict[str, Any]:
+    def suggest_parameters(self, path_template: str, method: str = "GET") -> SuggestedParameters:
         """Return a human-readable structure.
 
         - path_params: name, type, required, description
@@ -372,17 +419,17 @@ class APIWrapper:
         op = self._get_operation(path_template, method)
         path_params, query_params = self._extract_parameters(path_template, method)
 
-        def simplify(param: dict[str, Any]) -> dict[str, Any]:
+        def simplify(param: dict[str, Any]) -> ParameterInfo:
             sch = param.get("schema", {})
-            return {
-                "name": param.get("name"),
-                "in": param.get("in"),
-                "type": sch.get("type"),
-                "required": param.get("required", False),
-                "description": param.get("description"),
-                "enum": sch.get("enum"),
-                "format": sch.get("format"),
-            }
+            return ParameterInfo(
+                name=param.get("name"),
+                **{"in": param.get("in")},  # Use ** to avoid 'in' keyword conflict
+                type=sch.get("type"),
+                required=param.get("required", False),
+                description=param.get("description"),
+                enum=sch.get("enum"),
+                format=sch.get("format"),
+            )
 
         path_list = [simplify(p) for p in path_params]
         query_list = [simplify(p) for p in query_params]
@@ -390,15 +437,15 @@ class APIWrapper:
         schema = self._get_request_schema(path_template, method)
         body_sample = self._build_sample_from_schema(schema) if schema else None
 
-        return {
-            "path": path_template,
-            "method": method,
-            "summary": op.get("summary"),
-            "path_params": path_list,
-            "query_params": query_list,
-            "headers": dict(self.session.headers),
-            "body_sample": body_sample,
-        }
+        return SuggestedParameters(
+            path=path_template,
+            method=method,
+            summary=op.get("summary"),
+            path_params=path_list,
+            query_params=query_list,
+            headers=dict(self.session.headers),
+            body_sample=body_sample,
+        )
 
     def call_endpoint(
         self,
@@ -436,9 +483,7 @@ class APIWrapper:
             headers.update(additional_headers)
 
         logging.debug(f"Calling {method} {url} {headers}")
-        resp = self.session.request(
-            method, url, json=body, headers=headers, timeout=self.timeout
-        )
+        resp = self.session.request(method, url, json=body, headers=headers, timeout=self.timeout)
         logging.debug(f"Response Status Code: {resp.status_code}")
         resp.raise_for_status()
 

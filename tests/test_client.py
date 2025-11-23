@@ -1,6 +1,5 @@
 """Tests for OPNsense API client."""
 
-import pytest
 
 from opnsense_api.client import OPNsenseClient
 

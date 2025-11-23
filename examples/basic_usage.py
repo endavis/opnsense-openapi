@@ -10,8 +10,8 @@ Prerequisites:
 """
 
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add generated code to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "generated"))
@@ -30,31 +30,27 @@ def main() -> None:
     )
 
     try:
-        # Example 1: Get system information
+        # Example 1: Get system information using the client API
         print("=== System Information ===")
-        # Note: These are example calls - actual methods depend on generated code
-        # system = System(client)
-        # info = system.info.version()
-        # print(f"Version: {info}")
+        info = client.get("system", "info", "version")
+        print(f"Version info: {info}")
 
-        # Example 2: List firewall aliases
+        # Example 2: List firewall aliases using the client API
         print("\n=== Firewall Aliases ===")
-        # firewall = Firewall(client)
-        # aliases = firewall.alias_util.find_alias()
-        # for alias in aliases.get('rows', []):
-        #     print(f"  - {alias.get('name')}: {alias.get('description')}")
+        aliases = client.get("firewall", "alias_util", "findAlias")
+        for alias in aliases.get('rows', []):
+            print(f"  - {alias.get('name')}: {alias.get('description')}")
 
-        # Example 3: Using context manager
+        # Example 3: Using context manager for the client
         print("\n=== Using Context Manager ===")
         with OPNsenseClient(
             base_url=os.getenv("OPNSENSE_URL", "https://opnsense.local"),
-            api_key=os.getenv("OPNSENSE_API_KEY"),
-            api_secret=os.getenv("OPNSENSE_API_SECRET"),
+            api_key=os.getenv("OPNSENSE_API_KEY", "your-api-key"),
+            api_secret=os.getenv("OPNSENSE_API_SECRET", "your-api-secret"),
+            verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "true").lower() == "true",
         ) as ctx_client:
-            # Make API calls
-            # result = ctx_client.get("system", "info", "version")
-            # print(result)
-            pass
+            ctx_info = ctx_client.get("system", "info", "version")
+            print(f"Context manager version info: {ctx_info}")
 
     except Exception as e:
         print(f"Error: {e}")

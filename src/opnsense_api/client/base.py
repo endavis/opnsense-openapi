@@ -94,9 +94,7 @@ class OPNsenseClient:
         try:
             return response.json()
         except json.JSONDecodeError as e:
-            raise APIResponseError(
-                f"Invalid JSON response from {url}: {e}", response.text
-            ) from e
+            raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def post(
         self,
@@ -128,9 +126,7 @@ class OPNsenseClient:
         try:
             return response.json()
         except json.JSONDecodeError as e:
-            raise APIResponseError(
-                f"Invalid JSON response from {url}: {e}", response.text
-            ) from e
+            raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def close(self) -> None:
         """Close the HTTP client."""

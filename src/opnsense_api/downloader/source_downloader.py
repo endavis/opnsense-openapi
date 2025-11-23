@@ -76,9 +76,7 @@ class SourceDownloader:
                 ) from e
 
         if not controllers_dir.exists():
-            raise RuntimeError(
-                f"Controllers directory not found after download: {controllers_dir}"
-            )
+            raise RuntimeError(f"Controllers directory not found after download: {controllers_dir}")
 
         logger.info("Successfully downloaded to %s", controllers_dir)
         return controllers_dir

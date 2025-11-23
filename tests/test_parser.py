@@ -12,7 +12,7 @@ from opnsense_api.utils import to_snake_case
 @pytest.fixture
 def sample_controller() -> str:
     """Sample PHP controller content for testing."""
-    return '''<?php
+    return """<?php
 namespace OPNsense\\Firewall\\Api;
 
 use OPNsense\\Base\\ApiControllerBase;
@@ -50,7 +50,7 @@ class AliasUtilController extends ApiControllerBase
         return $this->setBase("alias");
     }
 }
-'''
+"""
 
 
 def test_parse_controller_basic(sample_controller: str) -> None:
@@ -115,7 +115,8 @@ def test_parse_directory() -> None:
         firewall_api = Path(tmpdir) / "Firewall" / "Api"
         firewall_api.mkdir(parents=True)
 
-        (firewall_api / "TestController.php").write_text('''<?php
+        (firewall_api / "TestController.php").write_text(
+            """<?php
 namespace OPNsense\\Firewall\\Api;
 use OPNsense\\Base\\ApiControllerBase;
 
@@ -123,12 +124,14 @@ class TestController extends ApiControllerBase
 {
     public function getAction() {}
 }
-''')
+"""
+        )
 
         system_api = Path(tmpdir) / "System" / "Api"
         system_api.mkdir(parents=True)
 
-        (system_api / "InfoController.php").write_text('''<?php
+        (system_api / "InfoController.php").write_text(
+            """<?php
 namespace OPNsense\\System\\Api;
 use OPNsense\\Base\\ApiControllerBase;
 
@@ -136,7 +139,8 @@ class InfoController extends ApiControllerBase
 {
     public function versionAction() {}
 }
-''')
+"""
+        )
 
         controllers = parser.parse_directory(Path(tmpdir))
 

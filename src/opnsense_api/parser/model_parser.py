@@ -1,7 +1,6 @@
 """Parse OPNsense model XML files to extract field definitions."""
 
 import logging
-import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path

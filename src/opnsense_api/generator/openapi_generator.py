@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ..parser import ApiController, ApiEndpoint, ModelDefinition, ModelParser
+from ..parser import ApiController, ModelDefinition, ModelParser
 from ..utils import to_snake_case
 
 
@@ -50,13 +50,11 @@ class OpenApiGenerator:
                 "version": version,
                 "description": f"Auto-generated OpenAPI specification for OPNsense {version}",
             },
-            "servers": [{"url": "https://{host}/api", "variables": {"host": {"default": "localhost"}}}],
+            "servers": [
+                {"url": "https://{host}/api", "variables": {"host": {"default": "localhost"}}}
+            ],
             "paths": {},
-            "components": {
-                "securitySchemes": {
-                    "basicAuth": {"type": "http", "scheme": "basic"}
-                }
-            },
+            "components": {"securitySchemes": {"basicAuth": {"type": "http", "scheme": "basic"}}},
             "security": [{"basicAuth": []}],
         }
 
@@ -144,9 +142,7 @@ class OpenApiGenerator:
                     # Use model schema for request body if available
                     request_schema: dict[str, Any] = {
                         "type": "object",
-                        "properties": {
-                            param: {"type": "string"} for param in other_params
-                        },
+                        "properties": {param: {"type": "string"} for param in other_params},
                     }
                     if model_schema and self._is_model_endpoint(endpoint.name):
                         request_schema = model_schema

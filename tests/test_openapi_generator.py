@@ -52,7 +52,9 @@ def test_generate_openapi_spec(sample_controllers: list[ApiController]) -> None:
         assert spec["openapi"] == "3.0.0"
         assert spec["info"]["version"] == "24.7"
         assert "paths" in spec
-        assert "/firewall/alias/get" in spec["paths"] or "/firewall/alias/get/{uuid}" in spec["paths"]
+        assert (
+            "/firewall/alias/get" in spec["paths"] or "/firewall/alias/get/{uuid}" in spec["paths"]
+        )
 
 
 def test_generator_creates_output_dir() -> None:

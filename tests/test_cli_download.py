@@ -1,13 +1,11 @@
 """Tests for CLI commands."""
 
-from pathlib import Path
 
 from typer.testing import CliRunner
 
 from opnsense_api import __version__
 from opnsense_api.cli import app
 from opnsense_api.parser import ApiController, ApiEndpoint
-
 
 runner = CliRunner()
 
@@ -62,9 +60,7 @@ def test_generate_command_success(tmp_path, monkeypatch):
                 module="Test",
                 controller="TestCtrl",
                 base_class="ApiControllerBase",
-                endpoints=[
-                    ApiEndpoint(name="get", method="GET", description="Get", parameters=[])
-                ],
+                endpoints=[ApiEndpoint(name="get", method="GET", description="Get", parameters=[])],
             )
         ]
 
@@ -80,6 +76,7 @@ def test_generate_command_success(tmp_path, monkeypatch):
 
 def test_generate_command_download_failure(tmp_path, monkeypatch):
     """Test generate command when download fails."""
+
     def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
         raise RuntimeError("download failed")
 
