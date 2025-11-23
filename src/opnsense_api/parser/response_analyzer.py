@@ -165,9 +165,9 @@ class ResponseAnalyzer:
         if not returns:
             return None
 
-        # Analyze the most complex return (usually the success path)
-        # Sort by length to get the most detailed one
-        returns.sort(key=len, reverse=True)
+        # Try to infer schema from each return statement
+        # Then merge properties from all branches
+        schemas = []
 
         for return_expr in returns:
             return_expr = return_expr.strip()
@@ -179,25 +179,32 @@ class ResponseAnalyzer:
                 if traced_expr:
                     return_expr = traced_expr
 
-            # Check for base method calls
+            # Check for base method calls (these are definitive, return immediately)
             schema = self._match_base_method(return_expr)
             if schema:
                 return schema
 
-            # Check for service action patterns (before generic array literal parsing)
+            # Check for service action patterns
             schema = self._match_service_action(method_body, return_expr)
             if schema:
-                return schema
+                schemas.append(schema)
+                continue
 
             # Check for array literals
             schema = self._parse_array_literal(return_expr)
             if schema:
-                return schema
+                schemas.append(schema)
+                continue
 
             # Check for simple patterns
             schema = self._match_simple_patterns(return_expr)
             if schema:
-                return schema
+                schemas.append(schema)
+                continue
+
+        # If we found multiple schemas, merge their properties
+        if schemas:
+            return self._merge_schemas(schemas)
 
         return None
 
@@ -379,6 +386,84 @@ class ResponseAnalyzer:
             }
 
         return None
+
+    def _merge_schemas(self, schemas: list[dict[str, Any]]) -> dict[str, Any]:
+        """Merge multiple schemas into a single schema with all properties.
+
+        Args:
+            schemas: List of JSON Schema objects to merge
+
+        Returns:
+            Merged JSON Schema
+        """
+        if not schemas:
+            return {"type": "object"}
+
+        if len(schemas) == 1:
+            return schemas[0]
+
+        # Merge all properties from all schemas
+        merged_properties = {}
+        merged_required = set()
+
+        for schema in schemas:
+            if schema.get("type") != "object":
+                continue
+
+            props = schema.get("properties", {})
+            for prop_name, prop_schema in props.items():
+                if prop_name in merged_properties:
+                    # Property exists - try to merge its type/enum
+                    existing = merged_properties[prop_name]
+                    merged_properties[prop_name] = self._merge_property_schemas(
+                        existing, prop_schema
+                    )
+                else:
+                    merged_properties[prop_name] = prop_schema.copy()
+
+            # A property is required only if it appears in ALL schemas
+            required = set(schema.get("required", []))
+            if not merged_required:
+                merged_required = required
+            else:
+                merged_required &= required
+
+        result = {"type": "object", "properties": merged_properties}
+        if merged_required:
+            result["required"] = sorted(merged_required)
+
+        return result
+
+    def _merge_property_schemas(
+        self, schema1: dict[str, Any], schema2: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Merge two property schemas for the same property name.
+
+        Args:
+            schema1: First property schema
+            schema2: Second property schema
+
+        Returns:
+            Merged property schema
+        """
+        # If they're the same type, merge enums if present
+        if schema1.get("type") == schema2.get("type"):
+            merged = schema1.copy()
+
+            # Merge enum values
+            enum1 = set(schema1.get("enum", []))
+            enum2 = set(schema2.get("enum", []))
+            if enum1 or enum2:
+                merged["enum"] = sorted(enum1 | enum2)
+
+            # Prefer more descriptive description
+            if not merged.get("description") and schema2.get("description"):
+                merged["description"] = schema2["description"]
+
+            return merged
+
+        # Different types - return a union-like schema (just use string as fallback)
+        return {"type": "string"}
 
     def _trace_variable(self, method_body: str, var_name: str) -> str | None:
         """Trace a variable back to its assignment.
