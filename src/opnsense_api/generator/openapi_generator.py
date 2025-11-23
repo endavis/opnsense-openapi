@@ -1,11 +1,14 @@
 """Generate OpenAPI JSON specification from parsed API controllers."""
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
-from ..parser import ApiController, ModelDefinition, ModelParser
+from ..parser import ApiController, ModelDefinition, ModelParser, ResponseAnalyzer
 from ..utils import to_snake_case
+
+logger = logging.getLogger(__name__)
 
 
 class OpenApiGenerator:
@@ -20,13 +23,16 @@ class OpenApiGenerator:
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.model_parser = ModelParser()
+        self.response_analyzer = ResponseAnalyzer()
         self.models: dict[str, ModelDefinition] = {}
+        self.controllers_dir: Path | None = None
 
     def generate(
         self,
         controllers: list[ApiController],
         version: str,
         models_dir: Path | None = None,
+        controllers_dir: Path | None = None,
     ) -> Path:
         """Generate OpenAPI specification for all controllers.
 
@@ -34,6 +40,7 @@ class OpenApiGenerator:
             controllers: List of parsed API controllers
             version: OPNsense version
             models_dir: Directory containing model XML files
+            controllers_dir: Directory containing controller PHP files (for response inference)
 
         Returns:
             Path to generated OpenAPI JSON file
@@ -42,6 +49,9 @@ class OpenApiGenerator:
         self.models = {}
         if models_dir:
             self.models = self.model_parser.parse_directory(models_dir)
+
+        # Store controllers directory for response inference
+        self.controllers_dir = controllers_dir
 
         spec: dict[str, Any] = {
             "openapi": "3.0.0",
@@ -93,9 +103,18 @@ class OpenApiGenerator:
 
             method = endpoint.method.lower()
 
-            # Determine response schema
+            # Determine response schema - try multiple strategies
             response_schema: dict[str, Any] = {"type": "object"}
-            if model_schema and self._is_model_endpoint(endpoint.name):
+
+            # Strategy 1: Infer from PHP method implementation
+            inferred_schema = self._infer_response_schema(controller, endpoint)
+            if inferred_schema:
+                response_schema = inferred_schema
+                logger.debug(
+                    f"Inferred schema for {controller.module}/{ctrl_name}/{endpoint.name}"
+                )
+            # Strategy 2: Use model schema for model endpoints
+            elif model_schema and self._is_model_endpoint(endpoint.name):
                 response_schema = model_schema
 
             operation: dict[str, Any] = {
@@ -202,3 +221,46 @@ class OpenApiGenerator:
         """
         model_patterns = ["get", "set", "add", "search", "item"]
         return any(p in endpoint_name.lower() for p in model_patterns)
+
+    def _infer_response_schema(
+        self, controller: ApiController, endpoint: Any
+    ) -> dict[str, Any] | None:
+        """Infer response schema from PHP method implementation.
+
+        Args:
+            controller: API controller
+            endpoint: API endpoint
+
+        Returns:
+            Inferred JSON Schema or None
+        """
+        if not self.controllers_dir:
+            return None
+
+        # Construct path to controller file
+        # Path: controllers_dir/OPNsense/{Module}/Api/{Controller}Controller.php
+        controller_file = (
+            self.controllers_dir
+            / "OPNsense"
+            / controller.module
+            / "Api"
+            / f"{controller.controller}Controller.php"
+        )
+
+        if not controller_file.exists():
+            logger.debug(f"Controller file not found: {controller_file}")
+            return None
+
+        # Method name is endpoint name + "Action"
+        method_name = f"{endpoint.name}Action"
+
+        try:
+            schema = self.response_analyzer.infer_response_schema(controller_file, method_name)
+            if schema:
+                logger.info(
+                    f"Inferred response schema for {controller.module}::{controller.controller}::{method_name}"
+                )
+            return schema
+        except Exception as e:
+            logger.debug(f"Failed to infer schema for {method_name}: {e}")
+            return None
