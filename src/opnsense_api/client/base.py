@@ -226,7 +226,7 @@ class OPNsenseClient:
 
     @property
     def openapi(self) -> APIWrapper:
-        """Get the OpenAPI wrapper instance.
+        """Get the OpenAPI wrapper instance (legacy).
 
         Lazily initializes the wrapper with the appropriate spec file.
 
@@ -236,6 +236,10 @@ class OPNsenseClient:
         Raises:
             RuntimeError: If no version is available (neither specified nor detected)
             FileNotFoundError: If spec file for the version doesn't exist
+
+        Note:
+            This is the legacy dynamic wrapper. Consider using the `api` property
+            for the generated client with full type hints instead.
         """
         if self._openapi is None:
             # Determine which version to use
@@ -263,6 +267,56 @@ class OPNsenseClient:
             )
 
         return self._openapi
+
+    @property
+    def api(self) -> Any:
+        """Get the generated API client with full type hints.
+
+        Auto-detects the OPNsense version and returns the appropriate generated
+        client. Provides full IDE autocomplete and type checking.
+
+        Returns:
+            Generated client for the detected version
+
+        Raises:
+            RuntimeError: If no version is available or no generated client exists
+
+        Example:
+            >>> client = OPNsenseClient(...)
+            >>> # Full type hints and autocomplete!
+            >>> from opnsense_api.generated.v25_7_6.op_nsense_api_client.api.core import core_firmware_info
+            >>> result = core_firmware_info.sync(client=client.api)
+        """
+        # Determine which version to use
+        version = self._spec_version or self._detected_version
+
+        if version is None:
+            raise RuntimeError(
+                "No OPNsense version available. Either specify spec_version "
+                "or enable auto_detect_version."
+            )
+
+        # Import the generated client for this version
+        version_module = version.replace('.', '_')
+        module_path = f"opnsense_api.generated.v{version_module}.op_nsense_api_client"
+
+        try:
+            import importlib
+            generated = importlib.import_module(module_path)
+
+            # Create a Client instance and inject our authenticated httpx client
+            api_client = generated.Client(base_url=f"{self.base_url}/api")
+            api_client.set_httpx_client(self._client)
+
+            return api_client
+
+        except ImportError as e:
+            raise RuntimeError(
+                f"No generated client found for version {version}. "
+                f"Generate it with: opnsense-openapi generate {version} && "
+                f"openapi-python-client generate --path specs/opnsense-{version}.json "
+                f"--output-path src/opnsense_api/generated/v{version_module}"
+            ) from e
 
     def list_endpoints(self) -> list[tuple[str, str, str | None]]:
         """List all available API endpoints from the OpenAPI spec.
