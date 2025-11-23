@@ -346,26 +346,107 @@ class ResponseAnalyzer:
         if not (return_expr.startswith("[") or return_expr.startswith("array(")):
             return None
 
-        # Extract key-value pairs
-        # Pattern: "key" => value or 'key' => value
         properties = {}
 
-        # Find all quoted keys with their values
-        # Match: "key" => value, up to comma or end of array
-        key_value_pattern = r'["\'](\w+)["\']\s*=>\s*([^,\]\)]+)'
-        matches = re.findall(key_value_pattern, return_expr)
-
-        for key, value in matches:
-            value = value.strip()
-
-            # Infer type from value
-            schema = self._infer_value_type(value)
-            properties[key] = schema
+        # Extract key-value pairs using a more robust approach
+        # This handles nested arrays and multi-line formatting
+        properties = self._extract_array_properties(return_expr)
 
         if properties:
             return {"type": "object", "properties": properties}
 
         return None
+
+    def _extract_array_properties(self, array_str: str) -> dict[str, dict[str, Any]]:
+        """Extract properties from array literal using bracket counting.
+
+        Args:
+            array_str: PHP array literal string
+
+        Returns:
+            Dictionary mapping property names to their schemas
+        """
+        properties = {}
+
+        # Remove outer brackets/array() wrapper
+        array_str = array_str.strip()
+        if array_str.startswith("array("):
+            array_str = array_str[6:-1]  # Remove "array(" and ")"
+        elif array_str.startswith("["):
+            array_str = array_str[1:-1]  # Remove "[" and "]"
+
+        # Find all key => value pairs
+        i = 0
+        while i < len(array_str):
+            # Look for quoted key
+            key_match = re.match(r'\s*["\'](\w+)["\']\s*=>\s*', array_str[i:])
+            if not key_match:
+                i += 1
+                continue
+
+            key = key_match.group(1)
+            i += key_match.end()
+
+            # Extract the value (may be nested array or simple value)
+            value_str, value_end = self._extract_value(array_str, i)
+            if value_str:
+                schema = self._infer_value_type(value_str.strip())
+                properties[key] = schema
+
+            i += value_end
+
+        return properties
+
+    def _extract_value(self, text: str, start: int) -> tuple[str, int]:
+        """Extract a value from array literal, handling nested structures.
+
+        Args:
+            text: Text to extract from
+            start: Starting position
+
+        Returns:
+            Tuple of (extracted_value, length_consumed)
+        """
+        i = start
+        # Skip whitespace
+        while i < len(text) and text[i].isspace():
+            i += 1
+
+        if i >= len(text):
+            return "", 0
+
+        # Check if value is a nested array
+        if text[i] in "[":
+            bracket_count = 1
+            value_start = i
+            i += 1
+            while i < len(text) and bracket_count > 0:
+                if text[i] == "[":
+                    bracket_count += 1
+                elif text[i] == "]":
+                    bracket_count -= 1
+                i += 1
+            return text[value_start:i], i - start
+
+        # Check if value is array() syntax
+        if text[i:].startswith("array("):
+            paren_count = 1
+            value_start = i
+            i += 6  # Skip "array("
+            while i < len(text) and paren_count > 0:
+                if text[i] == "(":
+                    paren_count += 1
+                elif text[i] == ")":
+                    paren_count -= 1
+                i += 1
+            return text[value_start:i], i - start
+
+        # Simple value - read until comma or closing bracket
+        value_start = i
+        while i < len(text) and text[i] not in ",])\n":
+            i += 1
+
+        return text[value_start:i].strip(), i - start
 
     def _infer_value_type(self, value: str) -> dict[str, Any]:
         """Infer JSON schema type from PHP value expression.
