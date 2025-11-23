@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -11,6 +12,7 @@ from . import __version__
 from .downloader import SourceDownloader
 from .generator import OpenApiGenerator
 from .parser import ControllerParser
+from .specs import find_best_matching_spec, list_available_specs
 
 app = typer.Typer(help="Generate and inspect OPNsense API wrappers.")
 
@@ -129,6 +131,161 @@ def generate(
     )
 
     typer.secho(f"Generated {output_file}", fg=typer.colors.GREEN)
+
+
+@app.command(name="serve-docs")
+def serve_docs(
+    version: Annotated[
+        str | None,
+        typer.Option(
+            "--version",
+            "-v",
+            help="OPNsense version (e.g., '25.7.6'). Auto-detects if not specified.",
+        ),
+    ] = None,
+    port: Annotated[
+        int,
+        typer.Option("--port", "-p", help="Port to run server on"),
+    ] = 8080,
+    host: Annotated[
+        str,
+        typer.Option("--host", "-h", help="Host to bind to"),
+    ] = "127.0.0.1",
+    list_versions: Annotated[
+        bool,
+        typer.Option("--list", "-l", help="List available spec versions and exit"),
+    ] = False,
+    no_auto_detect: Annotated[
+        bool,
+        typer.Option("--no-auto-detect", help="Disable auto-detection (requires --version)"),
+    ] = False,
+) -> None:
+    """Launch Swagger UI server for browsing OPNsense API documentation."""
+    # List versions and exit
+    if list_versions:
+        typer.echo("Available OPNsense API spec versions:")
+        for spec_version in list_available_specs():
+            typer.echo(f"  - {spec_version}")
+        return
+
+    # Validate arguments
+    if no_auto_detect and not version:
+        typer.secho(
+            "Error: --no-auto-detect requires --version to be specified",
+            fg=typer.colors.RED,
+            err=True,
+        )
+        raise typer.Exit(code=1)
+
+    # Import Flask dependencies (only when needed)
+    try:
+        from flask import Flask, jsonify, redirect
+        from flask_swagger_ui import get_swaggerui_blueprint
+    except ImportError:
+        typer.secho(
+            "Error: Flask dependencies not installed.",
+            fg=typer.colors.RED,
+            err=True,
+        )
+        typer.echo("Install with: uv pip install opnsense-openapi[ui]")
+        raise typer.Exit(code=1)
+
+    # Determine which version to use
+    version_to_use = version
+
+    if not no_auto_detect and version is None:
+        typer.echo("Attempting to auto-detect OPNsense version...")
+        try:
+            from .client import OPNsenseClient
+
+            client = OPNsenseClient(
+                base_url=os.getenv("OPNSENSE_URL", "https://opnsense.local"),
+                api_key=os.getenv("OPNSENSE_API_KEY", ""),
+                api_secret=os.getenv("OPNSENSE_API_SECRET", ""),
+                verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true",
+                auto_detect_version=True,
+            )
+            if client._detected_version:
+                version_to_use = client._detected_version
+                typer.secho(f"✓ Detected version: {version_to_use}", fg=typer.colors.GREEN)
+            else:
+                typer.secho("⚠ Could not auto-detect version", fg=typer.colors.YELLOW)
+        except Exception as e:
+            typer.secho(f"⚠ Auto-detection failed: {e}", fg=typer.colors.YELLOW)
+
+    # Find the spec file to use
+    if version_to_use:
+        try:
+            spec_path = find_best_matching_spec(version_to_use)
+            typer.echo(f"Using spec file: {spec_path}")
+        except FileNotFoundError:
+            typer.secho(
+                f"Error: No spec file found for version {version_to_use}",
+                fg=typer.colors.RED,
+                err=True,
+            )
+            typer.echo(f"Available versions: {', '.join(list_available_specs())}")
+            raise typer.Exit(code=1)
+    else:
+        # No version specified and auto-detect failed, use latest available
+        available = list_available_specs()
+        if not available:
+            typer.secho(
+                "Error: No spec files found in specs directory",
+                fg=typer.colors.RED,
+                err=True,
+            )
+            raise typer.Exit(code=1)
+        version_to_use = available[-1]  # Use latest version
+        spec_path = find_best_matching_spec(version_to_use)
+        typer.echo(f"Using latest available spec: {version_to_use}")
+
+    # Create Flask app
+    flask_app = Flask(__name__)
+
+    # Configure Swagger UI
+    swagger_url = "/api/docs"
+    api_url = "/api/spec"
+
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        swagger_url,
+        api_url,
+        config={
+            "app_name": f"OPNsense API Documentation - v{version_to_use}",
+            "defaultModelsExpandDepth": -1,
+            "docExpansion": "list",
+            "displayRequestDuration": True,
+            "filter": True,
+        },
+    )
+
+    flask_app.register_blueprint(swaggerui_blueprint, url_prefix=swagger_url)
+
+    # Serve the OpenAPI spec file
+    @flask_app.route("/api/spec")
+    def api_spec():
+        """Serve the OpenAPI specification file."""
+        import json
+
+        with open(spec_path) as f:
+            spec = json.load(f)
+        return jsonify(spec)
+
+    # Root redirect
+    @flask_app.route("/")
+    def index():
+        """Redirect to Swagger UI."""
+        return redirect(swagger_url)
+
+    # Start server
+    typer.echo("=" * 70)
+    typer.secho("🚀 OPNsense API Documentation Server", fg=typer.colors.CYAN, bold=True)
+    typer.echo("=" * 70)
+    typer.echo(f"\n📖 Open your browser to: http://{host}:{port}/api/docs")
+    typer.echo(f"📄 Serving spec for version: {version_to_use}")
+    typer.echo("\n💡 Tip: Use Ctrl+C to stop the server\n")
+
+    flask_app.run(host=host, port=port, debug=False)
 
 
 if __name__ == "__main__":  # pragma: no cover

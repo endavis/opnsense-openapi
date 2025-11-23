@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.27.0",
     "typer>=0.9.0",
+    "jsonschema>=4.21.0",
 ]
 
 [project.optional-dependencies]
@@ -16,9 +17,14 @@ dev = [
     "black>=24.0.0",
     "ruff>=0.3.0",
     "mypy>=1.8.0",
+    "types-jsonschema>=4.21.0",
     "pygments>=2.17,<2.19",
     "build>=1.0.0",
     "twine>=5.0.0",
+]
+ui = [
+    "flask>=3.1.0",
+    "flask-swagger-ui>=5.21.0",
 ]
 
 [project.scripts]
