@@ -431,5 +431,9 @@ class APIWrapper:
         try:
             logging.debug(f"Response Text: {resp.text}")
             return resp.json()
-        except ValueError:
+        except json.JSONDecodeError as e:
+            logging.debug(
+                f"Response is not valid JSON (line {e.lineno}, col {e.colno}): {e.msg}. "
+                f"Returning as text."
+            )
             return resp.text
