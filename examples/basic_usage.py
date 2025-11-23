@@ -52,13 +52,16 @@ def main() -> None:
 
         # Example 2: List firewall aliases using the client API
         print("\n=== Firewall Aliases ===")
-        aliases = client.get("firewall", "alias_util", "findAlias")
-        alias_count = len(aliases.get("rows", []))
-        print(f"Found {alias_count} aliases")
-        for alias in aliases.get("rows", [])[:5]:
-            name = alias.get("name", "N/A")
-            desc = alias.get("description", "No description")
-            print(f"  - {name}: {desc}")
+        try:
+            aliases = client.get("firewall", "alias_util", "findAlias")
+            alias_count = len(aliases.get("rows", []))
+            print(f"Found {alias_count} aliases")
+            for alias in aliases.get("rows", [])[:5]:
+                name = alias.get("name", "N/A")
+                desc = alias.get("description", "No description")
+                print(f"  - {name}: {desc}")
+        except Exception as e:
+            print(f"Could not fetch aliases (endpoint may not exist on this version): {e}")
 
         # Example 3: Using OpenAPI endpoint discovery
         print("\n=== OpenAPI Endpoint Discovery ===")
