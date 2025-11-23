@@ -221,6 +221,32 @@ class APIWrapper:
         # Default fallback:
         return {}
 
+    def _describe_schema(self, schema: dict[str, Any]) -> dict[str, Any]:
+        """Convert a JSON Schema into a human-readable description.
+
+        Args:
+            schema: The JSON Schema dict to describe
+
+        Returns:
+            A dict with type, fields (name/type/required/description/enum), and sample
+        """
+        info: dict[str, Any] = {"type": schema.get("type", "object")}
+        props = schema.get("properties", {})
+        required = set(schema.get("required", []))
+        fields: dict[str, Any] = {}
+        for name, sub in props.items():
+            sub = self._resolve_refs(sub)
+            fields[name] = {
+                "type": sub.get("type", "object" if "properties" in sub else "unknown"),
+                "required": name in required,
+                "description": sub.get("description"),
+            }
+            if "enum" in sub:
+                fields[name]["enum"] = list(sub["enum"])
+        info["fields"] = fields
+        info["sample"] = self._build_sample_from_schema(schema)
+        return info
+
     # ------------------------------ Public API ------------------------------
 
     def list_endpoints(self) -> list[tuple[str, str, str | None]]:
@@ -259,27 +285,7 @@ class APIWrapper:
         if not human_readable:
             return resolved
 
-        def describe(schema: dict[str, Any]) -> dict[str, Any]:
-            info: dict[str, Any] = {"type": schema.get("type", "object")}
-            props = schema.get("properties", {})
-            required = set(schema.get("required", []))
-            fields: dict[str, Any] = {}
-            for name, sub in props.items():
-                sub = self._resolve_refs(sub)
-                fields[name] = {
-                    "type": sub.get(
-                        "type", "object" if "properties" in sub else "unknown"
-                    ),
-                    "required": name in required,
-                    "description": sub.get("description"),
-                }
-                if "enum" in sub:
-                    fields[name]["enum"] = list(sub["enum"])
-            info["fields"] = fields
-            info["sample"] = self._build_sample_from_schema(schema)
-            return info
-
-        return describe(resolved)
+        return self._describe_schema(resolved)
 
     def get_response_schema_for_endpoint(
         self,
@@ -301,27 +307,7 @@ class APIWrapper:
         if not human_readable:
             return resolved
 
-        def describe(schema: dict[str, Any]) -> dict[str, Any]:
-            info: dict[str, Any] = {"type": schema.get("type", "object")}
-            props = schema.get("properties", {})
-            required = set(schema.get("required", []))
-            fields: dict[str, Any] = {}
-            for name, sub in props.items():
-                sub = self._resolve_refs(sub)
-                fields[name] = {
-                    "type": sub.get(
-                        "type", "object" if "properties" in sub else "unknown"
-                    ),
-                    "required": name in required,
-                    "description": sub.get("description"),
-                }
-                if "enum" in sub:
-                    fields[name]["enum"] = list(sub["enum"])
-            info["fields"] = fields
-            info["sample"] = self._build_sample_from_schema(schema)
-            return info
-
-        return describe(resolved)
+        return self._describe_schema(resolved)
 
     def _get_response_schema(
         self, path_template: str, method: str, status_code: str = "200"
