@@ -55,6 +55,165 @@ status = core_firmware_status.sync(client=api)
 print(f"OPNsense version: {info.product_version}")
 ```
 
+## Using client.api - Detailed Examples
+
+The `client.api` property returns a generated client that gives you full type safety and IDE support.
+
+### Basic Usage Pattern
+
+```python
+from opnsense_api import OPNsenseClient
+
+# Initialize with auto-detection
+client = OPNsenseClient(
+    base_url="https://opnsense.local",
+    api_key="your-key",
+    api_secret="your-secret",
+    verify_ssl=False,
+    auto_detect_version=True,
+)
+
+# Get the generated client
+api = client.api
+```
+
+### Calling API Functions
+
+Each endpoint becomes a Python module with multiple functions:
+
+```python
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
+
+# sync() - Returns parsed data or None
+info = core_firmware_info.sync(client=api)
+if info:
+    print(f"Version: {info.product_version}")
+
+# sync_detailed() - Returns full Response object
+from opnsense_api.generated.v25_7_6.opnsense_api_client.types import Response
+response = core_firmware_info.sync_detailed(client=api)
+print(f"Status: {response.status_code}")
+print(f"Data: {response.parsed}")
+```
+
+### Working with Different Endpoints
+
+```python
+# Firewall operations
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.firewall import (
+    firewall_alias_search_item,
+    firewall_alias_get_item,
+)
+
+# Search for aliases
+aliases = firewall_alias_search_item.sync(client=api)
+
+# Get specific alias by UUID
+alias_detail = firewall_alias_get_item.sync(client=api, uuid="some-uuid-here")
+
+# Core system operations
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import (
+    core_firmware_check,
+    core_firmware_upgrade,
+)
+
+# Check for updates
+updates = core_firmware_check.sync(client=api)
+
+# Upgrade system (returns upgrade status)
+upgrade_result = core_firmware_upgrade.sync(client=api)
+```
+
+### Async/Await Support
+
+All functions have async versions:
+
+```python
+import asyncio
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
+
+async def get_firmware_info():
+    # Use asyncio() for parsed data
+    info = await core_firmware_info.asyncio(client=api)
+    return info
+
+# Or asyncio_detailed() for full response
+async def get_firmware_info_detailed():
+    response = await core_firmware_info.asyncio_detailed(client=api)
+    return response
+
+# Run async code
+info = asyncio.run(get_firmware_info())
+```
+
+### Error Handling
+
+```python
+from opnsense_api.generated.v25_7_6.opnsense_api_client import errors
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
+
+try:
+    info = core_firmware_info.sync(client=api)
+    if info is None:
+        print("Request succeeded but returned no data")
+    else:
+        print(f"Version: {info.product_version}")
+
+except errors.UnexpectedStatus as e:
+    print(f"Unexpected status code: {e.status_code}")
+    print(f"Response content: {e.content}")
+
+except httpx.TimeoutException:
+    print("Request timed out")
+
+except httpx.HTTPError as e:
+    print(f"HTTP error occurred: {e}")
+```
+
+### Context Manager Usage
+
+```python
+from opnsense_api import OPNsenseClient
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
+
+# Client automatically closes connections when exiting context
+with OPNsenseClient(
+    base_url="https://opnsense.local",
+    api_key="key",
+    api_secret="secret",
+    verify_ssl=False,
+    auto_detect_version=True,
+) as client:
+    api = client.api
+    info = core_firmware_info.sync(client=api)
+    print(f"Version: {info.product_version}")
+# Connection closed automatically here
+```
+
+### Multiple API Calls
+
+```python
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import (
+    core_firmware_info,
+    core_firmware_status,
+)
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.firewall import (
+    firewall_alias_search_item,
+)
+
+# The generated client reuses the same authenticated HTTP connection
+api = client.api
+
+# All these use the same connection
+firmware_info = core_firmware_info.sync(client=api)
+firmware_status = core_firmware_status.sync(client=api)
+aliases = firewall_alias_search_item.sync(client=api)
+
+print(f"System version: {firmware_info.product_version}")
+print(f"Status: {firmware_status}")
+print(f"Aliases count: {len(aliases.rows) if aliases else 0}")
+```
+
 ## Benefits of Generated Client
 
 ### ✅ Full Type Hints
@@ -81,7 +240,7 @@ info.product_version  # ✅ Correct
 
 ```python
 # Generated code raises clear exceptions
-from opnsense_api.generated.v25_7_6.op_nsense_api_client import errors
+from opnsense_api.generated.v25_7_6.opnsense_api_client import errors
 
 try:
     result = core_firmware_info.sync(client=api)
