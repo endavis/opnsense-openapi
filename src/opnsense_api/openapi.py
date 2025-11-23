@@ -25,24 +25,17 @@ class APIWrapper:
         session: httpx.Client | None = None,
         base_api_path: str = "",
     ):
-        """Initialize the class.
+        """Initialize the APIWrapper client.
 
-        :param api_json_file: the api json file to parse
-        :type api_json_file: str
-        :param base_url: the base url for the api
-        :type base_url: str
-        :param auth_header: the auth header to use (alternative to api_key/api_secret)
-        :type auth_header: dict[str, str] | None
-        :param api_key: OPNsense API key for basic auth
-        :type api_key: str | None
-        :param api_secret: OPNsense API secret for basic auth
-        :type api_secret: str | None
-        :param timeout: the timeout value
-        :type timeout: float
-        :param session: an already existing session to use
-        :type session: Optional[httpx.Client]
-        :param base_api_path: the base path of all api paths
-        :type base_api_path: str
+        Args:
+            api_json_file: The API JSON file to parse
+            base_url: The base URL for the API
+            auth_header: The auth header to use (alternative to api_key/api_secret)
+            api_key: OPNsense API key for basic auth
+            api_secret: OPNsense API secret for basic auth
+            timeout: The timeout value in seconds
+            session: An already existing httpx.Client session to use
+            base_api_path: The base path of all API paths
         """
         # Load the API spec
         with open(api_json_file, encoding="utf-8") as f:
@@ -87,13 +80,15 @@ class APIWrapper:
     def _get_operation(self, api_path: str, method: str) -> dict[str, Any]:
         """Get the operation for an API path (cached).
 
-        :param api_path: the api path to use, such as /storage/assets
-        :type api_path: str
-        :param method: the method (get, put, etc)
-        :type method: str
-        :return: various info about the path and method
-        :rtype: dict[str, Any]
-        :raises KeyError: if path or method not found in spec
+        Args:
+            api_path: The API path to use, such as /storage/assets
+            method: The HTTP method (get, put, etc)
+
+        Returns:
+            Various info about the path and method
+
+        Raises:
+            KeyError: If path or method not found in spec
         """
         method = method.lower()
         cache_key = (api_path, method)
