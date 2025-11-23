@@ -104,10 +104,19 @@ class APIWrapper:
 
         path = self.api_spec["paths"].get(api_path)
         if path is None:
-            raise KeyError(f"Path not found in API spec: {api_path}")
+            available_paths = list(self.api_spec["paths"].keys())
+            raise KeyError(
+                f"Path not found in API spec: {api_path}. "
+                f"Available paths: {', '.join(available_paths[:5])}"
+                + (f" ... ({len(available_paths) - 5} more)" if len(available_paths) > 5 else "")
+            )
         operation = path.get(method)
         if operation is None:
-            raise KeyError(f"Method '{method.upper()}' not found for path: {api_path}")
+            available_methods = [m.upper() for m in path.keys()]
+            raise KeyError(
+                f"Method '{method.upper()}' not found for path: {api_path}. "
+                f"Available methods: {', '.join(available_methods)}"
+            )
 
         self._operation_cache[cache_key] = operation
         return operation
@@ -341,7 +350,11 @@ class APIWrapper:
             validate(instance=body, schema=schema)
             return True
         except ValidationError as e:
-            logging.error(f"Request body validation error: {e.message}")
+            field_path = ".".join(str(p) for p in e.path) if e.path else "root"
+            logging.error(
+                f"Request body validation error at '{field_path}': {e.message}. "
+                f"Schema path: {'.'.join(str(p) for p in e.schema_path) if e.schema_path else 'N/A'}"
+            )
             return False
 
     def suggest_parameters(
