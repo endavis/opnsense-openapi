@@ -92,12 +92,15 @@ class ResponseAnalyzer:
         """Initialize response analyzer."""
         pass
 
-    def infer_response_schema(self, php_file: Path, method_name: str) -> dict[str, Any] | None:
+    def infer_response_schema(
+        self, php_file: Path, method_name: str, _depth: int = 0
+    ) -> dict[str, Any] | None:
         """Infer response schema for a specific method.
 
         Args:
             php_file: Path to PHP controller file
             method_name: Name of the method (e.g., 'searchItemAction')
+            _depth: Internal recursion depth tracker
 
         Returns:
             JSON Schema dict or None if cannot infer
@@ -112,8 +115,8 @@ class ResponseAnalyzer:
         if not method_body:
             return None
 
-        # Analyze return statements
-        return self._analyze_returns(method_body)
+        # Analyze return statements with access to full file content for method resolution
+        return self._analyze_returns(method_body, content, _depth)
 
     def _extract_method_body(self, content: str, method_name: str) -> str | None:
         """Extract method body from PHP content.
@@ -125,8 +128,8 @@ class ResponseAnalyzer:
         Returns:
             Method body or None if not found
         """
-        # Find method start
-        pattern = rf"public\s+function\s+{re.escape(method_name)}\s*\([^)]*\)\s*\{{"
+        # Find method start (public, private, or protected)
+        pattern = rf"(?:public|private|protected)\s+function\s+{re.escape(method_name)}\s*\([^)]*\)\s*\{{"
         match = re.search(pattern, content)
         if not match:
             return None
@@ -150,11 +153,16 @@ class ResponseAnalyzer:
 
         return None
 
-    def _analyze_returns(self, method_body: str) -> dict[str, Any] | None:
+    def _analyze_returns(
+        self, method_body: str, file_content: str, depth: int = 0, max_depth: int = 3
+    ) -> dict[str, Any] | None:
         """Analyze return statements in method body.
 
         Args:
             method_body: PHP method body content
+            file_content: Full PHP file content (for method resolution)
+            depth: Current recursion depth
+            max_depth: Maximum recursion depth for method resolution
 
         Returns:
             Inferred JSON Schema or None
@@ -185,6 +193,13 @@ class ResponseAnalyzer:
             schema = self._match_base_method(return_expr)
             if schema:
                 return schema
+
+            # Check for method calls within same controller (before other patterns)
+            if depth < max_depth:
+                schema = self._resolve_method_call(return_expr, file_content, depth)
+                if schema:
+                    schemas.append(schema)
+                    continue
 
             # Check for service action patterns
             schema = self._match_service_action(method_body, return_expr)
@@ -231,6 +246,37 @@ class ResponseAnalyzer:
                 return schema.copy()
 
         return None
+
+    def _resolve_method_call(
+        self, return_expr: str, file_content: str, depth: int
+    ) -> dict[str, Any] | None:
+        """Resolve method calls within the same controller.
+
+        Args:
+            return_expr: Return expression that may contain a method call
+            file_content: Full PHP file content
+            depth: Current recursion depth
+
+        Returns:
+            Resolved schema or None
+        """
+        # Check for $this->methodName(...) pattern
+        method_call_pattern = r"\$this->(\w+)\s*\("
+        match = re.search(method_call_pattern, return_expr)
+
+        if not match:
+            return None
+
+        called_method = match.group(1)
+
+        # Extract and analyze the called method
+        called_method_body = self._extract_method_body(file_content, called_method)
+        if not called_method_body:
+            return None
+
+        # Recursively analyze the called method
+        return self._analyze_returns(called_method_body, file_content, depth + 1)
+
 
     def _match_service_action(self, method_body: str, return_expr: str) -> dict[str, Any] | None:
         """Match service control action patterns.
