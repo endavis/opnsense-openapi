@@ -43,7 +43,7 @@ client = OPNsenseClient(
 api = client.api  # Returns generated client for detected version
 
 # Use the generated API functions with full type hints
-from opnsense_api.generated.v25_7_6.op_nsense_api_client.api.core import (
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import (
     core_firmware_info,
     core_firmware_status,
 )
@@ -193,7 +193,7 @@ result = client.get("core", "firmware", "info")
 
 # New code - gradually migrate
 api = client.api
-from opnsense_api.generated.v25_7_6.op_nsense_api_client.api.core import core_firmware_info
+from opnsense_api.generated.v25_7_6.opnsense_api_client.api.core import core_firmware_info
 result = core_firmware_info.sync(client=api)
 ```
 

@@ -298,7 +298,7 @@ class OPNsenseClient:
 
         # Import the generated client for this version
         version_module = version.replace('.', '_')
-        module_path = f"opnsense_api.generated.v{version_module}.op_nsense_api_client"
+        module_path = f"opnsense_api.generated.v{version_module}.opnsense_api_client"
 
         try:
             import importlib

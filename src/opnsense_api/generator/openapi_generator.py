@@ -46,7 +46,7 @@ class OpenApiGenerator:
         spec: dict[str, Any] = {
             "openapi": "3.0.0",
             "info": {
-                "title": "OPNsense API",
+                "title": "Opnsense API",  # Changed to avoid camelCase split
                 "version": version,
                 "description": f"Auto-generated OpenAPI specification for OPNsense {version}",
             },
