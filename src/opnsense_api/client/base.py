@@ -169,34 +169,58 @@ class OPNsenseClient:
     def detect_version(self) -> str:
         """Detect OPNsense version from the server.
 
+        Tries multiple API endpoints to determine the version.
+
         Returns:
             Version string (e.g., '24.7.1')
 
         Raises:
-            APIResponseError: If version cannot be retrieved
-            KeyError: If response doesn't contain expected version field
+            APIResponseError: If version cannot be retrieved from any endpoint
         """
-        try:
-            # Try to get version from core/firmware/status
-            response = self.get("core", "firmware", "status")
+        # List of endpoints to try for version detection
+        version_endpoints = [
+            # Try core/firmware/info first (more permissive)
+            ("core", "firmware", "info"),
+            # Fallback to status
+            ("core", "firmware", "status"),
+            # Try diagnostics endpoints
+            ("diagnostics", "system", "systemInformation"),
+        ]
 
-            # Response typically has 'product_version' field
-            if "product_version" in response:
-                version = response["product_version"]
-                logger.debug(f"Got version from firmware status: {version}")
-                return version
+        last_error = None
+        for module, controller, command in version_endpoints:
+            try:
+                response = self.get(module, controller, command)
 
-            # Fallback: try diagnostics/system/systemInformation
-            response = self.get("diagnostics", "system", "systemInformation")
-            if "versions" in response and "product_version" in response["versions"]:
-                version = response["versions"]["product_version"]
-                logger.debug(f"Got version from system information: {version}")
-                return version
+                # Check for product_version at root level
+                if "product_version" in response:
+                    version = response["product_version"]
+                    logger.debug(f"Got version from {module}/{controller}/{command}: {version}")
+                    return version
 
-            raise KeyError("Version field not found in API response")
-        except Exception as e:
-            logger.error(f"Failed to detect version: {e}")
-            raise
+                # Check for version in nested structure
+                if "versions" in response and "product_version" in response["versions"]:
+                    version = response["versions"]["product_version"]
+                    logger.debug(f"Got version from {module}/{controller}/{command}: {version}")
+                    return version
+
+                # Check for product.product_version
+                if "product" in response and "product_version" in response["product"]:
+                    version = response["product"]["product_version"]
+                    logger.debug(f"Got version from {module}/{controller}/{command}: {version}")
+                    return version
+
+            except Exception as e:
+                logger.debug(f"Failed to get version from {module}/{controller}/{command}: {e}")
+                last_error = e
+                continue
+
+        # If we get here, none of the endpoints worked
+        error_msg = "Could not detect OPNsense version from any API endpoint"
+        if last_error:
+            error_msg += f". Last error: {last_error}"
+        logger.error(error_msg)
+        raise APIResponseError(error_msg, str(last_error) if last_error else "")
 
     @property
     def openapi(self) -> APIWrapper:

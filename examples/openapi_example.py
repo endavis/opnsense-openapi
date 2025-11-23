@@ -17,22 +17,35 @@ def main() -> None:
     """Example demonstrating OpenAPI integration."""
     # Initialize client with automatic version detection
     print("=== Initializing Client ===")
+
+    # Try to use specified version from environment, or auto-detect
+    spec_version = os.getenv("OPNSENSE_VERSION")
+
+    if spec_version:
+        print(f"Using specified version from OPNSENSE_VERSION: {spec_version}")
+    else:
+        print("No version specified, attempting auto-detection...")
+
     client = OPNsenseClient(
         base_url=os.getenv("OPNSENSE_URL", "https://opnsense.local"),
         api_key=os.getenv("OPNSENSE_API_KEY", "your-api-key"),
         api_secret=os.getenv("OPNSENSE_API_SECRET", "your-api-secret"),
         verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true",
-        auto_detect_version=True,  # Automatically detect version from server
+        spec_version=spec_version,  # Use specified version if provided
+        auto_detect_version=spec_version is None,  # Only auto-detect if not specified
     )
 
-    # Alternative: Specify version explicitly
-    # client = OPNsenseClient(
-    #     base_url="https://opnsense.local",
-    #     api_key="your-api-key",
-    #     api_secret="your-api-secret",
-    #     spec_version="24.7.1",  # Use specific version
-    #     auto_detect_version=False,
-    # )
+    if client._detected_version:
+        print(f"Successfully detected version: {client._detected_version}")
+    elif spec_version:
+        print(f"Using manually specified version: {spec_version}")
+    else:
+        print("\n⚠ Warning: Could not determine OPNsense version!")
+        print("OpenAPI features will not be available.")
+        print("\nTo use OpenAPI features, either:")
+        print("  1. Set OPNSENSE_VERSION environment variable (e.g., '24.7.1')")
+        print("  2. Ensure API access to version detection endpoints")
+        return
 
     try:
         # Example 1: List all available endpoints
