@@ -155,3 +155,28 @@ def test_to_snake_case() -> None:
     assert to_snake_case("AliasUtil") == "alias_util"
     assert to_snake_case("get") == "get"
     assert to_snake_case("setItem") == "set_item"
+
+
+def test_validate_version() -> None:
+    """Test version validation."""
+    from opnsense_api.utils import validate_version
+
+    # Valid versions
+    assert validate_version("24.7")
+    assert validate_version("24.7.1")
+    assert validate_version("v24.7")
+    assert validate_version("25.1.10")
+
+    # Invalid versions
+    assert not validate_version("invalid")
+    assert not validate_version("24")
+    assert not validate_version("24.7.1.2")
+
+
+def test_to_class_name() -> None:
+    """Test snake_case to PascalCase conversion."""
+    from opnsense_api.utils import to_class_name
+
+    assert to_class_name("firewall_alias") == "FirewallAlias"
+    assert to_class_name("test") == "Test"
+    assert to_class_name("api_controller_base") == "ApiControllerBase"
