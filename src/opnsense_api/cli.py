@@ -325,7 +325,8 @@ def serve_docs(
 
         try:
             # Build full URL to OPNsense instance
-            url = f"{opnsense_client.base_url}/api/{api_path}"
+            # api_path includes 'api/' prefix from the Swagger spec paths
+            url = f"{opnsense_client.base_url}/{api_path}"
 
             # Get request data
             json_data = request.get_json(silent=True) if request.is_json else None
