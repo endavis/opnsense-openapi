@@ -86,6 +86,68 @@ class ResponseAnalyzer:
             },
             "required": ["result"],
         },
+        # Service control methods (ApiMutableServiceControllerBase)
+        "startAction": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string",
+                    "description": "Service start response output",
+                },
+            },
+            "required": ["response"],
+        },
+        "stopAction": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string",
+                    "description": "Service stop response output",
+                },
+            },
+            "required": ["response"],
+        },
+        "restartAction": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string",
+                    "description": "Service restart response output",
+                },
+            },
+            "required": ["response"],
+        },
+        "reconfigureAction": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["ok", "failed"],
+                    "description": "Reconfigure operation status",
+                },
+            },
+            "required": ["status"],
+        },
+        "statusAction": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["running", "stopped", "disabled", "unknown"],
+                    "description": "Service status",
+                },
+                "widget": {
+                    "type": "object",
+                    "properties": {
+                        "caption_restart": {"type": "string"},
+                        "caption_start": {"type": "string"},
+                        "caption_stop": {"type": "string"},
+                    },
+                    "description": "Widget caption translations",
+                },
+            },
+            "required": ["status"],
+        },
     }
 
     def __init__(self) -> None:
@@ -105,6 +167,11 @@ class ResponseAnalyzer:
         Returns:
             JSON Schema dict or None if cannot infer
         """
+        # Check if this is a known inherited service action method
+        # These are from ApiMutableServiceControllerBase and won't be in child controllers
+        if method_name in self.BASE_METHOD_SCHEMAS:
+            return self.BASE_METHOD_SCHEMAS[method_name].copy()
+
         try:
             content = php_file.read_text(encoding="utf-8")
         except Exception:

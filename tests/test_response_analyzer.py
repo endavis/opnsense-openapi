@@ -184,12 +184,20 @@ class TestController extends ApiControllerBase
 
 def test_base_method_schemas_defined(analyzer: ResponseAnalyzer) -> None:
     """Test that all base method schemas are defined."""
+    # Model base methods
     assert "searchBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "getBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "addBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "setBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "delBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "toggleBase" in analyzer.BASE_METHOD_SCHEMAS
+
+    # Service action methods
+    assert "startAction" in analyzer.BASE_METHOD_SCHEMAS
+    assert "stopAction" in analyzer.BASE_METHOD_SCHEMAS
+    assert "restartAction" in analyzer.BASE_METHOD_SCHEMAS
+    assert "reconfigureAction" in analyzer.BASE_METHOD_SCHEMAS
+    assert "statusAction" in analyzer.BASE_METHOD_SCHEMAS
 
 
 def test_infer_search_base_schema(
@@ -530,3 +538,48 @@ class Test {
 
         schema = analyzer.infer_response_schema(php_file, "nonExistentAction")
         assert schema is None
+
+
+def test_inherited_service_action_methods(analyzer: ResponseAnalyzer) -> None:
+    """Test detection of inherited service action methods."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    with TemporaryDirectory() as tmpdir:
+        # Create a controller that extends ApiMutableServiceControllerBase
+        # These methods are inherited, so they won't be in the controller file
+        php_file = Path(tmpdir) / "ServiceController.php"
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Test\\Api;
+
+class ServiceController extends ApiMutableServiceControllerBase
+{
+    // Inherits startAction, stopAction, restartAction, reconfigureAction, statusAction
+    // These methods are not defined here
+}
+"""
+        )
+
+        # Test that inherited methods are recognized
+        start_schema = analyzer.infer_response_schema(php_file, "startAction")
+        assert start_schema is not None
+        assert start_schema["type"] == "object"
+        assert "response" in start_schema["properties"]
+
+        status_schema = analyzer.infer_response_schema(php_file, "statusAction")
+        assert status_schema is not None
+        assert status_schema["type"] == "object"
+        assert "status" in status_schema["properties"]
+        assert set(status_schema["properties"]["status"]["enum"]) == {
+            "running",
+            "stopped",
+            "disabled",
+            "unknown",
+        }
+
+        reconfigure_schema = analyzer.infer_response_schema(php_file, "reconfigureAction")
+        assert reconfigure_schema is not None
+        assert reconfigure_schema["type"] == "object"
+        assert "status" in reconfigure_schema["properties"]
+        assert set(reconfigure_schema["properties"]["status"]["enum"]) == {"ok", "failed"}
