@@ -71,7 +71,7 @@ print(f"OPNsense version: {info.product_version}")
 print(f"Aliases: {aliases.rows if aliases else []}")
 ```
 
-See [GENERATED_CLIENT_USAGE.md](GENERATED_CLIENT_USAGE.md) for complete documentation.
+See [GENERATED_CLIENT_USAGE.md](docs/GENERATED_CLIENT_USAGE.md) for complete documentation.
 
 ## CLI Commands
 
