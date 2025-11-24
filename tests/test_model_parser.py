@@ -277,3 +277,306 @@ def test_convert_default_value_invalid_number():
     # Invalid number should return the original string
     result = parser._convert_default_value("not_a_float", "number")
     assert result == "not_a_float"
+
+
+def test_parse_model_file_non_xml():
+    """Test parsing non-XML file."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        # Try to parse a non-XML file
+        txt_file = Path(tmpdir) / "test.txt"
+        txt_file.write_text("not xml")
+
+        model = parser.parse_model_file(txt_file)
+        assert model is None
+
+
+def test_parse_model_file_nonexistent():
+    """Test parsing nonexistent file."""
+    from pathlib import Path
+
+    parser = ModelParser()
+
+    nonexistent = Path("/nonexistent/file.xml")
+    model = parser.parse_model_file(nonexistent)
+    assert model is None
+
+
+def test_parse_model_file_invalid_xml():
+    """Test parsing invalid XML."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        xml_file = Path(tmpdir) / "invalid.xml"
+        xml_file.write_text("<?xml version='1.0'?><broken>")
+
+        model = parser.parse_model_file(xml_file)
+        assert model is None
+
+
+def test_parse_model_file_wrong_root_tag():
+    """Test parsing XML with wrong root tag."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        xml_file = Path(tmpdir) / "wrong.xml"
+        xml_file.write_text("""<?xml version='1.0'?>
+<config>
+    <item>test</item>
+</config>
+""")
+
+        model = parser.parse_model_file(xml_file)
+        assert model is None
+
+
+def test_to_json_schema_with_multiple_field():
+    """Test JSON schema with field that has multiple=True."""
+    parser = ModelParser()
+
+    model = ModelDefinition(
+        name="Test",
+        module="Test",
+        mount="//Test",
+        description="Test model",
+        fields={
+            "root": [
+                ModelField(
+                    name="tags",
+                    field_type="TextField",
+                    multiple=True,
+                )
+            ]
+        },
+    )
+
+    schema = parser.to_json_schema(model, "root")
+
+    # Field should be wrapped in array
+    assert schema["properties"]["tags"]["type"] == "array"
+    assert "items" in schema["properties"]["tags"]
+
+
+def test_to_json_schema_with_option_values():
+    """Test JSON schema with field that has option values."""
+    parser = ModelParser()
+
+    model = ModelDefinition(
+        name="Test",
+        module="Test",
+        mount="//Test",
+        description="Test model",
+        fields={
+            "root": [
+                ModelField(
+                    name="protocol",
+                    field_type="OptionField",
+                    options={
+                        "tcp": "TCP Protocol",
+                        "udp": "UDP Protocol",
+                        "icmp": "ICMP Protocol",
+                    },
+                )
+            ]
+        },
+    )
+
+    schema = parser.to_json_schema(model, "root")
+
+    # Should have enum with options
+    assert "enum" in schema["properties"]["protocol"]
+    assert set(schema["properties"]["protocol"]["enum"]) == {"tcp", "udp", "icmp"}
+
+
+def test_to_json_schema_invalid_container():
+    """Test JSON schema with invalid container name."""
+    parser = ModelParser()
+
+    model = ModelDefinition(
+        name="Test",
+        module="Test",
+        mount="//Test",
+        description="Test model",
+        fields={
+            "root": [
+                ModelField(
+                    name="field1",
+                    field_type="TextField",
+                )
+            ]
+        },
+    )
+
+    # Request schema for nonexistent container
+    schema = parser.to_json_schema(model, "nonexistent")
+
+    # Should return generic object schema
+    assert schema == {"type": "object"}
+
+
+def test_parse_directory_nonexistent():
+    """Test parsing nonexistent directory."""
+    from pathlib import Path
+
+    parser = ModelParser()
+
+    nonexistent = Path("/nonexistent/directory")
+    models = parser.parse_directory(nonexistent)
+
+    # Should return empty dict
+    assert models == {}
+
+
+def test_parse_directory_skips_special_dirs():
+    """Test that parse_directory skips Menu, Migrations, ACL directories."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        models_dir = Path(tmpdir)
+
+        # Create directories that should be skipped
+        menu_dir = models_dir / "Menu"
+        menu_dir.mkdir()
+        migrations_dir = models_dir / "Migrations"
+        migrations_dir.mkdir()
+        acl_dir = models_dir / "ACL"
+        acl_dir.mkdir()
+
+        # Create models in each that should be skipped
+        for skip_dir in [menu_dir, migrations_dir, acl_dir]:
+            (skip_dir / "test.xml").write_text(
+                """<?xml version="1.0"?>
+<model>
+    <mount>//Test/Skip</mount>
+    <description>Should be skipped</description>
+    <items>
+        <field type="TextField">
+            <name>Field</name>
+        </field>
+    </items>
+</model>
+"""
+            )
+
+        # Parse directory
+        models = parser.parse_directory(models_dir)
+
+        # Should not find any models (all were in skipped directories)
+        assert len(models) == 0
+
+
+def test_parse_field_with_unknown_type():
+    """Test parsing field with unknown type."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        xml_file = Path(tmpdir) / "unknown_type.xml"
+        xml_file.write_text(
+            """<?xml version="1.0"?>
+<model>
+    <mount>//Test/UnknownType</mount>
+    <description>Test with unknown field type</description>
+    <items>
+        <field type="./CustomUnknownField">
+            <name>CustomField</name>
+        </field>
+    </items>
+</model>
+"""
+        )
+
+        model = parser.parse_model_file(xml_file)
+
+        # Should still parse but may not recognize the type
+        assert model is not None
+        assert len(model.fields) > 0
+
+
+def test_parse_field_with_option_values_from_xml():
+    """Test parsing field with OptionValues from XML."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        xml_file = Path(tmpdir) / "options.xml"
+        xml_file.write_text(
+            """<?xml version="1.0"?>
+<model>
+    <mount>//Test/Options</mount>
+    <description>Test with option values</description>
+    <items>
+        <protocol type="OptionField">
+            <name>Protocol</name>
+            <OptionValues>
+                <tcp>TCP Protocol</tcp>
+                <udp>UDP Protocol</udp>
+                <icmp>ICMP</icmp>
+            </OptionValues>
+        </protocol>
+    </items>
+</model>
+"""
+        )
+
+        model = parser.parse_model_file(xml_file)
+
+        # Should parse with options
+        assert model is not None
+        assert "root" in model.fields
+        protocol_field = model.fields["root"][0]
+        assert protocol_field.name == "protocol"  # Element tag becomes the field name
+        assert len(protocol_field.options) == 3
+        assert "tcp" in protocol_field.options
+        assert protocol_field.options["tcp"] == "TCP Protocol"
+
+
+def test_parse_field_with_fuzzy_type_matching():
+    """Test parsing field with type that requires fuzzy matching."""
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    parser = ModelParser()
+
+    with TemporaryDirectory() as tmpdir:
+        xml_file = Path(tmpdir) / "fuzzy_type.xml"
+        xml_file.write_text(
+            """<?xml version="1.0"?>
+<model>
+    <mount>//Test/FuzzyType</mount>
+    <description>Test with type that needs fuzzy matching</description>
+    <items>
+        <field type="./\\OPNsense\\Base\\FieldTypes\\TextField">
+            <name>TextField</name>
+        </field>
+    </items>
+</model>
+"""
+        )
+
+        model = parser.parse_model_file(xml_file)
+
+        # Should parse and recognize TextField via fuzzy matching
+        assert model is not None
+        assert "root" in model.fields
+        text_field = model.fields["root"][0]
+        assert text_field.name == "field"  # Element tag becomes the field name
+        # Type should be cleaned up to just the field type name
+        assert "TextField" in text_field.field_type

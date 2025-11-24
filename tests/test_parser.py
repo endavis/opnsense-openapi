@@ -180,3 +180,80 @@ def test_to_class_name() -> None:
     assert to_class_name("firewall_alias") == "FirewallAlias"
     assert to_class_name("test") == "Test"
     assert to_class_name("api_controller_base") == "ApiControllerBase"
+
+
+def test_parse_controller_nonexistent_file() -> None:
+    """Test parsing nonexistent controller file."""
+    parser = ControllerParser()
+
+    nonexistent = Path("/nonexistent/Controller.php")
+    controller = parser.parse_controller_file(nonexistent)
+
+    assert controller is None
+
+
+def test_parse_controller_non_controller_file() -> None:
+    """Test parsing non-controller PHP file."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        # Create a PHP file that doesn't end with Controller.php
+        php_file = Path(tmpdir) / "Api" / "Helper.php"
+        php_file.parent.mkdir(parents=True)
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Firewall\\Api;
+
+class Helper
+{
+    public function helpAction() {}
+}
+"""
+        )
+
+        controller = parser.parse_controller_file(php_file)
+        assert controller is None
+
+
+def test_parse_controller_no_namespace() -> None:
+    """Test parsing controller without namespace."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        api_dir = Path(tmpdir) / "Api"
+        api_dir.mkdir()
+        controller_file = api_dir / "TestController.php"
+        controller_file.write_text(
+            """<?php
+// Missing namespace
+
+class TestController extends ApiControllerBase
+{
+    public function getAction() {}
+}
+"""
+        )
+
+        controller = parser.parse_controller_file(controller_file)
+        assert controller is None
+
+
+def test_parse_controller_no_class() -> None:
+    """Test parsing controller without class definition."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        api_dir = Path(tmpdir) / "Api"
+        api_dir.mkdir()
+        controller_file = api_dir / "TestController.php"
+        controller_file.write_text(
+            """<?php
+namespace OPNsense\\Test\\Api;
+
+// Missing class definition
+function someFunction() {}
+"""
+        )
+
+        controller = parser.parse_controller_file(controller_file)
+        assert controller is None
