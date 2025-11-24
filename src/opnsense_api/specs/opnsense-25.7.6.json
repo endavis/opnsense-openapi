@@ -22,6 +22,7 @@
           "DHCPv6"
         ],
         "summary": "searchLease",
+        "description": "searchLease",
         "operationId": "DHCPv6_Leases_searchLease",
         "parameters": [],
         "requestBody": null,
@@ -62,6 +63,7 @@
           "DHCPv6"
         ],
         "summary": "searchPrefix",
+        "description": "searchPrefix",
         "operationId": "DHCPv6_Leases_searchPrefix",
         "parameters": [],
         "requestBody": null,
@@ -102,6 +104,7 @@
           "DHCPv6"
         ],
         "summary": "delLease",
+        "description": "delLease",
         "operationId": "DHCPv6_Leases_delLease",
         "parameters": [],
         "requestBody": null,
@@ -125,6 +128,7 @@
           "Core"
         ],
         "summary": "reconfigure",
+        "description": "Class HasyncController",
         "operationId": "Core_Hasync_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -161,6 +165,7 @@
           "Core"
         ],
         "summary": "tree",
+        "description": "return menu items for this user",
         "operationId": "Core_Menu_tree",
         "parameters": [],
         "requestBody": null,
@@ -177,6 +182,7 @@
           "Core"
         ],
         "summary": "search",
+        "description": "search menu items",
         "operationId": "Core_Menu_search",
         "parameters": [],
         "requestBody": null,
@@ -217,6 +223,7 @@
           "Core"
         ],
         "summary": "search",
+        "description": "Search service entries",
         "operationId": "Core_Service_search",
         "parameters": [],
         "requestBody": null,
@@ -257,6 +264,7 @@
           "Core"
         ],
         "summary": "start",
+        "description": "start a service",
         "operationId": "Core_Service_start",
         "parameters": [],
         "requestBody": null,
@@ -289,6 +297,7 @@
           "Core"
         ],
         "summary": "restart",
+        "description": "restart a service",
         "operationId": "Core_Service_restart",
         "parameters": [],
         "requestBody": null,
@@ -321,6 +330,7 @@
           "Core"
         ],
         "summary": "stop",
+        "description": "stop a service",
         "operationId": "Core_Service_stop",
         "parameters": [],
         "requestBody": null,
@@ -353,6 +363,7 @@
           "Core"
         ],
         "summary": "searchItem",
+        "description": "searchItem",
         "operationId": "Core_Tunables_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -376,6 +387,7 @@
           "Core"
         ],
         "summary": "setItem",
+        "description": "setItem",
         "operationId": "Core_Tunables_setItem",
         "parameters": [
           {
@@ -423,6 +435,7 @@
           "Core"
         ],
         "summary": "addItem",
+        "description": "addItem",
         "operationId": "Core_Tunables_addItem",
         "parameters": [],
         "requestBody": {
@@ -459,6 +472,7 @@
           "Core"
         ],
         "summary": "getItem",
+        "description": "getItem",
         "operationId": "Core_Tunables_getItem",
         "parameters": [
           {
@@ -493,6 +507,7 @@
           "Core"
         ],
         "summary": "delItem",
+        "description": "delItem",
         "operationId": "Core_Tunables_delItem",
         "parameters": [
           {
@@ -527,6 +542,7 @@
           "Core"
         ],
         "summary": "reset",
+        "description": "reset",
         "operationId": "Core_Tunables_reset",
         "parameters": [],
         "requestBody": {
@@ -563,6 +579,7 @@
           "Core"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Core_Tunables_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -599,6 +616,7 @@
           "Core"
         ],
         "summary": "providers",
+        "description": "list available providers",
         "operationId": "Core_Backup_providers",
         "parameters": [],
         "requestBody": null,
@@ -624,6 +642,7 @@
           "Core"
         ],
         "summary": "backups",
+        "description": "list available backups for selected host",
         "operationId": "Core_Backup_backups",
         "parameters": [],
         "requestBody": null,
@@ -640,6 +659,7 @@
           "Core"
         ],
         "summary": "diff",
+        "description": "diff two backups for selected host",
         "operationId": "Core_Backup_diff",
         "parameters": [],
         "requestBody": null,
@@ -656,6 +676,7 @@
           "Core"
         ],
         "summary": "deleteBackup",
+        "description": "delete local backup",
         "operationId": "Core_Backup_deleteBackup",
         "parameters": [],
         "requestBody": null,
@@ -679,6 +700,7 @@
           "Core"
         ],
         "summary": "revertBackup",
+        "description": "revert to local backup from history",
         "operationId": "Core_Backup_revertBackup",
         "parameters": [],
         "requestBody": null,
@@ -702,6 +724,7 @@
           "Core"
         ],
         "summary": "download",
+        "description": "download specified backup, when left empty the latest is offered",
         "operationId": "Core_Backup_download",
         "parameters": [],
         "requestBody": null,
@@ -727,6 +750,7 @@
           "Core"
         ],
         "summary": "isSupported",
+        "description": "isSupported",
         "operationId": "Core_Snapshots_isSupported",
         "parameters": [],
         "requestBody": null,
@@ -743,6 +767,7 @@
           "Core"
         ],
         "summary": "search",
+        "description": "search snapshots",
         "operationId": "Core_Snapshots_search",
         "parameters": [],
         "requestBody": null,
@@ -783,6 +808,7 @@
           "Core"
         ],
         "summary": "get",
+        "description": "fetch an environment by uuid, return new when not found or $uuid equals null",
         "operationId": "Core_Snapshots_get",
         "parameters": [],
         "requestBody": null,
@@ -808,6 +834,7 @@
           "Core"
         ],
         "summary": "set",
+        "description": "create a new snapshot",
         "operationId": "Core_Snapshots_set",
         "parameters": [],
         "requestBody": {
@@ -841,6 +868,7 @@
           "Core"
         ],
         "summary": "add",
+        "description": "add or clone a snapshot",
         "operationId": "Core_Snapshots_add",
         "parameters": [],
         "requestBody": {
@@ -874,6 +902,7 @@
           "Core"
         ],
         "summary": "del",
+        "description": "delete an environment by uuid",
         "operationId": "Core_Snapshots_del",
         "parameters": [],
         "requestBody": null,
@@ -897,6 +926,7 @@
           "Core"
         ],
         "summary": "activate",
+        "description": "activate a snapshot by uuid",
         "operationId": "Core_Snapshots_activate",
         "parameters": [],
         "requestBody": null,
@@ -913,6 +943,7 @@
           "Core"
         ],
         "summary": "halt",
+        "description": "Class SystemController",
         "operationId": "Core_System_halt",
         "parameters": [],
         "requestBody": null,
@@ -929,6 +960,7 @@
           "Core"
         ],
         "summary": "reboot",
+        "description": "Class SystemController",
         "operationId": "Core_System_reboot",
         "parameters": [],
         "requestBody": null,
@@ -945,6 +977,7 @@
           "Core"
         ],
         "summary": "status",
+        "description": "Class SystemController",
         "operationId": "Core_System_status",
         "parameters": [],
         "requestBody": null,
@@ -986,6 +1019,7 @@
           "Core"
         ],
         "summary": "dismissStatus",
+        "description": "Class SystemController",
         "operationId": "Core_System_dismissStatus",
         "parameters": [],
         "requestBody": null,
@@ -1027,6 +1061,7 @@
           "Core"
         ],
         "summary": "configure",
+        "description": "Class InitialSetupController",
         "operationId": "Core_InitialSetup_configure",
         "parameters": [],
         "requestBody": null,
@@ -1043,6 +1078,7 @@
           "Core"
         ],
         "summary": "version",
+        "description": "Class HasyncStatusController",
         "operationId": "Core_HasyncStatus_version",
         "parameters": [],
         "requestBody": null,
@@ -1059,6 +1095,7 @@
           "Core"
         ],
         "summary": "services",
+        "description": "Class HasyncStatusController",
         "operationId": "Core_HasyncStatus_services",
         "parameters": [],
         "requestBody": null,
@@ -1075,6 +1112,7 @@
           "Core"
         ],
         "summary": "stop",
+        "description": "Class HasyncStatusController",
         "operationId": "Core_HasyncStatus_stop",
         "parameters": [],
         "requestBody": null,
@@ -1107,6 +1145,7 @@
           "Core"
         ],
         "summary": "start",
+        "description": "Class HasyncStatusController",
         "operationId": "Core_HasyncStatus_start",
         "parameters": [],
         "requestBody": null,
@@ -1139,6 +1178,7 @@
           "Core"
         ],
         "summary": "restart",
+        "description": "Class HasyncStatusController",
         "operationId": "Core_HasyncStatus_restart",
         "parameters": [],
         "requestBody": null,
@@ -1171,6 +1211,7 @@
           "Core"
         ],
         "summary": "restartAll",
+        "description": "Class HasyncStatusController",
         "operationId": "Core_HasyncStatus_restartAll",
         "parameters": [],
         "requestBody": null,
@@ -1203,6 +1244,7 @@
           "Core"
         ],
         "summary": "check",
+        "description": "Run check for updates",
         "operationId": "Core_Firmware_check",
         "parameters": [],
         "requestBody": null,
@@ -1219,6 +1261,7 @@
           "Core"
         ],
         "summary": "status",
+        "description": "retrieve available updates",
         "operationId": "Core_Firmware_status",
         "parameters": [],
         "requestBody": null,
@@ -1260,6 +1303,7 @@
           "Core"
         ],
         "summary": "changelog",
+        "description": "Retrieve specific changelog in text and html format",
         "operationId": "Core_Firmware_changelog",
         "parameters": [],
         "requestBody": null,
@@ -1276,6 +1320,7 @@
           "Core"
         ],
         "summary": "log",
+        "description": "Retrieve upgrade log hidden in system",
         "operationId": "Core_Firmware_log",
         "parameters": [],
         "requestBody": null,
@@ -1292,6 +1337,7 @@
           "Core"
         ],
         "summary": "license",
+        "description": "Retrieve specific license for package in text format",
         "operationId": "Core_Firmware_license",
         "parameters": [],
         "requestBody": null,
@@ -1308,6 +1354,7 @@
           "Core"
         ],
         "summary": "reboot",
+        "description": "perform reboot",
         "operationId": "Core_Firmware_reboot",
         "parameters": [],
         "requestBody": null,
@@ -1324,6 +1371,7 @@
           "Core"
         ],
         "summary": "poweroff",
+        "description": "perform poweroff",
         "operationId": "Core_Firmware_poweroff",
         "parameters": [],
         "requestBody": null,
@@ -1340,6 +1388,7 @@
           "Core"
         ],
         "summary": "update",
+        "description": "perform (stable) update",
         "operationId": "Core_Firmware_update",
         "parameters": [],
         "requestBody": {
@@ -1376,6 +1425,7 @@
           "Core"
         ],
         "summary": "upgrade",
+        "description": "perform (major) upgrade",
         "operationId": "Core_Firmware_upgrade",
         "parameters": [],
         "requestBody": null,
@@ -1392,6 +1442,7 @@
           "Core"
         ],
         "summary": "cleanup",
+        "description": "run a cleanup task",
         "operationId": "Core_Firmware_cleanup",
         "parameters": [],
         "requestBody": null,
@@ -1408,6 +1459,7 @@
           "Core"
         ],
         "summary": "connection",
+        "description": "run a connection check",
         "operationId": "Core_Firmware_connection",
         "parameters": [],
         "requestBody": null,
@@ -1431,6 +1483,7 @@
           "Core"
         ],
         "summary": "health",
+        "description": "run a health check",
         "operationId": "Core_Firmware_health",
         "parameters": [],
         "requestBody": null,
@@ -1447,6 +1500,7 @@
           "Core"
         ],
         "summary": "audit",
+        "description": "run a health check",
         "operationId": "Core_Firmware_audit",
         "parameters": [],
         "requestBody": null,
@@ -1463,6 +1517,7 @@
           "Core"
         ],
         "summary": "reinstall",
+        "description": "reinstall package",
         "operationId": "Core_Firmware_reinstall",
         "parameters": [],
         "requestBody": null,
@@ -1479,6 +1534,7 @@
           "Core"
         ],
         "summary": "syncPlugins",
+        "description": "install missing configured plugins",
         "operationId": "Core_Firmware_syncPlugins",
         "parameters": [],
         "requestBody": null,
@@ -1495,6 +1551,7 @@
           "Core"
         ],
         "summary": "resyncPlugins",
+        "description": "reset missing configured plugins",
         "operationId": "Core_Firmware_resyncPlugins",
         "parameters": [],
         "requestBody": null,
@@ -1511,6 +1568,7 @@
           "Core"
         ],
         "summary": "install",
+        "description": "install package",
         "operationId": "Core_Firmware_install",
         "parameters": [],
         "requestBody": null,
@@ -1527,6 +1585,7 @@
           "Core"
         ],
         "summary": "remove",
+        "description": "remove package",
         "operationId": "Core_Firmware_remove",
         "parameters": [],
         "requestBody": null,
@@ -1543,6 +1602,7 @@
           "Core"
         ],
         "summary": "lock",
+        "description": "lock package",
         "operationId": "Core_Firmware_lock",
         "parameters": [],
         "requestBody": null,
@@ -1559,6 +1619,7 @@
           "Core"
         ],
         "summary": "unlock",
+        "description": "unlock package",
         "operationId": "Core_Firmware_unlock",
         "parameters": [],
         "requestBody": null,
@@ -1575,6 +1636,7 @@
           "Core"
         ],
         "summary": "running",
+        "description": "retrieve execution status",
         "operationId": "Core_Firmware_running",
         "parameters": [],
         "requestBody": null,
@@ -1591,6 +1653,7 @@
           "Core"
         ],
         "summary": "upgradestatus",
+        "description": "retrieve upgrade status (and log file of current process)",
         "operationId": "Core_Firmware_upgradestatus",
         "parameters": [],
         "requestBody": null,
@@ -1632,6 +1695,7 @@
           "Core"
         ],
         "summary": "details",
+        "description": "query package details",
         "operationId": "Core_Firmware_details",
         "parameters": [],
         "requestBody": null,
@@ -1648,6 +1712,7 @@
           "Core"
         ],
         "summary": "info",
+        "description": "list local and remote packages",
         "operationId": "Core_Firmware_info",
         "parameters": [],
         "requestBody": null,
@@ -1673,6 +1738,7 @@
           "Core"
         ],
         "summary": "getOptions",
+        "description": "list firmware mirror and flavour options",
         "operationId": "Core_Firmware_getOptions",
         "parameters": [],
         "requestBody": null,
@@ -1701,6 +1767,7 @@
           "Core"
         ],
         "summary": "set",
+        "description": "set firmware configuration options",
         "operationId": "Core_Firmware_set",
         "parameters": [],
         "requestBody": {
@@ -1737,6 +1804,7 @@
           "Core"
         ],
         "summary": "getDashboard",
+        "description": "getDashboard",
         "operationId": "Core_Dashboard_getDashboard",
         "parameters": [],
         "requestBody": null,
@@ -1762,6 +1830,7 @@
           "Core"
         ],
         "summary": "saveWidgets",
+        "description": "saveWidgets",
         "operationId": "Core_Dashboard_saveWidgets",
         "parameters": [],
         "requestBody": null,
@@ -1787,6 +1856,7 @@
           "Core"
         ],
         "summary": "restoreDefaults",
+        "description": "restoreDefaults",
         "operationId": "Core_Dashboard_restoreDefaults",
         "parameters": [],
         "requestBody": null,
@@ -1803,6 +1873,7 @@
           "Core"
         ],
         "summary": "productInfoFeed",
+        "description": "productInfoFeed",
         "operationId": "Core_Dashboard_productInfoFeed",
         "parameters": [],
         "requestBody": null,
@@ -1828,6 +1899,7 @@
           "Core"
         ],
         "summary": "picture",
+        "description": "picture",
         "operationId": "Core_Dashboard_picture",
         "parameters": [],
         "requestBody": null,
@@ -1844,6 +1916,7 @@
           "IPsec"
         ],
         "summary": "search",
+        "description": "Class ManualSPD",
         "operationId": "IPsec_ManualSPD_search",
         "parameters": [],
         "requestBody": null,
@@ -1867,6 +1940,7 @@
           "IPsec"
         ],
         "summary": "set",
+        "description": "Class ManualSPD",
         "operationId": "IPsec_ManualSPD_set",
         "parameters": [],
         "requestBody": {
@@ -1903,6 +1977,7 @@
           "IPsec"
         ],
         "summary": "add",
+        "description": "Class ManualSPD",
         "operationId": "IPsec_ManualSPD_add",
         "parameters": [],
         "requestBody": {
@@ -1939,6 +2014,7 @@
           "IPsec"
         ],
         "summary": "get",
+        "description": "Class ManualSPD",
         "operationId": "IPsec_ManualSPD_get",
         "parameters": [],
         "requestBody": null,
@@ -1967,6 +2043,7 @@
           "IPsec"
         ],
         "summary": "toggle",
+        "description": "Class ManualSPD",
         "operationId": "IPsec_ManualSPD_toggle",
         "parameters": [],
         "requestBody": null,
@@ -1990,6 +2067,7 @@
           "IPsec"
         ],
         "summary": "del",
+        "description": "Class ManualSPD",
         "operationId": "IPsec_ManualSPD_del",
         "parameters": [],
         "requestBody": null,
@@ -2013,6 +2091,7 @@
           "IPsec"
         ],
         "summary": "search",
+        "description": "Class PoolsController",
         "operationId": "IPsec_Pools_search",
         "parameters": [],
         "requestBody": null,
@@ -2036,6 +2115,7 @@
           "IPsec"
         ],
         "summary": "set",
+        "description": "Class PoolsController",
         "operationId": "IPsec_Pools_set",
         "parameters": [],
         "requestBody": {
@@ -2072,6 +2152,7 @@
           "IPsec"
         ],
         "summary": "add",
+        "description": "Class PoolsController",
         "operationId": "IPsec_Pools_add",
         "parameters": [],
         "requestBody": {
@@ -2108,6 +2189,7 @@
           "IPsec"
         ],
         "summary": "get",
+        "description": "Class PoolsController",
         "operationId": "IPsec_Pools_get",
         "parameters": [],
         "requestBody": null,
@@ -2136,6 +2218,7 @@
           "IPsec"
         ],
         "summary": "toggle",
+        "description": "Class PoolsController",
         "operationId": "IPsec_Pools_toggle",
         "parameters": [],
         "requestBody": null,
@@ -2159,6 +2242,7 @@
           "IPsec"
         ],
         "summary": "del",
+        "description": "Class PoolsController",
         "operationId": "IPsec_Pools_del",
         "parameters": [],
         "requestBody": null,
@@ -2182,6 +2266,7 @@
           "IPsec"
         ],
         "summary": "search",
+        "description": "Search SAD entries",
         "operationId": "IPsec_Sad_search",
         "parameters": [],
         "requestBody": null,
@@ -2205,6 +2290,7 @@
           "IPsec"
         ],
         "summary": "delete",
+        "description": "Remove an SPD entry",
         "operationId": "IPsec_Sad_delete",
         "parameters": [],
         "requestBody": null,
@@ -2228,6 +2314,7 @@
           "IPsec"
         ],
         "summary": "searchPhase1",
+        "description": "search phase 1 entries in legacy config returning a standard structure as we use in the mvc variant",
         "operationId": "IPsec_Tunnel_searchPhase1",
         "parameters": [],
         "requestBody": null,
@@ -2251,6 +2338,7 @@
           "IPsec"
         ],
         "summary": "searchPhase2",
+        "description": "search phase 2 entries in legacy config returning a standard structure as we use in the mvc variant",
         "operationId": "IPsec_Tunnel_searchPhase2",
         "parameters": [],
         "requestBody": null,
@@ -2274,6 +2362,7 @@
           "IPsec"
         ],
         "summary": "delPhase1",
+        "description": "delete phase 1 including associated phase 2 entries",
         "operationId": "IPsec_Tunnel_delPhase1",
         "parameters": [],
         "requestBody": null,
@@ -2297,6 +2386,7 @@
           "IPsec"
         ],
         "summary": "togglePhase1",
+        "description": "toggle if phase 1 is enabled",
         "operationId": "IPsec_Tunnel_togglePhase1",
         "parameters": [],
         "requestBody": null,
@@ -2320,6 +2410,7 @@
           "IPsec"
         ],
         "summary": "delPhase2",
+        "description": "delete phase 2 entry",
         "operationId": "IPsec_Tunnel_delPhase2",
         "parameters": [],
         "requestBody": null,
@@ -2343,6 +2434,7 @@
           "IPsec"
         ],
         "summary": "togglePhase2",
+        "description": "toggle if phase 2 is enabled",
         "operationId": "IPsec_Tunnel_togglePhase2",
         "parameters": [],
         "requestBody": null,
@@ -2366,6 +2458,7 @@
           "IPsec"
         ],
         "summary": "toggle",
+        "description": "toggle if IPsec is enabled",
         "operationId": "IPsec_Tunnel_toggle",
         "parameters": [],
         "requestBody": null,
@@ -2389,6 +2482,7 @@
           "IPsec"
         ],
         "summary": "searchItem",
+        "description": "Search key pairs",
         "operationId": "IPsec_KeyPairs_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -2412,6 +2506,7 @@
           "IPsec"
         ],
         "summary": "setItem",
+        "description": "Update key pair with given properties",
         "operationId": "IPsec_KeyPairs_setItem",
         "parameters": [
           {
@@ -2459,6 +2554,7 @@
           "IPsec"
         ],
         "summary": "addItem",
+        "description": "Add new key pair with given properties",
         "operationId": "IPsec_KeyPairs_addItem",
         "parameters": [],
         "requestBody": {
@@ -2495,6 +2591,7 @@
           "IPsec"
         ],
         "summary": "getItem",
+        "description": "Retrieve key pair or return defaults for new one",
         "operationId": "IPsec_KeyPairs_getItem",
         "parameters": [
           {
@@ -2529,6 +2626,7 @@
           "IPsec"
         ],
         "summary": "delItem",
+        "description": "Delete key pair by UUID",
         "operationId": "IPsec_KeyPairs_delItem",
         "parameters": [
           {
@@ -2563,6 +2661,7 @@
           "IPsec"
         ],
         "summary": "genKeyPair",
+        "description": "Generate keypair",
         "operationId": "IPsec_KeyPairs_genKeyPair",
         "parameters": [],
         "requestBody": null,
@@ -2579,6 +2678,7 @@
           "IPsec"
         ],
         "summary": "search",
+        "description": "Search leases",
         "operationId": "IPsec_Leases_search",
         "parameters": [],
         "requestBody": null,
@@ -2602,6 +2702,7 @@
           "IPsec"
         ],
         "summary": "pools",
+        "description": "list pools",
         "operationId": "IPsec_Leases_pools",
         "parameters": [],
         "requestBody": null,
@@ -2618,6 +2719,7 @@
           "IPsec"
         ],
         "summary": "searchConnection",
+        "description": "searchConnection",
         "operationId": "IPsec_Connections_searchConnection",
         "parameters": [],
         "requestBody": null,
@@ -2641,6 +2743,7 @@
           "IPsec"
         ],
         "summary": "setConnection",
+        "description": "setConnection",
         "operationId": "IPsec_Connections_setConnection",
         "parameters": [],
         "requestBody": null,
@@ -2664,6 +2767,7 @@
           "IPsec"
         ],
         "summary": "addConnection",
+        "description": "addConnection",
         "operationId": "IPsec_Connections_addConnection",
         "parameters": [],
         "requestBody": null,
@@ -2687,6 +2791,7 @@
           "IPsec"
         ],
         "summary": "getConnection",
+        "description": "getConnection",
         "operationId": "IPsec_Connections_getConnection",
         "parameters": [],
         "requestBody": null,
@@ -2710,6 +2815,7 @@
           "IPsec"
         ],
         "summary": "toggleConnection",
+        "description": "toggleConnection",
         "operationId": "IPsec_Connections_toggleConnection",
         "parameters": [],
         "requestBody": null,
@@ -2733,6 +2839,7 @@
           "IPsec"
         ],
         "summary": "connectionExists",
+        "description": "connectionExists",
         "operationId": "IPsec_Connections_connectionExists",
         "parameters": [],
         "requestBody": null,
@@ -2756,6 +2863,7 @@
           "IPsec"
         ],
         "summary": "delConnection",
+        "description": "delConnection",
         "operationId": "IPsec_Connections_delConnection",
         "parameters": [],
         "requestBody": null,
@@ -2779,6 +2887,7 @@
           "IPsec"
         ],
         "summary": "searchLocal",
+        "description": "searchLocal",
         "operationId": "IPsec_Connections_searchLocal",
         "parameters": [],
         "requestBody": null,
@@ -2802,6 +2911,7 @@
           "IPsec"
         ],
         "summary": "getLocal",
+        "description": "getLocal",
         "operationId": "IPsec_Connections_getLocal",
         "parameters": [
           {
@@ -2841,6 +2951,7 @@
           "IPsec"
         ],
         "summary": "setLocal",
+        "description": "setLocal",
         "operationId": "IPsec_Connections_setLocal",
         "parameters": [
           {
@@ -2888,6 +2999,7 @@
           "IPsec"
         ],
         "summary": "addLocal",
+        "description": "addLocal",
         "operationId": "IPsec_Connections_addLocal",
         "parameters": [],
         "requestBody": {
@@ -2924,6 +3036,7 @@
           "IPsec"
         ],
         "summary": "toggleLocal",
+        "description": "toggleLocal",
         "operationId": "IPsec_Connections_toggleLocal",
         "parameters": [
           {
@@ -2958,6 +3071,7 @@
           "IPsec"
         ],
         "summary": "delLocal",
+        "description": "delLocal",
         "operationId": "IPsec_Connections_delLocal",
         "parameters": [
           {
@@ -2992,6 +3106,7 @@
           "IPsec"
         ],
         "summary": "searchRemote",
+        "description": "searchRemote",
         "operationId": "IPsec_Connections_searchRemote",
         "parameters": [],
         "requestBody": null,
@@ -3015,6 +3130,7 @@
           "IPsec"
         ],
         "summary": "getRemote",
+        "description": "getRemote",
         "operationId": "IPsec_Connections_getRemote",
         "parameters": [],
         "requestBody": null,
@@ -3043,6 +3159,7 @@
           "IPsec"
         ],
         "summary": "setRemote",
+        "description": "setRemote",
         "operationId": "IPsec_Connections_setRemote",
         "parameters": [],
         "requestBody": {
@@ -3079,6 +3196,7 @@
           "IPsec"
         ],
         "summary": "addRemote",
+        "description": "addRemote",
         "operationId": "IPsec_Connections_addRemote",
         "parameters": [],
         "requestBody": {
@@ -3115,6 +3233,7 @@
           "IPsec"
         ],
         "summary": "toggleRemote",
+        "description": "toggleRemote",
         "operationId": "IPsec_Connections_toggleRemote",
         "parameters": [],
         "requestBody": null,
@@ -3138,6 +3257,7 @@
           "IPsec"
         ],
         "summary": "delRemote",
+        "description": "delRemote",
         "operationId": "IPsec_Connections_delRemote",
         "parameters": [],
         "requestBody": null,
@@ -3161,6 +3281,7 @@
           "IPsec"
         ],
         "summary": "searchChild",
+        "description": "searchChild",
         "operationId": "IPsec_Connections_searchChild",
         "parameters": [],
         "requestBody": null,
@@ -3184,6 +3305,7 @@
           "IPsec"
         ],
         "summary": "getChild",
+        "description": "getChild",
         "operationId": "IPsec_Connections_getChild",
         "parameters": [],
         "requestBody": null,
@@ -3212,6 +3334,7 @@
           "IPsec"
         ],
         "summary": "setChild",
+        "description": "setChild",
         "operationId": "IPsec_Connections_setChild",
         "parameters": [],
         "requestBody": {
@@ -3248,6 +3371,7 @@
           "IPsec"
         ],
         "summary": "addChild",
+        "description": "addChild",
         "operationId": "IPsec_Connections_addChild",
         "parameters": [],
         "requestBody": {
@@ -3284,6 +3408,7 @@
           "IPsec"
         ],
         "summary": "toggleChild",
+        "description": "toggleChild",
         "operationId": "IPsec_Connections_toggleChild",
         "parameters": [],
         "requestBody": null,
@@ -3307,6 +3432,7 @@
           "IPsec"
         ],
         "summary": "delChild",
+        "description": "delChild",
         "operationId": "IPsec_Connections_delChild",
         "parameters": [],
         "requestBody": null,
@@ -3330,6 +3456,7 @@
           "IPsec"
         ],
         "summary": "isEnabled",
+        "description": "is IPsec enabled",
         "operationId": "IPsec_Connections_isEnabled",
         "parameters": [],
         "requestBody": null,
@@ -3363,6 +3490,7 @@
           "IPsec"
         ],
         "summary": "toggle",
+        "description": "toggle if IPsec is enabled",
         "operationId": "IPsec_Connections_toggle",
         "parameters": [],
         "requestBody": null,
@@ -3386,6 +3514,7 @@
           "IPsec"
         ],
         "summary": "swanctl",
+        "description": "Fetch the contents of swanctl.conf",
         "operationId": "IPsec_Connections_swanctl",
         "parameters": [],
         "requestBody": null,
@@ -3402,6 +3531,7 @@
           "IPsec"
         ],
         "summary": "search",
+        "description": "Class VtiController",
         "operationId": "IPsec_Vti_search",
         "parameters": [],
         "requestBody": null,
@@ -3425,6 +3555,7 @@
           "IPsec"
         ],
         "summary": "set",
+        "description": "Class VtiController",
         "operationId": "IPsec_Vti_set",
         "parameters": [],
         "requestBody": {
@@ -3461,6 +3592,7 @@
           "IPsec"
         ],
         "summary": "add",
+        "description": "Class VtiController",
         "operationId": "IPsec_Vti_add",
         "parameters": [],
         "requestBody": {
@@ -3497,6 +3629,7 @@
           "IPsec"
         ],
         "summary": "get",
+        "description": "Class VtiController",
         "operationId": "IPsec_Vti_get",
         "parameters": [],
         "requestBody": null,
@@ -3525,6 +3658,7 @@
           "IPsec"
         ],
         "summary": "toggle",
+        "description": "Class VtiController",
         "operationId": "IPsec_Vti_toggle",
         "parameters": [],
         "requestBody": null,
@@ -3548,6 +3682,7 @@
           "IPsec"
         ],
         "summary": "del",
+        "description": "Class VtiController",
         "operationId": "IPsec_Vti_del",
         "parameters": [],
         "requestBody": null,
@@ -3571,6 +3706,7 @@
           "IPsec"
         ],
         "summary": "status",
+        "description": "Returns the status of the legacy subsystem, which currently only includes a boolean specifying if the subsystem",
         "operationId": "IPsec_LegacySubsystem_status",
         "parameters": [],
         "requestBody": null,
@@ -3612,6 +3748,7 @@
           "IPsec"
         ],
         "summary": "applyConfig",
+        "description": "Apply the IPsec configuration using the legacy subsystem and return a message describing the result",
         "operationId": "IPsec_LegacySubsystem_applyConfig",
         "parameters": [],
         "requestBody": null,
@@ -3635,6 +3772,7 @@
           "IPsec"
         ],
         "summary": "get",
+        "description": "get",
         "operationId": "IPsec_Settings_get",
         "parameters": [],
         "requestBody": null,
@@ -3663,6 +3801,7 @@
           "IPsec"
         ],
         "summary": "searchItem",
+        "description": "Search preSharedKeys",
         "operationId": "IPsec_PreSharedKeys_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -3686,6 +3825,7 @@
           "IPsec"
         ],
         "summary": "setItem",
+        "description": "Update preSharedKey with given properties",
         "operationId": "IPsec_PreSharedKeys_setItem",
         "parameters": [
           {
@@ -3733,6 +3873,7 @@
           "IPsec"
         ],
         "summary": "addItem",
+        "description": "Add new preSharedKey with given properties",
         "operationId": "IPsec_PreSharedKeys_addItem",
         "parameters": [],
         "requestBody": {
@@ -3769,6 +3910,7 @@
           "IPsec"
         ],
         "summary": "getItem",
+        "description": "Retrieve key pair or return defaults for new one",
         "operationId": "IPsec_PreSharedKeys_getItem",
         "parameters": [
           {
@@ -3803,6 +3945,7 @@
           "IPsec"
         ],
         "summary": "delItem",
+        "description": "Delete preSharedKey by UUID",
         "operationId": "IPsec_PreSharedKeys_delItem",
         "parameters": [
           {
@@ -3837,6 +3980,7 @@
           "IPsec"
         ],
         "summary": "search",
+        "description": "Search SPD entries",
         "operationId": "IPsec_Spd_search",
         "parameters": [],
         "requestBody": null,
@@ -3860,6 +4004,7 @@
           "IPsec"
         ],
         "summary": "delete",
+        "description": "Remove an SPD entry",
         "operationId": "IPsec_Spd_delete",
         "parameters": [],
         "requestBody": null,
@@ -3883,6 +4028,7 @@
           "IPsec"
         ],
         "summary": "searchPhase1",
+        "description": "Search phase 1 session entries",
         "operationId": "IPsec_Sessions_searchPhase1",
         "parameters": [],
         "requestBody": null,
@@ -3906,6 +4052,7 @@
           "IPsec"
         ],
         "summary": "searchPhase2",
+        "description": "Search phase 2 session entries",
         "operationId": "IPsec_Sessions_searchPhase2",
         "parameters": [],
         "requestBody": null,
@@ -3929,6 +4076,7 @@
           "IPsec"
         ],
         "summary": "connect",
+        "description": "connect a session",
         "operationId": "IPsec_Sessions_connect",
         "parameters": [],
         "requestBody": null,
@@ -3952,6 +4100,7 @@
           "IPsec"
         ],
         "summary": "disconnect",
+        "description": "disconnect a session",
         "operationId": "IPsec_Sessions_disconnect",
         "parameters": [],
         "requestBody": null,
@@ -3975,6 +4124,7 @@
           "Routes"
         ],
         "summary": "searchroute",
+        "description": "search routes",
         "operationId": "Routes_Routes_searchroute",
         "parameters": [],
         "requestBody": null,
@@ -4015,6 +4165,7 @@
           "Routes"
         ],
         "summary": "setroute",
+        "description": "Update route with given properties",
         "operationId": "Routes_Routes_setroute",
         "parameters": [
           {
@@ -4059,6 +4210,7 @@
           "Routes"
         ],
         "summary": "addroute",
+        "description": "Add new route and set with attributes from post",
         "operationId": "Routes_Routes_addroute",
         "parameters": [],
         "requestBody": {
@@ -4092,6 +4244,7 @@
           "Routes"
         ],
         "summary": "getroute",
+        "description": "Retrieve route settings or return defaults for new one",
         "operationId": "Routes_Routes_getroute",
         "parameters": [
           {
@@ -4128,6 +4281,7 @@
           "Routes"
         ],
         "summary": "delroute",
+        "description": "Delete route by uuid, save contents to tmp for removal on apply",
         "operationId": "Routes_Routes_delroute",
         "parameters": [
           {
@@ -4162,6 +4316,7 @@
           "Routes"
         ],
         "summary": "toggleroute",
+        "description": "toggle, we can not use our default action here since enabled/disabled are swapped",
         "operationId": "Routes_Routes_toggleroute",
         "parameters": [
           {
@@ -4196,6 +4351,7 @@
           "Routes"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure routes",
         "operationId": "Routes_Routes_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -4232,6 +4388,7 @@
           "Routes"
         ],
         "summary": "status",
+        "description": "status",
         "operationId": "Routes_Gateway_status",
         "parameters": [],
         "requestBody": null,
@@ -4273,6 +4430,7 @@
           "Routing"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Routing_Settings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -4309,6 +4467,7 @@
           "Routing"
         ],
         "summary": "searchGateway",
+        "description": "searchGateway",
         "operationId": "Routing_Settings_searchGateway",
         "parameters": [],
         "requestBody": null,
@@ -4349,6 +4508,7 @@
           "Routing"
         ],
         "summary": "getGateway",
+        "description": "getGateway",
         "operationId": "Routing_Settings_getGateway",
         "parameters": [],
         "requestBody": null,
@@ -4374,6 +4534,7 @@
           "Routing"
         ],
         "summary": "setGateway",
+        "description": "setGateway",
         "operationId": "Routing_Settings_setGateway",
         "parameters": [],
         "requestBody": {
@@ -4407,6 +4568,7 @@
           "Routing"
         ],
         "summary": "addGateway",
+        "description": "addGateway",
         "operationId": "Routing_Settings_addGateway",
         "parameters": [],
         "requestBody": {
@@ -4440,6 +4602,7 @@
           "Routing"
         ],
         "summary": "delGateway",
+        "description": "delGateway",
         "operationId": "Routing_Settings_delGateway",
         "parameters": [],
         "requestBody": null,
@@ -4463,6 +4626,7 @@
           "Routing"
         ],
         "summary": "toggleGateway",
+        "description": "toggleGateway",
         "operationId": "Routing_Settings_toggleGateway",
         "parameters": [],
         "requestBody": null,
@@ -4486,6 +4650,7 @@
           "Diagnostics"
         ],
         "summary": "log",
+        "description": "retrieve firewall log",
         "operationId": "Diagnostics_Firewall_log",
         "parameters": [],
         "requestBody": null,
@@ -4502,6 +4667,7 @@
           "Diagnostics"
         ],
         "summary": "streamLog",
+        "description": "retrieve firewall log",
         "operationId": "Diagnostics_Firewall_streamLog",
         "parameters": [],
         "requestBody": null,
@@ -4518,6 +4684,7 @@
           "Diagnostics"
         ],
         "summary": "logFilters",
+        "description": "retrieve firewall log filter choices",
         "operationId": "Diagnostics_Firewall_logFilters",
         "parameters": [],
         "requestBody": null,
@@ -4534,6 +4701,7 @@
           "Diagnostics"
         ],
         "summary": "stats",
+        "description": "retrieve firewall stats",
         "operationId": "Diagnostics_Firewall_stats",
         "parameters": [],
         "requestBody": null,
@@ -4559,6 +4727,7 @@
           "Diagnostics"
         ],
         "summary": "queryStates",
+        "description": "query pf states",
         "operationId": "Diagnostics_Firewall_queryStates",
         "parameters": [],
         "requestBody": null,
@@ -4575,6 +4744,7 @@
           "Diagnostics"
         ],
         "summary": "queryPfTop",
+        "description": "query pftop",
         "operationId": "Diagnostics_Firewall_queryPfTop",
         "parameters": [],
         "requestBody": null,
@@ -4591,6 +4761,7 @@
           "Diagnostics"
         ],
         "summary": "delState",
+        "description": "delete / drop a specific state by state+creator id",
         "operationId": "Diagnostics_Firewall_delState",
         "parameters": [],
         "requestBody": null,
@@ -4614,6 +4785,7 @@
           "Diagnostics"
         ],
         "summary": "killStates",
+        "description": "drop pf states by filter and/or rule id",
         "operationId": "Diagnostics_Firewall_killStates",
         "parameters": [],
         "requestBody": null,
@@ -4637,6 +4809,7 @@
           "Diagnostics"
         ],
         "summary": "listRuleIds",
+        "description": "return rule'ids and descriptions from running config",
         "operationId": "Diagnostics_Firewall_listRuleIds",
         "parameters": [],
         "requestBody": null,
@@ -4662,6 +4835,7 @@
           "Diagnostics"
         ],
         "summary": "flushStates",
+        "description": "flush all pf states",
         "operationId": "Diagnostics_Firewall_flushStates",
         "parameters": [],
         "requestBody": null,
@@ -4685,6 +4859,7 @@
           "Diagnostics"
         ],
         "summary": "flushSources",
+        "description": "flush pf source tracking",
         "operationId": "Diagnostics_Firewall_flushSources",
         "parameters": [],
         "requestBody": null,
@@ -4708,6 +4883,7 @@
           "Diagnostics"
         ],
         "summary": "pfStatistics",
+        "description": "retrieve various pf statistics",
         "operationId": "Diagnostics_Firewall_pfStatistics",
         "parameters": [],
         "requestBody": null,
@@ -4724,6 +4900,7 @@
           "Diagnostics"
         ],
         "summary": "pfStates",
+        "description": "retrieve pf state amount and states limit",
         "operationId": "Diagnostics_Firewall_pfStates",
         "parameters": [],
         "requestBody": null,
@@ -4740,6 +4917,7 @@
           "Diagnostics"
         ],
         "summary": "getInterfaceNames",
+        "description": "retrieve interface name mapping",
         "operationId": "Diagnostics_Interface_getInterfaceNames",
         "parameters": [],
         "requestBody": null,
@@ -4765,6 +4943,7 @@
           "Diagnostics"
         ],
         "summary": "getArp",
+        "description": "retrieve system arp table contents",
         "operationId": "Diagnostics_Interface_getArp",
         "parameters": [],
         "requestBody": null,
@@ -4790,6 +4969,7 @@
           "Diagnostics"
         ],
         "summary": "searchArp",
+        "description": "search wrapper around getArpAction",
         "operationId": "Diagnostics_Interface_searchArp",
         "parameters": [],
         "requestBody": null,
@@ -4830,6 +5010,7 @@
           "Diagnostics"
         ],
         "summary": "flushArp",
+        "description": "retrieve system arp table contents",
         "operationId": "Diagnostics_Interface_flushArp",
         "parameters": [],
         "requestBody": null,
@@ -4853,6 +5034,7 @@
           "Diagnostics"
         ],
         "summary": "getNdp",
+        "description": "retrieve system ndp table contents",
         "operationId": "Diagnostics_Interface_getNdp",
         "parameters": [],
         "requestBody": null,
@@ -4878,6 +5060,7 @@
           "Diagnostics"
         ],
         "summary": "searchNdp",
+        "description": "search wrapper around getNdpAction",
         "operationId": "Diagnostics_Interface_searchNdp",
         "parameters": [],
         "requestBody": null,
@@ -4918,6 +5101,7 @@
           "Diagnostics"
         ],
         "summary": "getRoutes",
+        "description": "retrieve system routing table",
         "operationId": "Diagnostics_Interface_getRoutes",
         "parameters": [
           {
@@ -4954,6 +5138,7 @@
           "Diagnostics"
         ],
         "summary": "delRoute",
+        "description": "drop route",
         "operationId": "Diagnostics_Interface_delRoute",
         "parameters": [
           {
@@ -4988,6 +5173,7 @@
           "Diagnostics"
         ],
         "summary": "getProtocolStatistics",
+        "description": "retrieve system-wide statistics for each network protocol",
         "operationId": "Diagnostics_Interface_getProtocolStatistics",
         "parameters": [],
         "requestBody": null,
@@ -5013,6 +5199,7 @@
           "Diagnostics"
         ],
         "summary": "getInterfaceStatistics",
+        "description": "retrieve system-wide statistics for each network adapter",
         "operationId": "Diagnostics_Interface_getInterfaceStatistics",
         "parameters": [],
         "requestBody": null,
@@ -5038,6 +5225,7 @@
           "Diagnostics"
         ],
         "summary": "getInterfaceConfig",
+        "description": "retrieve status/config for each network adapter",
         "operationId": "Diagnostics_Interface_getInterfaceConfig",
         "parameters": [],
         "requestBody": null,
@@ -5063,6 +5251,7 @@
           "Diagnostics"
         ],
         "summary": "getVipStatus",
+        "description": "retrieve virtual ip status (carp)",
         "operationId": "Diagnostics_Interface_getVipStatus",
         "parameters": [],
         "requestBody": null,
@@ -5104,6 +5293,7 @@
           "Diagnostics"
         ],
         "summary": "CarpStatus",
+        "description": "set new carp node status (enable, disable, maintenance)",
         "operationId": "Diagnostics_Interface_CarpStatus",
         "parameters": [],
         "requestBody": null,
@@ -5145,6 +5335,7 @@
           "Diagnostics"
         ],
         "summary": "getPfsyncNodes",
+        "description": "set new carp node status (enable, disable, maintenance)",
         "operationId": "Diagnostics_Interface_getPfsyncNodes",
         "parameters": [],
         "requestBody": null,
@@ -5170,6 +5361,7 @@
           "Diagnostics"
         ],
         "summary": "getSocketStatistics",
+        "description": "retrieve system-wide socket statistics (merge netstat with sockstat)",
         "operationId": "Diagnostics_Interface_getSocketStatistics",
         "parameters": [],
         "requestBody": null,
@@ -5195,6 +5387,7 @@
           "Diagnostics"
         ],
         "summary": "getMemoryStatistics",
+        "description": "retrieve statistics recorded by the memory management routines",
         "operationId": "Diagnostics_Interface_getMemoryStatistics",
         "parameters": [],
         "requestBody": null,
@@ -5220,6 +5413,7 @@
           "Diagnostics"
         ],
         "summary": "getBpfStatistics",
+        "description": "retrieve bpf(4) peers statistics",
         "operationId": "Diagnostics_Interface_getBpfStatistics",
         "parameters": [],
         "requestBody": null,
@@ -5245,6 +5439,7 @@
           "Diagnostics"
         ],
         "summary": "getNetisrStatistics",
+        "description": "retrieve netisr(9) statistics",
         "operationId": "Diagnostics_Interface_getNetisrStatistics",
         "parameters": [],
         "requestBody": null,
@@ -5270,6 +5465,7 @@
           "Diagnostics"
         ],
         "summary": "getActivity",
+        "description": "retrieve system activity (top)",
         "operationId": "Diagnostics_Activity_getActivity",
         "parameters": [],
         "requestBody": null,
@@ -5295,6 +5491,7 @@
           "Diagnostics"
         ],
         "summary": "set",
+        "description": "Copyright (C) 2023 Deciso B.V.",
         "operationId": "Diagnostics_Portprobe_set",
         "parameters": [],
         "requestBody": {
@@ -5331,6 +5528,7 @@
           "Diagnostics"
         ],
         "summary": "set",
+        "description": "Copyright (C) 2023 Deciso B.V.",
         "operationId": "Diagnostics_Traceroute_set",
         "parameters": [],
         "requestBody": {
@@ -5367,6 +5565,7 @@
           "Diagnostics"
         ],
         "summary": "memory",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_memory",
         "parameters": [],
         "requestBody": null,
@@ -5383,6 +5582,7 @@
           "Diagnostics"
         ],
         "summary": "systemInformation",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemInformation",
         "parameters": [],
         "requestBody": null,
@@ -5408,6 +5608,7 @@
           "Diagnostics"
         ],
         "summary": "systemTime",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemTime",
         "parameters": [],
         "requestBody": null,
@@ -5424,6 +5625,7 @@
           "Diagnostics"
         ],
         "summary": "systemResources",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemResources",
         "parameters": [],
         "requestBody": null,
@@ -5440,6 +5642,7 @@
           "Diagnostics"
         ],
         "summary": "systemDisk",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemDisk",
         "parameters": [],
         "requestBody": null,
@@ -5456,6 +5659,7 @@
           "Diagnostics"
         ],
         "summary": "systemMbuf",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemMbuf",
         "parameters": [],
         "requestBody": null,
@@ -5472,6 +5676,7 @@
           "Diagnostics"
         ],
         "summary": "systemSwap",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemSwap",
         "parameters": [],
         "requestBody": null,
@@ -5488,6 +5693,7 @@
           "Diagnostics"
         ],
         "summary": "systemTemperature",
+        "description": "Class SystemController",
         "operationId": "Diagnostics_System_systemTemperature",
         "parameters": [],
         "requestBody": null,
@@ -5504,6 +5710,7 @@
           "Diagnostics"
         ],
         "summary": "isEnabled",
+        "description": "isEnabled",
         "operationId": "Diagnostics_Netflow_isEnabled",
         "parameters": [],
         "requestBody": null,
@@ -5537,6 +5744,7 @@
           "Diagnostics"
         ],
         "summary": "getconfig",
+        "description": "retrieve Netflow settings",
         "operationId": "Diagnostics_Netflow_getconfig",
         "parameters": [],
         "requestBody": null,
@@ -5565,6 +5773,7 @@
           "Diagnostics"
         ],
         "summary": "setconfig",
+        "description": "update netflow configuration fields",
         "operationId": "Diagnostics_Netflow_setconfig",
         "parameters": [],
         "requestBody": {
@@ -5601,6 +5810,7 @@
           "Diagnostics"
         ],
         "summary": "reconfigure",
+        "description": "configure start/stop netflow",
         "operationId": "Diagnostics_Netflow_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -5637,6 +5847,7 @@
           "Diagnostics"
         ],
         "summary": "status",
+        "description": "request netflow status",
         "operationId": "Diagnostics_Netflow_status",
         "parameters": [],
         "requestBody": null,
@@ -5678,6 +5889,7 @@
           "Diagnostics"
         ],
         "summary": "cacheStats",
+        "description": "Retrieve netflow cache statistics",
         "operationId": "Diagnostics_Netflow_cacheStats",
         "parameters": [],
         "requestBody": null,
@@ -5703,6 +5915,7 @@
           "Diagnostics"
         ],
         "summary": "Interface",
+        "description": "retrieve interface traffic stats",
         "operationId": "Diagnostics_Traffic_Interface",
         "parameters": [],
         "requestBody": null,
@@ -5719,6 +5932,7 @@
           "Diagnostics"
         ],
         "summary": "stream",
+        "description": "retrieve interface traffic stats",
         "operationId": "Diagnostics_Traffic_stream",
         "parameters": [],
         "requestBody": null,
@@ -5735,6 +5949,7 @@
           "Diagnostics"
         ],
         "summary": "Top",
+        "description": "retrieve interface top traffic hosts",
         "operationId": "Diagnostics_Traffic_Top",
         "parameters": [],
         "requestBody": null,
@@ -5751,6 +5966,7 @@
           "Diagnostics"
         ],
         "summary": "set",
+        "description": "set / create capture job",
         "operationId": "Diagnostics_PacketCapture_set",
         "parameters": [],
         "requestBody": {
@@ -5787,6 +6003,7 @@
           "Diagnostics"
         ],
         "summary": "start",
+        "description": "start capture job",
         "operationId": "Diagnostics_PacketCapture_start",
         "parameters": [],
         "requestBody": null,
@@ -5819,6 +6036,7 @@
           "Diagnostics"
         ],
         "summary": "stop",
+        "description": "stop capture job",
         "operationId": "Diagnostics_PacketCapture_stop",
         "parameters": [],
         "requestBody": null,
@@ -5851,6 +6069,7 @@
           "Diagnostics"
         ],
         "summary": "remove",
+        "description": "remove capture job",
         "operationId": "Diagnostics_PacketCapture_remove",
         "parameters": [],
         "requestBody": null,
@@ -5867,6 +6086,7 @@
           "Diagnostics"
         ],
         "summary": "view",
+        "description": "view capture",
         "operationId": "Diagnostics_PacketCapture_view",
         "parameters": [],
         "requestBody": null,
@@ -5883,6 +6103,7 @@
           "Diagnostics"
         ],
         "summary": "download",
+        "description": "download pcap(s)",
         "operationId": "Diagnostics_PacketCapture_download",
         "parameters": [],
         "requestBody": null,
@@ -5908,6 +6129,7 @@
           "Diagnostics"
         ],
         "summary": "macInfo",
+        "description": "fetch mac info",
         "operationId": "Diagnostics_PacketCapture_macInfo",
         "parameters": [],
         "requestBody": null,
@@ -5933,6 +6155,7 @@
           "Diagnostics"
         ],
         "summary": "searchJobs",
+        "description": "search current capture jobs",
         "operationId": "Diagnostics_PacketCapture_searchJobs",
         "parameters": [],
         "requestBody": null,
@@ -5956,6 +6179,7 @@
           "Diagnostics"
         ],
         "summary": "searchItem",
+        "description": "Copyright (C) 2021 Deciso B.V.",
         "operationId": "Diagnostics_Lvtemplate_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -5979,6 +6203,7 @@
           "Diagnostics"
         ],
         "summary": "setItem",
+        "description": "Copyright (C) 2021 Deciso B.V.",
         "operationId": "Diagnostics_Lvtemplate_setItem",
         "parameters": [
           {
@@ -6026,6 +6251,7 @@
           "Diagnostics"
         ],
         "summary": "addItem",
+        "description": "Copyright (C) 2021 Deciso B.V.",
         "operationId": "Diagnostics_Lvtemplate_addItem",
         "parameters": [],
         "requestBody": {
@@ -6062,6 +6288,7 @@
           "Diagnostics"
         ],
         "summary": "getItem",
+        "description": "Copyright (C) 2021 Deciso B.V.",
         "operationId": "Diagnostics_Lvtemplate_getItem",
         "parameters": [
           {
@@ -6096,6 +6323,7 @@
           "Diagnostics"
         ],
         "summary": "delItem",
+        "description": "Copyright (C) 2021 Deciso B.V.",
         "operationId": "Diagnostics_Lvtemplate_delItem",
         "parameters": [
           {
@@ -6130,6 +6358,7 @@
           "Diagnostics"
         ],
         "summary": "set",
+        "description": "set / create ping job",
         "operationId": "Diagnostics_Ping_set",
         "parameters": [],
         "requestBody": {
@@ -6166,6 +6395,7 @@
           "Diagnostics"
         ],
         "summary": "start",
+        "description": "start ping job",
         "operationId": "Diagnostics_Ping_start",
         "parameters": [],
         "requestBody": null,
@@ -6198,6 +6428,7 @@
           "Diagnostics"
         ],
         "summary": "stop",
+        "description": "stop ping job",
         "operationId": "Diagnostics_Ping_stop",
         "parameters": [],
         "requestBody": null,
@@ -6230,6 +6461,7 @@
           "Diagnostics"
         ],
         "summary": "remove",
+        "description": "remove ping job",
         "operationId": "Diagnostics_Ping_remove",
         "parameters": [],
         "requestBody": null,
@@ -6246,6 +6478,7 @@
           "Diagnostics"
         ],
         "summary": "searchJobs",
+        "description": "search current ping jobs",
         "operationId": "Diagnostics_Ping_searchJobs",
         "parameters": [],
         "requestBody": null,
@@ -6269,6 +6502,7 @@
           "Diagnostics"
         ],
         "summary": "timeserie",
+        "description": "request timeserie data to use for reporting",
         "operationId": "Diagnostics_Networkinsight_timeserie",
         "parameters": [],
         "requestBody": null,
@@ -6285,6 +6519,7 @@
           "Diagnostics"
         ],
         "summary": "top",
+        "description": "request top usage data (for reporting), values can optionally be filtered using filter_field and filter_value",
         "operationId": "Diagnostics_Networkinsight_top",
         "parameters": [],
         "requestBody": null,
@@ -6301,6 +6536,7 @@
           "Diagnostics"
         ],
         "summary": "getMetadata",
+        "description": "get metadata from backend aggregation process",
         "operationId": "Diagnostics_Networkinsight_getMetadata",
         "parameters": [],
         "requestBody": null,
@@ -6326,6 +6562,7 @@
           "Diagnostics"
         ],
         "summary": "getInterfaces",
+        "description": "return interface map (device / name)",
         "operationId": "Diagnostics_Networkinsight_getInterfaces",
         "parameters": [],
         "requestBody": null,
@@ -6351,6 +6588,7 @@
           "Diagnostics"
         ],
         "summary": "getProtocols",
+        "description": "return known protocols",
         "operationId": "Diagnostics_Networkinsight_getProtocols",
         "parameters": [],
         "requestBody": null,
@@ -6376,6 +6614,7 @@
           "Diagnostics"
         ],
         "summary": "getServices",
+        "description": "return known services",
         "operationId": "Diagnostics_Networkinsight_getServices",
         "parameters": [],
         "requestBody": null,
@@ -6401,6 +6640,7 @@
           "Diagnostics"
         ],
         "summary": "export",
+        "description": "request timeserie data to use for reporting",
         "operationId": "Diagnostics_Networkinsight_export",
         "parameters": [],
         "requestBody": null,
@@ -6426,6 +6666,7 @@
           "Diagnostics"
         ],
         "summary": "set",
+        "description": "Copyright (C) 2022 Deciso B.V.",
         "operationId": "Diagnostics_DnsDiagnostics_set",
         "parameters": [],
         "requestBody": {
@@ -6462,6 +6703,7 @@
           "Diagnostics"
         ],
         "summary": "getRrdList",
+        "description": "retrieve Available RRD data",
         "operationId": "Diagnostics_Systemhealth_getRrdList",
         "parameters": [],
         "requestBody": null,
@@ -6487,6 +6729,7 @@
           "Diagnostics"
         ],
         "summary": "getSystemHealth",
+        "description": "retrieve SystemHealth Data (previously called RRD Graphs)",
         "operationId": "Diagnostics_Systemhealth_getSystemHealth",
         "parameters": [],
         "requestBody": null,
@@ -6512,6 +6755,7 @@
           "Diagnostics"
         ],
         "summary": "getInterfaces",
+        "description": "Retrieve network interfaces by key (lan, wan, opt1,..)",
         "operationId": "Diagnostics_Systemhealth_getInterfaces",
         "parameters": [],
         "requestBody": null,
@@ -6537,6 +6781,7 @@
           "Diagnostics"
         ],
         "summary": "exportAsCSV",
+        "description": "Retrieve network interfaces by key (lan, wan, opt1,..)",
         "operationId": "Diagnostics_Systemhealth_exportAsCSV",
         "parameters": [],
         "requestBody": null,
@@ -6562,6 +6807,7 @@
           "Diagnostics"
         ],
         "summary": "reverseLookup",
+        "description": "perform a reverse dns lookup",
         "operationId": "Diagnostics_Dns_reverseLookup",
         "parameters": [],
         "requestBody": null,
@@ -6578,6 +6824,7 @@
           "Diagnostics"
         ],
         "summary": "getCPUType",
+        "description": "Class CpuUsage",
         "operationId": "Diagnostics_CpuUsage_getCPUType",
         "parameters": [],
         "requestBody": null,
@@ -6603,6 +6850,7 @@
           "Diagnostics"
         ],
         "summary": "stream",
+        "description": "Class CpuUsage",
         "operationId": "Diagnostics_CpuUsage_stream",
         "parameters": [],
         "requestBody": null,
@@ -6619,6 +6867,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "search laggs",
         "operationId": "Interfaces_LaggSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -6659,6 +6908,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "Update lagg with given properties",
         "operationId": "Interfaces_LaggSettings_setItem",
         "parameters": [
           {
@@ -6720,6 +6970,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "Add new lagg and set with attributes from post",
         "operationId": "Interfaces_LaggSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -6770,6 +7021,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "Retrieve lagg settings or return defaults for new one",
         "operationId": "Interfaces_LaggSettings_getItem",
         "parameters": [
           {
@@ -6821,6 +7073,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "Delete lagg by uuid",
         "operationId": "Interfaces_LaggSettings_delItem",
         "parameters": [
           {
@@ -6872,6 +7125,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure laggs",
         "operationId": "Interfaces_LaggSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -6908,6 +7162,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "search bridges",
         "operationId": "Interfaces_BridgeSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -6948,6 +7203,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "Update bridge with given properties",
         "operationId": "Interfaces_BridgeSettings_setItem",
         "parameters": [
           {
@@ -7009,6 +7265,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "Add new bridge and set with attributes from post",
         "operationId": "Interfaces_BridgeSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -7059,6 +7316,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "Retrieve bridge settings or return defaults for new one",
         "operationId": "Interfaces_BridgeSettings_getItem",
         "parameters": [
           {
@@ -7110,6 +7368,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "Delete bridge by uuid",
         "operationId": "Interfaces_BridgeSettings_delItem",
         "parameters": [
           {
@@ -7161,6 +7420,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure bridges",
         "operationId": "Interfaces_BridgeSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -7197,6 +7457,7 @@
           "Interfaces"
         ],
         "summary": "interfacesInfo",
+        "description": "interfacesInfo",
         "operationId": "Interfaces_Overview_interfacesInfo",
         "parameters": [],
         "requestBody": null,
@@ -7222,6 +7483,7 @@
           "Interfaces"
         ],
         "summary": "getInterface",
+        "description": "getInterface",
         "operationId": "Interfaces_Overview_getInterface",
         "parameters": [],
         "requestBody": null,
@@ -7247,6 +7509,7 @@
           "Interfaces"
         ],
         "summary": "reloadInterface",
+        "description": "reloadInterface",
         "operationId": "Interfaces_Overview_reloadInterface",
         "parameters": [],
         "requestBody": null,
@@ -7263,6 +7526,7 @@
           "Interfaces"
         ],
         "summary": "export",
+        "description": "export",
         "operationId": "Interfaces_Overview_export",
         "parameters": [],
         "requestBody": null,
@@ -7288,6 +7552,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "searchItem",
         "operationId": "Interfaces_LoopbackSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -7328,6 +7593,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "setItem",
         "operationId": "Interfaces_LoopbackSettings_setItem",
         "parameters": [
           {
@@ -7389,6 +7655,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "addItem",
         "operationId": "Interfaces_LoopbackSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -7439,6 +7706,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "getItem",
         "operationId": "Interfaces_LoopbackSettings_getItem",
         "parameters": [
           {
@@ -7490,6 +7758,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "delItem",
         "operationId": "Interfaces_LoopbackSettings_delItem",
         "parameters": [
           {
@@ -7541,6 +7810,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Interfaces_LoopbackSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -7577,6 +7847,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "searchItem",
         "operationId": "Interfaces_VxlanSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -7617,6 +7888,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "setItem",
         "operationId": "Interfaces_VxlanSettings_setItem",
         "parameters": [
           {
@@ -7678,6 +7950,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "addItem",
         "operationId": "Interfaces_VxlanSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -7728,6 +8001,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "getItem",
         "operationId": "Interfaces_VxlanSettings_getItem",
         "parameters": [
           {
@@ -7779,6 +8053,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "delItem",
         "operationId": "Interfaces_VxlanSettings_delItem",
         "parameters": [
           {
@@ -7830,6 +8105,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Interfaces_VxlanSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -7866,6 +8142,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "searchItem",
         "operationId": "Interfaces_VlanSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -7906,6 +8183,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "setItem",
         "operationId": "Interfaces_VlanSettings_setItem",
         "parameters": [
           {
@@ -7967,6 +8245,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "addItem",
         "operationId": "Interfaces_VlanSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -8017,6 +8296,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "getItem",
         "operationId": "Interfaces_VlanSettings_getItem",
         "parameters": [
           {
@@ -8068,6 +8348,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "delItem",
         "operationId": "Interfaces_VlanSettings_delItem",
         "parameters": [
           {
@@ -8119,6 +8400,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Interfaces_VlanSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -8155,6 +8437,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "search gifs",
         "operationId": "Interfaces_GifSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -8195,6 +8478,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "Update gif with given properties",
         "operationId": "Interfaces_GifSettings_setItem",
         "parameters": [
           {
@@ -8256,6 +8540,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "Add new gif and set with attributes from post",
         "operationId": "Interfaces_GifSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -8306,6 +8591,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "Retrieve gif settings or return defaults for new one",
         "operationId": "Interfaces_GifSettings_getItem",
         "parameters": [
           {
@@ -8357,6 +8643,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "Delete gif by uuid",
         "operationId": "Interfaces_GifSettings_delItem",
         "parameters": [
           {
@@ -8408,6 +8695,7 @@
           "Interfaces"
         ],
         "summary": "getIfOptions",
+        "description": "Delete gif by uuid",
         "operationId": "Interfaces_GifSettings_getIfOptions",
         "parameters": [],
         "requestBody": null,
@@ -8433,6 +8721,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure gifs",
         "operationId": "Interfaces_GifSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -8469,6 +8758,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "search gres",
         "operationId": "Interfaces_GreSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -8509,6 +8799,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "Update gre with given properties",
         "operationId": "Interfaces_GreSettings_setItem",
         "parameters": [
           {
@@ -8570,6 +8861,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "Add new gre and set with attributes from post",
         "operationId": "Interfaces_GreSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -8620,6 +8912,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "Retrieve gre settings or return defaults for new one",
         "operationId": "Interfaces_GreSettings_getItem",
         "parameters": [
           {
@@ -8671,6 +8964,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "Delete gre by uuid",
         "operationId": "Interfaces_GreSettings_delItem",
         "parameters": [
           {
@@ -8722,6 +9016,7 @@
           "Interfaces"
         ],
         "summary": "getIfOptions",
+        "description": "Delete gre by uuid",
         "operationId": "Interfaces_GreSettings_getIfOptions",
         "parameters": [],
         "requestBody": null,
@@ -8747,6 +9042,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure gres",
         "operationId": "Interfaces_GreSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -8783,6 +9079,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "searchItem",
         "operationId": "Interfaces_NeighborSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -8823,6 +9120,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "setItem",
         "operationId": "Interfaces_NeighborSettings_setItem",
         "parameters": [
           {
@@ -8884,6 +9182,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "addItem",
         "operationId": "Interfaces_NeighborSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -8934,6 +9233,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "getItem",
         "operationId": "Interfaces_NeighborSettings_getItem",
         "parameters": [
           {
@@ -8985,6 +9285,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "delItem",
         "operationId": "Interfaces_NeighborSettings_delItem",
         "parameters": [
           {
@@ -9036,6 +9337,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Interfaces_NeighborSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -9072,6 +9374,7 @@
           "Interfaces"
         ],
         "summary": "getUnusedVhid",
+        "description": "retrieve first unused VHID number",
         "operationId": "Interfaces_VipSettings_getUnusedVhid",
         "parameters": [],
         "requestBody": null,
@@ -9097,6 +9400,7 @@
           "Interfaces"
         ],
         "summary": "searchItem",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
         "operationId": "Interfaces_VipSettings_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -9137,6 +9441,7 @@
           "Interfaces"
         ],
         "summary": "setItem",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
         "operationId": "Interfaces_VipSettings_setItem",
         "parameters": [
           {
@@ -9198,6 +9503,7 @@
           "Interfaces"
         ],
         "summary": "addItem",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
         "operationId": "Interfaces_VipSettings_addItem",
         "parameters": [],
         "requestBody": {
@@ -9248,6 +9554,7 @@
           "Interfaces"
         ],
         "summary": "getItem",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
         "operationId": "Interfaces_VipSettings_getItem",
         "parameters": [
           {
@@ -9299,6 +9606,7 @@
           "Interfaces"
         ],
         "summary": "delItem",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
         "operationId": "Interfaces_VipSettings_delItem",
         "parameters": [
           {
@@ -9350,6 +9658,7 @@
           "Interfaces"
         ],
         "summary": "reconfigure",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
         "operationId": "Interfaces_VipSettings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -9386,6 +9695,7 @@
           "Trust"
         ],
         "summary": "reconfigure",
+        "description": "Class SettingsController",
         "operationId": "Trust_Settings_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -9422,6 +9732,7 @@
           "Trust"
         ],
         "summary": "search",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_search",
         "parameters": [],
         "requestBody": null,
@@ -9445,6 +9756,7 @@
           "Trust"
         ],
         "summary": "get",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_get",
         "parameters": [],
         "requestBody": null,
@@ -9473,6 +9785,7 @@
           "Trust"
         ],
         "summary": "add",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_add",
         "parameters": [],
         "requestBody": {
@@ -9509,6 +9822,7 @@
           "Trust"
         ],
         "summary": "set",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_set",
         "parameters": [],
         "requestBody": {
@@ -9545,6 +9859,7 @@
           "Trust"
         ],
         "summary": "del",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_del",
         "parameters": [],
         "requestBody": null,
@@ -9568,6 +9883,7 @@
           "Trust"
         ],
         "summary": "caInfo",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_caInfo",
         "parameters": [],
         "requestBody": null,
@@ -9593,6 +9909,7 @@
           "Trust"
         ],
         "summary": "rawDump",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_rawDump",
         "parameters": [],
         "requestBody": null,
@@ -9618,6 +9935,7 @@
           "Trust"
         ],
         "summary": "caList",
+        "description": "private key manually offered",
         "operationId": "Trust_Cert_caList",
         "parameters": [],
         "requestBody": null,
@@ -9643,6 +9961,7 @@
           "Trust"
         ],
         "summary": "userList",
+        "description": "userList",
         "operationId": "Trust_Cert_userList",
         "parameters": [],
         "requestBody": null,
@@ -9668,6 +9987,7 @@
           "Trust"
         ],
         "summary": "generateFile",
+        "description": "generate file download content",
         "operationId": "Trust_Cert_generateFile",
         "parameters": [],
         "requestBody": null,
@@ -9691,6 +10011,7 @@
           "Trust"
         ],
         "summary": "search",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_search",
         "parameters": [],
         "requestBody": null,
@@ -9714,6 +10035,7 @@
           "Trust"
         ],
         "summary": "get",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_get",
         "parameters": [],
         "requestBody": null,
@@ -9742,6 +10064,7 @@
           "Trust"
         ],
         "summary": "add",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_add",
         "parameters": [],
         "requestBody": {
@@ -9778,6 +10101,7 @@
           "Trust"
         ],
         "summary": "set",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_set",
         "parameters": [],
         "requestBody": {
@@ -9814,6 +10138,7 @@
           "Trust"
         ],
         "summary": "del",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_del",
         "parameters": [],
         "requestBody": null,
@@ -9837,6 +10162,7 @@
           "Trust"
         ],
         "summary": "caInfo",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_caInfo",
         "parameters": [],
         "requestBody": null,
@@ -9862,6 +10188,7 @@
           "Trust"
         ],
         "summary": "rawDump",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_rawDump",
         "parameters": [],
         "requestBody": null,
@@ -9887,6 +10214,7 @@
           "Trust"
         ],
         "summary": "caList",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
         "operationId": "Trust_Ca_caList",
         "parameters": [],
         "requestBody": null,
@@ -9912,6 +10240,7 @@
           "Trust"
         ],
         "summary": "generateFile",
+        "description": "generate file download content",
         "operationId": "Trust_Ca_generateFile",
         "parameters": [],
         "requestBody": null,
@@ -9935,6 +10264,7 @@
           "Trust"
         ],
         "summary": "search",
+        "description": "Class CrlController",
         "operationId": "Trust_Crl_search",
         "parameters": [],
         "requestBody": null,
@@ -9975,6 +10305,7 @@
           "Trust"
         ],
         "summary": "get",
+        "description": "fetch (a new) revocation list for a given autority.",
         "operationId": "Trust_Crl_get",
         "parameters": [],
         "requestBody": null,
@@ -10000,6 +10331,7 @@
           "Trust"
         ],
         "summary": "set",
+        "description": "set crl for a certificate authority, mimicking standard model operations",
         "operationId": "Trust_Crl_set",
         "parameters": [],
         "requestBody": {
@@ -10033,6 +10365,7 @@
           "Trust"
         ],
         "summary": "del",
+        "description": "drop CRL by certificate reference",
         "operationId": "Trust_Crl_del",
         "parameters": [],
         "requestBody": null,
@@ -10056,6 +10389,7 @@
           "Trust"
         ],
         "summary": "rawDump",
+        "description": "drop CRL by certificate reference",
         "operationId": "Trust_Crl_rawDump",
         "parameters": [],
         "requestBody": null,
@@ -10081,6 +10415,7 @@
           "Monit"
         ],
         "summary": "getAlert",
+        "description": "Retrieve alert settings or return defaults",
         "operationId": "Monit_Settings_getAlert",
         "parameters": [],
         "requestBody": null,
@@ -10109,6 +10444,7 @@
           "Monit"
         ],
         "summary": "setAlert",
+        "description": "Update alert with given properties",
         "operationId": "Monit_Settings_setAlert",
         "parameters": [],
         "requestBody": {
@@ -10145,6 +10481,7 @@
           "Monit"
         ],
         "summary": "addAlert",
+        "description": "Add alert with given properties",
         "operationId": "Monit_Settings_addAlert",
         "parameters": [],
         "requestBody": {
@@ -10181,6 +10518,7 @@
           "Monit"
         ],
         "summary": "delAlert",
+        "description": "Delete alert by uuid",
         "operationId": "Monit_Settings_delAlert",
         "parameters": [],
         "requestBody": null,
@@ -10204,6 +10542,7 @@
           "Monit"
         ],
         "summary": "searchAlert",
+        "description": "Search monit alerts",
         "operationId": "Monit_Settings_searchAlert",
         "parameters": [],
         "requestBody": null,
@@ -10227,6 +10566,7 @@
           "Monit"
         ],
         "summary": "toggleAlert",
+        "description": "Toggle alert defined by uuid (enable/disable)",
         "operationId": "Monit_Settings_toggleAlert",
         "parameters": [],
         "requestBody": null,
@@ -10250,6 +10590,7 @@
           "Monit"
         ],
         "summary": "getService",
+        "description": "Retrieve service settings or return defaults",
         "operationId": "Monit_Settings_getService",
         "parameters": [],
         "requestBody": null,
@@ -10278,6 +10619,7 @@
           "Monit"
         ],
         "summary": "setService",
+        "description": "Update service with given properties",
         "operationId": "Monit_Settings_setService",
         "parameters": [],
         "requestBody": {
@@ -10314,6 +10656,7 @@
           "Monit"
         ],
         "summary": "addService",
+        "description": "Add service with given properties",
         "operationId": "Monit_Settings_addService",
         "parameters": [],
         "requestBody": {
@@ -10350,6 +10693,7 @@
           "Monit"
         ],
         "summary": "delService",
+        "description": "Delete service by uuid",
         "operationId": "Monit_Settings_delService",
         "parameters": [],
         "requestBody": null,
@@ -10373,6 +10717,7 @@
           "Monit"
         ],
         "summary": "searchService",
+        "description": "Search monit services",
         "operationId": "Monit_Settings_searchService",
         "parameters": [],
         "requestBody": null,
@@ -10396,6 +10741,7 @@
           "Monit"
         ],
         "summary": "toggleService",
+        "description": "Toggle service defined by uuid (enable/disable)",
         "operationId": "Monit_Settings_toggleService",
         "parameters": [],
         "requestBody": null,
@@ -10419,6 +10765,7 @@
           "Monit"
         ],
         "summary": "getTest",
+        "description": "Retrieve test settings or return defaults",
         "operationId": "Monit_Settings_getTest",
         "parameters": [],
         "requestBody": null,
@@ -10447,6 +10794,7 @@
           "Monit"
         ],
         "summary": "setTest",
+        "description": "Update test with given properties",
         "operationId": "Monit_Settings_setTest",
         "parameters": [],
         "requestBody": {
@@ -10483,6 +10831,7 @@
           "Monit"
         ],
         "summary": "addTest",
+        "description": "Add test with given properties",
         "operationId": "Monit_Settings_addTest",
         "parameters": [],
         "requestBody": {
@@ -10519,6 +10868,7 @@
           "Monit"
         ],
         "summary": "delTest",
+        "description": "Delete test by uuid",
         "operationId": "Monit_Settings_delTest",
         "parameters": [],
         "requestBody": null,
@@ -10542,6 +10892,7 @@
           "Monit"
         ],
         "summary": "searchTest",
+        "description": "Search monit services",
         "operationId": "Monit_Settings_searchTest",
         "parameters": [],
         "requestBody": null,
@@ -10565,6 +10916,7 @@
           "Monit"
         ],
         "summary": "getGeneral",
+        "description": "Retrieve general settings",
         "operationId": "Monit_Settings_getGeneral",
         "parameters": [],
         "requestBody": null,
@@ -10593,6 +10945,7 @@
           "Monit"
         ],
         "summary": "check",
+        "description": "test monit configuration",
         "operationId": "Monit_Service_check",
         "parameters": [],
         "requestBody": null,
@@ -10609,6 +10962,7 @@
           "Monit"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure monit",
         "operationId": "Monit_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -10645,6 +10999,7 @@
           "Monit"
         ],
         "summary": "get",
+        "description": "get monit status page",
         "operationId": "Monit_Status_get",
         "parameters": [],
         "requestBody": null,
@@ -10673,6 +11028,7 @@
           "Cron"
         ],
         "summary": "getJob",
+        "description": "retrieve job settings or return defaults",
         "operationId": "Cron_Settings_getJob",
         "parameters": [
           {
@@ -10712,6 +11068,7 @@
           "Cron"
         ],
         "summary": "setJob",
+        "description": "update job with given properties",
         "operationId": "Cron_Settings_setJob",
         "parameters": [
           {
@@ -10759,6 +11116,7 @@
           "Cron"
         ],
         "summary": "addJob",
+        "description": "add new job and set with attributes from post",
         "operationId": "Cron_Settings_addJob",
         "parameters": [],
         "requestBody": {
@@ -10795,6 +11153,7 @@
           "Cron"
         ],
         "summary": "delJob",
+        "description": "delete job by uuid ( only if origin is cron)",
         "operationId": "Cron_Settings_delJob",
         "parameters": [
           {
@@ -10829,6 +11188,7 @@
           "Cron"
         ],
         "summary": "toggleJob",
+        "description": "toggle job by uuid (enable/disable)",
         "operationId": "Cron_Settings_toggleJob",
         "parameters": [
           {
@@ -10863,6 +11223,7 @@
           "Cron"
         ],
         "summary": "searchJobs",
+        "description": "search cron jobs",
         "operationId": "Cron_Settings_searchJobs",
         "parameters": [],
         "requestBody": null,
@@ -10886,6 +11247,7 @@
           "Cron"
         ],
         "summary": "reconfigure",
+        "description": "restart cron service",
         "operationId": "Cron_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -10922,6 +11284,7 @@
           "DHCRelay"
         ],
         "summary": "reconfigure",
+        "description": "restart dhcrelay services",
         "operationId": "DHCRelay_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -10958,6 +11321,7 @@
           "DHCRelay"
         ],
         "summary": "searchRelay",
+        "description": "searchRelay",
         "operationId": "DHCRelay_Settings_searchRelay",
         "parameters": [],
         "requestBody": null,
@@ -10981,6 +11345,7 @@
           "DHCRelay"
         ],
         "summary": "getRelay",
+        "description": "getRelay",
         "operationId": "DHCRelay_Settings_getRelay",
         "parameters": [],
         "requestBody": null,
@@ -11009,6 +11374,7 @@
           "DHCRelay"
         ],
         "summary": "addRelay",
+        "description": "addRelay",
         "operationId": "DHCRelay_Settings_addRelay",
         "parameters": [],
         "requestBody": {
@@ -11045,6 +11411,7 @@
           "DHCRelay"
         ],
         "summary": "delRelay",
+        "description": "delRelay",
         "operationId": "DHCRelay_Settings_delRelay",
         "parameters": [],
         "requestBody": null,
@@ -11068,6 +11435,7 @@
           "DHCRelay"
         ],
         "summary": "setRelay",
+        "description": "setRelay",
         "operationId": "DHCRelay_Settings_setRelay",
         "parameters": [],
         "requestBody": {
@@ -11104,6 +11472,7 @@
           "DHCRelay"
         ],
         "summary": "toggleRelay",
+        "description": "toggleRelay",
         "operationId": "DHCRelay_Settings_toggleRelay",
         "parameters": [],
         "requestBody": null,
@@ -11127,6 +11496,7 @@
           "DHCRelay"
         ],
         "summary": "searchDest",
+        "description": "searchDest",
         "operationId": "DHCRelay_Settings_searchDest",
         "parameters": [],
         "requestBody": null,
@@ -11150,6 +11520,7 @@
           "DHCRelay"
         ],
         "summary": "getDest",
+        "description": "getDest",
         "operationId": "DHCRelay_Settings_getDest",
         "parameters": [],
         "requestBody": null,
@@ -11178,6 +11549,7 @@
           "DHCRelay"
         ],
         "summary": "addDest",
+        "description": "addDest",
         "operationId": "DHCRelay_Settings_addDest",
         "parameters": [],
         "requestBody": {
@@ -11214,6 +11586,7 @@
           "DHCRelay"
         ],
         "summary": "delDest",
+        "description": "delDest",
         "operationId": "DHCRelay_Settings_delDest",
         "parameters": [],
         "requestBody": null,
@@ -11237,6 +11610,7 @@
           "DHCRelay"
         ],
         "summary": "setDest",
+        "description": "setDest",
         "operationId": "DHCRelay_Settings_setDest",
         "parameters": [],
         "requestBody": {
@@ -11273,6 +11647,7 @@
           "OpenVPN"
         ],
         "summary": "search",
+        "description": "Class InstancesController",
         "operationId": "OpenVPN_Instances_search",
         "parameters": [],
         "requestBody": null,
@@ -11296,6 +11671,7 @@
           "OpenVPN"
         ],
         "summary": "get",
+        "description": "Class InstancesController",
         "operationId": "OpenVPN_Instances_get",
         "parameters": [],
         "requestBody": null,
@@ -11324,6 +11700,7 @@
           "OpenVPN"
         ],
         "summary": "add",
+        "description": "Class InstancesController",
         "operationId": "OpenVPN_Instances_add",
         "parameters": [],
         "requestBody": {
@@ -11360,6 +11737,7 @@
           "OpenVPN"
         ],
         "summary": "set",
+        "description": "Class InstancesController",
         "operationId": "OpenVPN_Instances_set",
         "parameters": [],
         "requestBody": {
@@ -11396,6 +11774,7 @@
           "OpenVPN"
         ],
         "summary": "del",
+        "description": "Class InstancesController",
         "operationId": "OpenVPN_Instances_del",
         "parameters": [],
         "requestBody": null,
@@ -11419,6 +11798,7 @@
           "OpenVPN"
         ],
         "summary": "toggle",
+        "description": "Class InstancesController",
         "operationId": "OpenVPN_Instances_toggle",
         "parameters": [],
         "requestBody": null,
@@ -11442,6 +11822,7 @@
           "OpenVPN"
         ],
         "summary": "searchStaticKey",
+        "description": "static key administration",
         "operationId": "OpenVPN_Instances_searchStaticKey",
         "parameters": [],
         "requestBody": null,
@@ -11465,6 +11846,7 @@
           "OpenVPN"
         ],
         "summary": "getStaticKey",
+        "description": "static key administration",
         "operationId": "OpenVPN_Instances_getStaticKey",
         "parameters": [
           {
@@ -11504,6 +11886,7 @@
           "OpenVPN"
         ],
         "summary": "addStaticKey",
+        "description": "static key administration",
         "operationId": "OpenVPN_Instances_addStaticKey",
         "parameters": [],
         "requestBody": {
@@ -11540,6 +11923,7 @@
           "OpenVPN"
         ],
         "summary": "setStaticKey",
+        "description": "static key administration",
         "operationId": "OpenVPN_Instances_setStaticKey",
         "parameters": [
           {
@@ -11587,6 +11971,7 @@
           "OpenVPN"
         ],
         "summary": "delStaticKey",
+        "description": "static key administration",
         "operationId": "OpenVPN_Instances_delStaticKey",
         "parameters": [
           {
@@ -11621,6 +12006,7 @@
           "OpenVPN"
         ],
         "summary": "genKey",
+        "description": "static key administration",
         "operationId": "OpenVPN_Instances_genKey",
         "parameters": [],
         "requestBody": null,
@@ -11637,6 +12023,7 @@
           "OpenVPN"
         ],
         "summary": "providers",
+        "description": "list providers",
         "operationId": "OpenVPN_Export_providers",
         "parameters": [],
         "requestBody": null,
@@ -11662,6 +12049,7 @@
           "OpenVPN"
         ],
         "summary": "accounts",
+        "description": "list configured accounts",
         "operationId": "OpenVPN_Export_accounts",
         "parameters": [],
         "requestBody": null,
@@ -11687,6 +12075,7 @@
           "OpenVPN"
         ],
         "summary": "templates",
+        "description": "list configured export options (client types)",
         "operationId": "OpenVPN_Export_templates",
         "parameters": [],
         "requestBody": null,
@@ -11712,6 +12101,7 @@
           "OpenVPN"
         ],
         "summary": "validatePresets",
+        "description": "validate user/model input for configurable options",
         "operationId": "OpenVPN_Export_validatePresets",
         "parameters": [],
         "requestBody": {
@@ -11748,6 +12138,7 @@
           "OpenVPN"
         ],
         "summary": "storePresets",
+        "description": "store presets when valid and changed",
         "operationId": "OpenVPN_Export_storePresets",
         "parameters": [],
         "requestBody": {
@@ -11784,6 +12175,7 @@
           "OpenVPN"
         ],
         "summary": "download",
+        "description": "download configuration",
         "operationId": "OpenVPN_Export_download",
         "parameters": [],
         "requestBody": null,
@@ -11809,6 +12201,7 @@
           "OpenVPN"
         ],
         "summary": "searchSessions",
+        "description": "Search sessions",
         "operationId": "OpenVPN_Service_searchSessions",
         "parameters": [],
         "requestBody": null,
@@ -11832,6 +12225,7 @@
           "OpenVPN"
         ],
         "summary": "searchRoutes",
+        "description": "Search routes",
         "operationId": "OpenVPN_Service_searchRoutes",
         "parameters": [],
         "requestBody": null,
@@ -11855,6 +12249,7 @@
           "OpenVPN"
         ],
         "summary": "killSession",
+        "description": "kill session by source ip:port or common name",
         "operationId": "OpenVPN_Service_killSession",
         "parameters": [
           {
@@ -11889,6 +12284,7 @@
           "OpenVPN"
         ],
         "summary": "startService",
+        "description": "startService",
         "operationId": "OpenVPN_Service_startService",
         "parameters": [],
         "requestBody": null,
@@ -11921,6 +12317,7 @@
           "OpenVPN"
         ],
         "summary": "stopService",
+        "description": "stopService",
         "operationId": "OpenVPN_Service_stopService",
         "parameters": [],
         "requestBody": null,
@@ -11953,6 +12350,7 @@
           "OpenVPN"
         ],
         "summary": "restartService",
+        "description": "restartService",
         "operationId": "OpenVPN_Service_restartService",
         "parameters": [],
         "requestBody": null,
@@ -11985,6 +12383,7 @@
           "OpenVPN"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "OpenVPN_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -12021,6 +12420,7 @@
           "OpenVPN"
         ],
         "summary": "search",
+        "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_search",
         "parameters": [],
         "requestBody": null,
@@ -12044,6 +12444,7 @@
           "OpenVPN"
         ],
         "summary": "get",
+        "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_get",
         "parameters": [],
         "requestBody": null,
@@ -12072,6 +12473,7 @@
           "OpenVPN"
         ],
         "summary": "add",
+        "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_add",
         "parameters": [],
         "requestBody": {
@@ -12108,6 +12510,7 @@
           "OpenVPN"
         ],
         "summary": "set",
+        "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_set",
         "parameters": [],
         "requestBody": {
@@ -12144,6 +12547,7 @@
           "OpenVPN"
         ],
         "summary": "del",
+        "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_del",
         "parameters": [],
         "requestBody": null,
@@ -12167,6 +12571,7 @@
           "OpenVPN"
         ],
         "summary": "toggle",
+        "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_toggle",
         "parameters": [],
         "requestBody": null,
@@ -12190,6 +12595,7 @@
           "Auth"
         ],
         "summary": "search",
+        "description": "Class GroupController",
         "operationId": "Auth_Group_search",
         "parameters": [],
         "requestBody": null,
@@ -12213,6 +12619,7 @@
           "Auth"
         ],
         "summary": "get",
+        "description": "Class GroupController",
         "operationId": "Auth_Group_get",
         "parameters": [],
         "requestBody": null,
@@ -12241,6 +12648,7 @@
           "Auth"
         ],
         "summary": "add",
+        "description": "Class GroupController",
         "operationId": "Auth_Group_add",
         "parameters": [],
         "requestBody": {
@@ -12277,6 +12685,7 @@
           "Auth"
         ],
         "summary": "set",
+        "description": "Class GroupController",
         "operationId": "Auth_Group_set",
         "parameters": [],
         "requestBody": {
@@ -12313,6 +12722,7 @@
           "Auth"
         ],
         "summary": "del",
+        "description": "Class GroupController",
         "operationId": "Auth_Group_del",
         "parameters": [],
         "requestBody": null,
@@ -12336,6 +12746,7 @@
           "Auth"
         ],
         "summary": "search",
+        "description": "Class PrivController",
         "operationId": "Auth_Priv_search",
         "parameters": [],
         "requestBody": null,
@@ -12359,6 +12770,7 @@
           "Auth"
         ],
         "summary": "getItem",
+        "description": "Class PrivController",
         "operationId": "Auth_Priv_getItem",
         "parameters": [
           {
@@ -12393,6 +12805,7 @@
           "Auth"
         ],
         "summary": "setItem",
+        "description": "Class PrivController",
         "operationId": "Auth_Priv_setItem",
         "parameters": [
           {
@@ -12440,6 +12853,7 @@
           "Auth"
         ],
         "summary": "search",
+        "description": "Class UserController",
         "operationId": "Auth_User_search",
         "parameters": [],
         "requestBody": null,
@@ -12463,6 +12877,7 @@
           "Auth"
         ],
         "summary": "get",
+        "description": "Class UserController",
         "operationId": "Auth_User_get",
         "parameters": [],
         "requestBody": null,
@@ -12491,6 +12906,7 @@
           "Auth"
         ],
         "summary": "download",
+        "description": "Class UserController",
         "operationId": "Auth_User_download",
         "parameters": [],
         "requestBody": null,
@@ -12516,6 +12932,7 @@
           "Auth"
         ],
         "summary": "upload",
+        "description": "Class UserController",
         "operationId": "Auth_User_upload",
         "parameters": [],
         "requestBody": null,
@@ -12539,6 +12956,7 @@
           "Auth"
         ],
         "summary": "newOtpSeed",
+        "description": "Class UserController",
         "operationId": "Auth_User_newOtpSeed",
         "parameters": [],
         "requestBody": null,
@@ -12555,6 +12973,7 @@
           "Auth"
         ],
         "summary": "add",
+        "description": "Class UserController",
         "operationId": "Auth_User_add",
         "parameters": [],
         "requestBody": {
@@ -12591,6 +13010,7 @@
           "Auth"
         ],
         "summary": "set",
+        "description": "Class UserController",
         "operationId": "Auth_User_set",
         "parameters": [],
         "requestBody": {
@@ -12627,6 +13047,7 @@
           "Auth"
         ],
         "summary": "del",
+        "description": "Class UserController",
         "operationId": "Auth_User_del",
         "parameters": [],
         "requestBody": null,
@@ -12650,6 +13071,7 @@
           "Auth"
         ],
         "summary": "searchApiKey",
+        "description": "Class UserController",
         "operationId": "Auth_User_searchApiKey",
         "parameters": [],
         "requestBody": null,
@@ -12673,6 +13095,7 @@
           "Auth"
         ],
         "summary": "delApiKey",
+        "description": "Class UserController",
         "operationId": "Auth_User_delApiKey",
         "parameters": [
           {
@@ -12707,6 +13130,7 @@
           "Auth"
         ],
         "summary": "addApiKey",
+        "description": "Class UserController",
         "operationId": "Auth_User_addApiKey",
         "parameters": [],
         "requestBody": {
@@ -12743,6 +13167,7 @@
           "Syslog"
         ],
         "summary": "reset",
+        "description": "reset local logging",
         "operationId": "Syslog_Service_reset",
         "parameters": [],
         "requestBody": {
@@ -12779,6 +13204,7 @@
           "Syslog"
         ],
         "summary": "stats",
+        "description": "fetch syslog-ng statistics",
         "operationId": "Syslog_Service_stats",
         "parameters": [],
         "requestBody": null,
@@ -12804,6 +13230,7 @@
           "Syslog"
         ],
         "summary": "searchDestinations",
+        "description": "Search syslog destinations",
         "operationId": "Syslog_Settings_searchDestinations",
         "parameters": [],
         "requestBody": null,
@@ -12827,6 +13254,7 @@
           "Syslog"
         ],
         "summary": "getDestination",
+        "description": "Retrieve destination settings or return defaults for a new one",
         "operationId": "Syslog_Settings_getDestination",
         "parameters": [],
         "requestBody": null,
@@ -12855,6 +13283,7 @@
           "Syslog"
         ],
         "summary": "setDestination",
+        "description": "Update destination with given properties",
         "operationId": "Syslog_Settings_setDestination",
         "parameters": [],
         "requestBody": {
@@ -12891,6 +13320,7 @@
           "Syslog"
         ],
         "summary": "addDestination",
+        "description": "Add new destination and set with attributes from post",
         "operationId": "Syslog_Settings_addDestination",
         "parameters": [],
         "requestBody": {
@@ -12927,6 +13357,7 @@
           "Syslog"
         ],
         "summary": "delDestination",
+        "description": "Delete destination by uuid",
         "operationId": "Syslog_Settings_delDestination",
         "parameters": [],
         "requestBody": null,
@@ -12950,6 +13381,7 @@
           "Syslog"
         ],
         "summary": "toggleDestination",
+        "description": "Toggle destination defined by uuid (enable/disable)",
         "operationId": "Syslog_Settings_toggleDestination",
         "parameters": [],
         "requestBody": null,
@@ -12973,6 +13405,7 @@
           "TrafficShaper"
         ],
         "summary": "getPipe",
+        "description": "Retrieve pipe settings or return defaults",
         "operationId": "TrafficShaper_Settings_getPipe",
         "parameters": [],
         "requestBody": null,
@@ -13001,6 +13434,7 @@
           "TrafficShaper"
         ],
         "summary": "setPipe",
+        "description": "Update  pipe with given properties",
         "operationId": "TrafficShaper_Settings_setPipe",
         "parameters": [],
         "requestBody": {
@@ -13037,6 +13471,7 @@
           "TrafficShaper"
         ],
         "summary": "addPipe",
+        "description": "Add new pipe and set with attributes from post",
         "operationId": "TrafficShaper_Settings_addPipe",
         "parameters": [],
         "requestBody": {
@@ -13073,6 +13508,7 @@
           "TrafficShaper"
         ],
         "summary": "delPipe",
+        "description": "Delete pipe by uuid",
         "operationId": "TrafficShaper_Settings_delPipe",
         "parameters": [],
         "requestBody": null,
@@ -13096,6 +13532,7 @@
           "TrafficShaper"
         ],
         "summary": "togglePipe",
+        "description": "Toggle pipe defined by uuid (enable/disable)",
         "operationId": "TrafficShaper_Settings_togglePipe",
         "parameters": [],
         "requestBody": null,
@@ -13119,6 +13556,7 @@
           "TrafficShaper"
         ],
         "summary": "searchPipes",
+        "description": "Search traffic shaper pipes",
         "operationId": "TrafficShaper_Settings_searchPipes",
         "parameters": [],
         "requestBody": null,
@@ -13142,6 +13580,7 @@
           "TrafficShaper"
         ],
         "summary": "searchQueues",
+        "description": "Search traffic shaper queues",
         "operationId": "TrafficShaper_Settings_searchQueues",
         "parameters": [],
         "requestBody": null,
@@ -13165,6 +13604,7 @@
           "TrafficShaper"
         ],
         "summary": "getQueue",
+        "description": "Retrieve queue settings or return defaults",
         "operationId": "TrafficShaper_Settings_getQueue",
         "parameters": [],
         "requestBody": null,
@@ -13193,6 +13633,7 @@
           "TrafficShaper"
         ],
         "summary": "setQueue",
+        "description": "Update queue with given properties",
         "operationId": "TrafficShaper_Settings_setQueue",
         "parameters": [],
         "requestBody": {
@@ -13229,6 +13670,7 @@
           "TrafficShaper"
         ],
         "summary": "addQueue",
+        "description": "Add new queue and set with attributes from post",
         "operationId": "TrafficShaper_Settings_addQueue",
         "parameters": [],
         "requestBody": {
@@ -13265,6 +13707,7 @@
           "TrafficShaper"
         ],
         "summary": "delQueue",
+        "description": "Delete queue by uuid",
         "operationId": "TrafficShaper_Settings_delQueue",
         "parameters": [],
         "requestBody": null,
@@ -13288,6 +13731,7 @@
           "TrafficShaper"
         ],
         "summary": "toggleQueue",
+        "description": "Toggle queue defined by uuid (enable/disable)",
         "operationId": "TrafficShaper_Settings_toggleQueue",
         "parameters": [],
         "requestBody": null,
@@ -13311,6 +13755,7 @@
           "TrafficShaper"
         ],
         "summary": "searchRules",
+        "description": "Search traffic shaper rules",
         "operationId": "TrafficShaper_Settings_searchRules",
         "parameters": [],
         "requestBody": null,
@@ -13334,6 +13779,7 @@
           "TrafficShaper"
         ],
         "summary": "getRule",
+        "description": "Retrieve rule settings or return defaults for new rule",
         "operationId": "TrafficShaper_Settings_getRule",
         "parameters": [
           {
@@ -13373,6 +13819,7 @@
           "TrafficShaper"
         ],
         "summary": "setRule",
+        "description": "Update rule with given properties",
         "operationId": "TrafficShaper_Settings_setRule",
         "parameters": [
           {
@@ -13420,6 +13867,7 @@
           "TrafficShaper"
         ],
         "summary": "addRule",
+        "description": "Add new rule and set with attributes from post",
         "operationId": "TrafficShaper_Settings_addRule",
         "parameters": [],
         "requestBody": {
@@ -13456,6 +13904,7 @@
           "TrafficShaper"
         ],
         "summary": "delRule",
+        "description": "Delete rule by uuid",
         "operationId": "TrafficShaper_Settings_delRule",
         "parameters": [
           {
@@ -13490,6 +13939,7 @@
           "TrafficShaper"
         ],
         "summary": "toggleRule",
+        "description": "Toggle rule defined by uuid (enable/disable)",
         "operationId": "TrafficShaper_Settings_toggleRule",
         "parameters": [
           {
@@ -13524,6 +13974,7 @@
           "TrafficShaper"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure shaper/ipfw, generate config and reload",
         "operationId": "TrafficShaper_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -13560,6 +14011,7 @@
           "TrafficShaper"
         ],
         "summary": "flushreload",
+        "description": "flush all ipfw rules",
         "operationId": "TrafficShaper_Service_flushreload",
         "parameters": [],
         "requestBody": null,
@@ -13583,6 +14035,7 @@
           "TrafficShaper"
         ],
         "summary": "statistics",
+        "description": "fetch current statistics",
         "operationId": "TrafficShaper_Service_statistics",
         "parameters": [],
         "requestBody": null,
@@ -13599,6 +14052,7 @@
           "Kea"
         ],
         "summary": "get",
+        "description": "get",
         "operationId": "Kea_Dhcpv6_get",
         "parameters": [],
         "requestBody": null,
@@ -13624,6 +14078,7 @@
           "Kea"
         ],
         "summary": "searchSubnet",
+        "description": "searchSubnet",
         "operationId": "Kea_Dhcpv6_searchSubnet",
         "parameters": [],
         "requestBody": null,
@@ -13664,6 +14119,7 @@
           "Kea"
         ],
         "summary": "setSubnet",
+        "description": "setSubnet",
         "operationId": "Kea_Dhcpv6_setSubnet",
         "parameters": [],
         "requestBody": {
@@ -13697,6 +14153,7 @@
           "Kea"
         ],
         "summary": "addSubnet",
+        "description": "addSubnet",
         "operationId": "Kea_Dhcpv6_addSubnet",
         "parameters": [],
         "requestBody": {
@@ -13730,6 +14187,7 @@
           "Kea"
         ],
         "summary": "getSubnet",
+        "description": "getSubnet",
         "operationId": "Kea_Dhcpv6_getSubnet",
         "parameters": [],
         "requestBody": null,
@@ -13755,6 +14213,7 @@
           "Kea"
         ],
         "summary": "delSubnet",
+        "description": "delSubnet",
         "operationId": "Kea_Dhcpv6_delSubnet",
         "parameters": [],
         "requestBody": null,
@@ -13778,6 +14237,7 @@
           "Kea"
         ],
         "summary": "searchReservation",
+        "description": "searchReservation",
         "operationId": "Kea_Dhcpv6_searchReservation",
         "parameters": [],
         "requestBody": null,
@@ -13818,6 +14278,7 @@
           "Kea"
         ],
         "summary": "setReservation",
+        "description": "setReservation",
         "operationId": "Kea_Dhcpv6_setReservation",
         "parameters": [],
         "requestBody": {
@@ -13851,6 +14312,7 @@
           "Kea"
         ],
         "summary": "addReservation",
+        "description": "addReservation",
         "operationId": "Kea_Dhcpv6_addReservation",
         "parameters": [],
         "requestBody": {
@@ -13884,6 +14346,7 @@
           "Kea"
         ],
         "summary": "getReservation",
+        "description": "getReservation",
         "operationId": "Kea_Dhcpv6_getReservation",
         "parameters": [],
         "requestBody": null,
@@ -13909,6 +14372,7 @@
           "Kea"
         ],
         "summary": "delReservation",
+        "description": "delReservation",
         "operationId": "Kea_Dhcpv6_delReservation",
         "parameters": [],
         "requestBody": null,
@@ -13932,6 +14396,7 @@
           "Kea"
         ],
         "summary": "downloadReservations",
+        "description": "downloadReservations",
         "operationId": "Kea_Dhcpv6_downloadReservations",
         "parameters": [],
         "requestBody": null,
@@ -13957,6 +14422,7 @@
           "Kea"
         ],
         "summary": "uploadReservations",
+        "description": "uploadReservations",
         "operationId": "Kea_Dhcpv6_uploadReservations",
         "parameters": [],
         "requestBody": null,
@@ -13980,6 +14446,7 @@
           "Kea"
         ],
         "summary": "searchPdPool",
+        "description": "searchPdPool",
         "operationId": "Kea_Dhcpv6_searchPdPool",
         "parameters": [],
         "requestBody": null,
@@ -14020,6 +14487,7 @@
           "Kea"
         ],
         "summary": "setPdPool",
+        "description": "setPdPool",
         "operationId": "Kea_Dhcpv6_setPdPool",
         "parameters": [],
         "requestBody": {
@@ -14053,6 +14521,7 @@
           "Kea"
         ],
         "summary": "addPdPool",
+        "description": "addPdPool",
         "operationId": "Kea_Dhcpv6_addPdPool",
         "parameters": [],
         "requestBody": {
@@ -14086,6 +14555,7 @@
           "Kea"
         ],
         "summary": "getPdPool",
+        "description": "getPdPool",
         "operationId": "Kea_Dhcpv6_getPdPool",
         "parameters": [],
         "requestBody": null,
@@ -14111,6 +14581,7 @@
           "Kea"
         ],
         "summary": "delPdPool",
+        "description": "delPdPool",
         "operationId": "Kea_Dhcpv6_delPdPool",
         "parameters": [],
         "requestBody": null,
@@ -14134,6 +14605,7 @@
           "Kea"
         ],
         "summary": "searchPeer",
+        "description": "searchPeer",
         "operationId": "Kea_Dhcpv6_searchPeer",
         "parameters": [],
         "requestBody": null,
@@ -14174,6 +14646,7 @@
           "Kea"
         ],
         "summary": "setPeer",
+        "description": "setPeer",
         "operationId": "Kea_Dhcpv6_setPeer",
         "parameters": [],
         "requestBody": {
@@ -14207,6 +14680,7 @@
           "Kea"
         ],
         "summary": "addPeer",
+        "description": "addPeer",
         "operationId": "Kea_Dhcpv6_addPeer",
         "parameters": [],
         "requestBody": {
@@ -14240,6 +14714,7 @@
           "Kea"
         ],
         "summary": "getPeer",
+        "description": "getPeer",
         "operationId": "Kea_Dhcpv6_getPeer",
         "parameters": [],
         "requestBody": null,
@@ -14265,6 +14740,7 @@
           "Kea"
         ],
         "summary": "delPeer",
+        "description": "delPeer",
         "operationId": "Kea_Dhcpv6_delPeer",
         "parameters": [],
         "requestBody": null,
@@ -14288,6 +14764,7 @@
           "Kea"
         ],
         "summary": "search",
+        "description": "search",
         "operationId": "Kea_Leases_search",
         "parameters": [],
         "requestBody": null,
@@ -14328,6 +14805,7 @@
           "Kea"
         ],
         "summary": "get",
+        "description": "get",
         "operationId": "Kea_Dhcpv4_get",
         "parameters": [],
         "requestBody": null,
@@ -14353,6 +14831,7 @@
           "Kea"
         ],
         "summary": "searchSubnet",
+        "description": "searchSubnet",
         "operationId": "Kea_Dhcpv4_searchSubnet",
         "parameters": [],
         "requestBody": null,
@@ -14393,6 +14872,7 @@
           "Kea"
         ],
         "summary": "setSubnet",
+        "description": "setSubnet",
         "operationId": "Kea_Dhcpv4_setSubnet",
         "parameters": [],
         "requestBody": {
@@ -14426,6 +14906,7 @@
           "Kea"
         ],
         "summary": "addSubnet",
+        "description": "addSubnet",
         "operationId": "Kea_Dhcpv4_addSubnet",
         "parameters": [],
         "requestBody": {
@@ -14459,6 +14940,7 @@
           "Kea"
         ],
         "summary": "getSubnet",
+        "description": "getSubnet",
         "operationId": "Kea_Dhcpv4_getSubnet",
         "parameters": [],
         "requestBody": null,
@@ -14484,6 +14966,7 @@
           "Kea"
         ],
         "summary": "delSubnet",
+        "description": "delSubnet",
         "operationId": "Kea_Dhcpv4_delSubnet",
         "parameters": [],
         "requestBody": null,
@@ -14507,6 +14990,7 @@
           "Kea"
         ],
         "summary": "searchReservation",
+        "description": "searchReservation",
         "operationId": "Kea_Dhcpv4_searchReservation",
         "parameters": [],
         "requestBody": null,
@@ -14547,6 +15031,7 @@
           "Kea"
         ],
         "summary": "setReservation",
+        "description": "setReservation",
         "operationId": "Kea_Dhcpv4_setReservation",
         "parameters": [],
         "requestBody": {
@@ -14580,6 +15065,7 @@
           "Kea"
         ],
         "summary": "addReservation",
+        "description": "addReservation",
         "operationId": "Kea_Dhcpv4_addReservation",
         "parameters": [],
         "requestBody": {
@@ -14613,6 +15099,7 @@
           "Kea"
         ],
         "summary": "getReservation",
+        "description": "getReservation",
         "operationId": "Kea_Dhcpv4_getReservation",
         "parameters": [],
         "requestBody": null,
@@ -14638,6 +15125,7 @@
           "Kea"
         ],
         "summary": "delReservation",
+        "description": "delReservation",
         "operationId": "Kea_Dhcpv4_delReservation",
         "parameters": [],
         "requestBody": null,
@@ -14661,6 +15149,7 @@
           "Kea"
         ],
         "summary": "downloadReservations",
+        "description": "downloadReservations",
         "operationId": "Kea_Dhcpv4_downloadReservations",
         "parameters": [],
         "requestBody": null,
@@ -14686,6 +15175,7 @@
           "Kea"
         ],
         "summary": "uploadReservations",
+        "description": "uploadReservations",
         "operationId": "Kea_Dhcpv4_uploadReservations",
         "parameters": [],
         "requestBody": null,
@@ -14709,6 +15199,7 @@
           "Kea"
         ],
         "summary": "searchPeer",
+        "description": "searchPeer",
         "operationId": "Kea_Dhcpv4_searchPeer",
         "parameters": [],
         "requestBody": null,
@@ -14749,6 +15240,7 @@
           "Kea"
         ],
         "summary": "setPeer",
+        "description": "setPeer",
         "operationId": "Kea_Dhcpv4_setPeer",
         "parameters": [],
         "requestBody": {
@@ -14782,6 +15274,7 @@
           "Kea"
         ],
         "summary": "addPeer",
+        "description": "addPeer",
         "operationId": "Kea_Dhcpv4_addPeer",
         "parameters": [],
         "requestBody": {
@@ -14815,6 +15308,7 @@
           "Kea"
         ],
         "summary": "getPeer",
+        "description": "getPeer",
         "operationId": "Kea_Dhcpv4_getPeer",
         "parameters": [],
         "requestBody": null,
@@ -14840,6 +15334,7 @@
           "Kea"
         ],
         "summary": "delPeer",
+        "description": "delPeer",
         "operationId": "Kea_Dhcpv4_delPeer",
         "parameters": [],
         "requestBody": null,
@@ -14863,6 +15358,7 @@
           "Kea"
         ],
         "summary": "get",
+        "description": "get",
         "operationId": "Kea_CtrlAgent_get",
         "parameters": [],
         "requestBody": null,
@@ -14888,6 +15384,7 @@
           "IDS"
         ],
         "summary": "reconfigure",
+        "description": "Reconfigure IDS",
         "operationId": "IDS_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -14924,6 +15421,7 @@
           "IDS"
         ],
         "summary": "updateRules",
+        "description": "Download and update rules",
         "operationId": "IDS_Service_updateRules",
         "parameters": [],
         "requestBody": {
@@ -14960,6 +15458,7 @@
           "IDS"
         ],
         "summary": "reloadRules",
+        "description": "Flush rule configuration to config and reload suricata ruleset (graceful restart)",
         "operationId": "IDS_Service_reloadRules",
         "parameters": [],
         "requestBody": null,
@@ -14976,6 +15475,7 @@
           "IDS"
         ],
         "summary": "queryAlerts",
+        "description": "Query suricata alerts",
         "operationId": "IDS_Service_queryAlerts",
         "parameters": [],
         "requestBody": null,
@@ -14992,6 +15492,7 @@
           "IDS"
         ],
         "summary": "getAlertInfo",
+        "description": "Fetch alert detailed info",
         "operationId": "IDS_Service_getAlertInfo",
         "parameters": [],
         "requestBody": null,
@@ -15017,6 +15518,7 @@
           "IDS"
         ],
         "summary": "getAlertLogs",
+        "description": "List all available logs",
         "operationId": "IDS_Service_getAlertLogs",
         "parameters": [],
         "requestBody": null,
@@ -15045,6 +15547,7 @@
           "IDS"
         ],
         "summary": "dropAlertLog",
+        "description": "Drop alert log",
         "operationId": "IDS_Service_dropAlertLog",
         "parameters": [],
         "requestBody": null,
@@ -15061,6 +15564,7 @@
           "IDS"
         ],
         "summary": "searchInstalledRules",
+        "description": "Search installed ids rules",
         "operationId": "IDS_Settings_searchInstalledRules",
         "parameters": [],
         "requestBody": null,
@@ -15084,6 +15588,7 @@
           "IDS"
         ],
         "summary": "getRuleInfo",
+        "description": "Get rule information",
         "operationId": "IDS_Settings_getRuleInfo",
         "parameters": [
           {
@@ -15120,6 +15625,7 @@
           "IDS"
         ],
         "summary": "listRuleMetadata",
+        "description": "List available rule metadata",
         "operationId": "IDS_Settings_listRuleMetadata",
         "parameters": [],
         "requestBody": null,
@@ -15145,6 +15651,7 @@
           "IDS"
         ],
         "summary": "getRulesetproperties",
+        "description": "List ruleset properties",
         "operationId": "IDS_Settings_getRulesetproperties",
         "parameters": [
           {
@@ -15184,6 +15691,7 @@
           "IDS"
         ],
         "summary": "setRulesetproperties",
+        "description": "Update ruleset properties",
         "operationId": "IDS_Settings_setRulesetproperties",
         "parameters": [
           {
@@ -15231,6 +15739,7 @@
           "IDS"
         ],
         "summary": "listRulesets",
+        "description": "List all installable rules including current status",
         "operationId": "IDS_Settings_listRulesets",
         "parameters": [],
         "requestBody": null,
@@ -15256,6 +15765,7 @@
           "IDS"
         ],
         "summary": "getRuleset",
+        "description": "Get ruleset list info (file)",
         "operationId": "IDS_Settings_getRuleset",
         "parameters": [
           {
@@ -15295,6 +15805,7 @@
           "IDS"
         ],
         "summary": "setRuleset",
+        "description": "Set ruleset attributes",
         "operationId": "IDS_Settings_setRuleset",
         "parameters": [
           {
@@ -15342,6 +15853,7 @@
           "IDS"
         ],
         "summary": "toggleRuleset",
+        "description": "Toggle usage of rule file or set enabled / disabled depending on parameters",
         "operationId": "IDS_Settings_toggleRuleset",
         "parameters": [
           {
@@ -15389,6 +15901,7 @@
           "IDS"
         ],
         "summary": "toggleRule",
+        "description": "Toggle rule enable status",
         "operationId": "IDS_Settings_toggleRule",
         "parameters": [
           {
@@ -15423,6 +15936,7 @@
           "IDS"
         ],
         "summary": "setRule",
+        "description": "Set rule action",
         "operationId": "IDS_Settings_setRule",
         "parameters": [
           {
@@ -15470,6 +15984,7 @@
           "IDS"
         ],
         "summary": "searchUserRule",
+        "description": "Search user defined rules",
         "operationId": "IDS_Settings_searchUserRule",
         "parameters": [],
         "requestBody": null,
@@ -15493,6 +16008,7 @@
           "IDS"
         ],
         "summary": "setUserRule",
+        "description": "Update user defined rules",
         "operationId": "IDS_Settings_setUserRule",
         "parameters": [
           {
@@ -15540,6 +16056,7 @@
           "IDS"
         ],
         "summary": "addUserRule",
+        "description": "Add new user defined rule",
         "operationId": "IDS_Settings_addUserRule",
         "parameters": [],
         "requestBody": {
@@ -15576,6 +16093,7 @@
           "IDS"
         ],
         "summary": "getUserRule",
+        "description": "Get properties of user defined rule",
         "operationId": "IDS_Settings_getUserRule",
         "parameters": [
           {
@@ -15615,6 +16133,7 @@
           "IDS"
         ],
         "summary": "delUserRule",
+        "description": "Delete user rule item",
         "operationId": "IDS_Settings_delUserRule",
         "parameters": [
           {
@@ -15649,6 +16168,7 @@
           "IDS"
         ],
         "summary": "toggleUserRule",
+        "description": "Toggle user defined rule by uuid (enable/disable)",
         "operationId": "IDS_Settings_toggleUserRule",
         "parameters": [
           {
@@ -15683,6 +16203,7 @@
           "IDS"
         ],
         "summary": "searchPolicy",
+        "description": "Search policy",
         "operationId": "IDS_Settings_searchPolicy",
         "parameters": [],
         "requestBody": null,
@@ -15706,6 +16227,7 @@
           "IDS"
         ],
         "summary": "setPolicy",
+        "description": "Update policy",
         "operationId": "IDS_Settings_setPolicy",
         "parameters": [],
         "requestBody": {
@@ -15742,6 +16264,7 @@
           "IDS"
         ],
         "summary": "addPolicy",
+        "description": "Add new policy",
         "operationId": "IDS_Settings_addPolicy",
         "parameters": [],
         "requestBody": {
@@ -15778,6 +16301,7 @@
           "IDS"
         ],
         "summary": "getPolicy",
+        "description": "Get properties of a policy",
         "operationId": "IDS_Settings_getPolicy",
         "parameters": [],
         "requestBody": null,
@@ -15806,6 +16330,7 @@
           "IDS"
         ],
         "summary": "delPolicy",
+        "description": "Delete policy item",
         "operationId": "IDS_Settings_delPolicy",
         "parameters": [],
         "requestBody": null,
@@ -15829,6 +16354,7 @@
           "IDS"
         ],
         "summary": "togglePolicy",
+        "description": "Toggle policy by uuid (enable/disable)",
         "operationId": "IDS_Settings_togglePolicy",
         "parameters": [],
         "requestBody": null,
@@ -15852,6 +16378,7 @@
           "IDS"
         ],
         "summary": "searchPolicyRule",
+        "description": "Search policy rule adjustment",
         "operationId": "IDS_Settings_searchPolicyRule",
         "parameters": [],
         "requestBody": null,
@@ -15875,6 +16402,7 @@
           "IDS"
         ],
         "summary": "setPolicyRule",
+        "description": "Update policy rule adjustment",
         "operationId": "IDS_Settings_setPolicyRule",
         "parameters": [
           {
@@ -15922,6 +16450,7 @@
           "IDS"
         ],
         "summary": "addPolicyRule",
+        "description": "Add new policy rule adjustment",
         "operationId": "IDS_Settings_addPolicyRule",
         "parameters": [],
         "requestBody": {
@@ -15958,6 +16487,7 @@
           "IDS"
         ],
         "summary": "getPolicyRule",
+        "description": "Get properties of a policy rule adjustment",
         "operationId": "IDS_Settings_getPolicyRule",
         "parameters": [
           {
@@ -15997,6 +16527,7 @@
           "IDS"
         ],
         "summary": "delPolicyRule",
+        "description": "Delete policy rule adjustment item",
         "operationId": "IDS_Settings_delPolicyRule",
         "parameters": [
           {
@@ -16031,6 +16562,7 @@
           "IDS"
         ],
         "summary": "togglePolicyRule",
+        "description": "Toggle policy rule adjustment by uuid (enable/disable)",
         "operationId": "IDS_Settings_togglePolicyRule",
         "parameters": [
           {
@@ -16065,6 +16597,7 @@
           "IDS"
         ],
         "summary": "checkPolicyRule",
+        "description": "return the number of custom defined policy rules",
         "operationId": "IDS_Settings_checkPolicyRule",
         "parameters": [],
         "requestBody": null,
@@ -16081,6 +16614,7 @@
           "Dnsmasq"
         ],
         "summary": "get",
+        "description": "get",
         "operationId": "Dnsmasq_Settings_get",
         "parameters": [],
         "requestBody": null,
@@ -16109,6 +16643,7 @@
           "Dnsmasq"
         ],
         "summary": "searchHost",
+        "description": "searchHost",
         "operationId": "Dnsmasq_Settings_searchHost",
         "parameters": [],
         "requestBody": null,
@@ -16132,6 +16667,7 @@
           "Dnsmasq"
         ],
         "summary": "getHost",
+        "description": "getHost",
         "operationId": "Dnsmasq_Settings_getHost",
         "parameters": [],
         "requestBody": null,
@@ -16160,6 +16696,7 @@
           "Dnsmasq"
         ],
         "summary": "setHost",
+        "description": "setHost",
         "operationId": "Dnsmasq_Settings_setHost",
         "parameters": [],
         "requestBody": {
@@ -16196,6 +16733,7 @@
           "Dnsmasq"
         ],
         "summary": "addHost",
+        "description": "addHost",
         "operationId": "Dnsmasq_Settings_addHost",
         "parameters": [],
         "requestBody": {
@@ -16232,6 +16770,7 @@
           "Dnsmasq"
         ],
         "summary": "delHost",
+        "description": "delHost",
         "operationId": "Dnsmasq_Settings_delHost",
         "parameters": [],
         "requestBody": null,
@@ -16255,6 +16794,7 @@
           "Dnsmasq"
         ],
         "summary": "downloadHosts",
+        "description": "downloadHosts",
         "operationId": "Dnsmasq_Settings_downloadHosts",
         "parameters": [],
         "requestBody": null,
@@ -16280,6 +16820,7 @@
           "Dnsmasq"
         ],
         "summary": "uploadHosts",
+        "description": "uploadHosts",
         "operationId": "Dnsmasq_Settings_uploadHosts",
         "parameters": [],
         "requestBody": null,
@@ -16303,6 +16844,7 @@
           "Dnsmasq"
         ],
         "summary": "searchDomain",
+        "description": "searchDomain",
         "operationId": "Dnsmasq_Settings_searchDomain",
         "parameters": [],
         "requestBody": null,
@@ -16326,6 +16868,7 @@
           "Dnsmasq"
         ],
         "summary": "getDomain",
+        "description": "getDomain",
         "operationId": "Dnsmasq_Settings_getDomain",
         "parameters": [],
         "requestBody": null,
@@ -16354,6 +16897,7 @@
           "Dnsmasq"
         ],
         "summary": "setDomain",
+        "description": "setDomain",
         "operationId": "Dnsmasq_Settings_setDomain",
         "parameters": [],
         "requestBody": {
@@ -16390,6 +16934,7 @@
           "Dnsmasq"
         ],
         "summary": "addDomain",
+        "description": "addDomain",
         "operationId": "Dnsmasq_Settings_addDomain",
         "parameters": [],
         "requestBody": {
@@ -16426,6 +16971,7 @@
           "Dnsmasq"
         ],
         "summary": "delDomain",
+        "description": "delDomain",
         "operationId": "Dnsmasq_Settings_delDomain",
         "parameters": [],
         "requestBody": null,
@@ -16449,6 +16995,7 @@
           "Dnsmasq"
         ],
         "summary": "searchTag",
+        "description": "searchTag",
         "operationId": "Dnsmasq_Settings_searchTag",
         "parameters": [],
         "requestBody": null,
@@ -16472,6 +17019,7 @@
           "Dnsmasq"
         ],
         "summary": "getTag",
+        "description": "getTag",
         "operationId": "Dnsmasq_Settings_getTag",
         "parameters": [],
         "requestBody": null,
@@ -16500,6 +17048,7 @@
           "Dnsmasq"
         ],
         "summary": "setTag",
+        "description": "setTag",
         "operationId": "Dnsmasq_Settings_setTag",
         "parameters": [],
         "requestBody": {
@@ -16536,6 +17085,7 @@
           "Dnsmasq"
         ],
         "summary": "addTag",
+        "description": "addTag",
         "operationId": "Dnsmasq_Settings_addTag",
         "parameters": [],
         "requestBody": {
@@ -16572,6 +17122,7 @@
           "Dnsmasq"
         ],
         "summary": "delTag",
+        "description": "delTag",
         "operationId": "Dnsmasq_Settings_delTag",
         "parameters": [],
         "requestBody": null,
@@ -16595,6 +17146,7 @@
           "Dnsmasq"
         ],
         "summary": "searchRange",
+        "description": "searchRange",
         "operationId": "Dnsmasq_Settings_searchRange",
         "parameters": [],
         "requestBody": null,
@@ -16618,6 +17170,7 @@
           "Dnsmasq"
         ],
         "summary": "getRange",
+        "description": "getRange",
         "operationId": "Dnsmasq_Settings_getRange",
         "parameters": [],
         "requestBody": null,
@@ -16646,6 +17199,7 @@
           "Dnsmasq"
         ],
         "summary": "setRange",
+        "description": "setRange",
         "operationId": "Dnsmasq_Settings_setRange",
         "parameters": [],
         "requestBody": {
@@ -16682,6 +17236,7 @@
           "Dnsmasq"
         ],
         "summary": "addRange",
+        "description": "addRange",
         "operationId": "Dnsmasq_Settings_addRange",
         "parameters": [],
         "requestBody": {
@@ -16718,6 +17273,7 @@
           "Dnsmasq"
         ],
         "summary": "delRange",
+        "description": "delRange",
         "operationId": "Dnsmasq_Settings_delRange",
         "parameters": [],
         "requestBody": null,
@@ -16741,6 +17297,7 @@
           "Dnsmasq"
         ],
         "summary": "searchOption",
+        "description": "searchOption",
         "operationId": "Dnsmasq_Settings_searchOption",
         "parameters": [],
         "requestBody": null,
@@ -16764,6 +17321,7 @@
           "Dnsmasq"
         ],
         "summary": "getOption",
+        "description": "getOption",
         "operationId": "Dnsmasq_Settings_getOption",
         "parameters": [],
         "requestBody": null,
@@ -16792,6 +17350,7 @@
           "Dnsmasq"
         ],
         "summary": "setOption",
+        "description": "setOption",
         "operationId": "Dnsmasq_Settings_setOption",
         "parameters": [],
         "requestBody": {
@@ -16828,6 +17387,7 @@
           "Dnsmasq"
         ],
         "summary": "addOption",
+        "description": "addOption",
         "operationId": "Dnsmasq_Settings_addOption",
         "parameters": [],
         "requestBody": {
@@ -16864,6 +17424,7 @@
           "Dnsmasq"
         ],
         "summary": "delOption",
+        "description": "delOption",
         "operationId": "Dnsmasq_Settings_delOption",
         "parameters": [],
         "requestBody": null,
@@ -16887,6 +17448,7 @@
           "Dnsmasq"
         ],
         "summary": "searchBoot",
+        "description": "searchBoot",
         "operationId": "Dnsmasq_Settings_searchBoot",
         "parameters": [],
         "requestBody": null,
@@ -16910,6 +17472,7 @@
           "Dnsmasq"
         ],
         "summary": "getBoot",
+        "description": "getBoot",
         "operationId": "Dnsmasq_Settings_getBoot",
         "parameters": [],
         "requestBody": null,
@@ -16938,6 +17501,7 @@
           "Dnsmasq"
         ],
         "summary": "setBoot",
+        "description": "setBoot",
         "operationId": "Dnsmasq_Settings_setBoot",
         "parameters": [],
         "requestBody": {
@@ -16974,6 +17538,7 @@
           "Dnsmasq"
         ],
         "summary": "addBoot",
+        "description": "addBoot",
         "operationId": "Dnsmasq_Settings_addBoot",
         "parameters": [],
         "requestBody": {
@@ -17010,6 +17575,7 @@
           "Dnsmasq"
         ],
         "summary": "delBoot",
+        "description": "delBoot",
         "operationId": "Dnsmasq_Settings_delBoot",
         "parameters": [],
         "requestBody": null,
@@ -17033,6 +17599,7 @@
           "Dnsmasq"
         ],
         "summary": "getTagList",
+        "description": "Return selectpicker options for interfaces and tags",
         "operationId": "Dnsmasq_Settings_getTagList",
         "parameters": [],
         "requestBody": null,
@@ -17058,6 +17625,7 @@
           "Dnsmasq"
         ],
         "summary": "search",
+        "description": "search",
         "operationId": "Dnsmasq_Leases_search",
         "parameters": [],
         "requestBody": null,
@@ -17081,6 +17649,7 @@
           "DHCPv4"
         ],
         "summary": "searchLease",
+        "description": "searchLease",
         "operationId": "DHCPv4_Leases_searchLease",
         "parameters": [],
         "requestBody": null,
@@ -17121,6 +17690,7 @@
           "DHCPv4"
         ],
         "summary": "delLease",
+        "description": "delLease",
         "operationId": "DHCPv4_Leases_delLease",
         "parameters": [],
         "requestBody": null,
@@ -17144,6 +17714,7 @@
           "Firewall"
         ],
         "summary": "searchItem",
+        "description": "search aliases",
         "operationId": "Firewall_Alias_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -17167,6 +17738,7 @@
           "Firewall"
         ],
         "summary": "listCategories",
+        "description": "list categories and usage",
         "operationId": "Firewall_Alias_listCategories",
         "parameters": [],
         "requestBody": null,
@@ -17192,6 +17764,7 @@
           "Firewall"
         ],
         "summary": "setItem",
+        "description": "Update alias with given properties",
         "operationId": "Firewall_Alias_setItem",
         "parameters": [
           {
@@ -17239,6 +17812,7 @@
           "Firewall"
         ],
         "summary": "addItem",
+        "description": "Add new alias and set with attributes from post",
         "operationId": "Firewall_Alias_addItem",
         "parameters": [],
         "requestBody": {
@@ -17275,6 +17849,7 @@
           "Firewall"
         ],
         "summary": "getItem",
+        "description": "Retrieve alias settings or return defaults for new one",
         "operationId": "Firewall_Alias_getItem",
         "parameters": [
           {
@@ -17309,6 +17884,7 @@
           "Firewall"
         ],
         "summary": "getAliasUUID",
+        "description": "find the alias uuid by name",
         "operationId": "Firewall_Alias_getAliasUUID",
         "parameters": [
           {
@@ -17348,6 +17924,7 @@
           "Firewall"
         ],
         "summary": "delItem",
+        "description": "Delete alias by uuid, save contents to tmp for removal on apply",
         "operationId": "Firewall_Alias_delItem",
         "parameters": [
           {
@@ -17382,6 +17959,7 @@
           "Firewall"
         ],
         "summary": "toggleItem",
+        "description": "toggle status",
         "operationId": "Firewall_Alias_toggleItem",
         "parameters": [
           {
@@ -17416,6 +17994,7 @@
           "Firewall"
         ],
         "summary": "listCountries",
+        "description": "list countries and regions",
         "operationId": "Firewall_Alias_listCountries",
         "parameters": [],
         "requestBody": null,
@@ -17441,6 +18020,7 @@
           "Firewall"
         ],
         "summary": "listUserGroups",
+        "description": "list user groups",
         "operationId": "Firewall_Alias_listUserGroups",
         "parameters": [],
         "requestBody": null,
@@ -17466,6 +18046,7 @@
           "Firewall"
         ],
         "summary": "listNetworkAliases",
+        "description": "list network alias types",
         "operationId": "Firewall_Alias_listNetworkAliases",
         "parameters": [],
         "requestBody": null,
@@ -17491,6 +18072,7 @@
           "Firewall"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure aliases",
         "operationId": "Firewall_Alias_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -17527,6 +18109,7 @@
           "Firewall"
         ],
         "summary": "getTableSize",
+        "description": "get aliases load stats and table-entries limit",
         "operationId": "Firewall_Alias_getTableSize",
         "parameters": [],
         "requestBody": null,
@@ -17555,6 +18138,7 @@
           "Firewall"
         ],
         "summary": "export",
+        "description": "export configured aliases",
         "operationId": "Firewall_Alias_export",
         "parameters": [],
         "requestBody": null,
@@ -17580,6 +18164,7 @@
           "Firewall"
         ],
         "summary": "import",
+        "description": "import delivered aliases in post variable \"data\", validate all only commit when fully valid.",
         "operationId": "Firewall_Alias_import",
         "parameters": [],
         "requestBody": null,
@@ -17596,6 +18181,7 @@
           "Firewall"
         ],
         "summary": "getGeoIP",
+        "description": "get geoip settings (and stats)",
         "operationId": "Firewall_Alias_getGeoIP",
         "parameters": [],
         "requestBody": null,
@@ -17624,6 +18210,7 @@
           "Firewall"
         ],
         "summary": "ruleStats",
+        "description": "return rule statistics",
         "operationId": "Firewall_FilterUtil_ruleStats",
         "parameters": [],
         "requestBody": null,
@@ -17649,6 +18236,7 @@
           "Firewall"
         ],
         "summary": "searchItem",
+        "description": "search categories",
         "operationId": "Firewall_Category_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -17672,6 +18260,7 @@
           "Firewall"
         ],
         "summary": "setItem",
+        "description": "Update category with given properties",
         "operationId": "Firewall_Category_setItem",
         "parameters": [
           {
@@ -17719,6 +18308,7 @@
           "Firewall"
         ],
         "summary": "addItem",
+        "description": "Add new category and set with attributes from post",
         "operationId": "Firewall_Category_addItem",
         "parameters": [],
         "requestBody": {
@@ -17755,6 +18345,7 @@
           "Firewall"
         ],
         "summary": "getItem",
+        "description": "Retrieve category settings or return defaults for new one",
         "operationId": "Firewall_Category_getItem",
         "parameters": [
           {
@@ -17789,6 +18380,7 @@
           "Firewall"
         ],
         "summary": "delItem",
+        "description": "Delete alias by uuid, save contents to tmp for removal on apply",
         "operationId": "Firewall_Category_delItem",
         "parameters": [
           {
@@ -17823,6 +18415,7 @@
           "Firewall"
         ],
         "summary": "searchItem",
+        "description": "search groups",
         "operationId": "Firewall_Group_searchItem",
         "parameters": [],
         "requestBody": null,
@@ -17846,6 +18439,7 @@
           "Firewall"
         ],
         "summary": "setItem",
+        "description": "Update group with given properties",
         "operationId": "Firewall_Group_setItem",
         "parameters": [
           {
@@ -17893,6 +18487,7 @@
           "Firewall"
         ],
         "summary": "addItem",
+        "description": "Add new group and set with attributes from post",
         "operationId": "Firewall_Group_addItem",
         "parameters": [],
         "requestBody": {
@@ -17929,6 +18524,7 @@
           "Firewall"
         ],
         "summary": "getItem",
+        "description": "Retrieve group settings or return defaults for new one",
         "operationId": "Firewall_Group_getItem",
         "parameters": [
           {
@@ -17963,6 +18559,7 @@
           "Firewall"
         ],
         "summary": "delItem",
+        "description": "Delete alias by uuid, save contents to tmp for removal on apply",
         "operationId": "Firewall_Group_delItem",
         "parameters": [
           {
@@ -17997,6 +18594,7 @@
           "Firewall"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure groups",
         "operationId": "Firewall_Group_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -18033,6 +18631,7 @@
           "Firewall"
         ],
         "summary": "listCategories",
+        "description": "list categories and usage",
         "operationId": "Firewall_FilterBase_listCategories",
         "parameters": [],
         "requestBody": null,
@@ -18058,6 +18657,7 @@
           "Firewall"
         ],
         "summary": "listNetworkSelectOptions",
+        "description": "list of available network options",
         "operationId": "Firewall_FilterBase_listNetworkSelectOptions",
         "parameters": [],
         "requestBody": null,
@@ -18083,6 +18683,7 @@
           "Firewall"
         ],
         "summary": "listPortSelectOptions",
+        "description": "list of available port options",
         "operationId": "Firewall_FilterBase_listPortSelectOptions",
         "parameters": [],
         "requestBody": null,
@@ -18108,6 +18709,7 @@
           "Firewall"
         ],
         "summary": "apply",
+        "description": "list of available port options",
         "operationId": "Firewall_FilterBase_apply",
         "parameters": [],
         "requestBody": null,
@@ -18131,6 +18733,7 @@
           "Firewall"
         ],
         "summary": "cancelRollback",
+        "description": "list of available port options",
         "operationId": "Firewall_FilterBase_cancelRollback",
         "parameters": [],
         "requestBody": null,
@@ -18154,6 +18757,7 @@
           "Firewall"
         ],
         "summary": "savepoint",
+        "description": "list of available port options",
         "operationId": "Firewall_FilterBase_savepoint",
         "parameters": [],
         "requestBody": null,
@@ -18177,6 +18781,7 @@
           "Firewall"
         ],
         "summary": "revert",
+        "description": "list of available port options",
         "operationId": "Firewall_FilterBase_revert",
         "parameters": [],
         "requestBody": null,
@@ -18200,6 +18805,7 @@
           "Firewall"
         ],
         "summary": "aliases",
+        "description": "list active alias tables",
         "operationId": "Firewall_AliasUtil_aliases",
         "parameters": [],
         "requestBody": null,
@@ -18225,6 +18831,7 @@
           "Firewall"
         ],
         "summary": "list",
+        "description": "list alias table",
         "operationId": "Firewall_AliasUtil_list",
         "parameters": [],
         "requestBody": null,
@@ -18250,6 +18857,7 @@
           "Firewall"
         ],
         "summary": "updateBogons",
+        "description": "update bogons table",
         "operationId": "Firewall_AliasUtil_updateBogons",
         "parameters": [],
         "requestBody": {
@@ -18283,6 +18891,7 @@
           "Firewall"
         ],
         "summary": "flush",
+        "description": "flush alias table",
         "operationId": "Firewall_AliasUtil_flush",
         "parameters": [],
         "requestBody": null,
@@ -18306,6 +18915,7 @@
           "Firewall"
         ],
         "summary": "delete",
+        "description": "delete item from alias table",
         "operationId": "Firewall_AliasUtil_delete",
         "parameters": [],
         "requestBody": null,
@@ -18329,6 +18939,7 @@
           "Firewall"
         ],
         "summary": "add",
+        "description": "add item to alias table",
         "operationId": "Firewall_AliasUtil_add",
         "parameters": [],
         "requestBody": {
@@ -18362,6 +18973,7 @@
           "Firewall"
         ],
         "summary": "findReferences",
+        "description": "API handler to look up in which rules an IP is used (either explicitly or included in a range).",
         "operationId": "Firewall_AliasUtil_findReferences",
         "parameters": [],
         "requestBody": null,
@@ -18402,6 +19014,7 @@
           "CaptivePortal"
         ],
         "summary": "getTemplate",
+        "description": "getTemplate",
         "operationId": "CaptivePortal_Service_getTemplate",
         "parameters": [],
         "requestBody": null,
@@ -18430,6 +19043,7 @@
           "CaptivePortal"
         ],
         "summary": "saveTemplate",
+        "description": "save template, updates existing or create new.",
         "operationId": "CaptivePortal_Service_saveTemplate",
         "parameters": [],
         "requestBody": null,
@@ -18446,6 +19060,7 @@
           "CaptivePortal"
         ],
         "summary": "delTemplate",
+        "description": "delete template by uuid",
         "operationId": "CaptivePortal_Service_delTemplate",
         "parameters": [],
         "requestBody": null,
@@ -18469,6 +19084,7 @@
           "CaptivePortal"
         ],
         "summary": "searchTemplates",
+        "description": "search captive portal zones",
         "operationId": "CaptivePortal_Service_searchTemplates",
         "parameters": [],
         "requestBody": null,
@@ -18494,6 +19110,7 @@
           "CaptivePortal"
         ],
         "summary": "status",
+        "description": "retrieve session info",
         "operationId": "CaptivePortal_Access_status",
         "parameters": [],
         "requestBody": null,
@@ -18535,6 +19152,7 @@
           "CaptivePortal"
         ],
         "summary": "api",
+        "description": "RFC 8908: Captive Portal API status object",
         "operationId": "CaptivePortal_Access_api",
         "parameters": [],
         "requestBody": null,
@@ -18551,6 +19169,7 @@
           "CaptivePortal"
         ],
         "summary": "logon",
+        "description": "logon client to zone, must use post type of request",
         "operationId": "CaptivePortal_Access_logon",
         "parameters": [],
         "requestBody": null,
@@ -18567,6 +19186,7 @@
           "CaptivePortal"
         ],
         "summary": "logoff",
+        "description": "logoff client",
         "operationId": "CaptivePortal_Access_logoff",
         "parameters": [],
         "requestBody": null,
@@ -18583,6 +19203,7 @@
           "CaptivePortal"
         ],
         "summary": "getZone",
+        "description": "retrieve zone settings or return defaults",
         "operationId": "CaptivePortal_Settings_getZone",
         "parameters": [],
         "requestBody": null,
@@ -18611,6 +19232,7 @@
           "CaptivePortal"
         ],
         "summary": "setZone",
+        "description": "update zone with given properties",
         "operationId": "CaptivePortal_Settings_setZone",
         "parameters": [],
         "requestBody": {
@@ -18647,6 +19269,7 @@
           "CaptivePortal"
         ],
         "summary": "addZone",
+        "description": "add new zone and set with attributes from post",
         "operationId": "CaptivePortal_Settings_addZone",
         "parameters": [],
         "requestBody": {
@@ -18683,6 +19306,7 @@
           "CaptivePortal"
         ],
         "summary": "delZone",
+        "description": "delete zone by uuid",
         "operationId": "CaptivePortal_Settings_delZone",
         "parameters": [],
         "requestBody": null,
@@ -18706,6 +19330,7 @@
           "CaptivePortal"
         ],
         "summary": "toggleZone",
+        "description": "toggle zone by uuid (enable/disable)",
         "operationId": "CaptivePortal_Settings_toggleZone",
         "parameters": [],
         "requestBody": null,
@@ -18729,6 +19354,7 @@
           "CaptivePortal"
         ],
         "summary": "searchZones",
+        "description": "search captive portal zones",
         "operationId": "CaptivePortal_Settings_searchZones",
         "parameters": [],
         "requestBody": null,
@@ -18752,6 +19378,7 @@
           "CaptivePortal"
         ],
         "summary": "list",
+        "description": "list client sessions",
         "operationId": "CaptivePortal_Session_list",
         "parameters": [],
         "requestBody": null,
@@ -18775,6 +19402,7 @@
           "CaptivePortal"
         ],
         "summary": "search",
+        "description": "search through connected clients",
         "operationId": "CaptivePortal_Session_search",
         "parameters": [],
         "requestBody": null,
@@ -18798,6 +19426,7 @@
           "CaptivePortal"
         ],
         "summary": "zones",
+        "description": "return list of available zones",
         "operationId": "CaptivePortal_Session_zones",
         "parameters": [],
         "requestBody": null,
@@ -18814,6 +19443,7 @@
           "CaptivePortal"
         ],
         "summary": "disconnect",
+        "description": "disconnect a client",
         "operationId": "CaptivePortal_Session_disconnect",
         "parameters": [],
         "requestBody": null,
@@ -18837,6 +19467,7 @@
           "CaptivePortal"
         ],
         "summary": "connect",
+        "description": "connect a client",
         "operationId": "CaptivePortal_Session_connect",
         "parameters": [],
         "requestBody": null,
@@ -18860,6 +19491,7 @@
           "CaptivePortal"
         ],
         "summary": "listProviders",
+        "description": "list voucher providers (authenticators of type \"voucher\")",
         "operationId": "CaptivePortal_Voucher_listProviders",
         "parameters": [],
         "requestBody": null,
@@ -18885,6 +19517,7 @@
           "CaptivePortal"
         ],
         "summary": "listVoucherGroups",
+        "description": "list voucher groups",
         "operationId": "CaptivePortal_Voucher_listVoucherGroups",
         "parameters": [],
         "requestBody": null,
@@ -18910,6 +19543,7 @@
           "CaptivePortal"
         ],
         "summary": "listVouchers",
+        "description": "list vouchers",
         "operationId": "CaptivePortal_Voucher_listVouchers",
         "parameters": [],
         "requestBody": null,
@@ -18935,6 +19569,7 @@
           "CaptivePortal"
         ],
         "summary": "dropVoucherGroup",
+        "description": "drop a voucher group",
         "operationId": "CaptivePortal_Voucher_dropVoucherGroup",
         "parameters": [],
         "requestBody": null,
@@ -18951,6 +19586,7 @@
           "CaptivePortal"
         ],
         "summary": "dropExpiredVouchers",
+        "description": "drop expired vouchers from group",
         "operationId": "CaptivePortal_Voucher_dropExpiredVouchers",
         "parameters": [],
         "requestBody": null,
@@ -18967,6 +19603,7 @@
           "CaptivePortal"
         ],
         "summary": "generateVouchers",
+        "description": "generate new vouchers",
         "operationId": "CaptivePortal_Voucher_generateVouchers",
         "parameters": [],
         "requestBody": null,
@@ -18990,6 +19627,7 @@
           "CaptivePortal"
         ],
         "summary": "expireVoucher",
+        "description": "expire a voucher",
         "operationId": "CaptivePortal_Voucher_expireVoucher",
         "parameters": [],
         "requestBody": null,
@@ -19006,6 +19644,7 @@
           "Unbound"
         ],
         "summary": "isEnabled",
+        "description": "isEnabled",
         "operationId": "Unbound_Overview_isEnabled",
         "parameters": [],
         "requestBody": null,
@@ -19039,6 +19678,7 @@
           "Unbound"
         ],
         "summary": "isBlockListEnabled",
+        "description": "isBlockListEnabled",
         "operationId": "Unbound_Overview_isBlockListEnabled",
         "parameters": [],
         "requestBody": null,
@@ -19064,6 +19704,7 @@
           "Unbound"
         ],
         "summary": "Rolling",
+        "description": "Rolling",
         "operationId": "Unbound_Overview_Rolling",
         "parameters": [],
         "requestBody": null,
@@ -19080,6 +19721,7 @@
           "Unbound"
         ],
         "summary": "totals",
+        "description": "totals",
         "operationId": "Unbound_Overview_totals",
         "parameters": [],
         "requestBody": null,
@@ -19096,6 +19738,7 @@
           "Unbound"
         ],
         "summary": "searchQueries",
+        "description": "searchQueries",
         "operationId": "Unbound_Overview_searchQueries",
         "parameters": [],
         "requestBody": null,
@@ -19119,6 +19762,7 @@
           "Unbound"
         ],
         "summary": "stats",
+        "description": "reconfigure return the stats",
         "operationId": "Unbound_Diagnostics_stats",
         "parameters": [],
         "requestBody": null,
@@ -19144,6 +19788,7 @@
           "Unbound"
         ],
         "summary": "dumpcache",
+        "description": "return the entries of the cache",
         "operationId": "Unbound_Diagnostics_dumpcache",
         "parameters": [],
         "requestBody": null,
@@ -19169,6 +19814,7 @@
           "Unbound"
         ],
         "summary": "dumpinfra",
+        "description": "return the entries of the cache",
         "operationId": "Unbound_Diagnostics_dumpinfra",
         "parameters": [],
         "requestBody": null,
@@ -19194,6 +19840,7 @@
           "Unbound"
         ],
         "summary": "listlocaldata",
+        "description": "return the entries of the cache",
         "operationId": "Unbound_Diagnostics_listlocaldata",
         "parameters": [],
         "requestBody": null,
@@ -19219,6 +19866,7 @@
           "Unbound"
         ],
         "summary": "listlocalzones",
+        "description": "return the entries of the cache",
         "operationId": "Unbound_Diagnostics_listlocalzones",
         "parameters": [],
         "requestBody": null,
@@ -19244,6 +19892,7 @@
           "Unbound"
         ],
         "summary": "listinsecure",
+        "description": "return the entries of the cache",
         "operationId": "Unbound_Diagnostics_listinsecure",
         "parameters": [],
         "requestBody": null,
@@ -19269,6 +19918,7 @@
           "Unbound"
         ],
         "summary": "updateBlocklist",
+        "description": "updateBlocklist",
         "operationId": "Unbound_Settings_updateBlocklist",
         "parameters": [],
         "requestBody": null,
@@ -19294,6 +19944,7 @@
           "Unbound"
         ],
         "summary": "getNameservers",
+        "description": "getNameservers",
         "operationId": "Unbound_Settings_getNameservers",
         "parameters": [
           {
@@ -19333,6 +19984,7 @@
           "Unbound"
         ],
         "summary": "searchForward",
+        "description": "searchForward",
         "operationId": "Unbound_Settings_searchForward",
         "parameters": [],
         "requestBody": null,
@@ -19356,6 +20008,7 @@
           "Unbound"
         ],
         "summary": "getForward",
+        "description": "getForward",
         "operationId": "Unbound_Settings_getForward",
         "parameters": [],
         "requestBody": null,
@@ -19384,6 +20037,7 @@
           "Unbound"
         ],
         "summary": "addForward",
+        "description": "addForward",
         "operationId": "Unbound_Settings_addForward",
         "parameters": [],
         "requestBody": {
@@ -19420,6 +20074,7 @@
           "Unbound"
         ],
         "summary": "delForward",
+        "description": "delForward",
         "operationId": "Unbound_Settings_delForward",
         "parameters": [],
         "requestBody": null,
@@ -19443,6 +20098,7 @@
           "Unbound"
         ],
         "summary": "setForward",
+        "description": "setForward",
         "operationId": "Unbound_Settings_setForward",
         "parameters": [],
         "requestBody": {
@@ -19479,6 +20135,7 @@
           "Unbound"
         ],
         "summary": "toggleForward",
+        "description": "toggleForward",
         "operationId": "Unbound_Settings_toggleForward",
         "parameters": [],
         "requestBody": null,
@@ -19502,6 +20159,7 @@
           "Unbound"
         ],
         "summary": "searchHostOverride",
+        "description": "searchHostOverride",
         "operationId": "Unbound_Settings_searchHostOverride",
         "parameters": [],
         "requestBody": null,
@@ -19525,6 +20183,7 @@
           "Unbound"
         ],
         "summary": "getHostOverride",
+        "description": "getHostOverride",
         "operationId": "Unbound_Settings_getHostOverride",
         "parameters": [],
         "requestBody": null,
@@ -19553,6 +20212,7 @@
           "Unbound"
         ],
         "summary": "addHostOverride",
+        "description": "addHostOverride",
         "operationId": "Unbound_Settings_addHostOverride",
         "parameters": [],
         "requestBody": {
@@ -19589,6 +20249,7 @@
           "Unbound"
         ],
         "summary": "delHostOverride",
+        "description": "delHostOverride",
         "operationId": "Unbound_Settings_delHostOverride",
         "parameters": [],
         "requestBody": null,
@@ -19612,6 +20273,7 @@
           "Unbound"
         ],
         "summary": "setHostOverride",
+        "description": "setHostOverride",
         "operationId": "Unbound_Settings_setHostOverride",
         "parameters": [],
         "requestBody": {
@@ -19648,6 +20310,7 @@
           "Unbound"
         ],
         "summary": "toggleHostOverride",
+        "description": "toggleHostOverride",
         "operationId": "Unbound_Settings_toggleHostOverride",
         "parameters": [],
         "requestBody": null,
@@ -19671,6 +20334,7 @@
           "Unbound"
         ],
         "summary": "searchHostAlias",
+        "description": "searchHostAlias",
         "operationId": "Unbound_Settings_searchHostAlias",
         "parameters": [],
         "requestBody": null,
@@ -19694,6 +20358,7 @@
           "Unbound"
         ],
         "summary": "getHostAlias",
+        "description": "getHostAlias",
         "operationId": "Unbound_Settings_getHostAlias",
         "parameters": [
           {
@@ -19733,6 +20398,7 @@
           "Unbound"
         ],
         "summary": "addHostAlias",
+        "description": "addHostAlias",
         "operationId": "Unbound_Settings_addHostAlias",
         "parameters": [],
         "requestBody": {
@@ -19769,6 +20435,7 @@
           "Unbound"
         ],
         "summary": "delHostAlias",
+        "description": "delHostAlias",
         "operationId": "Unbound_Settings_delHostAlias",
         "parameters": [
           {
@@ -19803,6 +20470,7 @@
           "Unbound"
         ],
         "summary": "setHostAlias",
+        "description": "setHostAlias",
         "operationId": "Unbound_Settings_setHostAlias",
         "parameters": [
           {
@@ -19850,6 +20518,7 @@
           "Unbound"
         ],
         "summary": "toggleHostAlias",
+        "description": "toggleHostAlias",
         "operationId": "Unbound_Settings_toggleHostAlias",
         "parameters": [
           {
@@ -19884,6 +20553,7 @@
           "Unbound"
         ],
         "summary": "searchAcl",
+        "description": "searchAcl",
         "operationId": "Unbound_Settings_searchAcl",
         "parameters": [],
         "requestBody": null,
@@ -19907,6 +20577,7 @@
           "Unbound"
         ],
         "summary": "getAcl",
+        "description": "getAcl",
         "operationId": "Unbound_Settings_getAcl",
         "parameters": [],
         "requestBody": null,
@@ -19935,6 +20606,7 @@
           "Unbound"
         ],
         "summary": "addAcl",
+        "description": "addAcl",
         "operationId": "Unbound_Settings_addAcl",
         "parameters": [],
         "requestBody": {
@@ -19971,6 +20643,7 @@
           "Unbound"
         ],
         "summary": "delAcl",
+        "description": "delAcl",
         "operationId": "Unbound_Settings_delAcl",
         "parameters": [],
         "requestBody": null,
@@ -19994,6 +20667,7 @@
           "Unbound"
         ],
         "summary": "setAcl",
+        "description": "setAcl",
         "operationId": "Unbound_Settings_setAcl",
         "parameters": [],
         "requestBody": {
@@ -20030,6 +20704,7 @@
           "Unbound"
         ],
         "summary": "toggleAcl",
+        "description": "toggleAcl",
         "operationId": "Unbound_Settings_toggleAcl",
         "parameters": [],
         "requestBody": null,
@@ -20053,6 +20728,7 @@
           "Unbound"
         ],
         "summary": "dnsbl",
+        "description": "dnsbl",
         "operationId": "Unbound_Service_dnsbl",
         "parameters": [],
         "requestBody": null,
@@ -20069,6 +20745,7 @@
           "Unbound"
         ],
         "summary": "reconfigureGeneral",
+        "description": "Only used on the general page to account for resolver_configure and dhcp hooks",
         "operationId": "Unbound_Service_reconfigureGeneral",
         "parameters": [],
         "requestBody": null,
@@ -20105,6 +20782,7 @@
           "Wireguard"
         ],
         "summary": "keyPair",
+        "description": "keyPair",
         "operationId": "Wireguard_Server_keyPair",
         "parameters": [],
         "requestBody": null,
@@ -20121,6 +20799,7 @@
           "Wireguard"
         ],
         "summary": "searchServer",
+        "description": "searchServer",
         "operationId": "Wireguard_Server_searchServer",
         "parameters": [],
         "requestBody": null,
@@ -20144,6 +20823,7 @@
           "Wireguard"
         ],
         "summary": "getServer",
+        "description": "getServer",
         "operationId": "Wireguard_Server_getServer",
         "parameters": [
           {
@@ -20183,6 +20863,7 @@
           "Wireguard"
         ],
         "summary": "addServer",
+        "description": "addServer",
         "operationId": "Wireguard_Server_addServer",
         "parameters": [],
         "requestBody": {
@@ -20219,6 +20900,7 @@
           "Wireguard"
         ],
         "summary": "delServer",
+        "description": "delServer",
         "operationId": "Wireguard_Server_delServer",
         "parameters": [
           {
@@ -20253,6 +20935,7 @@
           "Wireguard"
         ],
         "summary": "setServer",
+        "description": "setServer",
         "operationId": "Wireguard_Server_setServer",
         "parameters": [
           {
@@ -20300,6 +20983,7 @@
           "Wireguard"
         ],
         "summary": "toggleServer",
+        "description": "toggleServer",
         "operationId": "Wireguard_Server_toggleServer",
         "parameters": [
           {
@@ -20334,6 +21018,7 @@
           "Wireguard"
         ],
         "summary": "reconfigure",
+        "description": "reconfigure",
         "operationId": "Wireguard_Service_reconfigure",
         "parameters": [],
         "requestBody": null,
@@ -20370,6 +21055,7 @@
           "Wireguard"
         ],
         "summary": "show",
+        "description": "wg show all dump output",
         "operationId": "Wireguard_Service_show",
         "parameters": [],
         "requestBody": null,
@@ -20386,6 +21072,7 @@
           "Wireguard"
         ],
         "summary": "psk",
+        "description": "psk",
         "operationId": "Wireguard_Client_psk",
         "parameters": [],
         "requestBody": null,
@@ -20402,6 +21089,7 @@
           "Wireguard"
         ],
         "summary": "listServers",
+        "description": "listServers",
         "operationId": "Wireguard_Client_listServers",
         "parameters": [],
         "requestBody": null,
@@ -20427,6 +21115,7 @@
           "Wireguard"
         ],
         "summary": "searchClient",
+        "description": "searchClient",
         "operationId": "Wireguard_Client_searchClient",
         "parameters": [],
         "requestBody": null,
@@ -20450,6 +21139,7 @@
           "Wireguard"
         ],
         "summary": "getClient",
+        "description": "getClient",
         "operationId": "Wireguard_Client_getClient",
         "parameters": [
           {
@@ -20489,6 +21179,7 @@
           "Wireguard"
         ],
         "summary": "addClient",
+        "description": "addClient",
         "operationId": "Wireguard_Client_addClient",
         "parameters": [],
         "requestBody": {
@@ -20525,6 +21216,7 @@
           "Wireguard"
         ],
         "summary": "delClient",
+        "description": "delClient",
         "operationId": "Wireguard_Client_delClient",
         "parameters": [
           {
@@ -20559,6 +21251,7 @@
           "Wireguard"
         ],
         "summary": "setClient",
+        "description": "setClient",
         "operationId": "Wireguard_Client_setClient",
         "parameters": [
           {
@@ -20606,6 +21299,7 @@
           "Wireguard"
         ],
         "summary": "toggleClient",
+        "description": "Save to in memory model.",
         "operationId": "Wireguard_Client_toggleClient",
         "parameters": [
           {
@@ -20640,6 +21334,7 @@
           "Wireguard"
         ],
         "summary": "getClientBuilder",
+        "description": "Save to in memory model.",
         "operationId": "Wireguard_Client_getClientBuilder",
         "parameters": [
           {
@@ -20679,6 +21374,7 @@
           "Wireguard"
         ],
         "summary": "addClientBuilder",
+        "description": "Save to in memory model.",
         "operationId": "Wireguard_Client_addClientBuilder",
         "parameters": [],
         "requestBody": {
@@ -20715,6 +21411,7 @@
           "Wireguard"
         ],
         "summary": "getServerInfo",
+        "description": "Save to in memory model.",
         "operationId": "Wireguard_Client_getServerInfo",
         "parameters": [
           {
