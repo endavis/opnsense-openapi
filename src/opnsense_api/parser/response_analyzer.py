@@ -24,6 +24,20 @@ class ResponseAnalyzer:
             },
             "required": ["rows", "rowCount", "total", "current"],
         },
+        "searchRecordsetBase": {
+            "type": "object",
+            "properties": {
+                "rows": {
+                    "type": "array",
+                    "items": {"type": "object"},
+                    "description": "Array of matching records",
+                },
+                "rowCount": {"type": "integer", "description": "Number of rows in current page"},
+                "total": {"type": "integer", "description": "Total number of matching records"},
+                "current": {"type": "integer", "description": "Current page number"},
+            },
+            "required": ["rows", "rowCount", "total", "current"],
+        },
         "getBase": {
             "type": "object",
             "description": "Returns model data under a key matching the model name",
@@ -274,6 +288,12 @@ class ResponseAnalyzer:
                 schemas.append(schema)
                 continue
 
+            # Check for list/export array patterns using method body
+            schema = self._detect_list_export_pattern(method_body, return_expr)
+            if schema:
+                schemas.append(schema)
+                continue
+
             # Check for plain array patterns using original expression
             schema = self._match_plain_array(method_body, original_return_expr)
             if schema:
@@ -400,6 +420,112 @@ class ResponseAnalyzer:
                     }
                 },
                 "required": ["result"],
+            }
+
+        return None
+
+    def _detect_list_export_pattern(
+        self, method_body: str, return_expr: str
+    ) -> dict[str, Any] | None:
+        """Detect list/export patterns that return simple arrays.
+
+        Args:
+            method_body: Full method body
+            return_expr: Return expression from PHP (may be traced expression)
+
+        Returns:
+            Array schema or None
+        """
+        # Pattern 1: Check if return expression itself is a json_decode call (after tracing)
+        if "json_decode" in return_expr:
+            # json_decode typically returns arrays for list/export endpoints
+            return {
+                "type": "array",
+                "items": {"type": "object"},
+                "description": "Array of items",
+            }
+
+        # Pattern 2: Check if return expression is an empty array literal (after tracing)
+        # This means a variable was traced back to [] or array()
+        if return_expr.strip() in ("[]", "array()"):
+            # Find variables initialized as empty arrays
+            # Look for $var = []; or $var = array();
+            var_init_pattern = r"(\$\w+)\s*=\s*(?:\[\s*\]|array\(\s*\))\s*;"
+            var_matches = re.findall(var_init_pattern, method_body)
+
+            for var_name in var_matches:
+                # Check if this variable has items added to it
+                build_patterns = [
+                    rf"{re.escape(var_name)}\[\s*[^\]]*\s*\]\s*=",  # $var['key'] = or $var[$key] =
+                    rf"array_push\s*\(\s*{re.escape(var_name)}",  # array_push($var, ...)
+                ]
+
+                if any(re.search(pat, method_body) for pat in build_patterns):
+                    # This is an associative array being built up
+                    return {
+                        "type": "object",
+                        "additionalProperties": True,
+                        "description": "Object with dynamic keys",
+                    }
+
+        # Pattern 3: Check if return expr is a variable and trace back to json_decode
+        if return_expr.startswith("$"):
+            var_match = re.match(r"(\$\w+)", return_expr)
+            if not var_match:
+                return None
+
+            var_name = var_match.group(1)
+
+            # Check for json_decode assignment
+            # e.g., $result = json_decode(...);
+            json_decode_pattern = rf"{re.escape(var_name)}\s*=\s*json_decode\s*\("
+            if re.search(json_decode_pattern, method_body):
+                # json_decode typically returns arrays for list/export endpoints
+                return {
+                    "type": "array",
+                    "items": {"type": "object"},
+                    "description": "Array of items",
+                }
+
+            # Pattern 4: Check for variable initialized as empty array and items added (when not traced)
+            # Look for both $var = []; pattern and items being added
+            init_patterns = [
+                rf"{re.escape(var_name)}\s*=\s*\[\s*\];",  # $result = [];
+                rf"{re.escape(var_name)}\s*=\s*array\(\s*\);",  # $result = array();
+            ]
+
+            is_initialized_empty = any(re.search(pat, method_body) for pat in init_patterns)
+
+            # Look for array building patterns
+            build_patterns = [
+                rf"{re.escape(var_name)}\[\s*[^\]]*\s*\]\s*=",  # $result['key'] = or $result[$key] =
+                rf"array_push\s*\(\s*{re.escape(var_name)}",  # array_push($result, ...)
+            ]
+
+            is_array_built = any(re.search(pat, method_body) for pat in build_patterns)
+
+            if is_initialized_empty and is_array_built:
+                # This is an array being built up
+                # Check if it looks like an associative array (has string keys) or indexed array
+                # Most list endpoints return arrays of objects (associative)
+                return {
+                    "type": "object",
+                    "additionalProperties": True,
+                    "description": "Object with dynamic keys",
+                }
+
+        # Pattern 5: Check for "rows" wrapper pattern
+        # return ['rows' => $data];
+        if '"rows"' in return_expr or "'rows'" in return_expr:
+            return {
+                "type": "object",
+                "properties": {
+                    "rows": {
+                        "type": "array",
+                        "items": {"type": "object"},
+                        "description": "Array of items",
+                    }
+                },
             }
 
         return None

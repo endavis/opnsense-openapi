@@ -186,6 +186,7 @@ def test_base_method_schemas_defined(analyzer: ResponseAnalyzer) -> None:
     """Test that all base method schemas are defined."""
     # Model base methods
     assert "searchBase" in analyzer.BASE_METHOD_SCHEMAS
+    assert "searchRecordsetBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "getBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "addBase" in analyzer.BASE_METHOD_SCHEMAS
     assert "setBase" in analyzer.BASE_METHOD_SCHEMAS
@@ -583,3 +584,147 @@ class ServiceController extends ApiMutableServiceControllerBase
         assert reconfigure_schema["type"] == "object"
         assert "status" in reconfigure_schema["properties"]
         assert set(reconfigure_schema["properties"]["status"]["enum"]) == {"ok", "failed"}
+
+
+def test_search_recordset_base_method(analyzer: ResponseAnalyzer) -> None:
+    """Test detection of searchRecordsetBase method call."""
+    with TemporaryDirectory() as tmpdir:
+        php_file = Path(tmpdir) / "ListController.php"
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Firewall\\Api;
+
+use OPNsense\\Base\\ApiControllerBase;
+
+class ListController extends ApiControllerBase
+{
+    public function listAction($alias)
+    {
+        $data = json_decode((new Backend())->configdpRun("filter list table", [$alias]), true) ?? [];
+        return $this->searchRecordsetBase($data['items'] ?? []);
+    }
+}
+"""
+        )
+
+        schema = analyzer.infer_response_schema(php_file, "listAction")
+        assert schema is not None
+        assert schema["type"] == "object"
+        assert "rows" in schema["properties"]
+        assert "rowCount" in schema["properties"]
+        assert "total" in schema["properties"]
+        assert "current" in schema["properties"]
+
+
+def test_json_decode_array_pattern(analyzer: ResponseAnalyzer) -> None:
+    """Test detection of json_decode array return pattern."""
+    with TemporaryDirectory() as tmpdir:
+        php_file = Path(tmpdir) / "AliasController.php"
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Firewall\\Api;
+
+use OPNsense\\Base\\ApiControllerBase;
+
+class AliasController extends ApiControllerBase
+{
+    public function aliasesAction()
+    {
+        $backend = new Backend();
+        $result = json_decode($backend->configdRun("filter list tables"));
+        if ($result !== null) {
+            sort($result, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        return $result;
+    }
+}
+"""
+        )
+
+        schema = analyzer.infer_response_schema(php_file, "aliasesAction")
+        assert schema is not None
+        assert schema["type"] == "array"
+        assert "items" in schema
+        assert schema["items"]["type"] == "object"
+
+
+def test_array_building_pattern(analyzer: ResponseAnalyzer) -> None:
+    """Test detection of array building pattern."""
+    with TemporaryDirectory() as tmpdir:
+        php_file = Path(tmpdir) / "ListController.php"
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Firewall\\Api;
+
+use OPNsense\\Base\\ApiControllerBase;
+
+class ListController extends ApiControllerBase
+{
+    public function listUserGroupsAction()
+    {
+        $result = [];
+        $cnf = Config::getInstance()->object();
+        if (isset($cnf->system->group)) {
+            foreach ($cnf->system->group as $group) {
+                $name = (string)$group->name;
+                if ($name != 'all') {
+                    $result[(string)$group->gid] = [
+                        'value' => $name,
+                        'selected' => 0,
+                    ];
+                }
+            }
+            ksort($result);
+        }
+        return $result;
+    }
+}
+"""
+        )
+
+        schema = analyzer.infer_response_schema(php_file, "listUserGroupsAction")
+        assert schema is not None
+        assert schema["type"] == "object"
+        assert schema.get("additionalProperties") is True
+
+
+def test_rows_wrapper_pattern(analyzer: ResponseAnalyzer) -> None:
+    """Test detection of 'rows' wrapper pattern."""
+    with TemporaryDirectory() as tmpdir:
+        php_file = Path(tmpdir) / "CategoryController.php"
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Firewall\\Api;
+
+use OPNsense\\Base\\ApiControllerBase;
+
+class CategoryController extends ApiControllerBase
+{
+    public function listCategoriesAction()
+    {
+        $response = ['rows' => []];
+        $catcount = [];
+        foreach ($this->getModel()->aliases->alias->iterateItems() as $alias) {
+            if (!empty((string)$alias->categories)) {
+                foreach (explode(',', (string)$alias->categories) as $cat) {
+                    if (!isset($catcount[$cat])) {
+                        $catcount[$cat] = 0;
+                    }
+                    $catcount[$cat]++;
+                }
+            }
+        }
+        foreach ($catcount as $cat => $count) {
+            $response['rows'][] = ['name' => $cat, 'count' => $count];
+        }
+        return $response;
+    }
+}
+"""
+        )
+
+        schema = analyzer.infer_response_schema(php_file, "listCategoriesAction")
+        assert schema is not None
+        assert schema["type"] == "object"
+        assert "rows" in schema["properties"]
+        assert schema["properties"]["rows"]["type"] == "array"

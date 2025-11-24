@@ -10,6 +10,9 @@ import typer
 
 from . import __version__
 from .downloader import SourceDownloader
+
+# ENFORCE: Ensure your generator file is named 'generator.py'
+# or update this import to 'from .openapi_generator import OpenApiGenerator'
 from .generator import OpenApiGenerator
 from .parser import ControllerParser
 from .specs import find_best_matching_spec, list_available_specs
@@ -110,10 +113,12 @@ def generate(
         typer.secho(str(exc), fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1) from exc
 
-    # Derive models path from controllers path
-    # controllers: .../src/opnsense/mvc/app/controllers/OPNsense
-    # models:      .../src/opnsense/mvc/app/models/OPNsense
-    models_path = controllers_path.parent.parent / "models" / "OPNsense"
+    # --- FIX START ---
+    # Derive models path. The generator appends the Vendor (OPNsense),
+    # so we must point to the root 'models' directory.
+    # Structure: .../src/opnsense/mvc/app/models
+    models_path = controllers_path.parent.parent / "models"
+    # --- FIX END ---
 
     # Parse controllers
     typer.echo("Parsing controllers...")
@@ -124,10 +129,18 @@ def generate(
     # Generate OpenAPI spec
     typer.echo("Generating OpenAPI specification...")
     generator = OpenApiGenerator(output_dir)
+
+    # Validate models_path exists before passing
+    valid_models_path = models_path if models_path.exists() else None
+    if valid_models_path:
+        typer.echo(f"  Using models directory: {valid_models_path}")
+    else:
+        typer.secho("  Warning: Models directory not found. Schema generation will be skipped.", fg=typer.colors.YELLOW)
+
     output_file = generator.generate(
         controllers,
         version,
-        models_dir=models_path if models_path.exists() else None,
+        models_dir=valid_models_path,
         controllers_dir=controllers_path,
     )
 
@@ -180,7 +193,7 @@ def serve_docs(
 
     # Import Flask dependencies (only when needed)
     try:
-        from flask import Flask, jsonify, redirect, request, make_response
+        from flask import Flask, jsonify, make_response, redirect, request
         from flask_swagger_ui import get_swaggerui_blueprint
     except ImportError:
         typer.secho(
@@ -369,17 +382,3 @@ def serve_docs(
     typer.echo("=" * 70)
     typer.echo(f"\n📖 Open your browser to: http://{host}:{port}/api/docs")
     typer.echo(f"📄 Serving spec for version: {version_to_use}")
-
-    if opnsense_client:
-        typer.secho(f"\n✅ Proxy enabled - 'Try it out' will execute against: {opnsense_url}", fg=typer.colors.GREEN)
-    else:
-        typer.secho("\n⚠️  Proxy disabled - 'Try it out' will not work", fg=typer.colors.YELLOW)
-        typer.echo("   Set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET to enable")
-
-    typer.echo("\n💡 Tip: Use Ctrl+C to stop the server\n")
-
-    flask_app.run(host=host, port=port, debug=False)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    app()
