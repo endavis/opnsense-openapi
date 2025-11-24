@@ -381,3 +381,6 @@ def serve_docs(
     typer.echo("=" * 70)
     typer.echo(f"\n📖 Open your browser to: http://{host}:{port}/api/docs")
     typer.echo(f"📄 Serving spec for version: {version_to_use}")
+    typer.echo("\n💡 Tip: Use Ctrl+C to stop the server\n")
+
+    flask_app.run(host=host, port=port, debug=False)
