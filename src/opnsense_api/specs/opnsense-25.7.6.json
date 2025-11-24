@@ -3342,8 +3342,12 @@
                   "type": "object",
                   "properties": {
                     "enabled": {
-                      "type": "boolean",
-                      "description": "Whether feature is enabled"
+                      "type": "string",
+                      "enum": [
+                        "0",
+                        "1"
+                      ],
+                      "description": "Whether feature is enabled (0=false, 1=true)"
                     }
                   }
                 }
@@ -5512,8 +5516,12 @@
                   "type": "object",
                   "properties": {
                     "enabled": {
-                      "type": "boolean",
-                      "description": "Whether feature is enabled"
+                      "type": "string",
+                      "enum": [
+                        "0",
+                        "1"
+                      ],
+                      "description": "Whether feature is enabled (0=false, 1=true)"
                     }
                   }
                 }
@@ -19010,8 +19018,12 @@
                   "type": "object",
                   "properties": {
                     "enabled": {
-                      "type": "boolean",
-                      "description": "Whether feature is enabled"
+                      "type": "string",
+                      "enum": [
+                        "0",
+                        "1"
+                      ],
+                      "description": "Whether feature is enabled (0=false, 1=true)"
                     }
                   }
                 }
@@ -20753,10 +20765,20 @@
         "type": "object",
         "properties": {
           "disablepreempt": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disconnectppps": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pfsyncinterface": {
             "type": "string"
@@ -20774,13 +20796,23 @@
             ]
           },
           "pfsyncdefer": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "synchronizetoip": {
             "type": "string"
           },
           "verifypeer": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "username": {
             "type": "string"
@@ -20879,16 +20911,36 @@
             "format": "ipv4"
           },
           "dnsallowoverride": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssecstripped": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "timezone": {
             "type": "string"
@@ -20932,16 +20984,36 @@
             "type": "string"
           },
           "blockpriv": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "blockbogons": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "configure_dhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "password": {
             "type": "string"
@@ -20993,7 +21065,12 @@
             "type": "string"
           },
           "reboot": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           }
         }
       },
@@ -21027,10 +21104,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -21058,16 +21145,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -21085,10 +21192,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -21162,7 +21279,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -21200,19 +21322,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -21287,10 +21429,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -21318,16 +21470,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -21345,10 +21517,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -21422,7 +21604,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -21460,19 +21647,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -21547,10 +21754,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -21578,16 +21795,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -21605,10 +21842,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -21682,7 +21929,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -21720,19 +21972,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -21807,10 +22079,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -21838,16 +22120,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -21865,10 +22167,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -21942,7 +22254,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -21980,19 +22297,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -22067,10 +22404,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -22098,16 +22445,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -22125,10 +22492,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -22202,7 +22579,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -22240,19 +22622,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -22327,10 +22729,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -22358,16 +22770,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -22385,10 +22817,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -22462,7 +22904,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -22500,19 +22947,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -22587,10 +23054,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -22618,16 +23095,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -22645,10 +23142,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -22722,7 +23229,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -22760,19 +23272,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -22847,10 +23379,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -22878,16 +23420,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -22905,10 +23467,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -22982,7 +23554,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -23020,19 +23597,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -23107,10 +23704,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -23138,16 +23745,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -23165,10 +23792,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -23242,7 +23879,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -23280,19 +23922,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -23367,10 +24029,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -23398,16 +24070,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -23425,10 +24117,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -23502,7 +24204,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -23540,19 +24247,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -23627,10 +24354,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -23658,16 +24395,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -23685,10 +24442,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -23762,7 +24529,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -23800,19 +24572,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -23887,10 +24679,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -23918,16 +24720,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -23945,10 +24767,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -24022,7 +24854,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -24060,19 +24897,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -24147,10 +25004,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -24178,16 +25045,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -24205,10 +25092,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -24282,7 +25179,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -24320,19 +25222,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -24407,10 +25329,20 @@
             "type": "string"
           },
           "preferred_oldsa": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "disablevpnrules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "passthrough_networks": {
             "type": "string",
@@ -24438,16 +25370,36 @@
             "type": "integer"
           },
           "ignore_acquire_ts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "install_routes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cisco_unity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "make_before_break": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "retransmit_tries": {
             "type": "integer"
@@ -24465,10 +25417,20 @@
             "type": "integer"
           },
           "ike_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_level": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "app": {
             "type": "string"
@@ -24542,7 +25504,12 @@
             "type": "string"
           },
           "x_28673": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "x_28679": {
             "type": "string",
@@ -24580,19 +25547,39 @@
             "type": "string"
           },
           "accounting": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "class_group": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pam_service": {
             "type": "string"
           },
           "session": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "trim_email": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "keyPair": {
             "type": "string"
@@ -24685,7 +25672,12 @@
             "type": "string"
           },
           "showtext": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           }
         }
       },
@@ -24784,7 +25776,12 @@
             "type": "string"
           },
           "enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "activeTimeout": {
             "type": "integer"
@@ -24827,7 +25824,12 @@
             "type": "string"
           },
           "promiscuous": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "fam": {
             "type": "string",
@@ -24840,7 +25842,12 @@
             ]
           },
           "protocol_not": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "protocol": {
             "type": "string"
@@ -24849,7 +25856,12 @@
             "type": "string"
           },
           "port_not": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "port": {
             "type": "integer"
@@ -24895,7 +25907,12 @@
             "type": "string"
           },
           "or": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "filters": {
             "type": "string",
@@ -24948,7 +25965,12 @@
             "type": "integer"
           },
           "disable_frag": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "description": {
             "type": "string"
@@ -25147,10 +26169,20 @@
             "type": "string"
           },
           "in_use": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "is_user": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "name": {
             "type": "string"
@@ -25320,7 +26352,12 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interval": {
             "type": "integer"
@@ -25341,7 +26378,12 @@
             "type": "string"
           },
           "ssl": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "sslversion": {
             "type": "string",
@@ -25355,7 +26397,12 @@
             ]
           },
           "sslverify": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logfile": {
             "type": "string"
@@ -25370,7 +26417,12 @@
             "type": "integer"
           },
           "httpdEnabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "httpdUsername": {
             "type": "string"
@@ -25392,7 +26444,12 @@
             "type": "integer"
           },
           "mmonitRegisterCredentials": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "alert": {
             "type": "string"
@@ -25402,7 +26459,12 @@
             "format": "email"
           },
           "noton": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "events": {
             "type": "string",
@@ -25568,7 +26630,12 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interval": {
             "type": "integer"
@@ -25589,7 +26656,12 @@
             "type": "string"
           },
           "ssl": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "sslversion": {
             "type": "string",
@@ -25603,7 +26675,12 @@
             ]
           },
           "sslverify": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logfile": {
             "type": "string"
@@ -25618,7 +26695,12 @@
             "type": "integer"
           },
           "httpdEnabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "httpdUsername": {
             "type": "string"
@@ -25640,7 +26722,12 @@
             "type": "integer"
           },
           "mmonitRegisterCredentials": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "alert": {
             "type": "string"
@@ -25650,7 +26737,12 @@
             "format": "email"
           },
           "noton": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "events": {
             "type": "string",
@@ -25816,7 +26908,12 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interval": {
             "type": "integer"
@@ -25837,7 +26934,12 @@
             "type": "string"
           },
           "ssl": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "sslversion": {
             "type": "string",
@@ -25851,7 +26953,12 @@
             ]
           },
           "sslverify": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logfile": {
             "type": "string"
@@ -25866,7 +26973,12 @@
             "type": "integer"
           },
           "httpdEnabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "httpdUsername": {
             "type": "string"
@@ -25888,7 +27000,12 @@
             "type": "integer"
           },
           "mmonitRegisterCredentials": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "alert": {
             "type": "string"
@@ -25898,7 +27015,12 @@
             "format": "email"
           },
           "noton": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "events": {
             "type": "string",
@@ -26070,7 +27192,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "minutes": {
             "type": "string"
@@ -26134,7 +27261,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "minutes": {
             "type": "string"
@@ -26195,7 +27327,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interface": {
             "type": "string"
@@ -26205,7 +27342,12 @@
             "description": "UUID reference"
           },
           "agent_info": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "destinations": {
             "type": "string"
@@ -26249,7 +27391,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interface": {
             "type": "string"
@@ -26259,7 +27406,12 @@
             "description": "UUID reference"
           },
           "agent_info": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "destinations": {
             "type": "string"
@@ -26303,7 +27455,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "servers": {
             "type": "string"
@@ -26312,10 +27469,20 @@
             "type": "string"
           },
           "block": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "push_reset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "tunnel_network": {
             "type": "string",
@@ -26352,7 +27519,12 @@
             ]
           },
           "register_dns": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns_domain": {
             "type": "string"
@@ -26459,7 +27631,12 @@
             "format": "ipv4"
           },
           "nopool": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "bridge_gateway": {
             "type": "string",
@@ -26504,7 +27681,12 @@
             ]
           },
           "remote_cert_tls": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "verify_client_cert": {
             "type": "string",
@@ -26515,7 +27697,12 @@
             ]
           },
           "use_ocsp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "auth": {
             "type": "string",
@@ -26602,7 +27789,12 @@
             "type": "integer"
           },
           "username_as_common_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strictusercn": {
             "type": "string",
@@ -26641,7 +27833,12 @@
             "type": "string"
           },
           "provision_exclusive": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "route_metric": {
             "type": "integer"
@@ -26653,16 +27850,31 @@
             "type": "integer"
           },
           "mssfix": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "carp_depend_on": {
             "type": "string"
           },
           "compress_migrate": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "ifconfig-pool-persist": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "http-proxy": {
             "type": "string"
@@ -26725,19 +27937,44 @@
             "type": "integer"
           },
           "random_local_port": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "validate_server_cn": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cryptoapi": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "auth_nocache": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "static_challenge": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "plain_config": {
             "type": "string"
@@ -26774,7 +28011,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "servers": {
             "type": "string"
@@ -26783,10 +28025,20 @@
             "type": "string"
           },
           "block": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "push_reset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "tunnel_network": {
             "type": "string",
@@ -26823,7 +28075,12 @@
             ]
           },
           "register_dns": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns_domain": {
             "type": "string"
@@ -26930,7 +28187,12 @@
             "format": "ipv4"
           },
           "nopool": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "bridge_gateway": {
             "type": "string",
@@ -26975,7 +28237,12 @@
             ]
           },
           "remote_cert_tls": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "verify_client_cert": {
             "type": "string",
@@ -26986,7 +28253,12 @@
             ]
           },
           "use_ocsp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "auth": {
             "type": "string",
@@ -27073,7 +28345,12 @@
             "type": "integer"
           },
           "username_as_common_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strictusercn": {
             "type": "string",
@@ -27112,7 +28389,12 @@
             "type": "string"
           },
           "provision_exclusive": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "route_metric": {
             "type": "integer"
@@ -27124,16 +28406,31 @@
             "type": "integer"
           },
           "mssfix": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "carp_depend_on": {
             "type": "string"
           },
           "compress_migrate": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "ifconfig-pool-persist": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "http-proxy": {
             "type": "string"
@@ -27184,7 +28481,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "servers": {
             "type": "string"
@@ -27193,10 +28495,20 @@
             "type": "string"
           },
           "block": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "push_reset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "tunnel_network": {
             "type": "string",
@@ -27233,7 +28545,12 @@
             ]
           },
           "register_dns": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns_domain": {
             "type": "string"
@@ -27340,7 +28657,12 @@
             "format": "ipv4"
           },
           "nopool": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "bridge_gateway": {
             "type": "string",
@@ -27385,7 +28707,12 @@
             ]
           },
           "remote_cert_tls": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "verify_client_cert": {
             "type": "string",
@@ -27396,7 +28723,12 @@
             ]
           },
           "use_ocsp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "auth": {
             "type": "string",
@@ -27483,7 +28815,12 @@
             "type": "integer"
           },
           "username_as_common_name": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strictusercn": {
             "type": "string",
@@ -27522,7 +28859,12 @@
             "type": "string"
           },
           "provision_exclusive": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "route_metric": {
             "type": "integer"
@@ -27534,16 +28876,31 @@
             "type": "integer"
           },
           "mssfix": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "carp_depend_on": {
             "type": "string"
           },
           "compress_migrate": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "ifconfig-pool-persist": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "http-proxy": {
             "type": "string"
@@ -27689,7 +29046,12 @@
             "type": "string"
           },
           "disabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "scope": {
             "type": "string"
@@ -27710,7 +29072,12 @@
             "type": "string"
           },
           "scrambled_password": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pwd_changed_at": {
             "type": "string"
@@ -27771,10 +29138,20 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "loglocal": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "maxpreserve": {
             "type": "integer"
@@ -27854,7 +29231,12 @@
             "type": "string"
           },
           "rfc5424": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "description": {
             "type": "string"
@@ -27888,10 +29270,20 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "loglocal": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "maxpreserve": {
             "type": "integer"
@@ -27971,7 +29363,12 @@
             "type": "string"
           },
           "rfc5424": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "description": {
             "type": "string"
@@ -28012,7 +29409,12 @@
             "type": "integer"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "bandwidth": {
             "type": "integer"
@@ -28056,7 +29458,12 @@
             ]
           },
           "codel_enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "codel_target": {
             "type": "integer"
@@ -28065,10 +29472,20 @@
             "type": "integer"
           },
           "codel_ecn_enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pie_enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "fqcodel_quantum": {
             "type": "integer"
@@ -28130,7 +29547,12 @@
             "format": "ipv4"
           },
           "source_not": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "src_port": {
             "type": "string"
@@ -28140,7 +29562,12 @@
             "format": "ipv4"
           },
           "destination_not": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dst_port": {
             "type": "string"
@@ -28220,7 +29647,12 @@
             "type": "integer"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "bandwidth": {
             "type": "integer"
@@ -28264,7 +29696,12 @@
             ]
           },
           "codel_enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "codel_target": {
             "type": "integer"
@@ -28273,10 +29710,20 @@
             "type": "integer"
           },
           "codel_ecn_enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "pie_enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "fqcodel_quantum": {
             "type": "integer"
@@ -28338,7 +29785,12 @@
             "format": "ipv4"
           },
           "source_not": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "src_port": {
             "type": "string"
@@ -28348,7 +29800,12 @@
             "format": "ipv4"
           },
           "destination_not": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dst_port": {
             "type": "string"
@@ -28427,7 +29884,12 @@
             "type": "integer"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "action": {
             "type": "string",
@@ -28479,7 +29941,12 @@
             "type": "string"
           },
           "bypass": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "file": {
             "type": "string"
@@ -28497,10 +29964,20 @@
             "type": "string"
           },
           "ips": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "promisc": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interfaces": {
             "type": "string"
@@ -28553,13 +30030,28 @@
             "type": "integer"
           },
           "syslog": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "syslog_eve": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "LogPayload": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "verbosity": {
             "type": "string",
@@ -28572,10 +30064,20 @@
             ]
           },
           "enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "extended": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dumpAllHeaders": {
             "type": "string",
@@ -28587,7 +30089,12 @@
             ]
           },
           "sessionResumption": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "custom": {
             "type": "string",
@@ -28644,7 +30151,12 @@
             "type": "integer"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "action": {
             "type": "string",
@@ -28696,7 +30208,12 @@
             "type": "string"
           },
           "bypass": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "file": {
             "type": "string"
@@ -28714,10 +30231,20 @@
             "type": "string"
           },
           "ips": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "promisc": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "interfaces": {
             "type": "string"
@@ -28770,13 +30297,28 @@
             "type": "integer"
           },
           "syslog": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "syslog_eve": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "LogPayload": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "verbosity": {
             "type": "string",
@@ -28789,10 +30331,20 @@
             ]
           },
           "enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "extended": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dumpAllHeaders": {
             "type": "string",
@@ -28804,7 +30356,12 @@
             ]
           },
           "sessionResumption": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "custom": {
             "type": "string",
@@ -28855,40 +30412,100 @@
         "type": "object",
         "properties": {
           "enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dhcpfirst": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strict_order": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "domain_needed": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_private_reverse": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_resolv": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_queries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_hosts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strictbind": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
@@ -28921,43 +30538,88 @@
             ]
           },
           "add_subnet": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strip_subnet": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_interface": {
             "type": "string"
           },
           "fqdn": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "domain": {
             "type": "string"
           },
           "local": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "lease_max": {
             "type": "integer"
           },
           "authoritative": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "default_fw_rules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "reply_delay": {
             "type": "integer"
           },
           "enable_ra": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "nosync": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_ident": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hosts": {
             "type": "string"
@@ -28981,7 +30643,12 @@
             "type": "integer"
           },
           "ignore": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "set_tag": {
             "type": "string",
@@ -29104,7 +30771,12 @@
             "type": "string"
           },
           "force": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dhcp_boot": {
             "type": "string"
@@ -29147,40 +30819,100 @@
         "type": "object",
         "properties": {
           "enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dhcpfirst": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strict_order": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "domain_needed": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_private_reverse": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_resolv": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_queries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_hosts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strictbind": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
@@ -29213,43 +30945,88 @@
             ]
           },
           "add_subnet": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strip_subnet": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_interface": {
             "type": "string"
           },
           "fqdn": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "domain": {
             "type": "string"
           },
           "local": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "lease_max": {
             "type": "integer"
           },
           "authoritative": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "default_fw_rules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "reply_delay": {
             "type": "integer"
           },
           "enable_ra": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "nosync": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_ident": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hosts": {
             "type": "string"
@@ -29273,7 +31050,12 @@
             "type": "integer"
           },
           "ignore": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "set_tag": {
             "type": "string",
@@ -29396,7 +31178,12 @@
             "type": "string"
           },
           "force": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dhcp_boot": {
             "type": "string"
@@ -29439,40 +31226,100 @@
         "type": "object",
         "properties": {
           "enable": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dhcpfirst": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strict_order": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "domain_needed": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_private_reverse": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_resolv": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "log_queries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_hosts": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strictbind": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
@@ -29505,43 +31352,88 @@
             ]
           },
           "add_subnet": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "strip_subnet": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_interface": {
             "type": "string"
           },
           "fqdn": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "domain": {
             "type": "string"
           },
           "local": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "lease_max": {
             "type": "integer"
           },
           "authoritative": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "default_fw_rules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "reply_delay": {
             "type": "integer"
           },
           "enable_ra": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "nosync": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "no_ident": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hosts": {
             "type": "string"
@@ -29565,7 +31457,12 @@
             "type": "integer"
           },
           "ignore": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "set_tag": {
             "type": "string",
@@ -29688,7 +31585,12 @@
             "type": "string"
           },
           "force": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dhcp_boot": {
             "type": "string"
@@ -29737,7 +31639,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "name": {
             "type": "string"
@@ -29777,7 +31684,12 @@
             "type": "string"
           },
           "counters": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "updatefreq": {
             "type": "string"
@@ -29880,7 +31792,12 @@
             "type": "string"
           },
           "auto": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "color": {
             "type": "string"
@@ -29923,7 +31840,12 @@
             "type": "string"
           },
           "nogroup": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "sequence": {
             "type": "integer"
@@ -29963,7 +31885,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "zoneid": {
             "type": "string"
@@ -29972,13 +31899,23 @@
             "type": "string"
           },
           "disableRules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authservers": {
             "type": "string"
           },
           "alwaysSendAccountingReqs": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authEnforceGroup": {
             "type": "string"
@@ -29990,7 +31927,12 @@
             "type": "integer"
           },
           "concurrentlogins": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "certificate": {
             "type": "string",
@@ -30007,7 +31949,12 @@
             "type": "string"
           },
           "extendedPreAuthData": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "template": {
             "type": "string"
@@ -30056,7 +32003,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "zoneid": {
             "type": "string"
@@ -30065,13 +32017,23 @@
             "type": "string"
           },
           "disableRules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authservers": {
             "type": "string"
           },
           "alwaysSendAccountingReqs": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authEnforceGroup": {
             "type": "string"
@@ -30083,7 +32045,12 @@
             "type": "integer"
           },
           "concurrentlogins": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "certificate": {
             "type": "string",
@@ -30100,7 +32067,12 @@
             "type": "string"
           },
           "extendedPreAuthData": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "template": {
             "type": "string"
@@ -30149,7 +32121,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "zoneid": {
             "type": "string"
@@ -30158,13 +32135,23 @@
             "type": "string"
           },
           "disableRules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authservers": {
             "type": "string"
           },
           "alwaysSendAccountingReqs": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authEnforceGroup": {
             "type": "string"
@@ -30176,7 +32163,12 @@
             "type": "integer"
           },
           "concurrentlogins": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "certificate": {
             "type": "string",
@@ -30193,7 +32185,12 @@
             "type": "string"
           },
           "extendedPreAuthData": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "template": {
             "type": "string"
@@ -30242,7 +32239,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "zoneid": {
             "type": "string"
@@ -30251,13 +32253,23 @@
             "type": "string"
           },
           "disableRules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authservers": {
             "type": "string"
           },
           "alwaysSendAccountingReqs": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authEnforceGroup": {
             "type": "string"
@@ -30269,7 +32281,12 @@
             "type": "integer"
           },
           "concurrentlogins": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "certificate": {
             "type": "string",
@@ -30286,7 +32303,12 @@
             "type": "string"
           },
           "extendedPreAuthData": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "template": {
             "type": "string"
@@ -30335,7 +32357,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "zoneid": {
             "type": "string"
@@ -30344,13 +32371,23 @@
             "type": "string"
           },
           "disableRules": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authservers": {
             "type": "string"
           },
           "alwaysSendAccountingReqs": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "authEnforceGroup": {
             "type": "string"
@@ -30362,7 +32399,12 @@
             "type": "integer"
           },
           "concurrentlogins": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "certificate": {
             "type": "string",
@@ -30379,7 +32421,12 @@
             "type": "string"
           },
           "extendedPreAuthData": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "template": {
             "type": "string"
@@ -30425,50 +32472,105 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "port": {
             "type": "string"
           },
           "stats": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "active_interface": {
             "type": "string"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64prefix": {
             "type": "string",
             "format": "ipv4"
           },
           "noarecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noreglladdr6": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noregrecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "txtsupport": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cacheflush": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "local_zone_type": {
             "type": "string",
@@ -30491,28 +32593,68 @@
             "type": "string"
           },
           "enable_wpad": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideidentity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideversion": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetchkey": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssecstripped": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "aggressivensec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpired": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredreplyttl": {
             "type": "string"
@@ -30521,31 +32663,71 @@
             "type": "string"
           },
           "serveexpiredttlreset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredclienttimeout": {
             "type": "string"
           },
           "qnameminstrict": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "extendedstatistics": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logqueries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logreplies": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logtagqueryreply": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logservfail": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "loglocalactions": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logverbosity": {
             "type": "string",
@@ -30617,7 +32799,12 @@
             "type": "string"
           },
           "infrakeepprobing": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "infracachenumhosts": {
             "type": "string"
@@ -30660,7 +32847,12 @@
             "type": "string"
           },
           "safesearch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "type": {
             "type": "string",
@@ -30691,7 +32883,12 @@
             "format": "ipv4"
           },
           "nxdomain": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dot": {
             "type": "string"
@@ -30707,10 +32904,20 @@
             "type": "string"
           },
           "forward_tcp_upstream": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "forward_first": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "host": {
             "type": "string",
@@ -30773,50 +32980,105 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "port": {
             "type": "string"
           },
           "stats": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "active_interface": {
             "type": "string"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64prefix": {
             "type": "string",
             "format": "ipv4"
           },
           "noarecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noreglladdr6": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noregrecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "txtsupport": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cacheflush": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "local_zone_type": {
             "type": "string",
@@ -30839,28 +33101,68 @@
             "type": "string"
           },
           "enable_wpad": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideidentity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideversion": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetchkey": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssecstripped": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "aggressivensec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpired": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredreplyttl": {
             "type": "string"
@@ -30869,31 +33171,71 @@
             "type": "string"
           },
           "serveexpiredttlreset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredclienttimeout": {
             "type": "string"
           },
           "qnameminstrict": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "extendedstatistics": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logqueries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logreplies": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logtagqueryreply": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logservfail": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "loglocalactions": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logverbosity": {
             "type": "string",
@@ -30965,7 +33307,12 @@
             "type": "string"
           },
           "infrakeepprobing": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "infracachenumhosts": {
             "type": "string"
@@ -31008,7 +33355,12 @@
             "type": "string"
           },
           "safesearch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "type": {
             "type": "string",
@@ -31039,7 +33391,12 @@
             "format": "ipv4"
           },
           "nxdomain": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dot": {
             "type": "string"
@@ -31055,10 +33412,20 @@
             "type": "string"
           },
           "forward_tcp_upstream": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "forward_first": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "host": {
             "type": "string",
@@ -31121,50 +33488,105 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "port": {
             "type": "string"
           },
           "stats": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "active_interface": {
             "type": "string"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64prefix": {
             "type": "string",
             "format": "ipv4"
           },
           "noarecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noreglladdr6": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noregrecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "txtsupport": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cacheflush": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "local_zone_type": {
             "type": "string",
@@ -31187,28 +33609,68 @@
             "type": "string"
           },
           "enable_wpad": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideidentity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideversion": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetchkey": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssecstripped": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "aggressivensec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpired": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredreplyttl": {
             "type": "string"
@@ -31217,31 +33679,71 @@
             "type": "string"
           },
           "serveexpiredttlreset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredclienttimeout": {
             "type": "string"
           },
           "qnameminstrict": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "extendedstatistics": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logqueries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logreplies": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logtagqueryreply": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logservfail": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "loglocalactions": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logverbosity": {
             "type": "string",
@@ -31313,7 +33815,12 @@
             "type": "string"
           },
           "infrakeepprobing": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "infracachenumhosts": {
             "type": "string"
@@ -31356,7 +33863,12 @@
             "type": "string"
           },
           "safesearch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "type": {
             "type": "string",
@@ -31387,7 +33899,12 @@
             "format": "ipv4"
           },
           "nxdomain": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dot": {
             "type": "string"
@@ -31403,10 +33920,20 @@
             "type": "string"
           },
           "forward_tcp_upstream": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "forward_first": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "host": {
             "type": "string",
@@ -31469,50 +33996,105 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "port": {
             "type": "string"
           },
           "stats": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "active_interface": {
             "type": "string"
           },
           "dnssec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dns64prefix": {
             "type": "string",
             "format": "ipv4"
           },
           "noarecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcp": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "regdhcpdomain": {
             "type": "string"
           },
           "regdhcpstatic": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noreglladdr6": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "noregrecords": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "txtsupport": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cacheflush": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "local_zone_type": {
             "type": "string",
@@ -31535,28 +34117,68 @@
             "type": "string"
           },
           "enable_wpad": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideidentity": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "hideversion": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "prefetchkey": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dnssecstripped": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "aggressivensec": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpired": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredreplyttl": {
             "type": "string"
@@ -31565,31 +34187,71 @@
             "type": "string"
           },
           "serveexpiredttlreset": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "serveexpiredclienttimeout": {
             "type": "string"
           },
           "qnameminstrict": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "extendedstatistics": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logqueries": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logreplies": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logtagqueryreply": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logservfail": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "loglocalactions": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "logverbosity": {
             "type": "string",
@@ -31661,7 +34323,12 @@
             "type": "string"
           },
           "infrakeepprobing": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "infracachenumhosts": {
             "type": "string"
@@ -31704,7 +34371,12 @@
             "type": "string"
           },
           "safesearch": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "type": {
             "type": "string",
@@ -31735,7 +34407,12 @@
             "format": "ipv4"
           },
           "nxdomain": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "dot": {
             "type": "string"
@@ -31751,10 +34428,20 @@
             "type": "string"
           },
           "forward_tcp_upstream": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "forward_first": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "host": {
             "type": "string",
@@ -31820,7 +34507,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "name": {
             "type": "string"
@@ -31849,7 +34541,12 @@
             "format": "ipv4"
           },
           "disableroutes": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "gateway": {
             "type": "string",
@@ -31863,7 +34560,12 @@
             "description": "UUID reference"
           },
           "debug": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "cnfFilename": {
             "type": "string"
@@ -31909,7 +34611,12 @@
         "type": "object",
         "properties": {
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           }
         }
       },
@@ -31943,7 +34650,12 @@
             "type": "string"
           },
           "enabled": {
-            "type": "boolean"
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "Boolean (0=false, 1=true)"
           },
           "name": {
             "type": "string"

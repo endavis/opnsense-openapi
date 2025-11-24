@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 TYPE_MAP = {
     "IntegerField": {"type": "integer"},
     "TextField": {"type": "string"},
-    "BooleanField": {"type": "boolean"},
+    "BooleanField": {"type": "string", "enum": ["0", "1"], "description": "Boolean (0=false, 1=true)"},
     "NetworkField": {"type": "string", "format": "ipv4"},
     "OptionField": {"type": "string", "description": "Dropdown selection"},
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
@@ -297,13 +297,17 @@ class OpenApiGenerator:
             }
         # === BOOLEAN QUERY PATTERNS ===
         elif 'isenabled' in act_lower.replace('_', ''):
-            # isEnabled returns {"enabled": boolean}
+            # isEnabled returns {"enabled": "0"|"1"}
             response_schema["content"] = {
                 "application/json": {
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "enabled": {"type": "boolean", "description": "Whether feature is enabled"}
+                            "enabled": {
+                                "type": "string",
+                                "enum": ["0", "1"],
+                                "description": "Whether feature is enabled (0=false, 1=true)"
+                            }
                         }
                     }
                 }
