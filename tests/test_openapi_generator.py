@@ -49,11 +49,11 @@ def test_generate_openapi_spec(sample_controllers: list[ApiController]) -> None:
         with spec_path.open() as f:
             spec = json.load(f)
 
-        assert spec["openapi"] == "3.0.0"
+        assert spec["openapi"] == "3.0.3"
         assert spec["info"]["version"] == "24.7"
         assert "paths" in spec
         assert (
-            "/firewall/alias/get" in spec["paths"] or "/firewall/alias/get/{uuid}" in spec["paths"]
+            "/api/firewall/alias/get" in spec["paths"] or "/api/firewall/alias/get/{uuid}" in spec["paths"]
         )
 
 
@@ -123,7 +123,7 @@ class TestController extends ApiMutableModelControllerBase
         # Generate spec with response inference
         output_dir = Path(tmpdir) / "output"
         generator = OpenApiGenerator(output_dir)
-        spec_path = generator.generate(controllers, "24.7", controllers_dir=controllers_dir)
+        spec_path = generator.generate(controllers, "24.7")
 
         with spec_path.open() as f:
             spec = json.load(f)

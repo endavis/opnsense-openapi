@@ -141,7 +141,6 @@ def generate(
         controllers,
         version,
         models_dir=valid_models_path,
-        controllers_dir=controllers_path,
     )
 
     typer.secho(f"Generated {output_file}", fg=typer.colors.GREEN)

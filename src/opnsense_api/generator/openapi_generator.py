@@ -6,8 +6,6 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
-# We keep these imports to match your project structure,
-# though the logic below handles parsing internally for better accuracy.
 from ..parser import ApiController
 
 logger = logging.getLogger(__name__)
@@ -44,7 +42,6 @@ class OpenApiGenerator:
         controllers: list[ApiController],
         version: str,
         models_dir: Path | None = None,
-        controllers_dir: Path | None = None,
     ) -> Path:
         """Generate OpenAPI specification for all controllers.
 
@@ -52,7 +49,6 @@ class OpenApiGenerator:
             controllers: List of parsed API controllers
             version: OPNsense version
             models_dir: Directory containing model XML files
-            controllers_dir: Directory containing controller PHP files (unused in v3 logic)
 
         Returns:
             Path to generated OpenAPI JSON file
