@@ -49,6 +49,16 @@ class AliasUtilController extends ApiControllerBase
     {
         return $this->setBase("alias");
     }
+
+    /**
+     * Get alias
+     * @param string $uuid
+     * @return array
+     */
+    public function getAction($uuid)
+    {
+        return $this->getBase("alias", "field", $uuid);
+    }
 }
 """
 
@@ -71,7 +81,7 @@ def test_parse_controller_basic(sample_controller: str) -> None:
         assert controller.module == "Firewall"
         assert controller.controller == "AliasUtil"
         assert controller.base_class == "ApiControllerBase"
-        assert len(controller.endpoints) == 3
+        assert len(controller.endpoints) == 4
 
 
 def test_parse_endpoints(sample_controller: str) -> None:
@@ -90,7 +100,7 @@ def test_parse_endpoints(sample_controller: str) -> None:
 
         # Check findAlias endpoint
         find_endpoint = next(e for e in controller.endpoints if e.name == "findAlias")
-        assert find_endpoint.method == "GET"
+        assert find_endpoint.method == "POST"
         assert find_endpoint.description == "Find aliases"
         assert find_endpoint.parameters == []
 
@@ -104,6 +114,11 @@ def test_parse_endpoints(sample_controller: str) -> None:
         set_endpoint = next(e for e in controller.endpoints if e.name == "set")
         assert set_endpoint.method == "POST"
         assert set_endpoint.description == "Update alias settings"
+
+        # Check get endpoint
+        get_endpoint = next(e for e in controller.endpoints if e.name == "get")
+        assert get_endpoint.method == "GET"
+        assert get_endpoint.description == "Get alias"
 
 
 def test_parse_directory() -> None:

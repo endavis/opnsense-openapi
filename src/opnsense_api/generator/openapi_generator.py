@@ -113,7 +113,8 @@ class OpenApiGenerator:
         # controller.endpoints is expected to be a list of endpoint objects with a 'name' attribute
         for endpoint in controller.endpoints:
             action_name = endpoint.name if hasattr(endpoint, 'name') else str(endpoint)
-            self._add_path_to_spec(module, ctrl_name, action_name, schema_name if model_schema else None)
+            http_method = endpoint.method if hasattr(endpoint, 'method') else "POST"
+            self._add_path_to_spec(module, ctrl_name, action_name, schema_name if model_schema else None, http_method)
 
     def _find_and_parse_model(self, vendor: str, module: str, controller_name: str) -> dict[str, Any] | None:
         """Locates the corresponding XML model and parses fields."""
@@ -215,7 +216,7 @@ class OpenApiGenerator:
             }
         }
 
-    def _add_path_to_spec(self, module: str, controller: str, action: str, schema_name: str | None) -> None:
+    def _add_path_to_spec(self, module: str, controller: str, action: str, schema_name: str | None, http_method: str = "POST") -> None:
         """Constructs the OpenAPI Operation object with correct paths and parameters."""
         # Use CamelCase for action in URL (standard OPNsense routing)
         # But we check logic using lowercase
@@ -446,8 +447,14 @@ class OpenApiGenerator:
                 }
 
         # Add to spec
+        method_key = http_method.lower()
+        
+        # GET requests should not have a body
+        if method_key == 'get':
+            request_body = None
+
         self.spec['paths'][url] = {
-            "post": {
+            method_key: {
                 "tags": [module],
                 "summary": action,
                 "operationId": f"{module}_{controller}_{action}",

@@ -171,7 +171,8 @@ class ControllerParser:
             'GET' or 'POST'
         """
         # Common patterns for GET methods
-        get_patterns = ["get", "search", "find", "list", "export", "show", "fetch"]
+        # Removed 'search' and 'find' as they often require POST for complex parameters
+        get_patterns = ["get", "list", "export", "show", "fetch", "info", "overview", "status"]
 
         endpoint_lower = endpoint_name.lower()
 
@@ -185,8 +186,8 @@ class ControllerParser:
         if any(pattern in endpoint_lower for pattern in post_patterns):
             return "POST"
 
-        # Default: POST if has parameters, GET otherwise
-        return "POST" if parameters else "GET"
+        # Default to POST for safety as OPNsense heavily relies on POST
+        return "POST"
 
     def _extract_description(self, content: str, method_name: str) -> str:
         """Extract description from docblock comment before method.
