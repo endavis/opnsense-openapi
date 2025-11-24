@@ -256,9 +256,114 @@ class OpenApiGenerator:
         response_schema = {"description": "Successful response"}
         request_body = None
 
-        if schema_name:
-            # Search = Pagination
-            if "search" in act_lower:
+        # === SERVICE ACTION PATTERNS (from ApiMutableServiceControllerBase) ===
+        # These take priority - check first before other patterns
+        if any(x in act_lower for x in ['start', 'stop', 'restart']):
+            # start/stop/restart return {"response": "command output"}
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "response": {"type": "string", "description": "Service command output"}
+                        },
+                        "required": ["response"]
+                    }
+                }
+            }
+        elif 'reconfigure' in act_lower:
+            # reconfigure returns {"status": "ok"|"failed"}
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "status": {"type": "string", "enum": ["ok", "failed"], "description": "Reconfigure status"}
+                        },
+                        "required": ["status"]
+                    }
+                }
+            }
+        elif 'status' in act_lower:
+            # status returns {"status": "running"|"stopped"|...}
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "status": {"type": "string", "enum": ["running", "stopped", "disabled", "unknown"]},
+                            "widget": {"type": "object", "description": "UI widget captions"}
+                        },
+                        "required": ["status"]
+                    }
+                }
+            }
+        # === BOOLEAN QUERY PATTERNS ===
+        elif 'isenabled' in act_lower.replace('_', ''):
+            # isEnabled returns {"enabled": boolean}
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "enabled": {"type": "boolean", "description": "Whether feature is enabled"}
+                        }
+                    }
+                }
+            }
+        # === STATISTICS/INFO PATTERNS ===
+        elif any(x in act_lower for x in ['stats', 'info', 'overview', 'summary']):
+            # Stats/info endpoints return objects with dynamic structure
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "additionalProperties": True,
+                        "description": "Statistics or information object"
+                    }
+                }
+            }
+        # === SPECIAL OPERATIONS ===
+        elif any(x in act_lower for x in ['apply', 'flush', 'revert', 'savepoint', 'rollback', 'upload', 'generate', 'kill', 'disconnect', 'connect']):
+            # Operations that modify state and return status
+            response_schema["content"] = {
+                "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
+            }
+        # === QUERY/EXPORT PATTERNS ===
+        elif any(x in act_lower for x in ['export', 'download', 'rawdump', 'dump', 'providers', 'accounts', 'templates']):
+            # Export/download return data or file content
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "additionalProperties": True,
+                        "description": "Export data or file content"
+                    }
+                }
+            }
+        # === LIST PATTERNS ===
+        elif any(x in act_lower for x in ['list', 'aliases', 'countries', 'groups', 'users', 'categories']):
+            # Check if 'list' might be paginated (listAction often calls searchRecordsetBase)
+            if act_lower == 'list' and schema_name:
+                # Paginated list response
+                response_schema["content"] = {
+                    "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}Search"}}
+                }
+            else:
+                # Simple array or object with dynamic keys
+                response_schema["content"] = {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": True,
+                            "description": "Object with dynamic keys or array of items"
+                        }
+                    }
+                }
+        # === STANDARD MODEL-BASED PATTERNS ===
+        elif schema_name:
+            # Search/Find = Pagination (including Item variations like searchItem)
+            if any(x in act_lower for x in ['search', 'find']) or act_lower.endswith('item'):
                 response_schema["content"] = {
                     "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}Search"}}
                 }
@@ -291,6 +396,54 @@ class OpenApiGenerator:
                                 "properties": {
                                     controller.lower(): {"$ref": f"#/components/schemas/{schema_name}"}
                                 }
+                            }
+                        }
+                    }
+                }
+        # === FALLBACK PATTERNS (no model found) ===
+        else:
+            # No model schema, but provide generic schemas for common patterns
+            if any(x in act_lower for x in ['search', 'find']) or act_lower.endswith('item'):
+                # Generic paginated response
+                response_schema["content"] = {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "current": {"type": "integer"},
+                                "rowCount": {"type": "integer"},
+                                "total": {"type": "integer"},
+                                "rows": {"type": "array", "items": {"type": "object"}}
+                            }
+                        }
+                    }
+                }
+            elif "get" in act_lower:
+                # Generic get response
+                response_schema["content"] = {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": True,
+                            "description": "Resource data"
+                        }
+                    }
+                }
+            elif any(x in act_lower for x in ['add', 'set', 'update', 'delete', 'remove', 'del', 'toggle']):
+                # Mutation operations return status
+                response_schema["content"] = {
+                    "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
+                }
+
+            # Request body for mutations without models
+            if any(x in act_lower for x in ['add', 'set', 'update']):
+                request_body = {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": True,
+                                "description": "Request payload"
                             }
                         }
                     }
