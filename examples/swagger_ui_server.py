@@ -25,6 +25,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 
 from opnsense_api.client import OPNsenseClient
 from opnsense_api.specs import find_best_matching_spec, list_available_specs
+import httpx
 
 
 def create_app(spec_version: str | None = None, auto_detect: bool = True) -> Flask:
@@ -105,7 +106,121 @@ def create_app(spec_version: str | None = None, auto_detect: bool = True) -> Fla
             import json
 
             spec = json.load(f)
+
+        # Update servers field to use local proxy endpoint
+        # This avoids CORS issues by proxying requests through the Flask server
+        opnsense_url = os.getenv("OPNSENSE_URL")
+        if opnsense_url:
+            spec["servers"] = [
+                {
+                    "url": "/proxy",
+                    "description": f"OPNsense Server Proxy ({opnsense_url})"
+                }
+            ]
+        else:
+            spec["servers"] = [
+                {
+                    "url": "https://localhost/api",
+                    "description": "OPNsense Server (set OPNSENSE_URL to enable proxy)"
+                }
+            ]
+
         return jsonify(spec)
+
+    # Proxy endpoint to forward API requests to OPNsense server
+    @app.route("/proxy/<path:endpoint>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+    def proxy(endpoint: str):
+        """Proxy API requests to OPNsense server to avoid CORS issues."""
+        from flask import request, Response
+        import base64
+
+        opnsense_url = os.getenv("OPNSENSE_URL")
+        api_key = os.getenv("OPNSENSE_API_KEY")
+        api_secret = os.getenv("OPNSENSE_API_SECRET")
+        verify_ssl = os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true"
+
+        if not all([opnsense_url, api_key, api_secret]):
+            return jsonify({
+                "error": "OPNsense credentials not configured",
+                "message": "Set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET environment variables"
+            }), 500
+
+        # Build target URL
+        base_url = opnsense_url.rstrip("/")
+        if base_url.endswith("/api"):
+            base_url = base_url[:-4]
+        target_url = f"{base_url}/api/{endpoint}"
+
+        # Add query parameters if present
+        if request.query_string:
+            target_url += f"?{request.query_string.decode()}"
+
+        # Prepare authentication
+        auth_string = f"{api_key}:{api_secret}"
+        auth_bytes = auth_string.encode("ascii")
+        auth_b64 = base64.b64encode(auth_bytes).decode("ascii")
+
+        # Prepare headers
+        headers = {
+            "Authorization": f"Basic {auth_b64}",
+        }
+
+        # Only add Content-Type for requests with JSON body
+        if request.is_json or request.method in ["POST", "PUT", "PATCH"]:
+            headers["Content-Type"] = "application/json"
+
+        # Forward request
+        try:
+            with httpx.Client(verify=verify_ssl, timeout=30.0) as client:
+                if request.method == "GET":
+                    response = client.get(target_url, headers=headers)
+                elif request.method == "POST":
+                    response = client.post(
+                        target_url,
+                        headers=headers,
+                        json=request.get_json() if request.is_json else None,
+                        data=request.data if not request.is_json else None,
+                    )
+                elif request.method == "PUT":
+                    response = client.put(
+                        target_url,
+                        headers=headers,
+                        json=request.get_json() if request.is_json else None,
+                        data=request.data if not request.is_json else None,
+                    )
+                elif request.method == "DELETE":
+                    response = client.delete(target_url, headers=headers)
+                elif request.method == "PATCH":
+                    response = client.patch(
+                        target_url,
+                        headers=headers,
+                        json=request.get_json() if request.is_json else None,
+                        data=request.data if not request.is_json else None,
+                    )
+                else:
+                    return jsonify({"error": "Method not supported"}), 405
+
+                # Return response with filtered headers
+                # Filter out headers that shouldn't be forwarded
+                excluded_headers = {
+                    "content-encoding",
+                    "content-length",
+                    "transfer-encoding",
+                    "connection",
+                }
+                response_headers = {
+                    key: value
+                    for key, value in response.headers.items()
+                    if key.lower() not in excluded_headers
+                }
+
+                return Response(
+                    response.content,
+                    status=response.status_code,
+                    headers=response_headers,
+                )
+        except Exception as e:
+            return jsonify({"error": "Proxy request failed", "message": str(e)}), 500
 
     # Root redirect
     @app.route("/")
