@@ -24,6 +24,7 @@ class ApiController:
     base_class: str  # e.g., "ApiControllerBase"
     endpoints: list[ApiEndpoint]
     model_class: str | None = None  # e.g., "OPNsense\\Firewall\\Alias"
+    model_name: str | None = None  # e.g., "dnsmasq" (from $internalModelName)
 
 
 class ControllerParser:
@@ -52,6 +53,9 @@ class ControllerParser:
 
     # Pattern to extract internal model class
     MODEL_CLASS_PATTERN = re.compile(r"\$internalModelClass\s*=\s*['\"]([^'\"]+)['\"]")
+
+    # Pattern to extract internal model name
+    MODEL_NAME_PATTERN = re.compile(r"\$internalModelName\s*=\s*['\"]([^'\"]+)['\"]")
 
     def parse_controller_file(self, file_path: Path) -> ApiController | None:
         """Parse a PHP controller file to extract API endpoint information.
@@ -90,12 +94,17 @@ class ControllerParser:
         model_match = self.MODEL_CLASS_PATTERN.search(content)
         model_class = model_match.group(1) if model_match else None
 
+        # Extract model name if present
+        model_name_match = self.MODEL_NAME_PATTERN.search(content)
+        model_name = model_name_match.group(1) if model_name_match else None
+
         return ApiController(
             module=module,
             controller=controller_name,
             base_class=base_class,
             endpoints=endpoints,
             model_class=model_class,
+            model_name=model_name,
         )
 
     def _extract_endpoints(self, content: str) -> list[ApiEndpoint]:

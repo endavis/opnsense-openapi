@@ -21,6 +21,18 @@ TYPE_MAP = {
     "CSVListField": {"type": "string", "description": "Comma separated values"},
     "CertificateField": {"type": "string", "description": "Certificate Data"},
     "EmailField": {"type": "string", "format": "email"},
+    "ArrayField": {"type": "array", "items": {"type": "object"}},
+    "InterfaceField": {
+        "type": "object", 
+        "additionalProperties": {
+            "type": "object",
+            "properties": {
+                "value": {"type": "string"},
+                "selected": {"type": "integer"}
+            }
+        },
+        "description": "Interface selection"
+    },
 }
 
 class OpenApiGenerator:
@@ -100,6 +112,11 @@ class OpenApiGenerator:
         # Clean controller name (e.g. "AliasController" -> "Alias")
         ctrl_name = controller.controller.replace("Controller", "")
 
+        # Determine response wrapper name
+        # Priority: 1. $internalModelName from controller (if parsed)
+        #           2. Controller name (lowercase)
+        response_wrapper = controller.model_name if controller.model_name else ctrl_name.lower()
+
         # 1. Try to find and parse the Model XML
         # This generates the "OPNsenseFirewallAlias" schema
         schema_name = f"OPNsense{module}{ctrl_name}"
@@ -115,7 +132,15 @@ class OpenApiGenerator:
             action_name = endpoint.name if hasattr(endpoint, 'name') else str(endpoint)
             http_method = endpoint.method if hasattr(endpoint, 'method') else "POST"
             description = endpoint.description if hasattr(endpoint, 'description') else ""
-            self._add_path_to_spec(module, ctrl_name, action_name, schema_name if model_schema else None, http_method, description)
+            self._add_path_to_spec(
+                module, 
+                ctrl_name, 
+                action_name, 
+                schema_name if model_schema else None, 
+                http_method, 
+                description,
+                response_wrapper
+            )
 
     def _find_and_parse_model(self, vendor: str, module: str, controller_name: str) -> dict[str, Any] | None:
         """Locates the corresponding XML model and parses fields."""
@@ -138,36 +163,80 @@ class OpenApiGenerator:
         try:
             tree = ET.parse(xml_path)
             root = tree.getroot()
-            properties = {}
-
-            for elem in root.iter():
-                if 'type' in elem.attrib:
-                    field_name = elem.tag
-                    field_type = elem.attrib['type']
-                    prop_def = TYPE_MAP.get(field_type, {"type": "string"}).copy()
-
-                    # === ENUM RESOLUTION LOGIC ===
-                    if field_type == "OptionField":
-                        # 1. Check for Inline Options
-                        inline_opts = elem.find('OptionValues')
-                        if inline_opts is not None:
-                            enums = [child.tag for child in inline_opts]
-                            if enums:
-                                prop_def['enum'] = enums
-
-                        # 2. Check for External Source (<Source>OPNsense.Firewall.AliasTypes</Source>)
-                        source_tag = elem.find('Source')
-                        if source_tag is not None and source_tag.text:
-                            enums = self._resolve_external_enums(source_tag.text)
-                            if enums:
-                                prop_def['enum'] = enums
-
-                    properties[field_name] = prop_def
+            # Start parsing from the root's items
+            items_node = root.find('items')
+            if items_node is None:
+                # Fallback: try iterating root children if no <items> tag (unlikely for OPNsense models)
+                properties = self._parse_model_nodes(root)
+            else:
+                properties = self._parse_model_nodes(items_node)
 
             return {"type": "object", "properties": properties}
         except Exception as e:
             logger.warning(f"Failed to parse model XML {xml_path}: {e}")
             return None
+
+    def _parse_model_nodes(self, parent_node: ET.Element) -> dict[str, Any]:
+        """Recursively parse XML nodes to build property definitions."""
+        properties = {}
+        for elem in parent_node:
+            field_name = elem.tag
+            # Skip comments or odd tags
+            if not isinstance(field_name, str):
+                continue
+
+            if 'type' in elem.attrib:
+                field_type = elem.attrib['type']
+                # Strip relative path chars from type (e.g. ".\HostnameField")
+                clean_type = field_type.lstrip(".\\/")
+                
+                prop_def = TYPE_MAP.get(clean_type, {"type": "string"}).copy()
+
+                # === ARRAY FIELD HANDLING ===
+                if clean_type == "ArrayField":
+                    # Recurse into children to find the item structure
+                    # ArrayField children define the properties of the objects in the array
+                    child_props = self._parse_model_nodes(elem)
+                    if child_props:
+                        prop_def['items'] = {
+                            "type": "object",
+                            "properties": child_props
+                        }
+                    else:
+                        # Fallback if no children defined
+                        prop_def['items'] = {"type": "object", "additionalProperties": True}
+
+                # === ENUM RESOLUTION LOGIC ===
+                elif clean_type == "OptionField":
+                    # 1. Check for Inline Options
+                    inline_opts = elem.find('OptionValues')
+                    if inline_opts is not None:
+                        enums = [child.tag for child in inline_opts]
+                        if enums:
+                            prop_def['enum'] = enums
+
+                    # 2. Check for External Source (<Source>OPNsense.Firewall.AliasTypes</Source>)
+                    source_tag = elem.find('Source')
+                    if source_tag is not None and source_tag.text:
+                        enums = self._resolve_external_enums(source_tag.text)
+                        if enums:
+                            prop_def['enum'] = enums
+                
+                properties[field_name] = prop_def
+            
+            else:
+                # No type attribute - check if it's a container (has children)
+                # recursing if it has children that look like fields
+                if len(elem) > 0:
+                    # Check if it's a container node (like 'dhcp' in Dnsmasq)
+                    child_props = self._parse_model_nodes(elem)
+                    if child_props:
+                        properties[field_name] = {
+                            "type": "object",
+                            "properties": child_props
+                        }
+        
+        return properties
 
     def _resolve_external_enums(self, source_string: str) -> list[str]:
         """Resolves dot-notation sources to file paths to extract options."""
@@ -217,7 +286,7 @@ class OpenApiGenerator:
             }
         }
 
-    def _add_path_to_spec(self, module: str, controller: str, action: str, schema_name: str | None, http_method: str = "POST", description: str = "") -> None:
+    def _add_path_to_spec(self, module: str, controller: str, action: str, schema_name: str | None, http_method: str = "POST", description: str = "", response_wrapper: str | None = None) -> None:
         """Constructs the OpenAPI Operation object with correct paths and parameters."""
         # Use CamelCase for action in URL (standard OPNsense routing)
         # But we check logic using lowercase
@@ -371,13 +440,15 @@ class OpenApiGenerator:
                 }
             # Get = Single Object Wrapped
             elif "get" in act_lower:
+                # Use custom wrapper (e.g. 'dnsmasq') if provided, otherwise controller name
+                wrapper_name = response_wrapper if response_wrapper else controller.lower()
                 response_schema["content"] = {
                     "application/json": {
                         "schema": {
                             "type": "object",
                             "properties": {
-                                # OPNsense returns payload wrapped in controller name, usually lowercase
-                                controller.lower(): {"$ref": f"#/components/schemas/{schema_name}"}
+                                # OPNsense returns payload wrapped in controller name or model name
+                                wrapper_name: {"$ref": f"#/components/schemas/{schema_name}"}
                             }
                         }
                     }
