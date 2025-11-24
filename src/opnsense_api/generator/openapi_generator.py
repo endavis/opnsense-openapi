@@ -10,28 +10,46 @@ from ..parser import ApiController
 
 logger = logging.getLogger(__name__)
 
+# Schema for fields extending BaseListField (OptionField, InterfaceField)
+# Supports object map for GET (Read) and string value for POST (Write)
+BASE_LIST_FIELD_SCHEMA = {
+    "oneOf": [
+        {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "value": {"type": "string"},
+                    "selected": {"type": "integer"}
+                }
+            },
+            "description": "Map of available options. Keys are the option values/IDs, values contain the display name and selection state."
+        },
+        {
+            "type": "string",
+            "description": "Selected value(s). For multiple selections, provide a comma-separated string (e.g., 'opt1,opt2')."
+        }
+    ]
+}
+
 # ================= TYPE MAPPING =================
 TYPE_MAP = {
     "IntegerField": {"type": "integer"},
     "TextField": {"type": "string"},
     "BooleanField": {"type": "string", "enum": ["0", "1"], "description": "Boolean (0=false, 1=true)"},
     "NetworkField": {"type": "string", "format": "ipv4"},
-    "OptionField": {"type": "string", "description": "Dropdown selection"},
+    "OptionField": {
+        **BASE_LIST_FIELD_SCHEMA,
+        "description": "Selection field. Returns a map of options on read, expects a selected value string on write."
+    },
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
     "CSVListField": {"type": "string", "description": "Comma separated values"},
     "CertificateField": {"type": "string", "description": "Certificate Data"},
     "EmailField": {"type": "string", "format": "email"},
     "ArrayField": {"type": "array", "items": {"type": "object"}},
     "InterfaceField": {
-        "type": "object", 
-        "additionalProperties": {
-            "type": "object",
-            "properties": {
-                "value": {"type": "string"},
-                "selected": {"type": "integer"}
-            }
-        },
-        "description": "Interface selection"
+        **BASE_LIST_FIELD_SCHEMA,
+        "description": "Interface selection. Keys are Interface IDs (e.g., 'lan', 'wan', 'opt1'). Returns a map of interfaces on read, expects a comma-separated string of Interface IDs on write."
     },
 }
 
