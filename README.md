@@ -35,10 +35,10 @@ uv pip install -e ".[dev]"
 
 ```bash
 # Download controller files for OPNsense 24.7 into tmp/opnsense_source
-uv run opnsense-wrapper download 24.7
+uv run opnsense-openapi download 24.7
 
 # Store the snapshot in a custom directory
-uv run opnsense-wrapper download 24.7 --dest tmp/releases --force
+uv run opnsense-openapi download 24.7 --dest tmp/releases --force
 ```
 
 The `download` command clones the `opnsense/core` repository at the requested tag,
@@ -78,7 +78,7 @@ See [GENERATED_CLIENT_USAGE.md](docs/GENERATED_CLIENT_USAGE.md) for complete doc
 ### Download Controller Sources
 
 ```bash
-opnsense-wrapper download [VERSION] [OPTIONS]
+opnsense-openapi download [VERSION] [OPTIONS]
 
 Options:
   -d, --dest PATH       Override the cache directory (default: tmp/opnsense_source)
@@ -89,10 +89,26 @@ The command clones `https://github.com/opnsense/core` at the requested tag, cach
 it locally, and extracts the controller files that downstream parsing and code
 generation steps consume.
 
+### Serve Documentation
+
+```bash
+opnsense-openapi serve-docs [OPTIONS]
+
+Options:
+  -v, --version TEXT    OPNsense version (e.g., '25.7.6'). Auto-detects if not specified.
+  -p, --port INTEGER    Port to run server on (default: 8080)
+  -h, --host TEXT       Host to bind to (default: 127.0.0.1)
+  -l, --list            List available spec versions and exit
+  --no-auto-detect      Disable auto-detection (requires --version)
+```
+
+Launch a local Swagger UI server to browse the generated OpenAPI documentation.
+If credentials are provided via environment variables (`OPNSENSE_URL`, `OPNSENSE_API_KEY`, `OPNSENSE_API_SECRET`), it acts as a proxy to the OPNsense instance, allowing you to test API calls directly from the browser.
+
 ### Display Tool Version
 
 ```bash
-opnsense-wrapper --version
+opnsense-openapi --version
 ```
 
 ## Development
