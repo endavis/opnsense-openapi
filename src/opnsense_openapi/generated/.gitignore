@@ -1,0 +1,6 @@
+# Ignore all generated client directories
+v*/
+
+# Allow this .gitignore and README
+!.gitignore
+!README.md
