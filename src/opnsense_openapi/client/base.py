@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urljoin
@@ -22,6 +24,80 @@ class APIResponseError(Exception):
     def __init__(self, message: str, response_text: str) -> None:
         super().__init__(message)
         self.response_text = response_text
+
+
+def _auto_generate_client(version: str) -> bool:
+    """Automatically generate Python client if spec exists but client doesn't.
+
+    Args:
+        version: OPNsense version string (e.g., '24.7.1')
+
+    Returns:
+        True if client was generated or already exists, False if spec doesn't exist
+    """
+    # Check if spec file exists
+    try:
+        spec_path = find_best_matching_spec(version)
+    except FileNotFoundError:
+        logger.debug(f"No spec file found for version {version}")
+        return False
+
+    # Check if generated client already exists
+    version_module = version.replace(".", "_")
+    client_dir = Path(__file__).parent.parent / "generated" / f"v{version_module}"
+
+    if client_dir.exists():
+        logger.debug(f"Generated client already exists at {client_dir}")
+        return True
+
+    # Check if openapi-python-client is available
+    if not shutil.which("openapi-python-client"):
+        logger.warning(
+            "openapi-python-client not found. Install it with: uv pip install openapi-python-client"
+        )
+        return False
+
+    # Generate the client
+    logger.info(f"Auto-generating Python client for version {version}...")
+    logger.info(f"Using spec: {spec_path}")
+    logger.info(f"Output directory: {client_dir}")
+
+    # Create a temporary config file to override the package name
+    import os
+    import tempfile
+
+    config_data = {"package_name_override": "opnsense_openapi_client"}
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as config_file:
+        json.dump(config_data, config_file)
+        config_path = config_file.name
+
+    try:
+        cmd = [
+            "openapi-python-client",
+            "generate",
+            "--path",
+            str(spec_path),
+            "--output-path",
+            str(client_dir),
+            "--meta",
+            "setup",  # Use setup to create the package structure
+            "--config",
+            config_path,
+        ]
+
+        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        logger.info(f"✓ Successfully generated client for version {version}")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to generate client: {e}")
+        return False
+    finally:
+        # Clean up temp config file
+        try:
+            os.unlink(config_path)
+        except Exception:
+            pass
 
 
 class OPNsenseClient:
@@ -315,6 +391,16 @@ class OPNsenseClient:
                 "or enable auto_detect_version."
             )
 
+        # Try to auto-generate the client if it doesn't exist
+        if not _auto_generate_client(version):
+            # Spec doesn't exist - provide instructions to generate it
+            raise RuntimeError(
+                f"No OpenAPI spec found for version {version}. "
+                f"Generate it with:\n"
+                f"  opnsense-openapi download {version}\n"
+                f"  opnsense-openapi generate {version}"
+            )
+
         # Import the generated client for this version
         version_module: str = version.replace(".", "_")
         module_path: str = f"opnsense_openapi.generated.v{version_module}.opnsense_openapi_client"
@@ -334,11 +420,10 @@ class OPNsenseClient:
             return GeneratedAPI(api_client, version)
 
         except ImportError as e:
+            # This should rarely happen now that we auto-generate, but keep as fallback
             raise RuntimeError(
-                f"No generated client found for version {version}. "
-                f"Generate it with: opnsense-openapi generate {version} && "
-                f"openapi-python-client generate --path specs/opnsense-{version}.json "
-                f"--output-path src/opnsense_openapi/generated/v{version_module}"
+                f"Failed to import generated client for version {version}. "
+                f"Try running: opnsense-openapi build-client --version {version}"
             ) from e
 
     def list_endpoints(self) -> list[tuple[str, str, str]]:

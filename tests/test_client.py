@@ -1,7 +1,6 @@
 """Tests for OPNsense API client."""
 
 import pytest
-
 from opnsense_openapi.client import OPNsenseClient
 
 
@@ -136,3 +135,61 @@ def test_api_response_error() -> None:
 
     assert str(error) == "Failed to parse JSON"
     assert error.response_text == "<html>Error</html>"
+
+
+def test_auto_generate_client_spec_missing() -> None:
+    """Test auto-generation when spec doesn't exist."""
+    from opnsense_openapi.client.base import _auto_generate_client
+
+    result = _auto_generate_client("99.99.99")
+    assert result is False
+
+
+def test_auto_generate_client_spec_exists() -> None:
+    """Test auto-generation when spec exists."""
+    import shutil
+    from pathlib import Path
+
+    from opnsense_openapi.client.base import _auto_generate_client
+
+    # This should return True because the spec exists (24.7.1)
+    # If the client already exists, it returns True
+    # If it needs to generate and openapi-python-client is available, it returns True
+    # If openapi-python-client is not available, it returns False
+    result = _auto_generate_client("24.7.1")
+
+    # Check if the generated client exists OR if openapi-python-client is not available
+    version_module = "24_7_1"
+    client_dir = (
+        Path(__file__).parent.parent / "src/opnsense_openapi/generated" / f"v{version_module}"
+    )
+    has_tool = shutil.which("openapi-python-client") is not None
+
+    if client_dir.exists():
+        # Client already exists, should return True
+        assert result is True
+    elif has_tool:
+        # Tool is available and spec exists, should have generated and returned True
+        assert result is True
+    else:
+        # Tool is not available, should return False
+        assert result is False
+
+
+def test_api_property_no_spec_error_message() -> None:
+    """Test that api property provides helpful error when spec is missing."""
+    client = OPNsenseClient(
+        base_url="https://opnsense.local",
+        api_key="test_key",
+        api_secret="test_secret",
+        spec_version="99.99.99",  # Non-existent version
+        auto_detect_version=False,
+    )
+
+    with pytest.raises(RuntimeError) as exc_info:
+        _ = client.api
+
+    error_msg = str(exc_info.value)
+    assert "No OpenAPI spec found" in error_msg
+    assert "opnsense-openapi download" in error_msg
+    assert "opnsense-openapi generate" in error_msg
