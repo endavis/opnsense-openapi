@@ -402,7 +402,10 @@ class OpenApiGenerator:
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "status": {"type": "string", "enum": ["running", "stopped", "disabled", "unknown"]},
+                            "status": {
+                                "type": "string",
+                                "enum": ["running", "stopped", "disabled", "unknown", "failed", "update", "done", "ok", "inactive", "error", "not found"], # Expanded values
+                            },
                             "widget": {"type": "object", "description": "UI widget captions"}
                         },
                         "required": ["status"]

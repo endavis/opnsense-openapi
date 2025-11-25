@@ -995,7 +995,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -1037,7 +1044,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -1279,7 +1293,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -1671,7 +1692,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -3724,7 +3752,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -4406,7 +4441,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -5269,7 +5311,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -5311,7 +5360,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -5865,7 +5921,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
@@ -19128,7 +19191,14 @@
                         "running",
                         "stopped",
                         "disabled",
-                        "unknown"
+                        "unknown",
+                        "failed",
+                        "update",
+                        "done",
+                        "ok",
+                        "inactive",
+                        "error",
+                        "not found"
                       ]
                     },
                     "widget": {
