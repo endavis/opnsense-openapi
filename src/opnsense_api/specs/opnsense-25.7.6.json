@@ -21570,29 +21570,8 @@
             "format": "ipv4"
           },
           "pfsyncversion": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string"
-                },
-                "selected": {
-                  "type": "integer"
-                }
-              }
-            },
-            "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-            "example": {
-              "option1": {
-                "value": "Option 1",
-                "selected": 0
-              },
-              "option2": {
-                "value": "Option 2",
-                "selected": 1
-              }
-            },
+            "type": "string",
+            "description": "Dropdown selection",
             "enum": [
               "v1301",
               "v1400"
@@ -21745,29 +21724,8 @@
                 "type": "object",
                 "properties": {
                   "ipv4_type": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "properties": {
-                        "value": {
-                          "type": "string"
-                        },
-                        "selected": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                    "example": {
-                      "option1": {
-                        "value": "Option 1",
-                        "selected": 0
-                      },
-                      "option2": {
-                        "value": "Option 2",
-                        "selected": 1
-                      }
-                    },
+                    "type": "string",
+                    "description": "Dropdown selection",
                     "enum": [
                       "static",
                       "dhcp",
@@ -22144,29 +22102,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -22262,29 +22199,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -22322,29 +22238,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -22600,29 +22495,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -22718,29 +22592,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -22778,29 +22631,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -23056,29 +22888,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -23174,29 +22985,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -23234,29 +23024,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -23512,29 +23281,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -23630,29 +23378,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -23690,29 +23417,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -23968,29 +23674,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -24086,29 +23771,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -24146,29 +23810,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -24424,29 +24067,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -24542,29 +24164,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -24602,29 +24203,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -24880,29 +24460,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -24998,29 +24557,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -25058,29 +24596,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -25336,29 +24853,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -25454,29 +24950,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -25514,29 +24989,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -25792,29 +25246,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -25910,29 +25343,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -25970,29 +25382,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -26248,29 +25639,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -26366,29 +25736,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -26426,29 +25775,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -26704,29 +26032,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -26822,29 +26129,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -26882,29 +26168,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -27160,29 +26425,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -27278,29 +26522,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -27338,29 +26561,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -27616,29 +26818,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -27734,29 +26915,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -27794,29 +26954,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -28072,29 +27211,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "x_28679": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "o1",
                           "o2",
@@ -28190,29 +27308,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "rsa",
                         "ecdsa"
@@ -28250,29 +27347,8 @@
                       "type": "string"
                     },
                     "keyType": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "PSK",
                         "EAP"
@@ -28327,29 +27403,8 @@
                 "type": "string"
               },
               "ipproto": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "inet",
                   "inet6"
@@ -28407,58 +27462,16 @@
                 "type": "string"
               },
               "ipproto": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "inet",
                   "inet6"
                 ]
               },
               "protocol": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "udp",
                   "icmp"
@@ -28552,29 +27565,8 @@
                 }
               },
               "version": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "v5",
                   "v9"
@@ -28672,29 +27664,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "fam": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "any",
                   "ip",
@@ -28826,29 +27797,8 @@
                 "type": "string"
               },
               "fam": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "ip",
                   "ip6"
@@ -29042,29 +27992,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "sslversion": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "auto",
                   "tlsv1",
@@ -29156,29 +28085,8 @@
                   "description": "Boolean (0=false, 1=true)"
                 },
                 "events": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "action",
                     "checksum",
@@ -29243,29 +28151,8 @@
                   "type": "string"
                 },
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "process",
                     "file",
@@ -29350,29 +28237,8 @@
                   "type": "string"
                 },
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "Existence",
                     "SystemResource",
@@ -29403,29 +28269,8 @@
                   "type": "string"
                 },
                 "action": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "alert",
                     "restart",
@@ -29507,29 +28352,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "sslversion": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "auto",
                   "tlsv1",
@@ -29621,29 +28445,8 @@
                   "description": "Boolean (0=false, 1=true)"
                 },
                 "events": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "action",
                     "checksum",
@@ -29708,29 +28511,8 @@
                   "type": "string"
                 },
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "process",
                     "file",
@@ -29815,29 +28597,8 @@
                   "type": "string"
                 },
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "Existence",
                     "SystemResource",
@@ -29868,29 +28629,8 @@
                   "type": "string"
                 },
                 "action": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "alert",
                     "restart",
@@ -29972,29 +28712,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "sslversion": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "auto",
                   "tlsv1",
@@ -30086,29 +28805,8 @@
                   "description": "Boolean (0=false, 1=true)"
                 },
                 "events": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "action",
                     "checksum",
@@ -30173,29 +28871,8 @@
                   "type": "string"
                 },
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "process",
                     "file",
@@ -30280,29 +28957,8 @@
                   "type": "string"
                 },
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "Existence",
                     "SystemResource",
@@ -30333,29 +28989,8 @@
                   "type": "string"
                 },
                 "action": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "alert",
                     "restart",
@@ -30808,29 +29443,8 @@
                       "format": "ipv4"
                     },
                     "redirect_gateway": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "local",
                         "autolocal",
@@ -30893,29 +29507,8 @@
                   "type": "object",
                   "properties": {
                     "mode": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "auth",
                         "crypt"
@@ -31115,29 +29708,8 @@
                       "format": "ipv4"
                     },
                     "redirect_gateway": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "local",
                         "autolocal",
@@ -31200,29 +29772,8 @@
                   "type": "object",
                   "properties": {
                     "mode": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "auth",
                         "crypt"
@@ -31326,29 +29877,8 @@
                       "format": "ipv4"
                     },
                     "redirect_gateway": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "local",
                         "autolocal",
@@ -31411,29 +29941,8 @@
                   "type": "object",
                   "properties": {
                     "mode": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "auth",
                         "crypt"
@@ -31722,29 +30231,8 @@
                       "description": "Boolean (0=false, 1=true)"
                     },
                     "transport": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "udp4",
                         "tcp4",
@@ -31758,29 +30246,8 @@
                       "type": "string"
                     },
                     "level": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "debug",
                         "info",
@@ -31793,29 +30260,8 @@
                       ]
                     },
                     "facility": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "kern",
                         "user",
@@ -31940,29 +30386,8 @@
                       "description": "Boolean (0=false, 1=true)"
                     },
                     "transport": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "udp4",
                         "tcp4",
@@ -31976,29 +30401,8 @@
                       "type": "string"
                     },
                     "level": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "debug",
                         "info",
@@ -32011,29 +30415,8 @@
                       ]
                     },
                     "facility": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "kern",
                         "user",
@@ -32137,29 +30520,8 @@
                       "type": "integer"
                     },
                     "bandwidthMetric": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "bit",
                         "Kbit",
@@ -32171,29 +30533,8 @@
                       "type": "integer"
                     },
                     "mask": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "none",
                         "src-ip",
@@ -32206,29 +30547,8 @@
                       "type": "integer"
                     },
                     "scheduler": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "fifo",
                         "rr",
@@ -32317,29 +30637,8 @@
                       "type": "integer"
                     },
                     "mask": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "none",
                         "src-ip",
@@ -32462,29 +30761,8 @@
                       }
                     },
                     "proto": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "ip",
                         "ip4",
@@ -32535,29 +30813,8 @@
                       "type": "string"
                     },
                     "dscp": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "be",
                         "ef",
@@ -32583,29 +30840,8 @@
                       ]
                     },
                     "direction": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "in",
                         "out"
@@ -32677,29 +30913,8 @@
                       "type": "integer"
                     },
                     "bandwidthMetric": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "bit",
                         "Kbit",
@@ -32711,29 +30926,8 @@
                       "type": "integer"
                     },
                     "mask": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "none",
                         "src-ip",
@@ -32746,29 +30940,8 @@
                       "type": "integer"
                     },
                     "scheduler": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "fifo",
                         "rr",
@@ -32857,29 +31030,8 @@
                       "type": "integer"
                     },
                     "mask": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "none",
                         "src-ip",
@@ -33002,29 +31154,8 @@
                       }
                     },
                     "proto": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "ip",
                         "ip4",
@@ -33075,29 +31206,8 @@
                       "type": "string"
                     },
                     "dscp": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "be",
                         "ef",
@@ -33123,29 +31233,8 @@
                       ]
                     },
                     "direction": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "in",
                         "out"
@@ -33222,29 +31311,8 @@
                       "type": "integer"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "disable",
                         "alert",
@@ -33259,29 +31327,8 @@
                       "type": "string"
                     },
                     "new_action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "default",
                         "alert",
@@ -33328,29 +31375,8 @@
                       "type": "string"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "alert",
                         "drop",
@@ -33477,29 +31503,8 @@
                 "description": "UUID reference"
               },
               "AlertLogrotate": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "W0D23",
                   "D0"
@@ -33509,29 +31514,8 @@
                 "type": "integer"
               },
               "MPMAlgo": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "ac",
                   "ac-ks",
@@ -33542,29 +31526,8 @@
                 "type": "object",
                 "properties": {
                   "Profile": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "properties": {
-                        "value": {
-                          "type": "string"
-                        },
-                        "selected": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                    "example": {
-                      "option1": {
-                        "value": "Option 1",
-                        "selected": 0
-                      },
-                      "option2": {
-                        "value": "Option 2",
-                        "selected": 1
-                      }
-                    },
+                    "type": "string",
+                    "description": "Dropdown selection",
                     "enum": [
                       "low",
                       "medium",
@@ -33605,29 +31568,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "verbosity": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "v",
                   "vv",
@@ -33658,29 +31600,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "dumpAllHeaders": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "request",
                           "response",
@@ -33717,29 +31638,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "custom": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "subject",
                           "issuer",
@@ -33819,29 +31719,8 @@
                       "type": "integer"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "disable",
                         "alert",
@@ -33856,29 +31735,8 @@
                       "type": "string"
                     },
                     "new_action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "default",
                         "alert",
@@ -33925,29 +31783,8 @@
                       "type": "string"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "alert",
                         "drop",
@@ -34074,29 +31911,8 @@
                 "description": "UUID reference"
               },
               "AlertLogrotate": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "W0D23",
                   "D0"
@@ -34106,29 +31922,8 @@
                 "type": "integer"
               },
               "MPMAlgo": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "ac",
                   "ac-ks",
@@ -34139,29 +31934,8 @@
                 "type": "object",
                 "properties": {
                   "Profile": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "properties": {
-                        "value": {
-                          "type": "string"
-                        },
-                        "selected": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                    "example": {
-                      "option1": {
-                        "value": "Option 1",
-                        "selected": 0
-                      },
-                      "option2": {
-                        "value": "Option 2",
-                        "selected": 1
-                      }
-                    },
+                    "type": "string",
+                    "description": "Dropdown selection",
                     "enum": [
                       "low",
                       "medium",
@@ -34202,29 +31976,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "verbosity": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "v",
                   "vv",
@@ -34255,29 +32008,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "dumpAllHeaders": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "request",
                           "response",
@@ -34314,29 +32046,8 @@
                         "description": "Boolean (0=false, 1=true)"
                       },
                       "custom": {
-                        "type": "object",
-                        "additionalProperties": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "string"
-                            },
-                            "selected": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                        "example": {
-                          "option1": {
-                            "value": "Option 1",
-                            "selected": 0
-                          },
-                          "option2": {
-                            "value": "Option 2",
-                            "selected": 1
-                          }
-                        },
+                        "type": "string",
+                        "description": "Dropdown selection",
                         "enum": [
                           "subject",
                           "issuer",
@@ -34528,29 +32239,8 @@
             "type": "integer"
           },
           "add_mac": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string"
-                },
-                "selected": {
-                  "type": "integer"
-                }
-              }
-            },
-            "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-            "example": {
-              "option1": {
-                "value": "Option 1",
-                "selected": 0
-              },
-              "option2": {
-                "value": "Option 2",
-                "selected": 1
-              }
-            },
+            "type": "string",
+            "description": "Dropdown selection",
             "enum": [
               "standard",
               "base64",
@@ -34839,29 +32529,8 @@
                   }
                 },
                 "mode": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "static"
                   ]
@@ -34873,29 +32542,8 @@
                   "type": "integer"
                 },
                 "domain_type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "interface",
                     "range"
@@ -34913,29 +32561,8 @@
                   "description": "Boolean (0=false, 1=true)"
                 },
                 "ra_mode": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "ra-only",
                     "slaac",
@@ -34946,29 +32573,8 @@
                   ]
                 },
                 "ra_priority": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "high",
                     "low"
@@ -34995,29 +32601,8 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "set",
                     "match"
@@ -35296,29 +32881,8 @@
             "type": "integer"
           },
           "add_mac": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string"
-                },
-                "selected": {
-                  "type": "integer"
-                }
-              }
-            },
-            "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-            "example": {
-              "option1": {
-                "value": "Option 1",
-                "selected": 0
-              },
-              "option2": {
-                "value": "Option 2",
-                "selected": 1
-              }
-            },
+            "type": "string",
+            "description": "Dropdown selection",
             "enum": [
               "standard",
               "base64",
@@ -35607,29 +33171,8 @@
                   }
                 },
                 "mode": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "static"
                   ]
@@ -35641,29 +33184,8 @@
                   "type": "integer"
                 },
                 "domain_type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "interface",
                     "range"
@@ -35681,29 +33203,8 @@
                   "description": "Boolean (0=false, 1=true)"
                 },
                 "ra_mode": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "ra-only",
                     "slaac",
@@ -35714,29 +33215,8 @@
                   ]
                 },
                 "ra_priority": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "high",
                     "low"
@@ -35763,29 +33243,8 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "set",
                     "match"
@@ -36064,29 +33523,8 @@
             "type": "integer"
           },
           "add_mac": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string"
-                },
-                "selected": {
-                  "type": "integer"
-                }
-              }
-            },
-            "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-            "example": {
-              "option1": {
-                "value": "Option 1",
-                "selected": 0
-              },
-              "option2": {
-                "value": "Option 2",
-                "selected": 1
-              }
-            },
+            "type": "string",
+            "description": "Dropdown selection",
             "enum": [
               "standard",
               "base64",
@@ -36375,29 +33813,8 @@
                   }
                 },
                 "mode": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "static"
                   ]
@@ -36409,29 +33826,8 @@
                   "type": "integer"
                 },
                 "domain_type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "interface",
                     "range"
@@ -36449,29 +33845,8 @@
                   "description": "Boolean (0=false, 1=true)"
                 },
                 "ra_mode": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "ra-only",
                     "slaac",
@@ -36482,29 +33857,8 @@
                   ]
                 },
                 "ra_priority": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "high",
                     "low"
@@ -36531,29 +33885,8 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "value": {
-                        "type": "string"
-                      },
-                      "selected": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                  "example": {
-                    "option1": {
-                      "value": "Option 1",
-                      "selected": 0
-                    },
-                    "option2": {
-                      "value": "Option 2",
-                      "selected": 1
-                    }
-                  },
+                  "type": "string",
+                  "description": "Dropdown selection",
                   "enum": [
                     "set",
                     "match"
@@ -37747,29 +35080,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "local_zone_type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -37930,29 +35242,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "logverbosity": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -37963,29 +35254,8 @@
                 ]
               },
               "valloglevel": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -38060,29 +35330,8 @@
             "type": "object",
             "properties": {
               "default_action": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -38106,29 +35355,8 @@
                       "type": "string"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "opt1",
                         "opt2",
@@ -38170,29 +35398,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "atf",
                   "ag",
@@ -38304,29 +35511,8 @@
                       "description": "Boolean (0=false, 1=true)"
                     },
                     "type": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "dot",
                         "forward"
@@ -38392,29 +35578,8 @@
                       "type": "string"
                     },
                     "rr": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "A",
                         "AAAA",
@@ -38613,29 +35778,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "local_zone_type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -38796,29 +35940,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "logverbosity": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -38829,29 +35952,8 @@
                 ]
               },
               "valloglevel": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -38926,29 +36028,8 @@
             "type": "object",
             "properties": {
               "default_action": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -38972,29 +36053,8 @@
                       "type": "string"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "opt1",
                         "opt2",
@@ -39036,29 +36096,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "atf",
                   "ag",
@@ -39170,29 +36209,8 @@
                       "description": "Boolean (0=false, 1=true)"
                     },
                     "type": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "dot",
                         "forward"
@@ -39258,29 +36276,8 @@
                       "type": "string"
                     },
                     "rr": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "A",
                         "AAAA",
@@ -39479,29 +36476,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "local_zone_type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -39662,29 +36638,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "logverbosity": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -39695,29 +36650,8 @@
                 ]
               },
               "valloglevel": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -39792,29 +36726,8 @@
             "type": "object",
             "properties": {
               "default_action": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -39838,29 +36751,8 @@
                       "type": "string"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "opt1",
                         "opt2",
@@ -39902,29 +36794,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "atf",
                   "ag",
@@ -40036,29 +36907,8 @@
                       "description": "Boolean (0=false, 1=true)"
                     },
                     "type": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "dot",
                         "forward"
@@ -40124,29 +36974,8 @@
                       "type": "string"
                     },
                     "rr": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "A",
                         "AAAA",
@@ -40345,29 +37174,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "local_zone_type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -40528,29 +37336,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "logverbosity": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -40561,29 +37348,8 @@
                 ]
               },
               "valloglevel": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -40658,29 +37424,8 @@
             "type": "object",
             "properties": {
               "default_action": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "opt1",
                   "opt2",
@@ -40704,29 +37449,8 @@
                       "type": "string"
                     },
                     "action": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "opt1",
                         "opt2",
@@ -40768,29 +37492,8 @@
                 "description": "Boolean (0=false, 1=true)"
               },
               "type": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "selected": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                "example": {
-                  "option1": {
-                    "value": "Option 1",
-                    "selected": 0
-                  },
-                  "option2": {
-                    "value": "Option 2",
-                    "selected": 1
-                  }
-                },
+                "type": "string",
+                "description": "Dropdown selection",
                 "enum": [
                   "atf",
                   "ag",
@@ -40902,29 +37605,8 @@
                       "description": "Boolean (0=false, 1=true)"
                     },
                     "type": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "dot",
                         "forward"
@@ -40990,29 +37672,8 @@
                       "type": "string"
                     },
                     "rr": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "string"
-                          },
-                          "selected": {
-                            "type": "integer"
-                          }
-                        }
-                      },
-                      "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-                      "example": {
-                        "option1": {
-                          "value": "Option 1",
-                          "selected": 0
-                        },
-                        "option2": {
-                          "value": "Option 2",
-                          "selected": 1
-                        }
-                      },
+                      "type": "string",
+                      "description": "Dropdown selection",
                       "enum": [
                         "A",
                         "AAAA",
