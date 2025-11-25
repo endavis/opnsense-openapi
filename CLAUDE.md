@@ -17,7 +17,7 @@ This is a lightweight Python wrapper generator for OPNSense API endpoints. The t
 - Target: Maintain ≥69% test coverage
 
 **Code Quality:**
-- `just format` - Format code with Black
+- `just format` - Format code with Ruff
 - `just lint` - Lint code with Ruff
 
 **Dependencies:**
@@ -30,8 +30,7 @@ This is a lightweight Python wrapper generator for OPNSense API endpoints. The t
 - **Python:** 3.12+ with full type hints
 - **Package Manager:** `uv` for Python environment and package management
 - **Task Runner:** `just` (justfile) for common commands
-- **Formatter:** Black (max line length 100)
-- **Linter:** Ruff
+- **Linter/Formatter:** Ruff (max line length 100)
 
 ## Code Style
 

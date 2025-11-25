@@ -98,7 +98,7 @@ def main() -> None:
         openapi = client.openapi
         print(f"OpenAPI wrapper initialized: {openapi is not None}")
         print(f"Base URL: {openapi.base_url}")
-        print(f"Spec file loaded: Yes")
+        print("Spec file loaded: Yes")
 
     except Exception as e:
         print(f"Error: {e}")

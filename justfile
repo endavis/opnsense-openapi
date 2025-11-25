@@ -17,13 +17,13 @@ coverage:
 
 # Format code
 format:
-    uv run black src/ tests/
+    uv run ruff format src/ tests/
     uv run ruff check --fix src/ tests/
 
 # Lint code
 lint:
-    uv run black --check src/ tests/
     uv run ruff check src/ tests/
+    uv run ruff format --check src/ tests/
     uv run mypy src/
 
 # Generate wrapper for a specific OPNsense version
@@ -63,5 +63,9 @@ bump part="patch":
         *) echo "Usage: just bump patch|minor|major"; exit 1 ;;
     esac
     sed -i "s/version = \"$current\"/version = \"$new\"/" pyproject.toml
-    sed -i "s/__version__ = \"$current\"/__version__ = \"$new\"/" src/opnsense_api/__init__.py
+    sed -i "s/__version__ = \"$current\"/__version__ = \"$new\"/" src/opnsense_openapi/__init__.py
     echo "Bumped version: $current -> $new"
+
+# Install pre-commit hooks
+install-hooks:
+    uv run pre-commit install

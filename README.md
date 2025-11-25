@@ -35,10 +35,10 @@ uv pip install -e ".[dev]"
 
 ```bash
 # Download controller files for OPNsense 24.7 into tmp/opnsense_source
-uv run opnsense-wrapper download 24.7
+uv run opnsense-openapi download 24.7
 
 # Store the snapshot in a custom directory
-uv run opnsense-wrapper download 24.7 --dest tmp/releases --force
+uv run opnsense-openapi download 24.7 --dest tmp/releases --force
 ```
 
 The `download` command clones the `opnsense/core` repository at the requested tag,
@@ -49,7 +49,7 @@ files that later steps of the wrapper pipeline will parse.
 
 ```python
 import os
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Initialize client with auto-detection
 client = OPNsenseClient(
@@ -71,14 +71,14 @@ print(f"OPNsense version: {info.product_version}")
 print(f"Aliases: {aliases.rows if aliases else []}")
 ```
 
-See [GENERATED_CLIENT_USAGE.md](GENERATED_CLIENT_USAGE.md) for complete documentation.
+See [GENERATED_CLIENT_USAGE.md](docs/GENERATED_CLIENT_USAGE.md) for complete documentation.
 
 ## CLI Commands
 
 ### Download Controller Sources
 
 ```bash
-opnsense-wrapper download [VERSION] [OPTIONS]
+opnsense-openapi download [VERSION] [OPTIONS]
 
 Options:
   -d, --dest PATH       Override the cache directory (default: tmp/opnsense_source)
@@ -89,10 +89,26 @@ The command clones `https://github.com/opnsense/core` at the requested tag, cach
 it locally, and extracts the controller files that downstream parsing and code
 generation steps consume.
 
+### Serve Documentation
+
+```bash
+opnsense-openapi serve-docs [OPTIONS]
+
+Options:
+  -v, --version TEXT    OPNsense version (e.g., '25.7.6'). Auto-detects if not specified.
+  -p, --port INTEGER    Port to run server on (default: 8080)
+  -h, --host TEXT       Host to bind to (default: 127.0.0.1)
+  -l, --list            List available spec versions and exit
+  --no-auto-detect      Disable auto-detection (requires --version)
+```
+
+Launch a local Swagger UI server to browse the generated OpenAPI documentation.
+If credentials are provided via environment variables (`OPNSENSE_URL`, `OPNSENSE_API_KEY`, `OPNSENSE_API_SECRET`), it acts as a proxy to the OPNsense instance, allowing you to test API calls directly from the browser.
+
 ### Display Tool Version
 
 ```bash
-opnsense-wrapper --version
+opnsense-openapi --version
 ```
 
 ## Development
@@ -121,22 +137,22 @@ just lint
 
 ### Components
 
-1. **Downloader** (`src/opnsense_api/downloader/`)
+1. **Downloader** (`src/opnsense_openapi/downloader/`)
    - Clones OPNsense core repository from GitHub
    - Manages version-specific source code cache
    - Supports tag-based version selection
 
-2. **Parser** (`src/opnsense_api/parser/`)
+2. **Parser** (`src/opnsense_openapi/parser/`)
    - Parses PHP controller files using regex
    - Extracts namespace, class, and method information
    - Determines HTTP methods and parameters
 
-3. **Generator** (`src/opnsense_api/generator/`)
+3. **Generator** (`src/opnsense_openapi/generator/`)
    - Generates Python module structure
    - Creates type-hinted method signatures
    - Organizes code by module and controller
 
-4. **Client** (`src/opnsense_api/client/`)
+4. **Client** (`src/opnsense_openapi/client/`)
    - Base HTTP client with OPNsense authentication
    - Handles API key/secret via Basic Auth
    - Provides GET/POST methods for API calls
@@ -166,10 +182,10 @@ The version-agnostic wrapper automatically maps Python function names to API end
 ## Example: Generated Code Structure
 
 ```
-src/opnsense_api/
+src/opnsense_openapi/
 ├── generated/
 │   └── v25_7_6/                    # Version-specific generated client
-│       └── opnsense_api_client/
+│       └── opnsense_openapi_client/
 │           ├── __init__.py
 │           ├── client.py           # HTTP client
 │           ├── models/             # Response models

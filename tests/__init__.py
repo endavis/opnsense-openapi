@@ -1,1 +1,1 @@
-"""Tests for opnsense_api package."""
+"""Tests for opnsense_openapi package."""
