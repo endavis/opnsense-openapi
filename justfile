@@ -17,13 +17,13 @@ coverage:
 
 # Format code
 format:
-    uv run black src/ tests/
+    uv run ruff format src/ tests/
     uv run ruff check --fix src/ tests/
 
 # Lint code
 lint:
-    uv run black --check src/ tests/
     uv run ruff check src/ tests/
+    uv run ruff format --check src/ tests/
     uv run mypy src/
 
 # Generate wrapper for a specific OPNsense version
