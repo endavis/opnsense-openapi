@@ -50,8 +50,10 @@ dmypy.json
 
 # Project specific
 tmp/
-generated/
 *.log
+
+# Generated clients - keep directory structure but ignore version subdirectories
+src/opnsense_openapi/generated/v*/
 
 # OS
 .DS_Store

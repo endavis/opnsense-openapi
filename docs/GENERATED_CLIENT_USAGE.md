@@ -11,18 +11,15 @@ The OPNsense API wrapper now supports **two approaches**:
 
 ## Quick Start - Generated Client
 
-### 1. Generate the Client
+### 1. Generate the OpenAPI Spec (if needed)
 
 ```bash
-# Generate OpenAPI spec from OPNsense source
-opnsense-openapi generate 25.7.6
-
-# Generate Python client from spec
-uv run openapi-python-client generate \
-  --path src/opnsense_openapi/specs/opnsense-25.7.6.json \
-  --output-path src/opnsense_openapi/generated/v25_7_6 \
-  --overwrite
+# Only needed if you don't have the spec for your version
+opnsense-openapi download 25.7.6  # Download source
+opnsense-openapi generate 25.7.6  # Generate spec
 ```
+
+**Note:** The Python client is now **automatically generated** when you first access `client.api`! You don't need to manually run `openapi-python-client` anymore.
 
 ### 2. Use With Auto-Detection (Version-Agnostic!)
 
@@ -40,6 +37,8 @@ client = OPNsenseClient(
 )
 
 # Get the version-agnostic API wrapper
+# On first access, if the spec exists but client doesn't,
+# it will be automatically generated (takes ~2 minutes)
 api = client.api
 
 # Call any API function - NO version-specific imports needed! 🎉
@@ -50,7 +49,10 @@ aliases = api.firewall.alias_search_item()
 print(f"OPNsense version: {info.product_version}")
 ```
 
-**Key Advantage:** Your code works across different OPNsense versions without any changes!
+**Key Advantages:**
+- Your code works across different OPNsense versions without any changes!
+- Python client is automatically generated on first use if spec exists
+- Subsequent uses are instant (client is cached)
 
 ## Using client.api - Detailed Examples
 

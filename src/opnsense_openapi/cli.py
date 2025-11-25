@@ -400,6 +400,153 @@ def build_client(
         raise typer.Exit(code=1)
 
 
+@app.command()
+def setup(
+    version: Annotated[str, typer.Argument(help="OPNsense release tag, e.g. 24.7")],
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            "--output",
+            "-o",
+            help=(
+                "Output directory for generated client "
+                "(defaults to src/opnsense_openapi/generated/v{version})."
+            ),
+        ),
+    ] = None,
+    cache: Annotated[
+        Path | None,
+        typer.Option(
+            "--cache",
+            "-c",
+            help="Directory for cached source files (defaults to tmp/opnsense_source).",
+        ),
+    ] = None,
+    force: Annotated[
+        bool,
+        typer.Option("--force/--no-force", help="Re-download source even when cached."),
+    ] = False,
+    meta: Annotated[
+        str,
+        typer.Option(
+            "--meta",
+            "-m",
+            help="Meta type for the generated client (none, poetry, setup, pdm, uv).",
+        ),
+    ] = "setup",
+    overwrite: Annotated[
+        bool,
+        typer.Option("--overwrite", help="Overwrite existing client directory."),
+    ] = False,
+) -> None:
+    """Complete setup: download source, generate spec, and build Python client.
+
+    This is a convenience command that runs all three steps:
+    1. opnsense-openapi download {version}
+    2. opnsense-openapi generate {version}
+    3. opnsense-openapi build-client --version {version}
+
+    Use this when setting up a new OPNsense version for the first time.
+    """
+    import shutil
+    import subprocess
+
+    typer.echo("=" * 70)
+    typer.echo(f"Setting up OPNsense {version}")
+    typer.echo("=" * 70)
+    typer.echo()
+
+    # Check if openapi-python-client is installed
+    if not shutil.which("openapi-python-client"):
+        typer.secho(
+            "Error: 'openapi-python-client' not found in PATH.", fg=typer.colors.RED, err=True
+        )
+        typer.echo("Install it with: uv pip install openapi-python-client")
+        raise typer.Exit(code=1)
+
+    # Step 1: Download source
+    typer.echo(f"[1/3] Downloading OPNsense {version} source...")
+    downloader = SourceDownloader(cache_dir=cache)
+    try:
+        controllers_path = downloader.download(version, force=force)
+        typer.secho(f"  ✓ Downloaded to {controllers_path}", fg=typer.colors.GREEN)
+    except RuntimeError as exc:
+        typer.secho(f"  ✗ {exc}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo()
+
+    # Step 2: Generate OpenAPI spec
+    typer.echo("[2/3] Generating OpenAPI specification...")
+    output_dir = Path(__file__).parent / "specs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    models_path = controllers_path.parent.parent / "models"
+    parser = ControllerParser()
+    controllers = parser.parse_directory(controllers_path)
+    typer.echo(f"  Found {len(controllers)} controllers")
+
+    generator = OpenApiGenerator(output_dir)
+    valid_models_path = models_path if models_path.exists() else None
+
+    if valid_models_path:
+        typer.echo(f"  Using models directory: {valid_models_path}")
+    else:
+        typer.secho(
+            "  Warning: Models directory not found. Schema generation will be skipped.",
+            fg=typer.colors.YELLOW,
+        )
+
+    output_file = generator.generate(controllers, version, models_dir=valid_models_path)
+    typer.secho(f"  ✓ Generated {output_file}", fg=typer.colors.GREEN)
+    typer.echo()
+
+    # Step 3: Build Python client
+    typer.echo("[3/3] Building Python client...")
+
+    # Determine output path
+    if output:
+        output_path = output
+    else:
+        version_clean = version.replace(".", "_")
+        output_path = Path(__file__).parent / "generated" / f"v{version_clean}"
+
+    typer.echo(f"  Output: {output_path}")
+
+    # Construct command
+    cmd = [
+        "openapi-python-client",
+        "generate",
+        "--path",
+        str(output_file),
+        "--output-path",
+        str(output_path),
+        "--meta",
+        meta,
+    ]
+
+    if overwrite:
+        cmd.append("--overwrite")
+
+    # Execute
+    try:
+        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        typer.secho("  ✓ Client generated successfully", fg=typer.colors.GREEN)
+    except subprocess.CalledProcessError as e:
+        typer.secho(f"  ✗ Error generating client: {e}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    typer.echo()
+    typer.echo("=" * 70)
+    typer.secho(f"✓ Setup complete for OPNsense {version}!", fg=typer.colors.GREEN, bold=True)
+    typer.echo("=" * 70)
+    typer.echo()
+    typer.echo("You can now use the client:")
+    typer.echo()
+    typer.echo("  from opnsense_openapi import OPNsenseClient")
+    typer.echo("  client = OPNsenseClient(...)")
+    typer.echo("  api = client.api")
+
+
 @app.command(name="serve-docs")
 def serve_docs(
     version: Annotated[
