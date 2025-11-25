@@ -91,25 +91,39 @@ class SpecValidator:
                 result["status"] = response.status_code
 
                 if response.status_code == 200:
-                    try:
-                        data = response.json()
-                        
-                        # Get response schema
-                        response_schema = methods["get"]["responses"]["200"]["content"]["application/json"]["schema"]
-                        
-                        # Validate
-                        # We need to prepare the validator with the resolver
-                        cls = validator_for(response_schema)
-                        validator = cls(response_schema, resolver=self.resolver)
-                        validator.validate(data)
-                        
+                    content_type = response.headers.get("Content-Type", "").lower()
+
+                    if "application/json" in content_type:
+                        try:
+                            data = response.json()
+                            
+                            # Get response schema
+                            # Note: sometimes 'content' is missing or has other media types
+                            response_content = methods["get"]["responses"]["200"].get("content")
+                            if not response_content or "application/json" not in response_content:
+                                result["error"] = "No application/json schema defined for 200 OK"
+                                yield result
+                                continue
+
+                            response_schema = response_content["application/json"]["schema"]
+                            
+                            # Validate
+                            # We need to prepare the validator with the resolver
+                            cls = validator_for(response_schema)
+                            validator = cls(response_schema, resolver=self.resolver)
+                            validator.validate(data)
+                            
+                            result["valid"] = True
+                        except jsonschema.ValidationError as e:
+                            result["error"] = f"Schema mismatch: {e.message} (at {'.'.join(str(p) for p in e.path)})"
+                        except json.JSONDecodeError:
+                            result["error"] = "Invalid JSON response (expected JSON based on schema)"
+                        except KeyError:
+                            result["error"] = "Schema definition missing for 200 OK or content type"
+                    else:
+                        # Non-JSON response (e.g., CSV, text). Assume valid if status is 200.
                         result["valid"] = True
-                    except jsonschema.ValidationError as e:
-                        result["error"] = f"Schema mismatch: {e.message} (at {e.path})"
-                    except json.JSONDecodeError:
-                        result["error"] = "Invalid JSON response"
-                    except KeyError:
-                        result["error"] = "Schema definition missing for 200 OK"
+                        result["error"] = f"Non-JSON response ({content_type}). Skipped schema validation."
                 else:
                     result["error"] = f"HTTP {response.status_code}"
 
