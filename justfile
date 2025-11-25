@@ -4,7 +4,7 @@ default:
 
 # Install dependencies
 install:
-    uv pip install -e "”.[dev]"
+    uv pip install -e ".[dev]"
 
 # Run tests
 test:
