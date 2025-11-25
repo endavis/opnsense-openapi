@@ -6,6 +6,7 @@ from typing import (
     Any,
     Literal,
     TypedDict,
+    cast,
 )
 from urllib.parse import urlencode, urlparse
 
@@ -147,16 +148,16 @@ class APIWrapper:
         if cache_key in self._operation_cache:
             return self._operation_cache[cache_key]
 
-        path_item: dict[str, Any] | None = self.api_spec["paths"].get(api_path)
-        if path_item is None:
+        path_item: dict[str, Any] = self.api_spec["paths"].get(api_path, {})
+        if path_item == {}:
             available_paths: list[str] = list(self.api_spec["paths"].keys())
             raise KeyError(
                 f"Path not found in API spec: {api_path}. "
                 f"Available paths: {', '.join(available_paths[:5])}"
                 + (f" ... ({len(available_paths) - 5} more)" if len(available_paths) > 5 else "")
             )
-        operation: dict[str, Any] | None = path_item.get(method)
-        if operation is None:
+        operation: dict[str, Any] = path_item.get(method, {})
+        if operation == {}:
             available_methods: list[str] = [m.upper() for m in path_item.keys()]
             raise KeyError(
                 f"Method '{method.upper()}' not found for path: {api_path}. "
@@ -164,7 +165,7 @@ class APIWrapper:
             )
 
         self._operation_cache[cache_key] = operation
-        return operation  # type: ignore[no-any-return]
+        return operation
 
     def _resolve_ref(self, ref: str) -> dict[str, Any]:
         """Resolve refs like '#/components/schemas/SomeSchema' against the api_spec."""
@@ -173,7 +174,7 @@ class APIWrapper:
 
         keys: list[str] = ref.split("/")[1:]  # Skip the # at the beginning
 
-        resolved_ref: Any = self.api_spec
+        resolved_ref: dict[str, Any] = self.api_spec
         for key in keys:
             resolved_ref = resolved_ref[key]
         return resolved_ref
@@ -216,7 +217,7 @@ class APIWrapper:
         schema: dict[str, Any] | None = content.get("schema")
         if not schema:
             return None
-        return self._resolve_refs(schema)
+        return cast(dict[str, Any], self._resolve_refs(schema))
 
     def _build_sample_from_schema(self, schema: dict[str, Any]) -> Any:
         """Heuristic sample generator for a JSON Schema object."""
@@ -282,13 +283,13 @@ class APIWrapper:
 
     # ------------------------------ Public API ------------------------------
 
-    def list_endpoints(self) -> list[tuple[str, str, str | None]]:
+    def list_endpoints(self) -> list[tuple[str, str, str]]:
         """Return list of (path, METHOD, summary) triples for quick discovery."""
-        items: list[tuple[str, str, str | None]] = []
+        items: list[tuple[str, str, str]] = []
         for path_str, path_item in self.api_spec["paths"].items():
             for m_str, op_item in path_item.items():
-                summary: str | None = op_item.get("summary")
-                if summary is None:
+                summary: str = op_item.get("summary", "")
+                if summary == "":
                     summary = op_item.get("description")
                     if isinstance(summary, str) and "." in summary:
                         summary = summary.split(".")[0]
@@ -341,16 +342,16 @@ class APIWrapper:
 
     def _get_response_schema(
         self, path_template: str, method: str, status_code: str = "200"
-    ) -> dict[str, Any] | None:
+    ) -> dict[str, Any]:
         """Return the resolved JSON Schema dict for the response if present."""
         op: dict[str, Any] = self._get_operation(path_template, method)
         responses: dict[str, Any] = op.get("responses", {})
-        response_item: dict[str, Any] | None = responses.get(status_code, {})
+        response_item: dict[str, Any] = responses.get(status_code, {})
         content: dict[str, Any] = response_item.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
-        schema: dict[str, Any] | None = content.get("schema")
+        schema: dict[str, Any] = content.get("schema", {})
         if not schema:
-            return None
-        return self._resolve_refs(schema)
+            return {}
+        return cast(dict[str, Any], self._resolve_refs(schema))
 
     def validate_body(
         self,

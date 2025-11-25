@@ -2,9 +2,9 @@
 
 import json
 import logging
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # noqa: N817
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from ..parser import ApiController
 
@@ -40,7 +40,7 @@ OPTION_FIELD_OBJECT_SCHEMA = {
 }
 
 # ================= TYPE MAPPING =================
-TYPE_MAP = {
+TYPE_MAP: dict[str, dict[str, Any]] = {
     "IntegerField": {
         "type": "string",
         "description": "Integer value (represented as string)",
@@ -462,7 +462,7 @@ class OpenApiGenerator:
             parameters = []
 
         # === RESPONSE/REQUEST LOGIC ===
-        response_schema = {"description": "Successful response"}
+        response_schema: dict[str, Any] = {"description": "Successful response"}
         request_body = None
 
         # === SERVICE ACTION PATTERNS (from ApiMutableServiceControllerBase) ===
@@ -729,7 +729,7 @@ class OpenApiGenerator:
                         "application/json": {
                             "schema": {
                                 "type": "object",
-                                "additionalProperties": True,
+                                "additionalProperties": cast(Any, True),
                                 "description": "Request payload",
                             }
                         }

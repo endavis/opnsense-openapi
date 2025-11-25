@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 import typer
+from flask import Response
 
 from . import __version__
 from .downloader import SourceDownloader
@@ -197,8 +198,8 @@ def validate(
 
         client = OPNsenseClient(
             base_url=opnsense_url,  # type: ignore
-            api_key=api_key,  # type: ignore
-            api_secret=api_secret,  # type: ignore
+            api_key=api_key,
+            api_secret=api_secret,
             verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true",
             auto_detect_version=not no_auto_detect,
             spec_version=version,
@@ -446,7 +447,7 @@ def serve_docs(
     # Import Flask dependencies (only when needed)
     try:
         from flask import Flask, jsonify, make_response, redirect, request
-        from flask_swagger_ui import get_swaggerui_blueprint
+        from flask_swagger_ui import get_swaggerui_blueprint  # type: ignore
     except ImportError:
         typer.secho(
             "Error: Flask dependencies not installed.",
@@ -549,7 +550,7 @@ def serve_docs(
 
     # Serve the OpenAPI spec file
     @flask_app.route("/api/spec")
-    def api_spec():
+    def api_spec() -> Response:
         """Serve the OpenAPI specification file."""
         import json
 
@@ -569,7 +570,9 @@ def serve_docs(
 
     # Proxy endpoint to forward requests to OPNsense instance
     @flask_app.route("/proxy/<path:api_path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-    def proxy(api_path):
+    def proxy(
+        api_path: str,
+    ) -> tuple[Response, Literal[503]] | Response | tuple[Response, Literal[500]]:
         """Proxy requests to the actual OPNsense instance."""
         if not opnsense_client:
             return (
@@ -623,7 +626,7 @@ def serve_docs(
 
     # Handle OPTIONS requests for CORS preflight
     @flask_app.route("/proxy/<path:api_path>", methods=["OPTIONS"])
-    def proxy_options(api_path):
+    def proxy_options(api_path: str) -> Response:
         """Handle CORS preflight requests."""
         response = make_response()
         response.headers["Access-Control-Allow-Origin"] = "*"
@@ -633,9 +636,9 @@ def serve_docs(
 
     # Root redirect
     @flask_app.route("/")
-    def index():
+    def index() -> Response:
         """Redirect to Swagger UI."""
-        return redirect(swagger_url)
+        return redirect(swagger_url)  # type: ignore
 
     # Start server
     typer.echo("=" * 70)

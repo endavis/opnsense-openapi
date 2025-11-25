@@ -1,14 +1,16 @@
 """Base client for OPNsense API communication."""
 
+from __future__ import annotations
+
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from urllib.parse import urljoin
 
 import httpx
 
-from opnsense_openapi.openapi import APIWrapper
+from opnsense_openapi.openapi import APIWrapper, SuggestedParameters
 from opnsense_openapi.specs import find_best_matching_spec
 
 logger = logging.getLogger(__name__)
@@ -129,8 +131,8 @@ class OPNsenseClient:
         response: httpx.Response = self._client.get(url, params=query)
         response.raise_for_status()
         try:
-            return response.json()
-        except json.JSONDecodeError as e:  # type: ignore[union-attr]
+            return cast(dict[str, Any], response.json())
+        except json.JSONDecodeError as e:
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def post(
@@ -163,7 +165,7 @@ class OPNsenseClient:
         response: httpx.Response = self._client.post(url, json=json, headers=headers)
         response.raise_for_status()
         try:
-            return response.json()
+            return cast(dict[str, Any], response.json())
         except json.JSONDecodeError as e:  # type: ignore[union-attr]
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
@@ -171,7 +173,7 @@ class OPNsenseClient:
         """Close the HTTP client."""
         self._client.close()
 
-    def __enter__(self) -> "OPNsenseClient":
+    def __enter__(self) -> OPNsenseClient:
         """Context manager entry."""
         return self
 
@@ -329,7 +331,7 @@ class OPNsenseClient:
             api_client.set_httpx_client(self._client)
 
             # Wrap in GeneratedAPI for version-agnostic access
-            return GeneratedAPI(api_client, version)  # type: ignore[no-any-return]
+            return GeneratedAPI(api_client, version)
 
         except ImportError as e:
             raise RuntimeError(
@@ -339,7 +341,7 @@ class OPNsenseClient:
                 f"--output-path src/opnsense_openapi/generated/v{version_module}"
             ) from e
 
-    def list_endpoints(self) -> list[tuple[str, str, str | None]]:
+    def list_endpoints(self) -> list[tuple[str, str, str]]:
         """List all available API endpoints from the OpenAPI spec.
 
         Returns:
@@ -351,9 +353,9 @@ class OPNsenseClient:
         if self._openapi is None:
             # force initialization of _openapi property
             _ = self.openapi
-        return self._openapi.list_endpoints()  # type: ignore[no-any-return]
+        return self.openapi.list_endpoints()
 
-    def get_endpoint_info(self, path_template: str, method: str = "GET") -> dict[str, Any]:
+    def get_endpoint_info(self, path_template: str, method: str = "GET") -> SuggestedParameters:
         """Get detailed information about an API endpoint.
 
         Args:
@@ -370,4 +372,4 @@ class OPNsenseClient:
         if self._openapi is None:
             # force initialization of _openapi property
             _ = self.openapi
-        return self._openapi.suggest_parameters(path_template, method)  # type: ignore[no-any-return]
+        return self.openapi.suggest_parameters(path_template, method)
