@@ -4,11 +4,30 @@ version = "0.1.0"
 description = "OpenAPI-based Python client for OPNsense with bundled specs"
 readme = "README.md"
 requires-python = ">=3.12"
+license = "MIT"
 dependencies = [
     "httpx>=0.27.0",
     "typer>=0.9.0",
     "jsonschema>=4.21.0",
 ]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Internet",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Typing :: Typed",
+]
+urls = {
+    "Homepage" = "https://github.com/endavis/opnsense-openapi",
+    "Repository" = "https://github.com/endavis/opnsense-openapi",
+    "Issue Tracker" = "https://github.com/endavis/opnsense-openapi/issues",
+    "Documentation" = "https://github.com/endavis/opnsense-openapi#readme",
+}
 
 [project.optional-dependencies]
 dev = [

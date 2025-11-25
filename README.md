@@ -298,4 +298,4 @@ See `CLAUDE.md` for development guidelines and coding standards.
 
 ## License
 
-See LICENSE file for details.
+MIT License. See `LICENSE`.
