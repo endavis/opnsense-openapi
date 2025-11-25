@@ -32,19 +32,19 @@ uv pip install -e ".[dev]"
 
 ## Quick Start
 
-### Download Controller Sources
+### Complete Setup (Easiest)
+
+The fastest way to get started is using the `setup` command, which does everything in one step:
 
 ```bash
-# Download controller files for OPNsense 24.7 into tmp/opnsense_source
-uv run opnsense-openapi download 24.7
-
-# Store the snapshot in a custom directory
-uv run opnsense-openapi download 24.7 --dest tmp/releases --force
+# Complete setup for OPNsense 25.7.6: download, generate spec, build client
+uv run opnsense-openapi setup 25.7.6
 ```
 
-The `download` command clones the `opnsense/core` repository at the requested tag,
-caches it under `tmp/opnsense_source/<version>/`, and extracts the controller
-files that later steps of the wrapper pipeline will parse.
+This command:
+1. Downloads OPNsense source code
+2. Generates OpenAPI specification
+3. Builds Python client
 
 ### Use the API Client
 
@@ -76,8 +76,10 @@ print(f"Aliases: {aliases.rows if aliases else []}")
 
 **Note:** The first time you access `client.api`, if the OpenAPI spec exists for your version, the Python client will be automatically generated. This takes about 2 minutes. Subsequent uses are instant.
 
-If you don't have the OpenAPI spec yet, you'll get a helpful error message with the exact commands to run:
+If you don't have the OpenAPI spec yet (because you skipped the `setup` command), you'll get a helpful error message with the exact commands to run:
 ```bash
+opnsense-openapi setup <version>
+# or step-by-step:
 opnsense-openapi download <version>
 opnsense-openapi generate <version>
 ```
@@ -85,6 +87,31 @@ opnsense-openapi generate <version>
 See [GENERATED_CLIENT_USAGE.md](docs/GENERATED_CLIENT_USAGE.md) for complete documentation.
 
 ## CLI Commands
+
+### Complete Setup (Recommended)
+
+```bash
+opnsense-openapi setup [VERSION] [OPTIONS]
+
+Options:
+  -o, --output PATH  Output directory for generated client
+  -c, --cache PATH   Cache directory for source files (default: tmp/opnsense_source)
+  --force            Re-download source even when cached
+  --meta TEXT        Meta type: none, poetry, setup, pdm, uv (default: setup)
+  --overwrite        Overwrite existing client directory
+```
+
+**One command to do it all!** This convenience command runs all three steps:
+1. Downloads OPNsense source code
+2. Generates OpenAPI specification
+3. Builds Python client
+
+Use this when setting up a new OPNsense version for the first time.
+
+**Example:**
+```bash
+opnsense-openapi setup 25.7.6
+```
 
 ### Download Controller Sources
 
@@ -202,6 +229,12 @@ just lint
 
 ### How It Works
 
+**Quick Setup (Recommended):**
+```bash
+opnsense-openapi setup 25.7.6
+```
+
+**Or step-by-step:**
 1. **Download**: Clone OPNsense core repository for specified version
 2. **Parse**: Scan `src/opnsense/mvc/app/controllers/OPNsense/*/Api/` for controllers
 3. **Extract**: Parse controller classes to find public `*Action()` methods
