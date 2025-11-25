@@ -46,7 +46,7 @@ TYPE_MAP = {
     "OptionField": OPTION_FIELD_ENUM_SCHEMA, # Default to enum string in TYPE_MAP
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
     "CSVListField": {"type": "string", "description": "Comma separated values"},
-    "CertificateField": {"type": "string", "description": "Certificate Data"},
+    "CertificateField": {"type": "string", "format": "email"},
     "EmailField": {"type": "string", "format": "email"},
     "ArrayField": {"type": "array", "items": {"type": "object"}},
     "InterfaceField": {
@@ -238,8 +238,18 @@ class OpenApiGenerator:
                         # Fallback if no children defined
                         prop_def['items'] = {"type": "object", "additionalProperties": True}
 
+                # === POLYMORPHIC LIST HANDLING (AsList/Multiple) ===
+                # Check if field behaves as a list (returning map object on read)
+                is_list = False
+                as_list = elem.find('AsList')
+                multiple = elem.find('Multiple')
+                
+                if (as_list is not None and as_list.text == 'Y') or \
+                   (multiple is not None and multiple.text == 'Y'):
+                    is_list = True
+
                 # === ENUM RESOLUTION LOGIC ===
-                elif clean_type == "OptionField":
+                if clean_type == "OptionField":
                     # 1. Check for Inline Options
                     inline_opts = elem.find('OptionValues')
                     enum_values: List[str] = []
@@ -252,24 +262,31 @@ class OpenApiGenerator:
                         enum_values.extend(self._resolve_external_enums(source_tag.text))
                     
                     if enum_values:
-                        # For OptionField, if enum values are present, it can be represented
-                        # as a string (for input) or an object map (for output, UI driven).
-                        # We use oneOf to represent both possibilities.
-
-                        # The object variant is what the API sometimes returns for GET
-                        object_variant = {"$ref": "#/components/schemas/OptionFieldObject"}
-                        # The string enum variant is what is usually sent for POST
+                        # OptionField with explicit enums always gets polymorphic treatment
+                        # because it can be read as an object map of options
                         string_variant = {"type": "string", "enum": list(set(enum_values)), "description": OPTION_FIELD_ENUM_SCHEMA['description']}
-
                         prop_def = {
-                            "oneOf": [object_variant, string_variant],
-                            "description": OPTION_FIELD_OBJECT_SCHEMA['description'] # Use the rich description
+                            "oneOf": [
+                                {"$ref": "#/components/schemas/OptionFieldObject"},
+                                string_variant
+                            ],
+                            "description": OPTION_FIELD_OBJECT_SCHEMA['description']
                         }
                     else:
-                        # Fallback to just the object representation if no explicit enum values are found
-                        # This covers cases where OptionField is used like an InterfaceField.
+                        # No enums found, default to object
                         prop_def = OPTION_FIELD_OBJECT_SCHEMA.copy()
                 
+                elif is_list:
+                    # Non-OptionField types that are lists (e.g. NetworkField with AsList=Y)
+                    # behave like OptionFields: object map on read, string on write.
+                    prop_def = {
+                        "oneOf": [
+                            {"$ref": "#/components/schemas/OptionFieldObject"},
+                            {"type": "string", "description": f"Comma-separated list of {clean_type} values."}
+                        ],
+                        "description": f"List of {clean_type} values. Returns a map on read, expects a string on write."
+                    }
+
                 properties[field_name] = prop_def
             
             else:
@@ -470,7 +487,7 @@ class OpenApiGenerator:
         elif any(x in act_lower for x in ['apply', 'flush', 'revert', 'savepoint', 'rollback', 'upload', 'generate', 'kill', 'disconnect', 'connect']):
             # Operations that modify state and return status
             response_schema["content"] = {
-                "application/json": {"$ref": "#/components/schemas/StatusResponse"}
+                "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
             }
         # === QUERY/EXPORT PATTERNS ===
         elif any(x in act_lower for x in ['export', 'download', 'rawdump', 'dump', 'providers', 'accounts', 'templates']):
@@ -490,7 +507,7 @@ class OpenApiGenerator:
             if act_lower == 'list' and schema_name:
                 # Paginated list response
                 response_schema["content"] = {
-                    "application/json": {"$ref": f"#/components/schemas/{schema_name}Search"}
+                    "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}Search"}}
                 }
             else:
                 # Simple array or object with dynamic keys
@@ -508,7 +525,7 @@ class OpenApiGenerator:
             # Search/Find = Pagination (including Item variations like searchItem)
             if any(x in act_lower for x in ['search', 'find']) or act_lower.endswith('item'):
                 response_schema["content"] = {
-                    "application/json": {"$ref": f"#/components/schemas/{schema_name}Search"}
+                    "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}Search"}}
                 }
             # Get = Single Object Wrapped
             elif "get" in act_lower:
@@ -528,7 +545,7 @@ class OpenApiGenerator:
             # Mutations = Status
             elif any(x in act_lower for x in ['add', 'set', 'del', 'toggle', 'update']):
                 response_schema["content"] = {
-                    "application/json": {"$ref": "#/components/schemas/StatusResponse"}
+                    "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
                 }
 
             # Request Body for mutations
@@ -577,7 +594,7 @@ class OpenApiGenerator:
             elif any(x in act_lower for x in ['add', 'set', 'update', 'delete', 'remove', 'del', 'toggle']):
                 # Mutation operations return status
                 response_schema["content"] = {
-                    "application/json": {"$ref": "#/components/schemas/StatusResponse"}
+                    "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
                 }
 
             # Request body for mutations without models
