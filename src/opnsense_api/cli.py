@@ -264,6 +264,114 @@ def validate(
         raise typer.Exit(code=1)
 
 
+@app.command(name="build-client")
+def build_client(
+    version: Annotated[
+        str | None,
+        typer.Option(
+            "--version",
+            "-v",
+            help="OPNsense version (e.g., '25.7.6'). Auto-detects if not specified.",
+        ),
+    ] = None,
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            "--output",
+            "-o",
+            help="Output directory for the generated client package.",
+        ),
+    ] = None,
+    meta: Annotated[
+        str,
+        typer.Option(
+            "--meta",
+            "-m",
+            help="Meta type for the generated client (none, poetry, hatch, setuptools).",
+        ),
+    ] = "hatch",
+    overwrite: Annotated[
+        bool,
+        typer.Option("--overwrite", help="Overwrite existing client directory."),
+    ] = False,
+    no_auto_detect: Annotated[
+        bool,
+        typer.Option("--no-auto-detect", help="Disable auto-detection (requires --version)"),
+    ] = False,
+) -> None:
+    """Generate a Python client library from the OpenAPI spec using openapi-python-client."""
+    import shutil
+    import subprocess
+
+    # Check if openapi-python-client is installed
+    if not shutil.which("openapi-python-client"):
+        typer.secho("Error: 'openapi-python-client' not found in PATH.", fg=typer.colors.RED, err=True)
+        typer.echo("Install it with: uv pip install openapi-python-client")
+        raise typer.Exit(code=1)
+
+    # Determine version
+    version_to_use = version
+    if not version and not no_auto_detect:
+        # Try minimal client init just for detection
+        try:
+            from .client import OPNsenseClient
+            # We don't strictly need credentials just to check version if endpoints are open, 
+            # but usually they are protected. If we can't auto-detect, user must provide version.
+            # We'll try with env vars if available, else warn.
+            client = OPNsenseClient(
+                base_url=os.getenv("OPNSENSE_URL", "https://opnsense.local"),
+                api_key=os.getenv("OPNSENSE_API_KEY", ""),
+                api_secret=os.getenv("OPNSENSE_API_SECRET", ""),
+                verify_ssl=False,
+                auto_detect_version=True,
+            )
+            version_to_use = client._detected_version
+        except Exception:
+            pass # Fallback to manual input requirement
+
+    if not version_to_use:
+        typer.secho("Error: Please specify --version (e.g. '25.7.6').", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    # Find spec
+    try:
+        spec_path = find_best_matching_spec(version_to_use)
+        typer.echo(f"Using spec file: {spec_path}")
+    except FileNotFoundError:
+        typer.secho(f"Error: No spec found for {version_to_use}. Run 'generate' first.", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    # Determine output path
+    if output:
+        output_path = output
+    else:
+        # Default: src/opnsense_api/generated/v{version_clean}
+        version_clean = version_to_use.replace(".", "_")
+        output_path = Path(__file__).parent / "generated" / f"v{version_clean}"
+
+    typer.echo(f"Generating client in: {output_path}")
+
+    # Construct command
+    cmd = [
+        "openapi-python-client",
+        "generate",
+        "--path", str(spec_path),
+        "--output-path", str(output_path),
+        "--meta", meta,
+    ]
+    
+    if overwrite:
+        cmd.append("--overwrite")
+
+    # Execute
+    try:
+        subprocess.check_call(cmd)
+        typer.secho(f"✓ Client generated successfully for OPNsense {version_to_use}", fg=typer.colors.GREEN)
+    except subprocess.CalledProcessError as e:
+        typer.secho(f"Error generating client: {e}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+
 @app.command(name="serve-docs")
 def serve_docs(
     version: Annotated[
