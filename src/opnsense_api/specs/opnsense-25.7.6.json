@@ -1010,9 +1010,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -1059,9 +1057,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -1308,9 +1304,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -1707,9 +1701,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -3767,9 +3759,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -4456,9 +4446,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -5338,9 +5326,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -5387,9 +5373,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -5948,9 +5932,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }
@@ -19219,9 +19201,7 @@
                       "description": "UI widget captions"
                     }
                   },
-                  "required": [
-                    "status"
-                  ]
+                  "required": []
                 }
               }
             }

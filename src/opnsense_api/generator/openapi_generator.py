@@ -371,6 +371,11 @@ class OpenApiGenerator:
             }
         elif 'status' in act_lower:
             # status returns {"status": "running"|"stopped"|...}
+            # For some basic status endpoints (e.g., system/status), it might return {} if status is unknown/unavailable.
+            # Make 'status' optional in these cases, unless 'widget' is also part of the response (rich status).
+            is_rich_status = "widget" in action # Heuristic: if action name includes "widget", assume rich status
+            required_status_property = ["status"] if is_rich_status else []
+            
             response_schema["content"] = {
                 "application/json": {
                     "schema": {
@@ -382,7 +387,7 @@ class OpenApiGenerator:
                             },
                             "widget": {"type": "object", "description": "UI widget captions"}
                         },
-                        "required": ["status"]
+                        "required": required_status_property
                     }
                 }
             }
