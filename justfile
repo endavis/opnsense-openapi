@@ -4,7 +4,7 @@ default:
 
 # Install dependencies
 install:
-    uv pip install -e ".[dev]"
+    uv pip install -e "”.[dev]"
 
 # Run tests
 test:
@@ -65,3 +65,7 @@ bump part="patch":
     sed -i "s/version = \"$current\"/version = \"$new\"/" pyproject.toml
     sed -i "s/__version__ = \"$current\"/__version__ = \"$new\"/" src/opnsense_openapi/__init__.py
     echo "Bumped version: $current -> $new"
+
+# Install pre-commit hooks
+install-hooks:
+    uv run pre-commit install
