@@ -21,7 +21,21 @@ TYPE_MAP = {
     "TextField": {"type": "string"},
     "BooleanField": {"type": "string", "enum": ["0", "1"], "description": "Boolean (0=false, 1=true)"},
     "NetworkField": {"type": "string", "format": "ipv4"},
-    "OptionField": {"type": "string", "description": "Dropdown selection"}, # Reverted to string default
+    "OptionField": { # Reverting OptionField to complex object in TYPE_MAP
+        "type": "object",
+        "additionalProperties": {
+            "type": "object",
+            "properties": {
+                "value": {"type": "string"},
+                "selected": {"type": "integer"}
+            }
+        },
+        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
+        "example": {
+            "default": {"value": "Default Option", "selected": 0},
+            "custom": {"value": "Custom Option", "selected": 1}
+        }
+    },
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
     "CSVListField": {"type": "string", "description": "Comma separated values"},
     "CertificateField": {"type": "string", "description": "Certificate Data"},
