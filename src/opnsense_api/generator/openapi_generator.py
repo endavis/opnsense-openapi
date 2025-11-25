@@ -39,14 +39,15 @@ OPTION_FIELD_OBJECT_SCHEMA = {
 
 # ================= TYPE MAPPING =================
 TYPE_MAP = {
-    "IntegerField": {"type": "integer"},
+    "IntegerField": {"type": "string", "description": "Integer value (represented as string)"}, # OPNsense often serializes ints as strings
     "TextField": {"type": "string"},
     "BooleanField": {"type": "string", "enum": ["0", "1"], "description": "Boolean (0=false, 1=true)"},
     "NetworkField": {"type": "string", "format": "ipv4"},
     "OptionField": OPTION_FIELD_ENUM_SCHEMA, # Default to enum string in TYPE_MAP
+    "AuthGroupField": OPTION_FIELD_ENUM_SCHEMA, # Behaves like OptionField
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
     "CSVListField": {"type": "string", "description": "Comma separated values"},
-    "CertificateField": {"type": "string", "format": "email"},
+    "CertificateField": {"type": "string", "description": "Certificate Data"},
     "EmailField": {"type": "string", "format": "email"},
     "ArrayField": {"type": "array", "items": {"type": "object"}},
     "InterfaceField": {
@@ -249,7 +250,7 @@ class OpenApiGenerator:
                     is_list = True
 
                 # === ENUM RESOLUTION LOGIC ===
-                if clean_type == "OptionField":
+                if clean_type == "OptionField" or clean_type == "AuthGroupField":
                     # 1. Check for Inline Options
                     inline_opts = elem.find('OptionValues')
                     enum_values: List[str] = []
