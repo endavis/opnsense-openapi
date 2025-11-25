@@ -31,34 +31,44 @@ class OPNsenseClient:
     def __init__(
         self,
         base_url: str,
-        api_key: str,
-        api_secret: str,
+        api_key: str | None = None,
+        api_secret: str | None = None,
         verify_ssl: bool = True,
         timeout: float = 30.0,
         spec_version: str | None = None,
         auto_detect_version: bool = True,
+        auth: Any | None = None,
+        headers: dict[str, str] | None = None,
     ) -> None:
         """Initialize OPNsense API client.
 
         Args:
             base_url: Base URL of OPNsense instance (e.g., "https://opnsense.local")
-            api_key: API key for authentication
-            api_secret: API secret for authentication
+            api_key: API key for authentication (Basic Auth)
+            api_secret: API secret for authentication (Basic Auth)
             verify_ssl: Whether to verify SSL certificates
             timeout: Request timeout in seconds
             spec_version: Specific OpenAPI spec version to use (e.g., '24.7.1').
                          If None, will auto-detect from server.
             auto_detect_version: If True and spec_version is None, automatically
                                 detect version from server
+            auth: Custom httpx auth object (overrides api_key/api_secret)
+            headers: Custom headers to include in requests
         """
         self.base_url = base_url.rstrip("/")
-        self.api_key = api_key
-        self.api_secret = api_secret
+        self.api_key = api_key or ""
+        self.api_secret = api_secret or ""
         self.verify_ssl = verify_ssl
         self.timeout = timeout
 
+        # Determine authentication method
+        client_auth = auth
+        if client_auth is None and api_key and api_secret:
+            client_auth = (api_key, api_secret)
+
         self._client = httpx.Client(
-            auth=(api_key, api_secret),
+            auth=client_auth,
+            headers=headers,
             verify=verify_ssl,
             timeout=timeout,
             follow_redirects=True,
