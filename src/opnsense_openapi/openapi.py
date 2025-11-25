@@ -1,10 +1,12 @@
 """Wrapper for openapi based API."""
 
-# openapi.py
-
 import json
 import logging
-from typing import Any, TypedDict
+from typing import (
+    Any,
+    Literal,
+    TypedDict,
+)
 from urllib.parse import urlencode, urlparse
 
 import httpx
@@ -22,10 +24,11 @@ class EndpointInfo(TypedDict):
 class ParameterInfo(TypedDict, total=False):
     """Information about an API parameter.
 
-    Note: 'in' field uses string key to avoid Python keyword conflict.
+    Note: 'in_field' is used to avoid Python keyword conflict with 'in'.
     """
 
     name: str | None
+    in_field: str | None  # Renamed from 'in'
     type: str | None
     required: bool
     description: str | None
@@ -66,7 +69,7 @@ class APIWrapper:
     """Tiny OpenAPI wrapper client for path/param discovery + calling endpoints."""
 
     # Constants
-    CONTENT_TYPE_JSON = "application/json"
+    CONTENT_TYPE_JSON: Literal["application/json"] = "application/json"
 
     def __init__(
         self,
@@ -79,7 +82,7 @@ class APIWrapper:
         session: httpx.Client | None = None,
         base_api_path: str = "",
         verify_ssl: bool = False,
-    ):
+    ) -> None:
         """Initialize the APIWrapper client.
 
         Args:
@@ -91,7 +94,8 @@ class APIWrapper:
             timeout: The timeout value in seconds
             session: An already existing httpx.Client session to use
             base_api_path: The base path of all API paths
-            verify_ssl: Whether to verify SSL certificates (default False for self-signed certs)
+            verify_ssl: Whether to verify SSL certificates (default False for
+                        self-signed certs)
         """
         # Load the API spec
         with open(api_json_file, encoding="utf-8") as f:
@@ -105,7 +109,8 @@ class APIWrapper:
             # Try OpenAPI 3.0 servers array
             elif "servers" in self.api_spec and self.api_spec["servers"]:
                 server_url = self.api_spec["servers"][0].get("url", "")
-                # Extract path portion from server URL (e.g., "https://{host}/api" -> "/api")
+                # Extract path portion from server URL (e.g., "https://{host}/api"
+                # -> "/api")
                 if "/" in server_url:
                     parsed = urlparse(server_url)
                     if parsed.path:
@@ -135,60 +140,49 @@ class APIWrapper:
     # -------------------------- Internal helpers ---------------------------
 
     def _get_operation(self, api_path: str, method: str) -> dict[str, Any]:
-        """Get the operation for an API path (cached).
-
-        Args:
-            api_path: The API path to use, such as /storage/assets
-            method: The HTTP method (get, put, etc)
-
-        Returns:
-            Various info about the path and method
-
-        Raises:
-            KeyError: If path or method not found in spec
-        """
+        """Get the operation for an API path (cached)."""
         method = method.lower()
-        cache_key = (api_path, method)
+        cache_key: tuple[str, str] = (api_path, method)
 
         if cache_key in self._operation_cache:
             return self._operation_cache[cache_key]
 
-        path = self.api_spec["paths"].get(api_path)
-        if path is None:
-            available_paths = list(self.api_spec["paths"].keys())
+        path_item: dict[str, Any] | None = self.api_spec["paths"].get(api_path)
+        if path_item is None:
+            available_paths: list[str] = list(self.api_spec["paths"].keys())
             raise KeyError(
                 f"Path not found in API spec: {api_path}. "
                 f"Available paths: {', '.join(available_paths[:5])}"
                 + (f" ... ({len(available_paths) - 5} more)" if len(available_paths) > 5 else "")
             )
-        operation = path.get(method)
+        operation: dict[str, Any] | None = path_item.get(method)
         if operation is None:
-            available_methods = [m.upper() for m in path.keys()]
+            available_methods: list[str] = [m.upper() for m in path_item.keys()]
             raise KeyError(
                 f"Method '{method.upper()}' not found for path: {api_path}. "
                 f"Available methods: {', '.join(available_methods)}"
             )
 
         self._operation_cache[cache_key] = operation
-        return operation
+        return operation  # type: ignore[no-any-return]
 
-    def _resolve_ref(self, ref: str) -> Any:
+    def _resolve_ref(self, ref: str) -> dict[str, Any]:
         """Resolve refs like '#/components/schemas/SomeSchema' against the api_spec."""
         if not ref.startswith("#"):
             return {}
 
-        keys = ref.split("/")[1:]  # Skip the # at the beginning
+        keys: list[str] = ref.split("/")[1:]  # Skip the # at the beginning
 
-        new_ref = self.api_spec
+        resolved_ref: Any = self.api_spec
         for key in keys:
-            new_ref = new_ref[key]
-        return new_ref
+            resolved_ref = resolved_ref[key]
+        return resolved_ref
 
     def _resolve_refs(self, schema: Any) -> Any:
         """Deep-resolve $ref in the provided schema dict/list/primitive."""
         if isinstance(schema, dict):
             if "$ref" in schema:
-                target = self._resolve_ref(schema["$ref"])
+                target: dict[str, Any] = self._resolve_ref(schema["$ref"])
                 return self._resolve_refs(target)
             return {k: self._resolve_refs(v) for k, v in schema.items()}
         if isinstance(schema, list):
@@ -196,11 +190,8 @@ class APIWrapper:
         return schema
 
     def _format_path(self, path_template: str, path_params: dict[str, Any] | None) -> str:
-        """Replace placeholders like {id} in the path template with provided values.
-
-        Also tolerates {{id}} just in case.
-        """
-        path = f"{self.base_api_path}{path_template}"
+        """Replace placeholders like {id} in the path template with provided values."""
+        path: str = f"{self.base_api_path}{path_template}"
         if path_params:
             for k, v in path_params.items():
                 path = path.replace(f"{{{k}}}", str(v))  # OpenAPI style
@@ -211,42 +202,36 @@ class APIWrapper:
         self, path_template: str, method: str
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         """Return (path_params, query_params) lists from the spec entry."""
-        op = self._get_operation(path_template, method)
-        params = op.get("parameters", []) or []
-        path_params = [p for p in params if p.get("in") == "path"]
-        query_params = [p for p in params if p.get("in") == "query"]
+        op: dict[str, Any] = self._get_operation(path_template, method)
+        params: list[dict[str, Any]] = op.get("parameters", []) or []
+        path_params: list[dict[str, Any]] = [p for p in params if p.get("in") == "path"]
+        query_params: list[dict[str, Any]] = [p for p in params if p.get("in") == "query"]
         return path_params, query_params
 
     def _get_request_schema(self, path_template: str, method: str) -> dict[str, Any] | None:
-        """Return the resolved JSON Schema dict for the request body if present.
-
-        Only supports application/json for simplicity.
-        """
-        op = self._get_operation(path_template, method)
-        request_body = op.get("requestBody", {})
-        content = request_body.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
-        schema = content.get("schema")
+        """Return the resolved JSON Schema dict for the request body if present."""
+        op: dict[str, Any] = self._get_operation(path_template, method)
+        request_body: dict[str, Any] = op.get("requestBody", {})
+        content: dict[str, Any] = request_body.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
+        schema: dict[str, Any] | None = content.get("schema")
         if not schema:
             return None
         return self._resolve_refs(schema)
 
     def _build_sample_from_schema(self, schema: dict[str, Any]) -> Any:
-        """Heuristic sample generator for a JSON Schema object.
-
-        Produces a minimal readable skeleton with placeholder values.
-        """
-        t = schema.get("type")
+        """Heuristic sample generator for a JSON Schema object."""
+        t: str | None = schema.get("type")
         if not t and "oneOf" in schema:
             return self._build_sample_from_schema(schema["oneOf"][0])
         if t == "object" or ("properties" in schema):
-            props = schema.get("properties", {})
-            sample = {}
+            props: dict[str, Any] = schema.get("properties", {})
+            sample: dict[str, Any] = {}
             for name, sub in props.items():
                 sub = self._resolve_refs(sub)
-                subtype = sub.get("type")
-                enum = sub.get("enum")
+                subtype: str | None = sub.get("type")
+                enum: list[Any] | None = sub.get("enum")
                 if enum:
-                    value = enum[0]
+                    value: Any = enum[0]
                 elif subtype == "string" or subtype is None:
                     value = f"<{name}>"
                 elif subtype == "integer":
@@ -277,22 +262,15 @@ class APIWrapper:
         return {}
 
     def _describe_schema(self, schema: dict[str, Any]) -> SchemaDescription:
-        """Convert a JSON Schema into a human-readable description.
-
-        Args:
-            schema: The JSON Schema dict to describe
-
-        Returns:
-            A dict with type, fields (name/type/required/description/enum), and sample
-        """
-        props = schema.get("properties", {})
-        required = set(schema.get("required", []))
+        """Convert a JSON Schema into a human-readable description."""
+        props: dict[str, Any] = schema.get("properties", {})
+        required_fields: set[str] = set(schema.get("required", []))
         fields: dict[str, FieldInfo] = {}
         for name, sub in props.items():
             sub = self._resolve_refs(sub)
             fields[name] = FieldInfo(
                 type=sub.get("type", "object" if "properties" in sub else "unknown"),
-                required=name in required,
+                required=name in required_fields,
                 description=sub.get("description"),
                 enum=list(sub["enum"]) if "enum" in sub else None,
             )
@@ -307,19 +285,14 @@ class APIWrapper:
     def list_endpoints(self) -> list[tuple[str, str, str | None]]:
         """Return list of (path, METHOD, summary) triples for quick discovery."""
         items: list[tuple[str, str, str | None]] = []
-        for path in self.api_spec["paths"]:
-
-            methods = self.api_spec["paths"].get(path, {})
-
-            for m in methods.keys():
-                if "summary" in methods[m]:
-                    summary = methods[m].get("summary")
-                    items.append((path, m.upper(), summary))
-                elif "description" in methods[m]:
-                    summary = methods[m].get("description")
-                    if "." in summary:
+        for path_str, path_item in self.api_spec["paths"].items():
+            for m_str, op_item in path_item.items():
+                summary: str | None = op_item.get("summary")
+                if summary is None:
+                    summary = op_item.get("description")
+                    if isinstance(summary, str) and "." in summary:
                         summary = summary.split(".")[0]
-                    items.append((path, m.upper(), summary))
+                items.append((path_str, m_str.upper(), summary))
 
         return items
 
@@ -332,7 +305,7 @@ class APIWrapper:
         (type/required/enum/description),
         plus a 'sample' field with a minimal example body.
         """
-        resolved = self._get_request_schema(path_template, method)
+        resolved: dict[str, Any] | None = self._get_request_schema(path_template, method)
 
         if not resolved:
             return None
@@ -354,7 +327,9 @@ class APIWrapper:
         If human_readable=True, return a compact dict describing fields
         (type/required/enum/description), plus a 'sample' field with a minimal example.
         """
-        resolved = self._get_response_schema(path_template, method, status_code)
+        resolved: dict[str, Any] | None = self._get_response_schema(
+            path_template, method, status_code
+        )
 
         if not resolved:
             return None
@@ -368,11 +343,11 @@ class APIWrapper:
         self, path_template: str, method: str, status_code: str = "200"
     ) -> dict[str, Any] | None:
         """Return the resolved JSON Schema dict for the response if present."""
-        op = self._get_operation(path_template, method)
-        responses = op.get("responses", {})
-        response = responses.get(status_code, {})
-        content = response.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
-        schema = content.get("schema")
+        op: dict[str, Any] = self._get_operation(path_template, method)
+        responses: dict[str, Any] = op.get("responses", {})
+        response_item: dict[str, Any] | None = responses.get(status_code, {})
+        content: dict[str, Any] = response_item.get("content", {}).get(self.CONTENT_TYPE_JSON, {})
+        schema: dict[str, Any] | None = content.get("schema")
         if not schema:
             return None
         return self._resolve_refs(schema)
@@ -383,21 +358,18 @@ class APIWrapper:
         method: str = "GET",
         body: dict[str, Any] | None = None,
     ) -> bool:
-        """Validate 'body' against the endpoint's resolved schema (if any).
-
-        If no body or no schema is present, returns True.
-        """
+        """Validate 'body' against the endpoint's resolved schema (if any)."""
         if body is None:
             return True
-        schema = self._get_request_schema(path_template, method)
+        schema: dict[str, Any] | None = self._get_request_schema(path_template, method)
         if not schema:
             return True
         try:
             validate(instance=body, schema=schema)
             return True
         except ValidationError as e:
-            field_path = ".".join(str(p) for p in e.path) if e.path else "root"
-            schema_path = ".".join(str(p) for p in e.schema_path) if e.schema_path else "N/A"
+            field_path: str = ".".join(str(p) for p in e.path) if e.path else "root"
+            schema_path: str = ".".join(str(p) for p in e.schema_path) if e.schema_path else "N/A"
             logging.error(
                 f"Request body validation error at '{field_path}': {e.message}. "
                 f"Schema path: {schema_path}"
@@ -414,14 +386,16 @@ class APIWrapper:
         - summary: brief endpoint summary from spec
         """
         method = method.upper()
-        op = self._get_operation(path_template, method)
-        path_params, query_params = self._extract_parameters(path_template, method)
+        op: dict[str, Any] = self._get_operation(path_template, method)
+        path_params_raw: list[dict[str, Any]]
+        query_params_raw: list[dict[str, Any]]
+        path_params_raw, query_params_raw = self._extract_parameters(path_template, method)
 
         def simplify(param: dict[str, Any]) -> ParameterInfo:
-            sch = param.get("schema", {})
+            sch: dict[str, Any] = param.get("schema", {})
             return ParameterInfo(
                 name=param.get("name"),
-                **{"in": param.get("in")},  # Use ** to avoid 'in' keyword conflict
+                in_field=param.get("in"),  # Use 'in_field'
                 type=sch.get("type"),
                 required=param.get("required", False),
                 description=param.get("description"),
@@ -429,11 +403,11 @@ class APIWrapper:
                 format=sch.get("format"),
             )
 
-        path_list = [simplify(p) for p in path_params]
-        query_list = [simplify(p) for p in query_params]
+        path_list: list[ParameterInfo] = [simplify(p) for p in path_params_raw]
+        query_list: list[ParameterInfo] = [simplify(p) for p in query_params_raw]
 
-        schema = self._get_request_schema(path_template, method)
-        body_sample = self._build_sample_from_schema(schema) if schema else None
+        schema: dict[str, Any] | None = self._get_request_schema(path_template, method)
+        body_sample: Any = self._build_sample_from_schema(schema) if schema else None
 
         return SuggestedParameters(
             path=path_template,
@@ -466,9 +440,9 @@ class APIWrapper:
             raise ValueError("Request body validation failed.")
 
         # Build URL (formatting path placeholders)
-        path = self._format_path(path_template, path_params)
+        path: str = self._format_path(path_template, path_params)
         logging.debug(f"API Path: {path}")
-        url = f"{self.base_url}{path}"
+        url: str = f"{self.base_url}{path}"
         logging.debug(f"API URL: {url}")
 
         # Encode query params
@@ -476,12 +450,14 @@ class APIWrapper:
             url += "?" + urlencode(query_params, doseq=True)
 
         # Merge headers
-        headers = dict(self.session.headers)
+        headers: dict[str, str] = dict(self.session.headers)
         if additional_headers:
             headers.update(additional_headers)
 
         logging.debug(f"Calling {method} {url} {headers}")
-        resp = self.session.request(method, url, json=body, headers=headers, timeout=self.timeout)
+        resp: httpx.Response = self.session.request(
+            method, url, json=body, headers=headers, timeout=self.timeout
+        )
         logging.debug(f"Response Status Code: {resp.status_code}")
         resp.raise_for_status()
 

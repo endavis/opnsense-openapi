@@ -2,6 +2,7 @@
 
 import json
 import logging
+from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin
 
@@ -37,7 +38,7 @@ class OPNsenseClient:
         timeout: float = 30.0,
         spec_version: str | None = None,
         auto_detect_version: bool = True,
-        auth: Any | None = None,
+        auth: Any = None,
         headers: dict[str, str] | None = None,
     ) -> None:
         """Initialize OPNsense API client.
@@ -62,11 +63,11 @@ class OPNsenseClient:
         self.timeout = timeout
 
         # Determine authentication method
-        client_auth = auth
+        client_auth: Any = auth
         if client_auth is None and api_key and api_secret:
             client_auth = (api_key, api_secret)
 
-        self._client = httpx.Client(
+        self._client: httpx.Client = httpx.Client(
             auth=client_auth,
             headers=headers,
             verify=verify_ssl,
@@ -100,9 +101,9 @@ class OPNsenseClient:
         Returns:
             Complete API endpoint URL
         """
-        parts = ["api", module, controller, command]
+        parts: list[str] = ["api", module, controller, command]
         parts.extend(params)
-        path = "/".join(parts)
+        path: str = "/".join(parts)
         return urljoin(f"{self.base_url}/", path)
 
     def get(
@@ -124,12 +125,12 @@ class OPNsenseClient:
             httpx.HTTPError: On HTTP errors
             APIResponseError: If response is not valid JSON
         """
-        url = self._build_url(module, controller, command, *params)
-        response = self._client.get(url, params=query)
+        url: str = self._build_url(module, controller, command, *params)
+        response: httpx.Response = self._client.get(url, params=query)
         response.raise_for_status()
         try:
             return response.json()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError as e:  # type: ignore[union-attr]
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def post(
@@ -156,14 +157,14 @@ class OPNsenseClient:
             httpx.HTTPError: On HTTP errors
             APIResponseError: If response is not valid JSON
         """
-        url = self._build_url(module, controller, command, *params)
+        url: str = self._build_url(module, controller, command, *params)
         # Set Content-Type header for POST requests with JSON body
-        headers = {"Content-Type": "application/json"} if json else {}
-        response = self._client.post(url, json=json, headers=headers)
+        headers: dict[str, str] = {"Content-Type": "application/json"} if json else {}
+        response: httpx.Response = self._client.post(url, json=json, headers=headers)
         response.raise_for_status()
         try:
             return response.json()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError as e:  # type: ignore[union-attr]
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def close(self) -> None:
@@ -190,7 +191,7 @@ class OPNsenseClient:
             APIResponseError: If version cannot be retrieved from any endpoint
         """
         # List of endpoints to try for version detection
-        version_endpoints = [
+        version_endpoints: list[tuple[str, str, str]] = [
             # Try core/firmware/info first (more permissive)
             ("core", "firmware", "info"),
             # Fallback to status
@@ -199,14 +200,14 @@ class OPNsenseClient:
             ("diagnostics", "system", "systemInformation"),
         ]
 
-        last_error = None
+        last_error: Exception | None = None
         for module, controller, command in version_endpoints:
             try:
-                response = self.get(module, controller, command)
+                response: dict[str, Any] = self.get(module, controller, command)
 
                 # Check for product_version at root level
                 if "product_version" in response:
-                    version = response["product_version"]
+                    version: str = response["product_version"]
                     logger.debug(f"Got version from {module}/{controller}/{command}: {version}")
                     return version
 
@@ -228,7 +229,7 @@ class OPNsenseClient:
                 continue
 
         # If we get here, none of the endpoints worked
-        error_msg = "Could not detect OPNsense version from any API endpoint"
+        error_msg: str = "Could not detect OPNsense version from any API endpoint"
         if last_error:
             error_msg += f". Last error: {last_error}"
         logger.error(error_msg)
@@ -253,7 +254,7 @@ class OPNsenseClient:
         """
         if self._openapi is None:
             # Determine which version to use
-            version = self._spec_version or self._detected_version
+            version: str | None = self._spec_version or self._detected_version
 
             if version is None:
                 raise RuntimeError(
@@ -262,7 +263,7 @@ class OPNsenseClient:
                 )
 
             # Find the best matching spec file
-            spec_path = find_best_matching_spec(version)
+            spec_path: Path = find_best_matching_spec(version)
             logger.info(f"Loading OpenAPI spec from: {spec_path}")
 
             # Initialize APIWrapper
@@ -304,7 +305,7 @@ class OPNsenseClient:
             >>> response = api.core.firmware_info.sync_detailed()
         """
         # Determine which version to use
-        version = self._spec_version or self._detected_version
+        version: str | None = self._spec_version or self._detected_version
 
         if version is None:
             raise RuntimeError(
@@ -313,22 +314,22 @@ class OPNsenseClient:
             )
 
         # Import the generated client for this version
-        version_module = version.replace(".", "_")
-        module_path = f"opnsense_openapi.generated.v{version_module}.opnsense_openapi_client"
+        version_module: str = version.replace(".", "_")
+        module_path: str = f"opnsense_openapi.generated.v{version_module}.opnsense_openapi_client"
 
         try:
             import importlib
 
             from .generated_api import GeneratedAPI
 
-            generated = importlib.import_module(module_path)
+            generated: Any = importlib.import_module(module_path)
 
             # Create a Client instance and inject our authenticated httpx client
-            api_client = generated.Client(base_url=f"{self.base_url}/api")
+            api_client: Any = generated.Client(base_url=f"{self.base_url}/api")
             api_client.set_httpx_client(self._client)
 
             # Wrap in GeneratedAPI for version-agnostic access
-            return GeneratedAPI(api_client, version)
+            return GeneratedAPI(api_client, version)  # type: ignore[no-any-return]
 
         except ImportError as e:
             raise RuntimeError(
@@ -347,7 +348,10 @@ class OPNsenseClient:
         Raises:
             RuntimeError: If OpenAPI wrapper is not available
         """
-        return self.openapi.list_endpoints()
+        if self._openapi is None:
+            # force initialization of _openapi property
+            _ = self.openapi
+        return self._openapi.list_endpoints()  # type: ignore[no-any-return]
 
     def get_endpoint_info(self, path_template: str, method: str = "GET") -> dict[str, Any]:
         """Get detailed information about an API endpoint.
@@ -363,4 +367,7 @@ class OPNsenseClient:
             RuntimeError: If OpenAPI wrapper is not available
             KeyError: If endpoint not found in spec
         """
-        return self.openapi.suggest_parameters(path_template, method)
+        if self._openapi is None:
+            # force initialization of _openapi property
+            _ = self.openapi
+        return self._openapi.suggest_parameters(path_template, method)  # type: ignore[no-any-return]

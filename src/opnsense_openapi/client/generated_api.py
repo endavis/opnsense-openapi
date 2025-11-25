@@ -20,7 +20,7 @@ class GeneratedAPI:
         >>> aliases = api.firewall.alias_search_item()
     """
 
-    def __init__(self, generated_client: Any, version: str):
+    def __init__(self, generated_client: Any, version: str) -> None:
         """Initialize the dynamic API wrapper.
 
         Args:
@@ -42,7 +42,7 @@ class GeneratedAPI:
 class ModuleProxy:
     """Proxy for a generated API module (e.g., core, firewall)."""
 
-    def __init__(self, client: Any, version_module: str, module_name: str):
+    def __init__(self, client: Any, version_module: str, module_name: str) -> None:
         """Initialize module proxy.
 
         Args:
@@ -65,7 +65,9 @@ class ModuleProxy:
 class FunctionProxy:
     """Proxy for a generated API function."""
 
-    def __init__(self, client: Any, version_module: str, module_name: str, function_name: str):
+    def __init__(
+        self, client: Any, version_module: str, module_name: str, function_name: str
+    ) -> None:
         """Initialize function proxy.
 
         Args:
@@ -78,9 +80,9 @@ class FunctionProxy:
         self._version_module = version_module
         self._module_name = module_name
         self._function_name = function_name
-        self._function_module = None
+        self._function_module: Any = None  # Initialize as Any to avoid mypy error
 
-    def _load_function_module(self):
+    def _load_function_module(self) -> Any:
         """Lazy-load the generated function module."""
         if self._function_module is None:
             import importlib
@@ -103,7 +105,7 @@ class FunctionProxy:
 
         return self._function_module
 
-    def __call__(self, **kwargs) -> Any:
+    def __call__(self, **kwargs: Any) -> Any:
         """Call the function's sync() method.
 
         This is a convenience that automatically calls .sync(client=...).
@@ -111,24 +113,24 @@ class FunctionProxy:
         """
         return self.sync(**kwargs)
 
-    def sync(self, **kwargs) -> Any:
+    def sync(self, **kwargs: Any) -> Any:
         """Call the generated sync() function."""
-        module = self._load_function_module()
+        module: Any = self._load_function_module()
         return module.sync(client=self._client, **kwargs)
 
-    def sync_detailed(self, **kwargs) -> Any:
+    def sync_detailed(self, **kwargs: Any) -> Any:
         """Call the generated sync_detailed() function."""
-        module = self._load_function_module()
+        module: Any = self._load_function_module()
         return module.sync_detailed(client=self._client, **kwargs)
 
-    async def asyncio(self, **kwargs) -> Any:
+    async def asyncio(self, **kwargs: Any) -> Any:
         """Call the generated asyncio() function."""
-        module = self._load_function_module()
+        module: Any = self._load_function_module()
         return await module.asyncio(client=self._client, **kwargs)
 
-    async def asyncio_detailed(self, **kwargs) -> Any:
+    async def asyncio_detailed(self, **kwargs: Any) -> Any:
         """Call the generated asyncio_detailed() function."""
-        module = self._load_function_module()
+        module: Any = self._load_function_module()
         return await module.asyncio_detailed(client=self._client, **kwargs)
 
     def __repr__(self) -> str:
