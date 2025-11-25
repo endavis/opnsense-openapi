@@ -45,6 +45,7 @@ TYPE_MAP = {
     "NetworkField": {"type": "string", "format": "ipv4"},
     "OptionField": OPTION_FIELD_ENUM_SCHEMA, # Default to enum string in TYPE_MAP
     "AuthGroupField": OPTION_FIELD_ENUM_SCHEMA, # Behaves like OptionField
+    "CharonLogLevelField": OPTION_FIELD_ENUM_SCHEMA, # Behaves like OptionField
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
     "CSVListField": {"type": "string", "description": "Comma separated values"},
     "CertificateField": {"type": "string", "description": "Certificate Data"},
@@ -250,7 +251,7 @@ class OpenApiGenerator:
                     is_list = True
 
                 # === ENUM RESOLUTION LOGIC ===
-                if clean_type == "OptionField" or clean_type == "AuthGroupField":
+                if clean_type in ["OptionField", "AuthGroupField", "CharonLogLevelField"]:
                     # 1. Check for Inline Options
                     inline_opts = elem.find('OptionValues')
                     enum_values: List[str] = []
