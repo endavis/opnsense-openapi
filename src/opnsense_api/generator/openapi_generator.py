@@ -67,7 +67,7 @@ TYPE_MAP = {
 }
 
 class OpenApiGenerator:
-    """Generate OpenAPI JSON specification from parsed API controllers."""
+    """Generate OpenAPI 3.0 specification from parsed API controllers."""
 
     def __init__(self, output_dir: Path) -> None:
         """Initialize OpenAPI generator.
@@ -240,13 +240,13 @@ class OpenApiGenerator:
 
                 # === ENUM RESOLUTION LOGIC ===
                 elif clean_type == "OptionField":
-                    enum_values: List[str] = []
                     # 1. Check for Inline Options
                     inline_opts = elem.find('OptionValues')
+                    enum_values: List[str] = []
                     if inline_opts is not None:
                         enum_values.extend([child.tag for child in inline_opts])
 
-                    # 2. Check for External Source (<Source>OPNsense.Firewall.AliasTypes</Source>)
+                    # 2. Check for External Source ("<Source>OPNsense.Firewall.AliasTypes</Source>")
                     source_tag = elem.find('Source')
                     if source_tag is not None and source_tag.text:
                         enum_values.extend(self._resolve_external_enums(source_tag.text))
@@ -470,7 +470,7 @@ class OpenApiGenerator:
         elif any(x in act_lower for x in ['apply', 'flush', 'revert', 'savepoint', 'rollback', 'upload', 'generate', 'kill', 'disconnect', 'connect']):
             # Operations that modify state and return status
             response_schema["content"] = {
-                "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
+                "application/json": {"$ref": "#/components/schemas/StatusResponse"}
             }
         # === QUERY/EXPORT PATTERNS ===
         elif any(x in act_lower for x in ['export', 'download', 'rawdump', 'dump', 'providers', 'accounts', 'templates']):
@@ -490,7 +490,7 @@ class OpenApiGenerator:
             if act_lower == 'list' and schema_name:
                 # Paginated list response
                 response_schema["content"] = {
-                    "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}Search"}}
+                    "application/json": {"$ref": f"#/components/schemas/{schema_name}Search"}
                 }
             else:
                 # Simple array or object with dynamic keys
@@ -508,7 +508,7 @@ class OpenApiGenerator:
             # Search/Find = Pagination (including Item variations like searchItem)
             if any(x in act_lower for x in ['search', 'find']) or act_lower.endswith('item'):
                 response_schema["content"] = {
-                    "application/json": {"schema": {"$ref": f"#/components/schemas/{schema_name}Search"}}
+                    "application/json": {"$ref": f"#/components/schemas/{schema_name}Search"}
                 }
             # Get = Single Object Wrapped
             elif "get" in act_lower:
@@ -528,7 +528,7 @@ class OpenApiGenerator:
             # Mutations = Status
             elif any(x in act_lower for x in ['add', 'set', 'del', 'toggle', 'update']):
                 response_schema["content"] = {
-                    "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
+                    "application/json": {"$ref": "#/components/schemas/StatusResponse"}
                 }
 
             # Request Body for mutations
@@ -577,7 +577,7 @@ class OpenApiGenerator:
             elif any(x in act_lower for x in ['add', 'set', 'update', 'delete', 'remove', 'del', 'toggle']):
                 # Mutation operations return status
                 response_schema["content"] = {
-                    "application/json": {"schema": {"$ref": "#/components/schemas/StatusResponse"}}
+                    "application/json": {"$ref": "#/components/schemas/StatusResponse"}
                 }
 
             # Request body for mutations without models
