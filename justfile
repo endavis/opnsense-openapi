@@ -69,3 +69,27 @@ bump part="patch":
 # Install pre-commit hooks
 install-hooks:
     uv run pre-commit install
+
+# Tag and push a release (triggers GitHub Actions publish)
+release version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+        echo "Working tree not clean; commit or stash changes first." >&2
+        exit 1
+    fi
+    tag="v{{version}}"
+    if git rev-parse "$tag" >/dev/null 2>&1; then
+        echo "Tag $tag already exists locally; aborting." >&2
+        exit 1
+    fi
+    echo "Running lint and tests..."
+    uv run ruff check .
+    uv run ruff format --check .
+    uv run mypy src/
+    uv run pytest
+    echo "Building package..."
+    uv build
+    git tag "$tag"
+    git push origin "$tag"
+    echo "Release tag $tag pushed. GitHub Actions will publish to TestPyPI and PyPI."
