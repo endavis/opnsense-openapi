@@ -16,6 +16,7 @@ from .downloader import SourceDownloader
 from .generator import OpenApiGenerator
 from .parser import ControllerParser
 from .specs import find_best_matching_spec, list_available_specs
+from .validator import SpecValidator
 
 app = typer.Typer(help="Generate and inspect OPNsense API wrappers.")
 
@@ -144,6 +145,123 @@ def generate(
     )
 
     typer.secho(f"Generated {output_file}", fg=typer.colors.GREEN)
+
+
+@app.command()
+def validate(
+    version: Annotated[
+        str | None,
+        typer.Option(
+            "--version",
+            "-v",
+            help="OPNsense version (e.g., '25.7.6'). Auto-detects if not specified.",
+        ),
+    ] = None,
+    max_endpoints: Annotated[
+        int,
+        typer.Option(
+            "--max-endpoints",
+            "-n",
+            help="Maximum number of endpoints to check.",
+        ),
+    ] = 50,
+    no_auto_detect: Annotated[
+        bool,
+        typer.Option("--no-auto-detect", help="Disable auto-detection (requires --version)"),
+    ] = False,
+) -> None:
+    """Validate the generated OpenAPI spec against a live OPNsense instance."""
+    
+    # 1. Setup Client
+    opnsense_url = os.getenv("OPNSENSE_URL")
+    api_key = os.getenv("OPNSENSE_API_KEY")
+    api_secret = os.getenv("OPNSENSE_API_SECRET")
+
+    if not all([opnsense_url, api_key, api_secret]):
+        typer.secho(
+            "Error: Live validation requires credentials.",
+            fg=typer.colors.RED,
+            err=True,
+        )
+        typer.echo("Please set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET environment variables.")
+        raise typer.Exit(code=1)
+
+    try:
+        from .client import OPNsenseClient
+        client = OPNsenseClient(
+            base_url=opnsense_url, # type: ignore
+            api_key=api_key, # type: ignore
+            api_secret=api_secret, # type: ignore
+            verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true",
+            auto_detect_version=not no_auto_detect,
+            spec_version=version
+        )
+    except Exception as e:
+        typer.secho(f"Failed to initialize client: {e}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    # 2. Determine Version and Spec Path
+    if not version and client._detected_version:
+        version = client._detected_version
+        typer.secho(f"✓ Detected version: {version}", fg=typer.colors.GREEN)
+    elif not version:
+        typer.secho("Error: Could not determine version. Use --version.", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    try:
+        spec_path = find_best_matching_spec(version)
+        typer.echo(f"Using spec file: {spec_path}")
+    except FileNotFoundError:
+        typer.secho(f"Error: No spec found for {version}. Run 'opnsense-openapi generate {version}' first.", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+    # 3. Run Validation
+    typer.echo(f"\nCrawling up to {max_endpoints} safe GET endpoints...")
+    typer.echo("-" * 80)
+    typer.echo(f"{'Method':<7} {'Status':<7} {'Result':<10} {'Path'}")
+    typer.echo("-" * 80)
+
+    validator = SpecValidator(client, spec_path)
+    
+    passed = 0
+    failed = 0
+    skipped = 0
+
+    for result in validator.validate_endpoints(max_endpoints=max_endpoints):
+        status = str(result["status"]) if result["status"] else "ERR"
+        
+        if result["valid"]:
+            res_color = typer.colors.GREEN
+            res_text = "VALID"
+            passed += 1
+        elif result["error"]:
+            res_color = typer.colors.RED
+            res_text = "INVALID"
+            failed += 1
+        else:
+            res_color = typer.colors.YELLOW
+            res_text = "SKIPPED"
+            skipped += 1
+
+        path_short = result["path"]
+        if len(path_short) > 50:
+            path_short = path_short[:47] + "..."
+
+        typer.echo(
+            f"{result['method']:<7} "
+            f"{status:<7} "
+            f"{typer.style(res_text, fg=res_color):<10} "
+            f"{path_short}"
+        )
+        
+        if not result["valid"] and result["error"]:
+            typer.secho(f"  ↳ {result['error']}", fg=typer.colors.BRIGHT_BLACK)
+
+    typer.echo("-" * 80)
+    typer.echo(f"Summary: {passed} passed, {failed} failed, {skipped} skipped")
+    
+    if failed > 0:
+        raise typer.Exit(code=1)
 
 
 @app.command(name="serve-docs")
