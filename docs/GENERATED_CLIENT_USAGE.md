@@ -347,12 +347,7 @@ Settings → Editor → Inspections → Python → Type Checker (enable)
 - Don't want build step
 - Simple scripts
 
-## Migration Path
-
-Existing code continues to work:
-
-```python
-# Old code - still works
+# Old approach - still works
 client = OPNsenseClient(...)
 result = client.get("core", "firmware", "info")
 
@@ -362,3 +357,26 @@ result = api.core.firmware_info()
 ```
 
 Both can coexist in the same codebase!
+
+## Handling Incorrectly Generated Endpoints
+
+In rare cases, the OpenApi generator might misidentify an endpoint's HTTP method (e.g., generating a `GET` for an endpoint that requires `POST`) or parameters. If you encounter a 404 or 405 error for a specific function, you can bypass the generated method and use the underlying manual client methods.
+
+**Example: Forcing a POST request**
+
+```python
+# If api.diagnostics.interface.carp_status() incorrectly tries GET:
+try:
+    # Use the manual .post() method on the base client
+    response = client.post(
+        "diagnostics", 
+        "interface", 
+        "CarpStatus", 
+        json={"status": "enable"}
+    )
+    print("Success:", response)
+except Exception as e:
+    print("Error:", e)
+```
+
+This ensures you are never blocked by a spec generation issue.
