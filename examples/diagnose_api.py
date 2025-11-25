@@ -1,104 +1,140 @@
-"""Example demonstrating API client diagnostics."""
+"""Diagnostic script to probe OPNsense API and identify available endpoints.
+
+This script helps diagnose API connectivity issues and identify the correct
+API structure for your OPNsense instance.
+"""
 
 import os
-import json
-from opnsense_openapi.client import OPNsenseClient
 
-
-def run_diagnostics(
-    base_url: str, api_key: str, api_secret: str, verify_ssl: bool
-) -> None:
-    """Run diagnostics against the OPNsense API."""
-    print(f"Connecting to OPNsense at {base_url}")
-    print(f"  Key: {api_key[:4]}...{api_key[-4:]}")
-
-    client = OPNsenseClient(
-        base_url=base_url,
-        api_key=api_key,
-        api_secret=api_secret,
-        verify_ssl=verify_ssl,
-    )
-
-    successful_endpoints = []
-    failed_endpoints = []
-
-    # Get all endpoints from the API spec
-    try:
-        endpoints = client.list_endpoints()
-    except Exception as e:
-        print(f"Error listing endpoints: {e}")
-        return
-
-    print(f"\nDiscovered {len(endpoints)} API endpoints.")
-    print("Testing read-only endpoints (GET requests without path parameters):")
-
-    for path, method, summary in endpoints:
-        if method != "GET" or "{" in path:
-            # Skip non-GET or parameterized paths for simple diagnostics
-            continue
-
-        try:
-            status = 0
-            response = None
-            try:
-                # Use the low-level client request method directly for flexibility
-                full_url = f"{client.base_url}{path}"
-                response = client._client.get(full_url)
-                status = response.status_code
-
-                if status == 200:
-                    try:
-                        data = response.json()
-                        successful_endpoints.append(
-                            (method, path, data)
-                        )
-                    except json.JSONDecodeError:
-                        successful_endpoints.append(
-                            (method, path, {"text": response.text, "error": "Non-JSON response"})
-                        )
-                elif status == 401:
-                    failed_endpoints.append((method, path, "UNAUTHORIZED"))
-                else:
-                    failed_endpoints.append(
-                        (method, path, f"HTTP {status} - {response.text}")
-                    )
-            except Exception as e:
-                failed_endpoints.append((method, path, f"Request failed: {e}"))
-
-        except Exception as e:
-            print(f"Error processing endpoint {path}: {e}")
-
-    print("\n--- Diagnostic Results ---")
-    print(f"Successful endpoints: {len(successful_endpoints)}")
-    for method, path, data in successful_endpoints:
-        print(f"  ✓ {method} {path}")
-
-    print(f"Failed endpoints: {len(failed_endpoints)}")
-    for method, path, error_msg in failed_endpoints:
-        print(f"  ✗ {method} {path} - {error_msg}")
-
-    # Example: Print detected OPNsense version
-    print("\nAttempting to detect OPNsense version...")
-    try:
-        client._detected_version = client.detect_version()
-        print(f"  ✓ Detected version: {client._detected_version}")
-    except Exception as e:
-        print(f"  ✗ Could not detect version: {e}")
+import httpx
 
 
 def main() -> None:
-    """Main function to run the diagnostics."""
-    base_url = os.getenv("OPNSENSE_URL")
-    api_key = os.getenv("OPNSENSE_API_KEY")
-    api_secret = os.getenv("OPNSENSE_API_SECRET")
-    verify_ssl_str = os.getenv("OPNSENSE_VERIFY_SSL", "true").lower()
-    verify_ssl = verify_ssl_str == "true" or verify_ssl_str == "1"
+    """Diagnose OPNsense API connectivity and structure."""
+    base_url = os.getenv("OPNSENSE_URL", "https://opnsense.local")
+    api_key = os.getenv("OPNSENSE_API_KEY", "your-api-key")
+    api_secret = os.getenv("OPNSENSE_API_SECRET", "your-api-secret")
+    verify_ssl = os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true"
 
-    if not all([base_url, api_key, api_secret]):
-        print("Please set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET environment variables.")
-        return
+    print("=== OPNsense API Diagnostics ===\n")
+    print(f"Base URL: {base_url}")
+    print(f"SSL Verification: {verify_ssl}")
+    print(f"API Key: {api_key[:10]}..." if len(api_key) > 10 else f"API Key: {api_key}")
+    print()
 
-    run_diagnostics(base_url, api_key, api_secret, verify_ssl)
+    # Create HTTP client
+    client = httpx.Client(
+        auth=(api_key, api_secret), verify=verify_ssl, timeout=30.0, follow_redirects=True
+    )
+
+    # Common API endpoints to test - trying both GET and POST
+    test_endpoints = [
+        # Firmware/version endpoints
+        ("GET", "core", "firmware", "status"),
+        ("POST", "core", "firmware", "status"),
+        ("GET", "core", "firmware", "info"),
+        ("POST", "core", "firmware", "info"),
+        ("POST", "core", "firmware", "check"),
+        ("GET", "firmware", "status", "get"),
+        ("POST", "firmware", "status", "get"),
+        # System endpoints
+        ("GET", "diagnostics", "system", "systemInformation"),
+        ("POST", "diagnostics", "system", "systemInformation"),
+        ("GET", "core", "system", "status"),
+        ("POST", "core", "system", "status"),
+        # Simple test endpoints
+        ("GET", "diagnostics", "interface", "getInterfaceNames"),
+        ("POST", "diagnostics", "interface", "getInterfaceNames"),
+        ("GET", "firewall", "alias", "searchItem"),
+        ("POST", "firewall", "alias", "searchItem"),
+        ("GET", "firewall", "alias_util", "list"),
+        ("POST", "firewall", "alias_util", "list"),
+    ]
+
+    print("Testing common API endpoints (GET and POST):\n")
+    successful_endpoints = []
+
+    for method, module, controller, command in test_endpoints:
+        url = f"{base_url.rstrip('/')}/api/{module}/{controller}/{command}"
+        try:
+            if method == "GET":
+                response = client.get(url)
+            else:  # POST
+                response = client.post(url)
+
+            status = response.status_code
+
+            if status == 200:
+                result = "✓ SUCCESS"
+                try:
+                    data = response.json()
+                    successful_endpoints.append((method, module, controller, command, data))
+                except Exception:
+                    successful_endpoints.append(
+                        (method, module, controller, command, {"text": response.text})
+                    )
+            elif status == 401:
+                result = "✗ UNAUTHORIZED"
+            elif status == 403:
+                result = "✗ FORBIDDEN"
+            elif status == 404:
+                result = "✗ NOT FOUND"
+            elif status == 400:
+                result = "✗ BAD REQUEST"
+            else:
+                result = f"? {status}"
+
+            print(f"{method:4} {result:20} {module}/{controller}/{command}")
+
+        except Exception as e:
+            print(f"{method:4} ✗ ERROR: {str(e)[:40]:20} {module}/{controller}/{command}")
+
+    # Show successful endpoints in detail
+    if successful_endpoints:
+        print("\n=== Successful Endpoints (with data) ===\n")
+        for method, module, controller, command, data in successful_endpoints:
+            print(f"{method} {module}/{controller}/{command}:")
+
+            # Look for version information
+            if "product_version" in data:
+                print(f"  → Found version: {data['product_version']}")
+            if "product" in data and isinstance(data["product"], dict):
+                if "product_version" in data["product"]:
+                    print(f"  → Found version: {data['product']['product_version']}")
+                if "product_name" in data["product"]:
+                    print(f"  → Product name: {data['product']['product_name']}")
+
+            # Check for version in other common locations
+            if "version" in data:
+                print(f"  → Found version: {data['version']}")
+            if (
+                "system" in data
+                and isinstance(data["system"], dict)
+                and "version" in data["system"]
+            ):
+                print(f"  → Found version: {data['system']['version']}")
+
+            # Show first few keys of response
+            if isinstance(data, dict):
+                keys = list(data.keys())[:5]
+                print(f"  → Response keys: {', '.join(keys)}")
+                if len(data.keys()) > 5:
+                    print(f"  → ... and {len(data.keys()) - 5} more")
+            print()
+    else:
+        print("\n⚠ No successful endpoints found!")
+        print("\nPossible issues:")
+        print("  1. Incorrect API credentials")
+        print("  2. API not enabled in OPNsense")
+        print("  3. Different OPNsense version with different API structure")
+        print("  4. Network/firewall blocking access")
+        print("\nTroubleshooting:")
+        print("  1. Verify credentials in OPNsense UI: System → Access → Users")
+        print("  2. Check API is enabled: System → Settings → Administration")
+        print("  3. Try accessing the URL directly in a browser")
+        print(f"  4. Test URL: {base_url}/api/diagnostics/interface/getInterfaceNames")
+
+    client.close()
 
 
 if __name__ == "__main__":
