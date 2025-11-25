@@ -7,6 +7,7 @@ from typing import Any, Generator
 
 import httpx
 import jsonschema
+from jsonschema import ValidationError # Import ValidationError
 from jsonschema.validators import validator_for
 
 from opnsense_openapi.client import OPNsenseClient
@@ -81,14 +82,17 @@ class SpecValidator:
                 if response.status_code == 200:
                     content_type = response.headers.get("Content-Type", "").lower()
                     
-                    response_content_schema = methods["get"]["responses"]["200"].get("content")
+                    response_content_schema_block = methods["get"]["responses"]["200"].get("content")
                     
-                    if response_content_schema and "application/json" in response_content_schema:
-                        # Schema expects JSON
+                    # Determine if the spec expects JSON content for 200 OK
+                    spec_expects_json = response_content_schema_block and "application/json" in response_content_schema_block
+                    
+                    if spec_expects_json:
+                        # Spec expects JSON, so validate accordingly
                         if "application/json" in content_type:
                             try:
                                 data = response.json()
-                                response_schema = response_content_schema["application/json"]["schema"]
+                                response_schema = response_content_schema_block["application/json"]["schema"]
                                 
                                 cls = validator_for(response_schema)
                                 validator = cls(response_schema, resolver=self.resolver)
@@ -96,7 +100,7 @@ class SpecValidator:
                                 
                                 result["valid"] = True
                             except json.JSONDecodeError:
-                                result["error"] = "Invalid JSON response (server returned malformed JSON)"
+                                result["error"] = "Invalid JSON response (server returned malformed JSON despite Content-Type)"
                             except ValidationError as e:
                                 result["error"] = f"Schema mismatch: {e.message} (at {'.'.join(str(p) for p in e.path)})"
                             except KeyError:
@@ -104,16 +108,11 @@ class SpecValidator:
                         else:
                             # Schema expects JSON, but server returned non-JSON content-type
                             result["error"] = f"Content-Type mismatch: Server returned '{content_type}' but schema expected 'application/json'."
-                    elif response_content_schema:
-                        # Schema expects a non-JSON content type (e.g., text/csv).
+                    else:
+                        # Spec does NOT explicitly expect JSON for 200 OK (e.g., it might expect text/csv, or no content)
                         # Assume valid if HTTP 200 OK, skip schema validation.
                         result["valid"] = True
-                        result["error"] = f"Non-JSON schema defined. Server returned '{content_type}'. Skipped schema validation."
-                    else:
-                        # No content schema defined for 200 OK.
-                        # For now, assume valid if it's a 200 OK without specific content validation.
-                        result["valid"] = True
-                        result["error"] = "No content schema defined for 200 OK. Skipped content validation."
+                        result["error"] = f"Schema does not explicitly expect JSON for 200 OK. Server returned '{content_type}'. Skipped content validation."
                 else:
                     result["error"] = f"HTTP {response.status_code}"
 
