@@ -44,7 +44,28 @@ TYPE_MAP = {
     "BooleanField": {"type": "string", "enum": ["0", "1"], "description": "Boolean (0=false, 1=true)"},
     "NetworkField": {"type": "string", "format": "ipv4"},
     "OptionField": {
-        **BASE_LIST_FIELD_SCHEMA,
+        "oneOf": [
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "value": {"type": "string"},
+                        "selected": {"type": "integer"}
+                    }
+                },
+                "description": "Map of available options. Keys are the option values/IDs, values contain the display name and selection state.",
+                "example": {
+                    "option1": {"value": "Option 1", "selected": 0},
+                    "option2": {"value": "Option 2", "selected": 1}
+                }
+            },
+            {
+                "type": "string",
+                "description": "Selected value(s). For multiple selections, provide a comma-separated string (e.g., 'opt1,opt2').",
+                "example": "option1,option2"
+            }
+        ],
         "description": "Selection field. Returns a map of options on read, expects a selected value string on write."
     },
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
