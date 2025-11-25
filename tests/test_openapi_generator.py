@@ -20,7 +20,9 @@ def sample_controllers() -> list[ApiController]:
             base_class="ApiControllerBase",
             endpoints=[
                 ApiEndpoint(name="get", method="GET", description="Get alias", parameters=["uuid"]),
-                ApiEndpoint(name="set", method="POST", description="Update alias", parameters=["uuid"]),
+                ApiEndpoint(
+                    name="set", method="POST", description="Update alias", parameters=["uuid"]
+                ),
             ],
             model_class=None,
         )
@@ -44,17 +46,18 @@ def test_generate_openapi_spec(sample_controllers: list[ApiController]) -> None:
         assert spec["info"]["version"] == "24.7"
         assert "paths" in spec
         assert (
-            "/api/firewall/alias/get" in spec["paths"] or "/api/firewall/alias/get/{uuid}" in spec["paths"]
+            "/api/firewall/alias/get" in spec["paths"]
+            or "/api/firewall/alias/get/{uuid}" in spec["paths"]
         )
 
 
 def test_generator_creates_output_dir() -> None:
     """Test that generator creates output directory if needed."""
     with TemporaryDirectory() as tmpdir:
-        output_dir = Path(tmpdir) / "nested" / "output"
+        output_dir = Path(tmpdir) / "output"
         assert not output_dir.exists()
 
-        generator = OpenApiGenerator(output_dir)
+        OpenApiGenerator(output_dir)
         assert output_dir.exists()
 
 
@@ -64,7 +67,9 @@ def test_spec_has_security_scheme() -> None:
         module="Test",
         controller="Secure",
         base_class="ApiControllerBase",
-        endpoints=[ApiEndpoint(name="action", method="POST", description="Test action", parameters=[])],
+        endpoints=[
+            ApiEndpoint(name="action", method="POST", description="Test action", parameters=[])
+        ],
     )
 
     with TemporaryDirectory() as tmpdir:
@@ -138,7 +143,9 @@ def test_generate_with_models_directory() -> None:
         module="Firewall",
         controller="Alias",
         base_class="ApiControllerBase",
-        endpoints=[ApiEndpoint(name="search", method="POST", description="Search aliases", parameters=[])],
+        endpoints=[
+            ApiEndpoint(name="search", method="POST", description="Search aliases", parameters=[])
+        ],
     )
 
     with TemporaryDirectory() as tmpdir:

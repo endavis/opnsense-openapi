@@ -64,7 +64,9 @@ def test_generate_command_success(tmp_path, monkeypatch):
         ]
 
     monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
-    monkeypatch.setattr("opnsense_openapi.cli.ControllerParser.parse_directory", fake_parse_directory)
+    monkeypatch.setattr(
+        "opnsense_openapi.cli.ControllerParser.parse_directory", fake_parse_directory
+    )
 
     output_dir = tmp_path / "output"
     result = runner.invoke(app, ["generate", "24.7", "--output", str(output_dir)])

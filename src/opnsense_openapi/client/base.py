@@ -313,11 +313,12 @@ class OPNsenseClient:
             )
 
         # Import the generated client for this version
-        version_module = version.replace('.', '_')
+        version_module = version.replace(".", "_")
         module_path = f"opnsense_openapi.generated.v{version_module}.opnsense_openapi_client"
 
         try:
             import importlib
+
             from .generated_api import GeneratedAPI
 
             generated = importlib.import_module(module_path)

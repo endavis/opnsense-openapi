@@ -136,7 +136,10 @@ def generate(
     if valid_models_path:
         typer.echo(f"  Using models directory: {valid_models_path}")
     else:
-        typer.secho("  Warning: Models directory not found. Schema generation will be skipped.", fg=typer.colors.YELLOW)
+        typer.secho(
+            "  Warning: Models directory not found. Schema generation will be skipped.",
+            fg=typer.colors.YELLOW,
+        )
 
     output_file = generator.generate(
         controllers,
@@ -171,7 +174,7 @@ def validate(
     ] = False,
 ) -> None:
     """Validate the generated OpenAPI spec against a live OPNsense instance."""
-    
+
     # 1. Setup Client
     opnsense_url = os.getenv("OPNSENSE_URL")
     api_key = os.getenv("OPNSENSE_API_KEY")
@@ -183,18 +186,22 @@ def validate(
             fg=typer.colors.RED,
             err=True,
         )
-        typer.echo("Please set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET environment variables.")
+        typer.echo(
+            "Please set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET "
+            "environment variables."
+        )
         raise typer.Exit(code=1)
 
     try:
         from .client import OPNsenseClient
+
         client = OPNsenseClient(
-            base_url=opnsense_url, # type: ignore
-            api_key=api_key, # type: ignore
-            api_secret=api_secret, # type: ignore
+            base_url=opnsense_url,  # type: ignore
+            api_key=api_key,  # type: ignore
+            api_secret=api_secret,  # type: ignore
             verify_ssl=os.getenv("OPNSENSE_VERIFY_SSL", "false").lower() == "true",
             auto_detect_version=not no_auto_detect,
-            spec_version=version
+            spec_version=version,
         )
     except Exception as e:
         typer.secho(f"Failed to initialize client: {e}", fg=typer.colors.RED, err=True)
@@ -205,14 +212,20 @@ def validate(
         version = client._detected_version
         typer.secho(f"✓ Detected version: {version}", fg=typer.colors.GREEN)
     elif not version:
-        typer.secho("Error: Could not determine version. Use --version.", fg=typer.colors.RED, err=True)
+        typer.secho(
+            "Error: Could not determine version. Use --version.", fg=typer.colors.RED, err=True
+        )
         raise typer.Exit(code=1)
 
     try:
         spec_path = find_best_matching_spec(version)
         typer.echo(f"Using spec file: {spec_path}")
     except FileNotFoundError:
-        typer.secho(f"Error: No spec found for {version}. Run 'opnsense-openapi generate {version}' first.", fg=typer.colors.RED, err=True)
+        typer.secho(
+            f"Error: No spec found for {version}. Run 'opnsense-openapi generate {version}' first.",
+            fg=typer.colors.RED,
+            err=True,
+        )
         raise typer.Exit(code=1)
 
     # 3. Run Validation
@@ -222,14 +235,14 @@ def validate(
     typer.echo("-" * 80)
 
     validator = SpecValidator(client, spec_path)
-    
+
     passed = 0
     failed = 0
     skipped = 0
 
     for result in validator.validate_endpoints(max_endpoints=max_endpoints):
         status = str(result["status"]) if result["status"] else "ERR"
-        
+
         if result["valid"]:
             res_color = typer.colors.GREEN
             res_text = "VALID"
@@ -253,13 +266,13 @@ def validate(
             f"{typer.style(res_text, fg=res_color):<10} "
             f"{path_short}"
         )
-        
+
         if not result["valid"] and result["error"]:
             typer.secho(f"  ↳ {result['error']}", fg=typer.colors.BRIGHT_BLACK)
 
     typer.echo("-" * 80)
     typer.echo(f"Summary: {passed} passed, {failed} failed, {skipped} skipped")
-    
+
     if failed > 0:
         raise typer.Exit(code=1)
 
@@ -305,7 +318,9 @@ def build_client(
 
     # Check if openapi-python-client is installed
     if not shutil.which("openapi-python-client"):
-        typer.secho("Error: 'openapi-python-client' not found in PATH.", fg=typer.colors.RED, err=True)
+        typer.secho(
+            "Error: 'openapi-python-client' not found in PATH.", fg=typer.colors.RED, err=True
+        )
         typer.echo("Install it with: uv pip install openapi-python-client")
         raise typer.Exit(code=1)
 
@@ -315,7 +330,8 @@ def build_client(
         # Try minimal client init just for detection
         try:
             from .client import OPNsenseClient
-            # We don't strictly need credentials just to check version if endpoints are open, 
+
+            # We don't strictly need credentials just to check version if endpoints are open,
             # but usually they are protected. If we can't auto-detect, user must provide version.
             # We'll try with env vars if available, else warn.
             client = OPNsenseClient(
@@ -327,10 +343,12 @@ def build_client(
             )
             version_to_use = client._detected_version
         except Exception:
-            pass # Fallback to manual input requirement
+            pass  # Fallback to manual input requirement
 
     if not version_to_use:
-        typer.secho("Error: Please specify --version (e.g. '25.7.6').", fg=typer.colors.RED, err=True)
+        typer.secho(
+            "Error: Please specify --version (e.g. '25.7.6').", fg=typer.colors.RED, err=True
+        )
         raise typer.Exit(code=1)
 
     # Find spec
@@ -338,7 +356,11 @@ def build_client(
         spec_path = find_best_matching_spec(version_to_use)
         typer.echo(f"Using spec file: {spec_path}")
     except FileNotFoundError:
-        typer.secho(f"Error: No spec found for {version_to_use}. Run 'generate' first.", fg=typer.colors.RED, err=True)
+        typer.secho(
+            f"Error: No spec found for {version_to_use}. Run 'generate' first.",
+            fg=typer.colors.RED,
+            err=True,
+        )
         raise typer.Exit(code=1)
 
     # Determine output path
@@ -355,18 +377,23 @@ def build_client(
     cmd = [
         "openapi-python-client",
         "generate",
-        "--path", str(spec_path),
-        "--output-path", str(output_path),
-        "--meta", meta,
+        "--path",
+        str(spec_path),
+        "--output-path",
+        str(output_path),
+        "--meta",
+        meta,
     ]
-    
+
     if overwrite:
         cmd.append("--overwrite")
 
     # Execute
     try:
         subprocess.check_call(cmd)
-        typer.secho(f"✓ Client generated successfully for OPNsense {version_to_use}", fg=typer.colors.GREEN)
+        typer.secho(
+            f"✓ Client generated successfully for OPNsense {version_to_use}", fg=typer.colors.GREEN
+        )
     except subprocess.CalledProcessError as e:
         typer.secho(f"Error generating client: {e}", fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1)
@@ -491,6 +518,7 @@ def serve_docs(
     if opnsense_url and api_key and api_secret:
         try:
             from .client import OPNsenseClient
+
             opnsense_client = OPNsenseClient(
                 base_url=opnsense_url,
                 api_key=api_key,
@@ -533,7 +561,7 @@ def serve_docs(
             spec["servers"] = [
                 {
                     "url": f"http://{host}:{port}/proxy",
-                    "description": "Local proxy to OPNsense instance"
+                    "description": "Local proxy to OPNsense instance",
                 }
             ]
 
@@ -544,10 +572,18 @@ def serve_docs(
     def proxy(api_path):
         """Proxy requests to the actual OPNsense instance."""
         if not opnsense_client:
-            return jsonify({
-                "error": "Proxy not configured",
-                "message": "Set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET environment variables"
-            }), 503
+            return (
+                jsonify(
+                    {
+                        "error": "Proxy not configured",
+                        "message": (
+                            "Set OPNSENSE_URL, OPNSENSE_API_KEY, and OPNSENSE_API_SECRET "
+                            "environment variables"
+                        ),
+                    }
+                ),
+                503,
+            )
 
         try:
             # Build full URL to OPNsense instance
@@ -573,16 +609,15 @@ def serve_docs(
             # Create response with CORS headers
             response = make_response(jsonify(response_data))
             response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+            response.headers["Access-Control-Allow-Methods"] = (
+                "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+            )
             response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
 
             return response
 
         except Exception as e:
-            error_response = jsonify({
-                "error": "Proxy request failed",
-                "message": str(e)
-            })
+            error_response = jsonify({"error": "Proxy request failed", "message": str(e)})
             error_response.headers["Access-Control-Allow-Origin"] = "*"
             return error_response, 500
 

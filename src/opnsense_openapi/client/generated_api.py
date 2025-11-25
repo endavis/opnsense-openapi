@@ -29,7 +29,7 @@ class GeneratedAPI:
         """
         self._client = generated_client
         self._version = version
-        self._version_module = version.replace('.', '_')
+        self._version_module = version.replace(".", "_")
 
     def __getattr__(self, module_name: str) -> "ModuleProxy":
         """Dynamically access API modules (core, firewall, etc.)."""
@@ -56,12 +56,7 @@ class ModuleProxy:
 
     def __getattr__(self, function_name: str) -> "FunctionProxy":
         """Dynamically access API functions within the module."""
-        return FunctionProxy(
-            self._client,
-            self._version_module,
-            self._module_name,
-            function_name
-        )
+        return FunctionProxy(self._client, self._version_module, self._module_name, function_name)
 
     def __repr__(self) -> str:
         return f"ModuleProxy(module={self._module_name})"
@@ -90,7 +85,8 @@ class FunctionProxy:
         if self._function_module is None:
             import importlib
 
-            # Build module path: opnsense_openapi.generated.v25_7_6.opnsense_openapi_client.api.core.core_firmware_info
+            # Build module path:
+            # opnsense_openapi.generated.v25_7_6.opnsense_openapi_client.api.core.core_firmware_info
             function_module_name = f"{self._module_name}_{self._function_name}"
             module_path = (
                 f"opnsense_openapi.generated.v{self._version_module}."
