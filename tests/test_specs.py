@@ -2,7 +2,7 @@
 
 import pytest
 
-from opnsense_api import find_best_matching_spec, get_spec_path, list_available_specs
+from opnsense_openapi import find_best_matching_spec, get_spec_path, list_available_specs
 
 
 def test_list_available_specs() -> None:

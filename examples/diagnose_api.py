@@ -69,8 +69,10 @@ def main() -> None:
                 try:
                     data = response.json()
                     successful_endpoints.append((method, module, controller, command, data))
-                except:
-                    successful_endpoints.append((method, module, controller, command, {"text": response.text}))
+                except Exception:
+                    successful_endpoints.append(
+                        (method, module, controller, command, {"text": response.text})
+                    )
             elif status == 401:
                 result = "✗ UNAUTHORIZED"
             elif status == 403:
@@ -105,7 +107,11 @@ def main() -> None:
             # Check for version in other common locations
             if "version" in data:
                 print(f"  → Found version: {data['version']}")
-            if "system" in data and isinstance(data["system"], dict) and "version" in data["system"]:
+            if (
+                "system" in data
+                and isinstance(data["system"], dict)
+                and "version" in data["system"]
+            ):
                 print(f"  → Found version: {data['system']['version']}")
 
             # Show first few keys of response

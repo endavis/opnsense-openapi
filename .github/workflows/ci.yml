@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, feature/* ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Run Linting
+      run: |
+        uv run ruff check .
+        uv run ruff format --check .
+        uv run mypy src/
+
+    - name: Run Tests
+      run: uv run pytest
+
+  generate-matrix:
+    name: Test Generation (Version Matrix)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Test against recent major versions
+        opnsense-version: ["24.7", "25.1", "25.7.6"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Set up Python
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Generate Spec for ${{ matrix.opnsense-version }}
+      run: |
+        # We don't have a live OPNsense instance in CI, so we can only test the
+        # download and generate parsing logic.
+        # Note: Download might fail if tags don't exist or git fails, but this ensures
+        # the code runs.
+        uv run opnsense-openapi download ${{ matrix.opnsense-version }}
+        uv run opnsense-openapi generate ${{ matrix.opnsense-version }}
+
+    - name: Verify Spec Validity
+      run: |
+        # Basic check that JSON was created and is valid
+        ls -l src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json
+        python -c "import json; json.load(open('src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json'))"

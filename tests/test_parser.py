@@ -5,8 +5,8 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from opnsense_api.parser import ControllerParser
-from opnsense_api.utils import to_snake_case
+from opnsense_openapi.parser import ControllerParser
+from opnsense_openapi.utils import to_snake_case
 
 
 @pytest.fixture
@@ -49,6 +49,16 @@ class AliasUtilController extends ApiControllerBase
     {
         return $this->setBase("alias");
     }
+
+    /**
+     * Get alias
+     * @param string $uuid
+     * @return array
+     */
+    public function getAction($uuid)
+    {
+        return $this->getBase("alias", "field", $uuid);
+    }
 }
 """
 
@@ -71,7 +81,7 @@ def test_parse_controller_basic(sample_controller: str) -> None:
         assert controller.module == "Firewall"
         assert controller.controller == "AliasUtil"
         assert controller.base_class == "ApiControllerBase"
-        assert len(controller.endpoints) == 3
+        assert len(controller.endpoints) == 4
 
 
 def test_parse_endpoints(sample_controller: str) -> None:
@@ -90,7 +100,7 @@ def test_parse_endpoints(sample_controller: str) -> None:
 
         # Check findAlias endpoint
         find_endpoint = next(e for e in controller.endpoints if e.name == "findAlias")
-        assert find_endpoint.method == "GET"
+        assert find_endpoint.method == "POST"
         assert find_endpoint.description == "Find aliases"
         assert find_endpoint.parameters == []
 
@@ -104,6 +114,11 @@ def test_parse_endpoints(sample_controller: str) -> None:
         set_endpoint = next(e for e in controller.endpoints if e.name == "set")
         assert set_endpoint.method == "POST"
         assert set_endpoint.description == "Update alias settings"
+
+        # Check get endpoint
+        get_endpoint = next(e for e in controller.endpoints if e.name == "get")
+        assert get_endpoint.method == "GET"
+        assert get_endpoint.description == "Get alias"
 
 
 def test_parse_directory() -> None:
@@ -155,3 +170,105 @@ def test_to_snake_case() -> None:
     assert to_snake_case("AliasUtil") == "alias_util"
     assert to_snake_case("get") == "get"
     assert to_snake_case("setItem") == "set_item"
+
+
+def test_validate_version() -> None:
+    """Test version validation."""
+    from opnsense_openapi.utils import validate_version
+
+    # Valid versions
+    assert validate_version("24.7")
+    assert validate_version("24.7.1")
+    assert validate_version("v24.7")
+    assert validate_version("25.1.10")
+
+    # Invalid versions
+    assert not validate_version("invalid")
+    assert not validate_version("24")
+    assert not validate_version("24.7.1.2")
+
+
+def test_to_class_name() -> None:
+    """Test snake_case to PascalCase conversion."""
+    from opnsense_openapi.utils import to_class_name
+
+    assert to_class_name("firewall_alias") == "FirewallAlias"
+    assert to_class_name("test") == "Test"
+    assert to_class_name("api_controller_base") == "ApiControllerBase"
+
+
+def test_parse_controller_nonexistent_file() -> None:
+    """Test parsing nonexistent controller file."""
+    parser = ControllerParser()
+
+    nonexistent = Path("/nonexistent/Controller.php")
+    controller = parser.parse_controller_file(nonexistent)
+
+    assert controller is None
+
+
+def test_parse_controller_non_controller_file() -> None:
+    """Test parsing non-controller PHP file."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        # Create a PHP file that doesn't end with Controller.php
+        php_file = Path(tmpdir) / "Api" / "Helper.php"
+        php_file.parent.mkdir(parents=True)
+        php_file.write_text(
+            """<?php
+namespace OPNsense\\Firewall\\Api;
+
+class Helper
+{
+    public function helpAction() {}
+}
+"""
+        )
+
+        controller = parser.parse_controller_file(php_file)
+        assert controller is None
+
+
+def test_parse_controller_no_namespace() -> None:
+    """Test parsing controller without namespace."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        api_dir = Path(tmpdir) / "Api"
+        api_dir.mkdir()
+        controller_file = api_dir / "TestController.php"
+        controller_file.write_text(
+            """<?php
+// Missing namespace
+
+class TestController extends ApiControllerBase
+{
+    public function getAction() {}
+}
+"""
+        )
+
+        controller = parser.parse_controller_file(controller_file)
+        assert controller is None
+
+
+def test_parse_controller_no_class() -> None:
+    """Test parsing controller without class definition."""
+    parser = ControllerParser()
+
+    with TemporaryDirectory() as tmpdir:
+        api_dir = Path(tmpdir) / "Api"
+        api_dir.mkdir()
+        controller_file = api_dir / "TestController.php"
+        controller_file.write_text(
+            """<?php
+namespace OPNsense\\Test\\Api;
+
+// Missing class definition
+function someFunction() {}
+"""
+        )
+
+        controller = parser.parse_controller_file(controller_file)
+        assert controller is None
