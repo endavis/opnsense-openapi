@@ -4995,9 +4995,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "Resource data"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Dynamic object representing an item in the list"
+                  },
+                  "description": "List of dynamic items"
                 }
               }
             }
@@ -5086,9 +5090,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "Resource data"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Dynamic object representing an item in the list"
+                  },
+                  "description": "List of dynamic items"
                 }
               }
             }
@@ -5164,9 +5172,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "Resource data"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Dynamic object representing an item in the list"
+                  },
+                  "description": "List of dynamic items"
                 }
               }
             }
@@ -15591,12 +15603,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "service": {
-                      "$ref": "#/components/schemas/OPNsenseIDSService"
-                    }
-                  }
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Dynamic object representing an item in the list"
+                  },
+                  "description": "List of dynamic items"
                 }
               }
             }

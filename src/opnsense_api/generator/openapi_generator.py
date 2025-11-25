@@ -412,6 +412,22 @@ class OpenApiGenerator:
                     }
                 }
             }
+        # === ARRAY RESPONSE PATTERNS (for lists of generic items) ===
+        # Heuristic for endpoints that return an array of objects like getArp, getNdp, getLog, etc.
+        elif http_method == "GET" and any(pattern in act_lower for pattern in ["arp", "ndp", "log", "leases", "sessions", "states", "routes"]):
+            response_schema["content"] = {
+                "application/json": {
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": True,
+                            "description": "Dynamic object representing an item in the list"
+                        },
+                        "description": "List of dynamic items"
+                    }
+                }
+            }
         # === BOOLEAN QUERY PATTERNS ===
         elif 'isenabled' in act_lower.replace('_', ''):
             # isEnabled returns {"enabled": "0"|"1"}
