@@ -22,12 +22,12 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Typing :: Typed",
 ]
-urls = {
-    "Homepage" = "https://github.com/endavis/opnsense-openapi",
-    "Repository" = "https://github.com/endavis/opnsense-openapi",
-    "Issue Tracker" = "https://github.com/endavis/opnsense-openapi/issues",
-    "Documentation" = "https://github.com/endavis/opnsense-openapi#readme",
-}
+
+[project.urls]
+Homepage = "https://github.com/endavis/opnsense-openapi"
+Repository = "https://github.com/endavis/opnsense-openapi"
+"Issue Tracker" = "https://github.com/endavis/opnsense-openapi/issues"
+Documentation = "https://github.com/endavis/opnsense-openapi#readme"
 
 [project.optional-dependencies]
 dev = [
