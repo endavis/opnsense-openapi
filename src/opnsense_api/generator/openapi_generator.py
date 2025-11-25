@@ -1,10 +1,10 @@
-"""Generate OpenAPI JSON specification from parsed API controllers."""
+"Generate OpenAPI JSON specification from parsed API controllers."
 
 import json
 import logging
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Dict
 
 from ..parser import ApiController
 
@@ -15,27 +15,35 @@ def _get_xml_tag_text(elem: ET.Element, tag_name: str) -> str | None:
     child = elem.find(tag_name)
     return child.text if child is not None else None
 
+# Define reusable schema components for OptionField variants
+OPTION_FIELD_ENUM_SCHEMA = {
+    "type": "string",
+    "description": "Selected option value (string from enum)."
+}
+
+OPTION_FIELD_OBJECT_SCHEMA = {
+    "type": "object",
+    "additionalProperties": {
+        "type": "object",
+        "properties": {
+            "value": {"type": "string"},
+            "selected": {"type": "integer"}
+        }
+    },
+    "description": "Map of available options. Keys are the option values/IDs, values contain the display name and selection state.",
+    "example": {
+        "default": {"value": "Default Option", "selected": 0},
+        "custom": {"value": "Custom Option", "selected": 1}
+    }
+}
+
 # ================= TYPE MAPPING =================
 TYPE_MAP = {
     "IntegerField": {"type": "integer"},
     "TextField": {"type": "string"},
     "BooleanField": {"type": "string", "enum": ["0", "1"], "description": "Boolean (0=false, 1=true)"},
     "NetworkField": {"type": "string", "format": "ipv4"},
-    "OptionField": { # Reverting OptionField to complex object in TYPE_MAP
-        "type": "object",
-        "additionalProperties": {
-            "type": "object",
-            "properties": {
-                "value": {"type": "string"},
-                "selected": {"type": "integer"}
-            }
-        },
-        "description": "Selection field. Returns a map of options on read, expects a selected value string on write.",
-        "example": {
-            "default": {"value": "Default Option", "selected": 0},
-            "custom": {"value": "Custom Option", "selected": 1}
-        }
-    },
+    "OptionField": OPTION_FIELD_ENUM_SCHEMA, # Default to enum string in TYPE_MAP
     "ModelRelationField": {"type": "string", "description": "UUID reference"},
     "CSVListField": {"type": "string", "description": "Comma separated values"},
     "CertificateField": {"type": "string", "description": "Certificate Data"},
@@ -59,7 +67,7 @@ TYPE_MAP = {
 }
 
 class OpenApiGenerator:
-    """Generate OpenAPI 3.0 specification from parsed API controllers."""
+    """Generate OpenAPI JSON specification from parsed API controllers."""
 
     def __init__(self, output_dir: Path) -> None:
         """Initialize OpenAPI generator.
@@ -109,7 +117,8 @@ class OpenApiGenerator:
                             "result": {"type": "string", "example": "saved"},
                             "validations": {"type": "object", "description": "Validation errors if failed"}
                         }
-                    }
+                    },
+                    "OptionFieldObject": OPTION_FIELD_OBJECT_SCHEMA # Add as a reusable component
                 },
                 "securitySchemes": {
                     "basicAuth": {"type": "http", "scheme": "basic"},
@@ -211,7 +220,7 @@ class OpenApiGenerator:
             if 'type' in elem.attrib:
                 field_type = elem.attrib['type']
                 # Strip relative path chars from type (e.g. ".\HostnameField")
-                clean_type = field_type.lstrip(".\\/")
+                clean_type = field_type.lstrip(".\/")
                 
                 prop_def = TYPE_MAP.get(clean_type, {"type": "string"}).copy()
 
@@ -231,19 +240,35 @@ class OpenApiGenerator:
 
                 # === ENUM RESOLUTION LOGIC ===
                 elif clean_type == "OptionField":
+                    enum_values: List[str] = []
                     # 1. Check for Inline Options
                     inline_opts = elem.find('OptionValues')
                     if inline_opts is not None:
-                        enums = [child.tag for child in inline_opts]
-                        if enums:
-                            prop_def['enum'] = enums
+                        enum_values.extend([child.tag for child in inline_opts])
 
                     # 2. Check for External Source (<Source>OPNsense.Firewall.AliasTypes</Source>)
                     source_tag = elem.find('Source')
                     if source_tag is not None and source_tag.text:
-                        enums = self._resolve_external_enums(source_tag.text)
-                        if enums:
-                            prop_def['enum'] = enums
+                        enum_values.extend(self._resolve_external_enums(source_tag.text))
+                    
+                    if enum_values:
+                        # For OptionField, if enum values are present, it can be represented
+                        # as a string (for input) or an object map (for output, UI driven).
+                        # We use oneOf to represent both possibilities.
+
+                        # The object variant is what the API sometimes returns for GET
+                        object_variant = {"$ref": "#/components/schemas/OptionFieldObject"}
+                        # The string enum variant is what is usually sent for POST
+                        string_variant = {"type": "string", "enum": list(set(enum_values)), "description": OPTION_FIELD_ENUM_SCHEMA['description']}
+
+                        prop_def = {
+                            "oneOf": [object_variant, string_variant],
+                            "description": OPTION_FIELD_OBJECT_SCHEMA['description'] # Use the rich description
+                        }
+                    else:
+                        # Fallback to just the object representation if no explicit enum values are found
+                        # This covers cases where OptionField is used like an InterfaceField.
+                        prop_def = OPTION_FIELD_OBJECT_SCHEMA.copy()
                 
                 properties[field_name] = prop_def
             
