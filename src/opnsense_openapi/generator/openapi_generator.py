@@ -222,7 +222,7 @@ class OpenApiGenerator:
             if 'type' in elem.attrib:
                 field_type = elem.attrib['type']
                 # Strip relative path chars from type (e.g. ".\HostnameField")
-                clean_type = field_type.lstrip(".\/")
+                clean_type = field_type.lstrip("./")
                 
                 prop_def = TYPE_MAP.get(clean_type, {"type": "string"}).copy()
 

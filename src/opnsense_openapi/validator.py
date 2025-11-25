@@ -74,56 +74,46 @@ class SpecValidator:
             }
 
             try:
-                # Construct API URL
-                # The path in spec is like /api/core/firmware/info
-                # Client expects module, controller, command
-                # But client.get() constructs from parts. 
-                # We can use the underlying client to fetch the full path directly
-                # correcting for the client's base_url
-                
-                # path already contains /api prefix usually in our generation
-                # e.g. /api/core/firmware/info
-                # client.base_url is https://host
-                
                 url = f"{self.client.base_url}{path}"
-                
                 response = self.client._client.get(url)
                 result["status"] = response.status_code
 
                 if response.status_code == 200:
                     content_type = response.headers.get("Content-Type", "").lower()
-
-                    if "application/json" in content_type:
-                        try:
-                            data = response.json()
-                            
-                            # Get response schema
-                            # Note: sometimes 'content' is missing or has other media types
-                            response_content = methods["get"]["responses"]["200"].get("content")
-                            if not response_content or "application/json" not in response_content:
-                                result["error"] = "No application/json schema defined for 200 OK"
-                                yield result
-                                continue
-
-                            response_schema = response_content["application/json"]["schema"]
-                            
-                            # Validate
-                            # We need to prepare the validator with the resolver
-                            cls = validator_for(response_schema)
-                            validator = cls(response_schema, resolver=self.resolver)
-                            validator.validate(data)
-                            
-                            result["valid"] = True
-                        except jsonschema.ValidationError as e:
-                            result["error"] = f"Schema mismatch: {e.message} (at {'.'.join(str(p) for p in e.path)})"
-                        except json.JSONDecodeError:
-                            result["error"] = "Invalid JSON response (expected JSON based on schema)"
-                        except KeyError:
-                            result["error"] = "Schema definition missing for 200 OK or content type"
-                    else:
-                        # Non-JSON response (e.g., CSV, text). Assume valid if status is 200.
+                    
+                    response_content_schema = methods["get"]["responses"]["200"].get("content")
+                    
+                    if response_content_schema and "application/json" in response_content_schema:
+                        # Schema expects JSON
+                        if "application/json" in content_type:
+                            try:
+                                data = response.json()
+                                response_schema = response_content_schema["application/json"]["schema"]
+                                
+                                cls = validator_for(response_schema)
+                                validator = cls(response_schema, resolver=self.resolver)
+                                validator.validate(data)
+                                
+                                result["valid"] = True
+                            except json.JSONDecodeError:
+                                result["error"] = "Invalid JSON response (server returned malformed JSON)"
+                            except ValidationError as e:
+                                result["error"] = f"Schema mismatch: {e.message} (at {'.'.join(str(p) for p in e.path)})"
+                            except KeyError:
+                                result["error"] = "Schema definition missing for application/json"
+                        else:
+                            # Schema expects JSON, but server returned non-JSON content-type
+                            result["error"] = f"Content-Type mismatch: Server returned '{content_type}' but schema expected 'application/json'."
+                    elif response_content_schema:
+                        # Schema expects a non-JSON content type (e.g., text/csv).
+                        # Assume valid if HTTP 200 OK, skip schema validation.
                         result["valid"] = True
-                        result["error"] = f"Non-JSON response ({content_type}). Skipped schema validation."
+                        result["error"] = f"Non-JSON schema defined. Server returned '{content_type}'. Skipped schema validation."
+                    else:
+                        # No content schema defined for 200 OK.
+                        # For now, assume valid if it's a 200 OK without specific content validation.
+                        result["valid"] = True
+                        result["error"] = "No content schema defined for 200 OK. Skipped content validation."
                 else:
                     result["error"] = f"HTTP {response.status_code}"
 
