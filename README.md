@@ -9,6 +9,7 @@ This tool downloads OPNsense source code from GitHub, parses PHP controller file
 ## Features
 
 - **Version-agnostic API**: Auto-detects OPNsense version, no version-specific imports needed
+- **Auto-generation**: Automatically generates Python client on first use if spec exists
 - **Full type hints**: Generated code uses Python 3.12+ type annotations with Pydantic models
 - **OpenAPI-based**: Generates OpenAPI 3.0 specs from OPNsense PHP source code
 - **IDE support**: Complete autocomplete and type checking in modern IDEs
@@ -45,7 +46,7 @@ The `download` command clones the `opnsense/core` repository at the requested ta
 caches it under `tmp/opnsense_source/<version>/`, and extracts the controller
 files that later steps of the wrapper pipeline will parse.
 
-### Use Generated Wrapper
+### Use the API Client
 
 ```python
 import os
@@ -60,7 +61,9 @@ client = OPNsenseClient(
     auto_detect_version=True,  # Automatically detect OPNsense version
 )
 
-# Get version-agnostic API wrapper
+# Access the API - automatically generates client if needed
+# If the OpenAPI spec exists but the Python client hasn't been generated yet,
+# it will be automatically generated on first access (takes ~2 minutes)
 api = client.api
 
 # Call any API function - no version-specific imports needed!
@@ -69,6 +72,14 @@ aliases = api.firewall.alias_search_item()
 
 print(f"OPNsense version: {info.product_version}")
 print(f"Aliases: {aliases.rows if aliases else []}")
+```
+
+**Note:** The first time you access `client.api`, if the OpenAPI spec exists for your version, the Python client will be automatically generated. This takes about 2 minutes. Subsequent uses are instant.
+
+If you don't have the OpenAPI spec yet, you'll get a helpful error message with the exact commands to run:
+```bash
+opnsense-openapi download <version>
+opnsense-openapi generate <version>
 ```
 
 See [GENERATED_CLIENT_USAGE.md](docs/GENERATED_CLIENT_USAGE.md) for complete documentation.
@@ -88,6 +99,37 @@ Options:
 The command clones `https://github.com/opnsense/core` at the requested tag, caches
 it locally, and extracts the controller files that downstream parsing and code
 generation steps consume.
+
+### Generate OpenAPI Spec
+
+```bash
+opnsense-openapi generate [VERSION] [OPTIONS]
+
+Options:
+  -o, --output PATH  Output directory for OpenAPI spec (default: specs/)
+  -c, --cache PATH   Cache directory for source files (default: tmp/opnsense_source)
+  --force            Re-download source even when cached
+```
+
+Generates an OpenAPI 3.0 specification from OPNsense controller source code. The spec is saved to the specs directory and can be used for client generation or documentation.
+
+### Build Python Client (Optional)
+
+```bash
+opnsense-openapi build-client [OPTIONS]
+
+Options:
+  -v, --version TEXT  OPNsense version (e.g., '25.7.6'). Auto-detects if not specified.
+  -o, --output PATH   Output directory for generated client
+  --meta TEXT         Meta type: none, poetry, setup, pdm, uv (default: setup)
+  --overwrite         Overwrite existing client directory
+  --no-auto-detect    Disable auto-detection (requires --version)
+```
+
+**Note:** This command is **optional** because the Python client is automatically generated when you first access `client.api` if the OpenAPI spec exists. Only use this command if you want to:
+- Pre-generate the client before first use
+- Customize the generation options (meta type, output path)
+- Regenerate/overwrite an existing client
 
 ### Serve Documentation
 
@@ -148,22 +190,26 @@ just lint
    - Determines HTTP methods and parameters
 
 3. **Generator** (`src/opnsense_openapi/generator/`)
-   - Generates Python module structure
-   - Creates type-hinted method signatures
-   - Organizes code by module and controller
+   - Generates OpenAPI 3.0 specifications from PHP source
+   - Infers response schemas from controller patterns
+   - Creates reusable spec files for each version
 
 4. **Client** (`src/opnsense_openapi/client/`)
    - Base HTTP client with OPNsense authentication
    - Handles API key/secret via Basic Auth
-   - Provides GET/POST methods for API calls
+   - Auto-generates Python client on first use
+   - Provides version-agnostic API access
 
 ### How It Works
 
 1. **Download**: Clone OPNsense core repository for specified version
 2. **Parse**: Scan `src/opnsense/mvc/app/controllers/OPNsense/*/Api/` for controllers
 3. **Extract**: Parse controller classes to find public `*Action()` methods
-4. **Generate**: Create Python classes mirroring the API structure
-5. **Use**: Import generated modules and call methods with type hints
+4. **Generate Spec**: Create OpenAPI 3.0 specification from parsed controllers
+5. **Auto-Generate Client**: When accessing `client.api`, automatically generate Python client if spec exists
+6. **Use**: Call API methods with full type hints and IDE autocomplete
+
+The auto-generation step (5) happens seamlessly on first use. If the OpenAPI spec exists for your version, the Python client is generated automatically (takes ~2 minutes). Subsequent uses are instant.
 
 ### URL Mapping
 
@@ -208,7 +254,8 @@ src/opnsense_openapi/
 ## Limitations
 
 - Requires git to be installed for downloading OPNsense source
-- Generated clients must be pre-built for each OPNsense version
+- Requires `openapi-python-client` for auto-generating Python clients
+- First-time client generation takes ~2 minutes (subsequent uses are instant)
 - Some complex XML model definitions may not parse perfectly
 - Requires access to OPNsense instance for version auto-detection
 
