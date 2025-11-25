@@ -23,11 +23,16 @@ BASE_LIST_FIELD_SCHEMA = {
                     "selected": {"type": "integer"}
                 }
             },
-            "description": "Map of available options. Keys are the option values/IDs, values contain the display name and selection state."
+            "description": "Map of available options. Keys are the option values/IDs (e.g. 'lan', 'opt1'), values contain the display name and selection state.",
+            "example": {
+                "lan": {"value": "LAN", "selected": 0},
+                "wan": {"value": "WAN", "selected": 1}
+            }
         },
         {
             "type": "string",
-            "description": "Selected value(s). For multiple selections, provide a comma-separated string (e.g., 'opt1,opt2')."
+            "description": "Selected value(s). For multiple selections, provide a comma-separated string (e.g., 'opt1,opt2').",
+            "example": "lan,wan"
         }
     ]
 }
