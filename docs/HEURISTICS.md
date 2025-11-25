@@ -357,7 +357,7 @@ Choose where in the hierarchy:
 
 #### 4. Add Pattern Detection
 
-**File**: `src/opnsense_api/generator/openapi_generator.py`
+**File**: `src/opnsense_openapi/generator/openapi_generator.py`
 
 **Location**: In `_add_path_to_spec` method
 
@@ -395,7 +395,7 @@ uv run opnsense-openapi generate 25.7.6
 # Check if pattern is matched
 python3 << 'EOF'
 import json
-with open('src/opnsense_api/specs/opnsense-25.7.6.json') as f:
+with open('src/opnsense_openapi/specs/opnsense-25.7.6.json') as f:
     spec = json.load(f)
 
 # Find validate endpoints
@@ -564,7 +564,7 @@ PYTHONLOG=DEBUG uv run opnsense-openapi generate 25.7.6 2>&1 | grep "Processing"
 # Find endpoints without schemas
 import json
 
-with open('src/opnsense_api/specs/opnsense-25.7.6.json') as f:
+with open('src/opnsense_openapi/specs/opnsense-25.7.6.json') as f:
     spec = json.load(f)
 
 missing = []
@@ -592,7 +592,7 @@ for pattern, count in patterns.most_common(10):
 npm install -g @apidevtools/swagger-cli
 
 # Validate spec
-swagger-cli validate src/opnsense_api/specs/opnsense-25.7.6.json
+swagger-cli validate src/opnsense_openapi/specs/opnsense-25.7.6.json
 ```
 
 ## Performance Considerations
@@ -630,7 +630,7 @@ Each endpoint creates schema dictionaries. For large specs (>1000 endpoints), co
 import json
 from collections import Counter
 
-with open('src/opnsense_api/specs/opnsense-25.7.6.json') as f:
+with open('src/opnsense_openapi/specs/opnsense-25.7.6.json') as f:
     spec = json.load(f)
 
 patterns = []

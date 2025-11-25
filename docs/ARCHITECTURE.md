@@ -63,7 +63,7 @@ Discover all API endpoints by parsing PHP controller files in the OPNsense sourc
 
 ### Controller Parser (`controller_parser.py`)
 
-**Location**: `src/opnsense_api/parser/controller_parser.py`
+**Location**: `src/opnsense_openapi/parser/controller_parser.py`
 
 **What it does:**
 1. Scans directories matching pattern: `*/Api/*Controller.php`
@@ -133,7 +133,7 @@ Generate accurate OpenAPI response schemas without analyzing PHP code directly.
 
 ### OpenAPI Generator (`openapi_generator.py`)
 
-**Location**: `src/opnsense_api/generator/openapi_generator.py`
+**Location**: `src/opnsense_openapi/generator/openapi_generator.py`
 
 The generator uses pattern-based heuristics to infer response schemas based on:
 - Action name patterns (e.g., "search", "get", "add")
@@ -442,15 +442,15 @@ Common unmatched patterns (82 endpoints):
 # Generate OpenAPI spec for version 25.7.6
 uv run opnsense-openapi generate 25.7.6
 
-# Output: src/opnsense_api/specs/opnsense-25.7.6.json
+# Output: src/opnsense_openapi/specs/opnsense-25.7.6.json
 ```
 
 ### Programmatic Usage
 
 ```python
 from pathlib import Path
-from opnsense_api.parser import ControllerParser
-from opnsense_api.generator.openapi_generator import OpenApiGenerator
+from opnsense_openapi.parser import ControllerParser
+from opnsense_openapi.generator.openapi_generator import OpenApiGenerator
 
 # Parse controllers
 parser = ControllerParser()
@@ -602,7 +602,7 @@ uv run opnsense-openapi generate 25.7.6
 # Check coverage
 python3 << 'EOF'
 import json
-with open('src/opnsense_api/specs/opnsense-25.7.6.json') as f:
+with open('src/opnsense_openapi/specs/opnsense-25.7.6.json') as f:
     spec = json.load(f)
 total = len(spec['paths'])
 with_schema = sum(1 for p in spec['paths'].values()
@@ -667,7 +667,7 @@ EOF
 # Find unmatched patterns
 python3 << 'EOF'
 import json
-with open('src/opnsense_api/specs/opnsense-25.7.6.json') as f:
+with open('src/opnsense_openapi/specs/opnsense-25.7.6.json') as f:
     spec = json.load(f)
 missing = {}
 for path in spec['paths'].values():
@@ -698,11 +698,11 @@ EOF
 
 ### Key Files
 
-- **CLI**: `src/opnsense_api/cli.py`
-- **Controller Parser**: `src/opnsense_api/parser/controller_parser.py`
-- **OpenAPI Generator**: `src/opnsense_api/generator/openapi_generator.py`
-- **Code Generator**: `src/opnsense_api/generator/code_generator.py`
-- **Source Downloader**: `src/opnsense_api/downloader/source_downloader.py`
+- **CLI**: `src/opnsense_openapi/cli.py`
+- **Controller Parser**: `src/opnsense_openapi/parser/controller_parser.py`
+- **OpenAPI Generator**: `src/opnsense_openapi/generator/openapi_generator.py`
+- **Code Generator**: `src/opnsense_openapi/generator/code_generator.py`
+- **Source Downloader**: `src/opnsense_openapi/downloader/source_downloader.py`
 
 ### External Resources
 

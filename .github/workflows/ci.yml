@@ -69,5 +69,5 @@ jobs:
     - name: Verify Spec Validity
       run: |
         # Basic check that JSON was created and is valid
-        ls -l src/opnsense_api/specs/opnsense-${{ matrix.opnsense-version }}.json
-        python -c "import json; json.load(open('src/opnsense_api/specs/opnsense-${{ matrix.opnsense-version }}.json'))"
+        ls -l src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json
+        python -c "import json; json.load(open('src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json'))"

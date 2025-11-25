@@ -5,8 +5,8 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from opnsense_api.parser import ControllerParser
-from opnsense_api.utils import to_snake_case
+from opnsense_openapi.parser import ControllerParser
+from opnsense_openapi.utils import to_snake_case
 
 
 @pytest.fixture
@@ -174,7 +174,7 @@ def test_to_snake_case() -> None:
 
 def test_validate_version() -> None:
     """Test version validation."""
-    from opnsense_api.utils import validate_version
+    from opnsense_openapi.utils import validate_version
 
     # Valid versions
     assert validate_version("24.7")
@@ -190,7 +190,7 @@ def test_validate_version() -> None:
 
 def test_to_class_name() -> None:
     """Test snake_case to PascalCase conversion."""
-    from opnsense_api.utils import to_class_name
+    from opnsense_openapi.utils import to_class_name
 
     assert to_class_name("firewall_alias") == "FirewallAlias"
     assert to_class_name("test") == "Test"

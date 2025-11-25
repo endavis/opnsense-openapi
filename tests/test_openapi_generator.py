@@ -6,8 +6,8 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from opnsense_api.generator.openapi_generator import OpenApiGenerator
-from opnsense_api.parser import ApiController, ApiEndpoint, ControllerParser
+from opnsense_openapi.generator.openapi_generator import OpenApiGenerator
+from opnsense_openapi.parser import ApiController, ApiEndpoint, ControllerParser
 
 
 @pytest.fixture

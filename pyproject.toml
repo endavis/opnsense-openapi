@@ -28,15 +28,15 @@ ui = [
 ]
 
 [project.scripts]
-opnsense-openapi = "opnsense_api.cli:app"
+opnsense-openapi = "opnsense_openapi.cli:app"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/opnsense_api"]
-include = ["src/opnsense_api/specs/*.json"]
+packages = ["src/opnsense_openapi"]
+include = ["src/opnsense_openapi/specs/*.json"]
 
 [tool.black]
 line-length = 100
@@ -54,7 +54,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=src/opnsense_api --cov-report=term-missing"
+addopts = "-v --cov=src/opnsense_openapi --cov-report=term-missing"
 
 [tool.mypy]
 python_version = "3.12"

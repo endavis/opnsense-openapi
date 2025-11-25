@@ -2,7 +2,7 @@
 
 import pytest
 
-from opnsense_api.client import OPNsenseClient
+from opnsense_openapi.client import OPNsenseClient
 
 
 def test_client_initialization() -> None:
@@ -130,7 +130,7 @@ def test_list_endpoints() -> None:
 
 def test_api_response_error() -> None:
     """Test APIResponseError exception."""
-    from opnsense_api.client.base import APIResponseError
+    from opnsense_openapi.client.base import APIResponseError
 
     error = APIResponseError("Failed to parse JSON", "<html>Error</html>")
 

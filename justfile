@@ -63,5 +63,5 @@ bump part="patch":
         *) echo "Usage: just bump patch|minor|major"; exit 1 ;;
     esac
     sed -i "s/version = \"$current\"/version = \"$new\"/" pyproject.toml
-    sed -i "s/__version__ = \"$current\"/__version__ = \"$new\"/" src/opnsense_api/__init__.py
+    sed -i "s/__version__ = \"$current\"/__version__ = \"$new\"/" src/opnsense_openapi/__init__.py
     echo "Bumped version: $current -> $new"

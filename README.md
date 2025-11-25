@@ -49,7 +49,7 @@ files that later steps of the wrapper pipeline will parse.
 
 ```python
 import os
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Initialize client with auto-detection
 client = OPNsenseClient(
@@ -137,22 +137,22 @@ just lint
 
 ### Components
 
-1. **Downloader** (`src/opnsense_api/downloader/`)
+1. **Downloader** (`src/opnsense_openapi/downloader/`)
    - Clones OPNsense core repository from GitHub
    - Manages version-specific source code cache
    - Supports tag-based version selection
 
-2. **Parser** (`src/opnsense_api/parser/`)
+2. **Parser** (`src/opnsense_openapi/parser/`)
    - Parses PHP controller files using regex
    - Extracts namespace, class, and method information
    - Determines HTTP methods and parameters
 
-3. **Generator** (`src/opnsense_api/generator/`)
+3. **Generator** (`src/opnsense_openapi/generator/`)
    - Generates Python module structure
    - Creates type-hinted method signatures
    - Organizes code by module and controller
 
-4. **Client** (`src/opnsense_api/client/`)
+4. **Client** (`src/opnsense_openapi/client/`)
    - Base HTTP client with OPNsense authentication
    - Handles API key/secret via Basic Auth
    - Provides GET/POST methods for API calls
@@ -182,10 +182,10 @@ The version-agnostic wrapper automatically maps Python function names to API end
 ## Example: Generated Code Structure
 
 ```
-src/opnsense_api/
+src/opnsense_openapi/
 ├── generated/
 │   └── v25_7_6/                    # Version-specific generated client
-│       └── opnsense_api_client/
+│       └── opnsense_openapi_client/
 │           ├── __init__.py
 │           ├── client.py           # HTTP client
 │           ├── models/             # Response models

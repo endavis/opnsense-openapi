@@ -8,8 +8,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opnsense_api.generator.openapi_generator import OpenApiGenerator
-from opnsense_api.parser import ApiController, ApiEndpoint
+from opnsense_openapi.generator.openapi_generator import OpenApiGenerator
+from opnsense_openapi.parser import ApiController, ApiEndpoint
 
 
 @pytest.fixture

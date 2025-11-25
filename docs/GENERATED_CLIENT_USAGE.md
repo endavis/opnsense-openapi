@@ -19,8 +19,8 @@ opnsense-openapi generate 25.7.6
 
 # Generate Python client from spec
 uv run openapi-python-client generate \
-  --path src/opnsense_api/specs/opnsense-25.7.6.json \
-  --output-path src/opnsense_api/generated/v25_7_6 \
+  --path src/opnsense_openapi/specs/opnsense-25.7.6.json \
+  --output-path src/opnsense_openapi/generated/v25_7_6 \
   --overwrite
 ```
 
@@ -28,7 +28,7 @@ uv run openapi-python-client generate \
 
 ```python
 import os
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Client auto-detects version from your OPNsense instance
 client = OPNsenseClient(
@@ -59,7 +59,7 @@ The `client.api` property returns a version-agnostic API wrapper that provides d
 ### Basic Usage Pattern
 
 ```python
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Initialize with auto-detection
 client = OPNsenseClient(
@@ -123,7 +123,7 @@ All functions have async versions - no version-specific imports needed:
 
 ```python
 import asyncio
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Initialize client (outside async context)
 client = OPNsenseClient(..., auto_detect_version=True)
@@ -149,7 +149,7 @@ Error handling works with version-agnostic access - the client auto-loads the co
 
 ```python
 import httpx
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 client = OPNsenseClient(..., auto_detect_version=True)
 api = client.api
@@ -180,7 +180,7 @@ except Exception as e:
 Context managers work seamlessly with version-agnostic access:
 
 ```python
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Client automatically closes connections when exiting context
 with OPNsenseClient(
@@ -203,7 +203,7 @@ with OPNsenseClient(
 Multiple calls reuse the same authenticated connection automatically:
 
 ```python
-from opnsense_api import OPNsenseClient
+from opnsense_openapi import OPNsenseClient
 
 # Initialize once
 client = OPNsenseClient(..., auto_detect_version=True)
@@ -292,14 +292,14 @@ You can pre-generate clients for multiple versions:
 # Generate for 24.7
 opnsense-openapi generate 24.7
 uv run openapi-python-client generate \
-  --path src/opnsense_api/specs/opnsense-24.7.json \
-  --output-path src/opnsense_api/generated/v24_7
+  --path src/opnsense_openapi/specs/opnsense-24.7.json \
+  --output-path src/opnsense_openapi/generated/v24_7
 
 # Generate for 25.7.6
 opnsense-openapi generate 25.7.6
 uv run openapi-python-client generate \
-  --path src/opnsense_api/specs/opnsense-25.7.6.json \
-  --output-path src/opnsense_api/generated/v25_7_6
+  --path src/opnsense_openapi/specs/opnsense-25.7.6.json \
+  --output-path src/opnsense_openapi/generated/v25_7_6
 ```
 
 The client automatically selects the right one based on auto-detection!

@@ -2,9 +2,9 @@
 
 from typer.testing import CliRunner
 
-from opnsense_api import __version__
-from opnsense_api.cli import app
-from opnsense_api.parser import ApiController, ApiEndpoint
+from opnsense_openapi import __version__
+from opnsense_openapi.cli import app
+from opnsense_openapi.parser import ApiController, ApiEndpoint
 
 runner = CliRunner()
 
@@ -17,7 +17,7 @@ def test_download_command_success(tmp_path, monkeypatch):
         assert version == "24.1"
         return controllers_path
 
-    monkeypatch.setattr("opnsense_api.cli.SourceDownloader.download", fake_download)
+    monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
 
     result = runner.invoke(app, ["download", "24.1", "--dest", str(tmp_path)])
 
@@ -30,7 +30,7 @@ def test_download_command_failure(tmp_path, monkeypatch):
     def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
         raise RuntimeError("boom")
 
-    monkeypatch.setattr("opnsense_api.cli.SourceDownloader.download", fake_download)
+    monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
 
     result = runner.invoke(app, ["download", "24.1", "--dest", str(tmp_path)])
 
@@ -63,8 +63,8 @@ def test_generate_command_success(tmp_path, monkeypatch):
             )
         ]
 
-    monkeypatch.setattr("opnsense_api.cli.SourceDownloader.download", fake_download)
-    monkeypatch.setattr("opnsense_api.cli.ControllerParser.parse_directory", fake_parse_directory)
+    monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
+    monkeypatch.setattr("opnsense_openapi.cli.ControllerParser.parse_directory", fake_parse_directory)
 
     output_dir = tmp_path / "output"
     result = runner.invoke(app, ["generate", "24.7", "--output", str(output_dir)])
@@ -79,7 +79,7 @@ def test_generate_command_download_failure(tmp_path, monkeypatch):
     def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
         raise RuntimeError("download failed")
 
-    monkeypatch.setattr("opnsense_api.cli.SourceDownloader.download", fake_download)
+    monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
 
     result = runner.invoke(app, ["generate", "24.7", "--output", str(tmp_path)])
 
