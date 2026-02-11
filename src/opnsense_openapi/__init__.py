@@ -8,7 +8,7 @@ from opnsense_openapi.specs import (
     list_available_specs,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Backwards compatibility
 SPECS_DIR = get_specs_dir()
