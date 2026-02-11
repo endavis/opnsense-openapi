@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 import typer
-from flask import Response
 
 from . import __version__
 from .downloader import SourceDownloader
@@ -593,7 +592,7 @@ def serve_docs(
 
     # Import Flask dependencies (only when needed)
     try:
-        from flask import Flask, jsonify, make_response, redirect, request
+        from flask import Flask, Response, jsonify, make_response, redirect, request
         from flask_swagger_ui import get_swaggerui_blueprint  # type: ignore
     except ImportError:
         typer.secho(
