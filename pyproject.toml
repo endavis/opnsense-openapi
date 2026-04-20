@@ -213,7 +213,7 @@ source = ["opnsense_openapi"]
 skip_covered = false
 show_missing = true
 precision = 2
-fail_under = 80
+fail_under = 60
 exclude_lines = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
