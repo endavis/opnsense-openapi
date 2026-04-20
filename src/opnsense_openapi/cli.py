@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import os
 from pathlib import Path
 from typing import Annotated, Literal
@@ -314,7 +315,7 @@ def build_client(
 ) -> None:
     """Generate a Python client library from the OpenAPI spec using openapi-python-client."""
     import shutil
-    import subprocess
+    import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
 
     # Check if openapi-python-client is installed
     if not shutil.which("openapi-python-client"):
@@ -327,13 +328,10 @@ def build_client(
     # Determine version
     version_to_use = version
     if not version and not no_auto_detect:
-        # Try minimal client init just for detection
-        try:
+        # Best-effort auto-detect; fall through to manual-input requirement on any failure.
+        with contextlib.suppress(Exception):
             from .client import OPNsenseClient
 
-            # We don't strictly need credentials just to check version if endpoints are open,
-            # but usually they are protected. If we can't auto-detect, user must provide version.
-            # We'll try with env vars if available, else warn.
             client = OPNsenseClient(
                 base_url=os.getenv("OPNSENSE_URL", "https://opnsense.local"),
                 api_key=os.getenv("OPNSENSE_API_KEY", ""),
@@ -342,8 +340,6 @@ def build_client(
                 auto_detect_version=True,
             )
             version_to_use = client._detected_version
-        except Exception:
-            pass  # Fallback to manual input requirement
 
     if not version_to_use:
         typer.secho(
@@ -448,7 +444,7 @@ def setup(
     Use this when setting up a new OPNsense version for the first time.
     """
     import shutil
-    import subprocess
+    import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
 
     typer.echo("=" * 70)
     typer.echo(f"Setting up OPNsense {version}")

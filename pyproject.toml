@@ -137,7 +137,6 @@ ignore = []
 ]
 "src/opnsense_openapi/client/*.py" = [
     "ANN401",
-    "SIM105",
 ]
 "src/opnsense_openapi/openapi.py" = [
     "ANN401",
