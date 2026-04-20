@@ -104,7 +104,7 @@ def test_generate_success(mock_downloader, mock_parser, mock_generator):
     result = runner.invoke(app, ["generate", "25.7.6", "--output", "out"])
 
     assert result.exit_code == 0
-    assert "Generated output/spec.json" in result.stdout
+    assert f"Generated {Path('output/spec.json')}" in result.stdout
 
     # Check logic flow
     dl_instance.download.assert_called_once()

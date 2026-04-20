@@ -371,9 +371,9 @@ In rare cases, the OpenApi generator might misidentify an endpoint's HTTP method
 try:
     # Use the manual .post() method on the base client
     response = client.post(
-        "diagnostics", 
-        "interface", 
-        "CarpStatus", 
+        "diagnostics",
+        "interface",
+        "CarpStatus",
         json={"status": "enable"}
     )
     print("Success:", response)

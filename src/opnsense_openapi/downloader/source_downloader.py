@@ -2,7 +2,7 @@
 
 import logging
 import shutil
-import subprocess
+import subprocess  # nosec B404 - git CLI invoked with argv list; no shell=True
 from pathlib import Path
 
 from ..utils import validate_version

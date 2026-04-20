@@ -108,7 +108,7 @@ class APIWrapper:
             if "basePath" in self.api_spec:
                 self.base_api_path = self.api_spec["basePath"]
             # Try OpenAPI 3.0 servers array
-            elif "servers" in self.api_spec and self.api_spec["servers"]:
+            elif self.api_spec.get("servers"):
                 server_url = self.api_spec["servers"][0].get("url", "")
                 # Extract path portion from server URL (e.g., "https://{host}/api"
                 # -> "/api")
@@ -158,7 +158,7 @@ class APIWrapper:
             )
         operation: dict[str, Any] = path_item.get(method, {})
         if operation == {}:
-            available_methods: list[str] = [m.upper() for m in path_item.keys()]
+            available_methods: list[str] = [m.upper() for m in path_item]
             raise KeyError(
                 f"Method '{method.upper()}' not found for path: {api_path}. "
                 f"Available methods: {', '.join(available_methods)}"

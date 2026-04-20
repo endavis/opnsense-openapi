@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import shutil
-import subprocess
+import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urljoin
@@ -94,10 +95,8 @@ def _auto_generate_client(version: str) -> bool:
         return False
     finally:
         # Clean up temp config file
-        try:
+        with contextlib.suppress(Exception):
             os.unlink(config_path)
-        except Exception:
-            pass
 
 
 class OPNsenseClient:

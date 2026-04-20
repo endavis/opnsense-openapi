@@ -2,7 +2,7 @@
 
 import json
 import logging
-import xml.etree.ElementTree as ET  # noqa: N817
+import xml.etree.ElementTree as ET  # nosec B405 - parses local OPNsense source model XML files
 from pathlib import Path
 from typing import Any, cast
 
@@ -211,7 +211,7 @@ class OpenApiGenerator:
     def _parse_xml_model(self, xml_path: Path) -> dict[str, Any] | None:
         """Recursively parses OPNsense Model XML and resolves Enums."""
         try:
-            tree = ET.parse(xml_path)
+            tree = ET.parse(xml_path)  # nosec B314 - parses local OPNsense source model XML files
             root = tree.getroot()
             # Start parsing from the root's items
             items_node = root.find("items")
@@ -232,9 +232,9 @@ class OpenApiGenerator:
         properties = {}
         for elem in parent_node:
             field_name = elem.tag
-            # Skip comments or odd tags
+            # Skip comments or odd tags (ET yields non-str tags for comments/PIs)
             if not isinstance(field_name, str):
-                continue
+                continue  # type: ignore[unreachable]
 
             if "type" in elem.attrib:
                 field_type = elem.attrib["type"]
@@ -363,14 +363,14 @@ class OpenApiGenerator:
                 xml_path = self.models_dir / parts[0] / parts[1] / f"{parts[-1]}.xml"
 
             if xml_path.exists():
-                tree = ET.parse(xml_path)
+                tree = ET.parse(xml_path)  # nosec B314 - parses local OPNsense source model XML files
                 root = tree.getroot()
                 # Extract tag names (keys) or values depending on structure.
                 # Usually in OPNsense FieldTypes, the children tags are the keys.
                 return [child.tag for child in root]
 
         except Exception:
-            pass
+            return []
         return []
 
     def _create_search_schema(self, model_schema_name: str) -> None:

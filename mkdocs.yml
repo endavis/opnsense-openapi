@@ -1,0 +1,120 @@
+site_name: opnsense-openapi
+site_description: OpenAPI-based Python client for OPNsense with bundled specs
+site_author: Eric Davis
+site_url: https://endavis.github.io/opnsense-openapi
+
+repo_name: endavis/opnsense-openapi
+repo_url: https://github.com/endavis/opnsense-openapi
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            merge_init_into_class: true
+            show_root_heading: true
+            show_root_full_path: false
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Project:
+      - Architecture: ARCHITECTURE.md
+      - Generated Client Usage: GENERATED_CLIENT_USAGE.md
+      - Heuristics: HEURISTICS.md
+      - Publishing: PUBLISHING.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+  - Usage:
+      - Basics: usage/basics.md
+      - CLI Guide: usage/cli.md
+  - Development:
+      - Coding Standards: development/coding-standards.md
+      - CI/CD & Testing: development/ci-cd-testing.md
+      - GitHub Repository Settings: development/github-repository-settings.md
+      - Doit Tasks Reference: development/doit-tasks-reference.md
+      - install_tools Framework: development/install-tools-framework.md
+      - Tooling Roles: development/tooling-roles.md
+      - Extensions: development/extensions.md
+      - Release & Automation: development/release-and-automation.md
+      - AI:
+          - First 5 Minutes: development/ai/first-5-minutes.md
+          - Setup: development/AI_SETUP.md
+          - Slash Commands: development/ai/slash-commands.md
+          - Architectural Conventions: development/ai/architectural-conventions.md
+          - Enforcement Principles: development/ai/enforcement-principles.md
+          - Command Blocking: development/ai/command-blocking.md
+  - Deployment:
+      - Development: deployment/development.md
+      - Production: deployment/production.md
+  - Template:
+      - Overview: template/index.md
+      - Template Manager: template/manage.md
+      - New Project Setup: template/new-project.md
+      - Migration Guide: template/migration.md
+      - Keeping Up to Date: template/updates.md
+      - AI Sync Checklist: template/ai-sync-checklist.md
+      - Tools Reference: template/tools-reference.md
+      - Template Decisions:
+          - Overview: template/decisions/README.md
+  - Decisions:
+      - Overview: decisions/README.md
+  - Reference:
+      - API Reference: reference/api.md
+  - Examples:
+      - Overview: examples/README.md
+      - Add a Feature: examples/add-a-feature.md
+      - API Development: examples/api.md
+  - All Documents: TABLE_OF_CONTENTS.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/endavis
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/opnsense-openapi
