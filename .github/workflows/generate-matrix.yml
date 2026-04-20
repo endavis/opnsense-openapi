@@ -1,0 +1,47 @@
+name: Generate Matrix
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/opnsense_openapi/downloader/**"
+      - "src/opnsense_openapi/generator/**"
+      - "src/opnsense_openapi/parser/**"
+      - "src/opnsense_openapi/cli.py"
+      - ".github/workflows/generate-matrix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-matrix:
+    name: Test Generation (OPNsense ${{ matrix.opnsense-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        opnsense-version: ["24.7", "25.1", "25.7.6"]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Generate spec for ${{ matrix.opnsense-version }}
+        run: |
+          uv run opnsense-openapi download ${{ matrix.opnsense-version }}
+          uv run opnsense-openapi generate ${{ matrix.opnsense-version }}
+
+      - name: Verify spec validity
+        run: |
+          ls -l src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json
+          python -c "import json; json.load(open('src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json'))"

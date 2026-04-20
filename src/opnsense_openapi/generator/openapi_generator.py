@@ -2,7 +2,7 @@
 
 import json
 import logging
-import xml.etree.ElementTree as ET  # noqa: N817
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, cast
 
@@ -232,9 +232,9 @@ class OpenApiGenerator:
         properties = {}
         for elem in parent_node:
             field_name = elem.tag
-            # Skip comments or odd tags
+            # Skip comments or odd tags (ET yields non-str tags for comments/PIs)
             if not isinstance(field_name, str):
-                continue
+                continue  # type: ignore[unreachable]
 
             if "type" in elem.attrib:
                 field_type = elem.attrib["type"]

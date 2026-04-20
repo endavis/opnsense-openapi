@@ -3,4 +3,4 @@
 from .base import APIResponseError, OPNsenseClient
 from .generated_api import GeneratedAPI
 
-__all__ = ["APIResponseError", "OPNsenseClient", "GeneratedAPI"]
+__all__ = ["APIResponseError", "GeneratedAPI", "OPNsenseClient"]

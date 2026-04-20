@@ -19,49 +19,75 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # Virtual environments
 venv/
+.venv/
+.venv*/
 ENV/
 env/
-.venv
 
 # Testing
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 .tox/
 .hypothesis/
+.benchmarks/
 
-# Type checking
+# Type checking and linting
 .mypy_cache/
+.ruff_cache/
+.pytype/
+.pyre/
 .dmypy.json
 dmypy.json
 
-# Linting
-.ruff_cache/
-
 # IDEs
-.vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
+Thumbs.db
+
+# direnv
+.direnv/
+.envrc.local
+
+# Environment variables
+.env
+.env.*
+
+# Temporary files
+tmp/*
+!tmp/.gitkeep
+.cache/
+
+# Documentation
+site/
+
+# Build and packaging
+*.whl
+.uv-cache/
+**/_version.py
 
 # Project specific
-tmp/
 *.log
+.doit.db.db
+coverage.xml
+.nfs*
+.gemini/settings.json.orig
+tools/hooks/ai/hook-debug.jsonl
+out/
+
+# AI agent user-local settings (keep shared settings.json tracked)
+.claude/settings.local.json
 
 # Generated clients - keep directory structure but ignore version subdirectories
 src/opnsense_openapi/generated/v*/
 
-# OS
-.DS_Store
-Thumbs.db
-.nfs*
-
-# Claude
-.claude/
-
-# direnv local secrets
-.envrc.local
+# Template sync artifacts
+.template_commit

@@ -8,16 +8,19 @@ from opnsense_openapi.specs import (
     list_available_specs,
 )
 
-__version__ = "0.2.0"
+try:
+    from opnsense_openapi._version import __version__
+except ImportError:
+    __version__ = "0.0.0+unknown"
 
 # Backwards compatibility
 SPECS_DIR = get_specs_dir()
 
 __all__ = [
+    "SPECS_DIR",
     "OPNsenseClient",
     "find_best_matching_spec",
     "get_spec_path",
     "get_specs_dir",
     "list_available_specs",
-    "SPECS_DIR",
 ]

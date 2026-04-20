@@ -1,0 +1,1185 @@
+"""GitHub issue and PR creation doit tasks."""
+
+import json
+import os
+import re
+import subprocess  # nosec B404 - subprocess is required for doit tasks
+import sys
+import tempfile
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
+
+import yaml
+from doit.tools import title_with_actions
+from rich.console import Console
+from rich.panel import Panel
+
+from tools.doit.templates import get_issue_template, get_pr_template, get_required_sections
+
+if TYPE_CHECKING:
+    from rich.console import Console as ConsoleType
+
+DEFAULT_LABELS_FILE = ".github/labels.yml"
+DEFAULT_LABEL_COLOR = "ededed"
+
+
+def _get_editor() -> str:
+    """Get the user's preferred editor."""
+    return os.environ.get("EDITOR", os.environ.get("VISUAL", "vi"))
+
+
+def _open_editor_with_template(template: str, suffix: str = ".md") -> str | None:
+    """Open editor with template and return the edited content.
+
+    Args:
+        template: The template content to start with
+        suffix: File suffix for the temp file
+
+    Returns:
+        The edited content (without comment lines), or None if aborted/unchanged
+    """
+    console = Console()
+    editor = _get_editor()
+
+    # Create temp file with template
+    with tempfile.NamedTemporaryFile(mode="w", suffix=suffix, delete=False) as f:
+        f.write(template)
+        temp_path = f.name
+
+    try:
+        # Open editor
+        console.print(f"[dim]Opening {editor}...[/dim]")
+        result = subprocess.run([editor, temp_path])
+
+        if result.returncode != 0:
+            console.print("[red]Editor exited with error.[/red]")
+            return None
+
+        # Read the edited content
+        with open(temp_path) as f:
+            content = f.read()
+
+        # Remove comment lines (starting with #) and HTML comments
+        lines = []
+        for line in content.split("\n"):
+            stripped = line.strip()
+            if stripped.startswith("#") and not stripped.startswith("##"):
+                continue  # Skip comment lines but keep ## headers
+            lines.append(line)
+
+        edited = "\n".join(lines)
+
+        # Remove HTML comments <!-- ... -->
+        edited = re.sub(r"<!--.*?-->", "", edited, flags=re.DOTALL)
+
+        # Clean up extra blank lines
+        edited = re.sub(r"\n{3,}", "\n\n", edited).strip()
+
+        return edited
+
+    finally:
+        # Clean up temp file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+
+def _parse_markdown_sections(content: str) -> dict[str, str]:
+    """Parse markdown content into sections by ## headers.
+
+    Args:
+        content: Markdown content with ## headers
+
+    Returns:
+        Dict mapping section names to their content
+    """
+    sections: dict[str, str] = {}
+    current_section = ""
+    current_content: list[str] = []
+
+    for line in content.split("\n"):
+        if line.startswith("## "):
+            # Save previous section
+            if current_section:
+                sections[current_section] = "\n".join(current_content).strip()
+            # Start new section
+            current_section = line[3:].strip()
+            current_content = []
+        else:
+            current_content.append(line)
+
+    # Save last section
+    if current_section:
+        sections[current_section] = "\n".join(current_content).strip()
+
+    return sections
+
+
+def _validate_issue_content(
+    sections: dict[str, str], issue_type: str, console: "ConsoleType"
+) -> bool:
+    """Validate that required sections have content.
+
+    Args:
+        sections: Parsed markdown sections
+        issue_type: Type of issue (feature, bug, refactor, doc, chore)
+        console: Rich console for output
+
+    Returns:
+        True if valid, False otherwise
+    """
+    # Get required sections dynamically from templates
+    required_sections = get_required_sections(issue_type)
+
+    missing = []
+    placeholder_patterns = [
+        "describe the",
+        "clear description",
+        "paste error",
+        "any other relevant",
+        "delete section if not needed",
+    ]
+
+    for section_name in required_sections:
+        content = sections.get(section_name, "").strip()
+        if not content:
+            missing.append(section_name)
+            continue
+
+        # Check for placeholder text
+        content_lower = content.lower()
+        for pattern in placeholder_patterns:
+            if pattern in content_lower:
+                console.print(
+                    f"[yellow]Warning: '{section_name}' may contain placeholder text.[/yellow]"
+                )
+                break
+
+    if missing:
+        console.print(f"[red]Missing required sections: {', '.join(missing)}[/red]")
+        return False
+
+    return True
+
+
+def _read_body_file(file_path: str, console: "ConsoleType") -> str | None:
+    """Read body content from a file.
+
+    Args:
+        file_path: Path to the file
+        console: Rich console for output
+
+    Returns:
+        File content, or None if error
+    """
+    from pathlib import Path
+
+    path = Path(file_path)
+    if not path.exists():
+        console.print(f"[red]File not found: {file_path}[/red]")
+        return None
+
+    try:
+        return path.read_text()
+    except Exception as e:
+        console.print(f"[red]Error reading file: {e}[/red]")
+        return None
+
+
+def task_issue() -> dict[str, Any]:
+    """Create issue from .github/ISSUE_TEMPLATE/<type>.yml (feature/bug/refactor/doc/chore).
+
+    Labels are automatically applied based on the issue type.
+
+    Three modes:
+    1. Interactive (default): Opens $EDITOR with template
+    2. --body-file: Reads body from a file
+    3. --title + --body: Provides content directly (for AI/scripts)
+
+    Examples:
+        Interactive:  doit issue --type=feature
+        From file:    doit issue --type=doc --title="Add guide" --body-file=issue.md
+        Direct:       doit issue --type=chore --title="Update CI" --body="## Description\\n..."
+    """
+
+    def create_issue(
+        type: str,
+        title: str | None = None,
+        body: str | None = None,
+        body_file: str | None = None,
+    ) -> None:
+        console = Console()
+        console.print()
+        console.print(
+            Panel.fit(
+                f"[bold cyan]Creating {type} Issue[/bold cyan]",
+                border_style="cyan",
+            )
+        )
+        console.print()
+
+        # Get template (validates type and retrieves labels/template dynamically)
+        try:
+            issue_template = get_issue_template(type)
+        except ValueError as e:
+            console.print(f"[red]{e}[/red]")
+            sys.exit(1)
+        except FileNotFoundError as e:
+            console.print(f"[red]Template error: {e}[/red]")
+            sys.exit(1)
+
+        labels = issue_template.labels
+
+        # Determine body content
+        if body_file:
+            # Mode 2: Read from file
+            body_content = _read_body_file(body_file, console)
+            if body_content is None:
+                sys.exit(1)
+        elif body:
+            # Mode 3: Direct body provided
+            body_content = body
+        else:
+            # Mode 1: Interactive editor
+            console.print(
+                f"[dim]Opening editor with {type} template. "
+                "Fill in the sections, save, and exit.[/dim]"
+            )
+            body_content = _open_editor_with_template(issue_template.editor_template)
+            if body_content is None:
+                console.print("[yellow]Aborted.[/yellow]")
+                sys.exit(0)
+
+        # Parse and validate
+        sections = _parse_markdown_sections(body_content)
+        if not _validate_issue_content(sections, type, console):
+            console.print("[red]Issue content validation failed.[/red]")
+            console.print()
+            console.print(f"[yellow]See template: .github/ISSUE_TEMPLATE/{type}.yml[/yellow]")
+            sys.exit(1)
+
+        # Get title if not provided
+        if not title:
+            console.print("[cyan]Issue title:[/cyan]")
+            title = input("> ").strip()
+            if not title:
+                console.print("[red]Title is required.[/red]")
+                sys.exit(1)
+
+        # Create the issue
+        console.print("\n[cyan]Creating issue...[/cyan]")
+        try:
+            result = subprocess.run(
+                [
+                    "gh",
+                    "issue",
+                    "create",
+                    "--title",
+                    title,
+                    "--body",
+                    body_content,
+                    "--label",
+                    labels,
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            issue_url = result.stdout.strip()
+            console.print()
+            console.print(
+                Panel.fit(
+                    f"[bold green]Issue created successfully![/bold green]\n\n{issue_url}",
+                    border_style="green",
+                )
+            )
+        except subprocess.CalledProcessError as e:
+            console.print("[red]Failed to create issue:[/red]")
+            console.print(f"[red]{e.stderr}[/red]")
+            sys.exit(1)
+
+    return {
+        "actions": [create_issue],
+        "params": [
+            {
+                "name": "type",
+                "short": "t",
+                "long": "type",
+                "default": "feature",
+                "help": "Issue type: feature, bug, refactor, doc, chore",
+            },
+            {"name": "title", "long": "title", "default": None, "help": "Issue title"},
+            {"name": "body", "long": "body", "default": None, "help": "Issue body (markdown)"},
+            {
+                "name": "body_file",
+                "long": "body-file",
+                "default": None,
+                "help": "Read body from file",
+            },
+        ],
+        "title": title_with_actions,
+    }
+
+
+def task_pr() -> dict[str, Any]:
+    """Create PR from .github/pull_request_template.md (auto-detects branch and linked issue).
+
+    Three modes:
+    1. Interactive (default): Opens $EDITOR with template
+    2. --body-file: Reads body from a file
+    3. --title + --body: Provides content directly (for AI/scripts)
+
+    Before creating the PR, the task verifies that the current branch is up
+    to date with ``origin/main`` and aborts with a remediation message if
+    it is behind. Pass ``--no-update-check`` to skip this guard.
+
+    If the current branch has no upstream, the task pushes it to ``origin``
+    automatically before calling ``gh pr create``. Pass ``--no-push`` to
+    skip the auto-push (the task will then abort if no upstream exists).
+
+    Examples:
+        Interactive:  doit pr
+        From file:    doit pr --title="feat: add export" --body-file=pr.md
+        Direct:       doit pr --title="feat: add export" --body="## Description\\n..."
+        Skip check:   doit pr --no-update-check
+        No auto-push: doit pr --no-push
+    """
+
+    def create_pr(
+        title: str | None = None,
+        body: str | None = None,
+        body_file: str | None = None,
+        draft: bool = False,
+        no_update_check: bool = False,
+        no_push: bool = False,
+    ) -> None:
+        console = Console()
+        console.print()
+        console.print(
+            Panel.fit("[bold cyan]Creating Pull Request[/bold cyan]", border_style="cyan")
+        )
+        console.print()
+
+        # Check we're not on main
+        current_branch = subprocess.run(
+            ["git", "branch", "--show-current"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+
+        if current_branch == "main":
+            console.print("[red]Cannot create PR from main branch.[/red]")
+            console.print("[yellow]Create a feature branch first.[/yellow]")
+            sys.exit(1)
+
+        console.print(f"[dim]Current branch: {current_branch}[/dim]")
+
+        if no_update_check:
+            console.print("[dim]Skipping up-to-date check (--no-update-check).[/dim]")
+        else:
+            _check_branch_up_to_date(current_branch, console)
+
+        _ensure_branch_pushed(current_branch, console, no_push)
+
+        # Try to extract issue number from branch name (e.g., feat/42-description)
+        detected_issue = None
+        branch_issue_match = re.search(r"/(\d+)-", current_branch)
+        if branch_issue_match:
+            detected_issue = branch_issue_match.group(1)
+            console.print(f"[dim]Detected issue from branch: #{detected_issue}[/dim]")
+
+        # Determine body content
+        if body_file:
+            # Mode 2: Read from file
+            body_content = _read_body_file(body_file, console)
+            if body_content is None:
+                sys.exit(1)
+        elif body:
+            # Mode 3: Direct body provided
+            body_content = body
+        else:
+            # Mode 1: Interactive editor
+            # Get PR template dynamically from .github/
+            try:
+                template = get_pr_template()
+            except FileNotFoundError as e:
+                console.print(f"[red]Template error: {e}[/red]")
+                sys.exit(1)
+
+            # Pre-fill issue number if detected
+            if detected_issue:
+                template = template.replace("#(issue)", f"#{detected_issue}")
+
+            console.print(
+                "[dim]Opening editor with PR template. Fill in the sections, save, and exit.[/dim]"
+            )
+            body_content = _open_editor_with_template(template)
+            if body_content is None:
+                console.print("[yellow]Aborted.[/yellow]")
+                sys.exit(0)
+
+        # Validate PR has description
+        sections = _parse_markdown_sections(body_content)
+        description = sections.get("Description", "").strip()
+        if not description:
+            console.print("[red]Description is required.[/red]")
+            console.print()
+            console.print("[yellow]See template: .github/pull_request_template.md[/yellow]")
+            sys.exit(1)
+
+        # Get title if not provided
+        if not title:
+            console.print("[cyan]PR title (e.g., 'feat: add export feature'):[/cyan]")
+            title = input("> ").strip()
+            if not title:
+                console.print("[red]Title is required.[/red]")
+                sys.exit(1)
+
+        # Create the PR
+        console.print("\n[cyan]Creating PR...[/cyan]")
+        cmd = ["gh", "pr", "create", "--title", title, "--body", body_content]
+        if draft:
+            cmd.append("--draft")
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            pr_url = result.stdout.strip()
+            console.print()
+            console.print(
+                Panel.fit(
+                    f"[bold green]PR created successfully![/bold green]\n\n{pr_url}",
+                    border_style="green",
+                )
+            )
+        except subprocess.CalledProcessError as e:
+            console.print("[red]Failed to create PR:[/red]")
+            console.print(f"[red]{e.stderr}[/red]")
+            sys.exit(1)
+
+    return {
+        "actions": [create_pr],
+        "params": [
+            {"name": "title", "long": "title", "default": None, "help": "PR title"},
+            {"name": "body", "long": "body", "default": None, "help": "PR body (markdown)"},
+            {
+                "name": "body_file",
+                "long": "body-file",
+                "default": None,
+                "help": "Read body from file",
+            },
+            {
+                "name": "draft",
+                "long": "draft",
+                "type": bool,
+                "default": False,
+                "help": "Create as draft PR",
+            },
+            {
+                "name": "no_update_check",
+                "long": "no-update-check",
+                "type": bool,
+                "default": False,
+                "help": "Skip check that branch is up to date with origin/main",
+            },
+            {
+                "name": "no_push",
+                "long": "no-push",
+                "type": bool,
+                "default": False,
+                "help": "Do not auto-push a branch with no upstream (aborts instead)",
+            },
+        ],
+        "title": title_with_actions,
+    }
+
+
+def _get_pr_info(pr_number: str | None, console: "ConsoleType") -> dict[str, Any] | None:
+    """Get PR information from GitHub API.
+
+    Args:
+        pr_number: PR number, or None to use current branch's PR
+        console: Rich console for output
+
+    Returns:
+        Dict with PR info, or None if not found
+    """
+    import json
+
+    cmd = ["gh", "pr", "view", "--json", "number,title,body,state"]
+    if pr_number:
+        cmd.append(pr_number)
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        data: dict[str, Any] = json.loads(result.stdout)
+        return data
+    except subprocess.CalledProcessError as e:
+        if "no pull requests found" in e.stderr.lower():
+            console.print("[red]No PR found for current branch.[/red]")
+        else:
+            console.print(f"[red]Failed to get PR info: {e.stderr}[/red]")
+        return None
+
+
+def _extract_linked_issues(body: str) -> list[str]:
+    """Extract linked issue numbers from PR body.
+
+    Looks for patterns like:
+    - Addresses #123
+
+    Args:
+        body: PR body text
+
+    Returns:
+        List of issue numbers referenced with "Addresses"
+    """
+    seen: set[str] = set()
+    result: list[str] = []
+
+    pattern = r"addresses\s+#(\d+)"
+    for match in re.finditer(pattern, body, re.IGNORECASE):
+        issue = match.group(1)
+        if issue not in seen:
+            seen.add(issue)
+            result.append(issue)
+
+    return result
+
+
+def _format_merge_subject(title: str, pr_number: int, issues: list[str]) -> str:
+    """Format the merge commit subject line.
+
+    Args:
+        title: PR title (should be in conventional commit format)
+        pr_number: PR number
+        issues: List of issue numbers referenced with "Addresses"
+
+    Returns:
+        Formatted subject: "<type>: <subject> (merges PR #XX, addresses #YY)"
+    """
+    # Build the suffix parts
+    parts = [f"merges PR #{pr_number}"]
+
+    if issues:
+        issue_refs = ", ".join(f"#{i}" for i in issues)
+        parts.append(f"addresses {issue_refs}")
+
+    suffix = f"({', '.join(parts)})"
+    return f"{title} {suffix}"
+
+
+def _close_linked_issues(issues: list[str], pr_number: int, console: Console) -> None:
+    """Close each linked issue via `gh issue close` with a standard comment.
+
+    On per-issue failure, prints a yellow warning and continues. Does not
+    raise — the merge has already succeeded, partial failure is reported
+    but not fatal.
+
+    Args:
+        issues: List of issue numbers to close.
+        pr_number: PR number used in the close comment.
+        console: Rich console for output.
+    """
+    if not issues:
+        console.print("[dim]No linked issues to close.[/dim]")
+        return
+
+    comment = f"Addressed in PR #{pr_number}"
+    for issue in issues:
+        try:
+            subprocess.run(
+                ["gh", "issue", "close", issue, "--comment", comment],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            console.print(f"[green]Closed issue #{issue}[/green]")
+        except subprocess.CalledProcessError as e:
+            stderr = (e.stderr or "").strip()
+            console.print(f"[yellow]Failed to close #{issue}: {stderr}[/yellow]")
+
+
+def _check_branch_up_to_date(current_branch: str, console: Console) -> None:
+    """Abort PR creation if the current branch is behind ``origin/main``.
+
+    Fetches ``origin/main`` and compares it to ``HEAD``. If the branch is
+    behind, prints the count, the missing commits, and the rebase command
+    to run, then calls ``sys.exit(1)``. If the fetch itself fails (network
+    down, unreachable remote), prints a warning and returns — a flaky
+    network should not block PR creation.
+
+    Args:
+        current_branch: Name of the feature branch (used in remediation message).
+        console: Rich console for output.
+    """
+    try:
+        subprocess.run(
+            ["git", "fetch", "origin", "main"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        stderr = (e.stderr or "").strip()
+        console.print(f"[yellow]Warning: `git fetch origin main` failed: {stderr}[/yellow]")
+        console.print("[yellow]Skipping up-to-date check; proceeding.[/yellow]")
+        return
+
+    count_result = subprocess.run(
+        ["git", "rev-list", "--count", "HEAD..origin/main"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    behind = int(count_result.stdout.strip() or "0")
+
+    if behind == 0:
+        console.print("[green]Branch is up to date with origin/main.[/green]")
+        return
+
+    log_result = subprocess.run(
+        ["git", "log", "--oneline", "-n", "10", "HEAD..origin/main"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    console.print()
+    console.print(f"[red]Branch is {behind} commit(s) behind origin/main.[/red]")
+    console.print("[dim]Missing commits:[/dim]")
+    for line in log_result.stdout.strip().splitlines():
+        console.print(f"  {line}")
+    console.print()
+    console.print("[yellow]Rebase and force-push, then re-run `doit pr`:[/yellow]")
+    console.print(
+        f"  git rebase origin/main && git push --force-with-lease origin {current_branch}"
+    )
+    console.print()
+    console.print("[dim]Use `doit pr --no-update-check` to skip this check.[/dim]")
+    sys.exit(1)
+
+
+def _ensure_branch_pushed(current_branch: str, console: Console, no_push: bool) -> None:
+    """Ensure the current branch has an upstream on ``origin``.
+
+    If the branch already has an upstream, returns silently. Otherwise,
+    runs ``git push -u origin <branch>`` to create it. On push failure,
+    calls ``sys.exit(1)``.
+
+    When ``no_push`` is True and the branch has no upstream, aborts with
+    ``sys.exit(1)`` without attempting to push.
+
+    Args:
+        current_branch: Name of the branch to push.
+        console: Rich console for output.
+        no_push: If True, never push; abort if upstream is missing.
+    """
+    try:
+        subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return
+    except subprocess.CalledProcessError:
+        pass
+
+    if no_push:
+        console.print(
+            f"[red]Branch '{current_branch}' has no upstream and --no-push was passed.[/red]"
+        )
+        console.print(f"[yellow]Push manually: git push -u origin {current_branch}[/yellow]")
+        sys.exit(1)
+
+    console.print(f"[dim]Pushing {current_branch} to origin...[/dim]")
+    try:
+        subprocess.run(
+            ["git", "push", "-u", "origin", current_branch],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        stderr = (e.stderr or "").strip()
+        console.print(f"[red]Failed to push {current_branch}:[/red]")
+        console.print(f"[red]{stderr}[/red]")
+        sys.exit(1)
+
+    console.print(f"[dim]Pushed {current_branch} to origin.[/dim]")
+
+
+def task_pr_merge() -> dict[str, Any]:
+    """Merge a PR with properly formatted commit message.
+
+    This task enforces the merge commit format:
+        <type>: <subject> (merges PR #XX, addresses #YY)
+
+    Uses squash merge with a custom subject line to ensure consistent
+    commit history that matches the documented format.
+
+    Examples:
+        doit pr_merge                    # Merge PR for current branch
+        doit pr_merge --pr=123           # Merge specific PR
+        doit pr_merge --delete-branch    # Also delete the branch after merge
+        doit pr_merge --pr=123 --auto-close  # Close linked issues after merge
+    """
+
+    def merge_pr(
+        pr: str | None = None,
+        delete_branch: bool = True,
+        auto_close: bool = False,
+    ) -> None:
+        console = Console()
+        console.print()
+        console.print(Panel.fit("[bold cyan]Merging Pull Request[/bold cyan]", border_style="cyan"))
+        console.print()
+
+        # Get PR info
+        pr_info = _get_pr_info(pr, console)
+        if not pr_info:
+            sys.exit(1)
+
+        pr_number = pr_info["number"]
+        pr_title = pr_info["title"]
+        pr_body = pr_info.get("body", "") or ""
+        pr_state = pr_info.get("state", "")
+
+        console.print(f"[dim]PR #{pr_number}: {pr_title}[/dim]")
+
+        # Check PR state
+        if pr_state.upper() != "OPEN":
+            console.print(f"[red]PR is not open (state: {pr_state}).[/red]")
+            sys.exit(1)
+
+        # Validate PR title format
+        title_pattern = re.compile(r"^(feat|fix|refactor|docs|test|chore|ci|perf)(\(.+\))?:\s.+")
+        if not title_pattern.match(pr_title):
+            console.print("[red]PR title does not follow conventional commit format.[/red]")
+            console.print("[yellow]Expected: <type>: <subject>[/yellow]")
+            console.print("[yellow]Example: feat: add user authentication[/yellow]")
+            sys.exit(1)
+
+        # Extract linked issues
+        issues = _extract_linked_issues(pr_body)
+        if issues:
+            console.print(f"[dim]Linked issues: {', '.join(f'#{i}' for i in issues)}[/dim]")
+        else:
+            console.print("[yellow]Warning: No linked issues found in PR body.[/yellow]")
+
+        # Format merge subject
+        merge_subject = _format_merge_subject(pr_title, pr_number, issues)
+        console.print("\n[cyan]Merge commit subject:[/cyan]")
+        console.print(f"  [bold]{merge_subject}[/bold]")
+
+        # Build merge command
+        cmd = [
+            "gh",
+            "pr",
+            "merge",
+            str(pr_number),
+            "--squash",
+            "--subject",
+            merge_subject,
+        ]
+        if delete_branch:
+            cmd.append("--delete-branch")
+
+        # Execute merge
+        console.print("\n[cyan]Merging...[/cyan]")
+        try:
+            subprocess.run(cmd, check=True)
+            console.print()
+            console.print(
+                Panel.fit(
+                    f"[bold green]PR #{pr_number} merged successfully![/bold green]\n\n"
+                    f"Commit: {merge_subject}",
+                    border_style="green",
+                )
+            )
+
+            if auto_close:
+                console.print()
+                _close_linked_issues(issues, pr_number, console)
+            else:
+                # Reminder to update linked issues
+                console.print()
+                console.print(
+                    Panel.fit(
+                        "[bold yellow]Reminder: Update linked issues[/bold yellow]\n\n"
+                        "Examples:\n"
+                        f'  gh issue close <number> --comment "Addressed in PR #{pr_number}"\n'
+                        f'  gh issue comment <number> --body "Addressed in PR #{pr_number}"',
+                        border_style="yellow",
+                    )
+                )
+        except subprocess.CalledProcessError as e:
+            console.print("[red]Failed to merge PR.[/red]")
+            if e.stderr:
+                console.print(f"[red]{e.stderr}[/red]")
+            sys.exit(1)
+
+    return {
+        "actions": [merge_pr],
+        "params": [
+            {
+                "name": "pr",
+                "long": "pr",
+                "default": None,
+                "help": "PR number to merge (default: PR for current branch)",
+            },
+            {
+                "name": "delete_branch",
+                "long": "delete-branch",
+                "type": bool,
+                "default": True,
+                "help": "Delete branch after merge (default: True)",
+            },
+            {
+                "name": "auto_close",
+                "long": "auto-close",
+                "type": bool,
+                "default": False,
+                "help": "Close linked issues after merge with a standard comment",
+            },
+        ],
+        "title": title_with_actions,
+    }
+
+
+def _load_labels_file(path: Path, console: Console) -> list[dict[str, str]]:
+    """Parse a YAML labels file into a list of normalized label dicts.
+
+    Each entry must be a mapping with a required ``name`` field. ``color``
+    defaults to :data:`DEFAULT_LABEL_COLOR` and ``description`` defaults to
+    an empty string. Extra fields are ignored. Malformed entries cause
+    ``sys.exit(1)`` with a message naming the offending index.
+
+    Args:
+        path: Path to the labels YAML file.
+        console: Rich console for error output.
+
+    Returns:
+        List of ``{"name": str, "color": str, "description": str}`` dicts.
+    """
+    if not path.exists():
+        console.print(f"[red]Labels file not found: {path}[/red]")
+        sys.exit(1)
+
+    try:
+        raw = yaml.safe_load(path.read_text())
+    except yaml.YAMLError as e:
+        console.print(f"[red]Failed to parse {path}: {e}[/red]")
+        sys.exit(1)
+
+    if raw is None:
+        return []
+
+    if not isinstance(raw, list):
+        console.print(f"[red]Labels file must be a YAML list, got {type(raw).__name__}.[/red]")
+        sys.exit(1)
+
+    labels: list[dict[str, str]] = []
+    for index, entry in enumerate(raw):
+        if not isinstance(entry, dict):
+            console.print(
+                f"[red]Labels file entry #{index} must be a mapping, "
+                f"got {type(entry).__name__}.[/red]"
+            )
+            sys.exit(1)
+
+        name = entry.get("name")
+        if not isinstance(name, str) or not name.strip():
+            console.print(
+                f"[red]Labels file entry #{index} is missing a 'name' field "
+                f"(entry: {entry!r}).[/red]"
+            )
+            sys.exit(1)
+
+        color_raw = entry.get("color", DEFAULT_LABEL_COLOR)
+        if not isinstance(color_raw, str):
+            console.print(
+                f"[red]Labels file entry '{name}' has a non-string 'color' "
+                f"(got {type(color_raw).__name__}).[/red]"
+            )
+            sys.exit(1)
+
+        description = entry.get("description", "")
+        if description is None:
+            description = ""
+        if not isinstance(description, str):
+            console.print(
+                f"[red]Labels file entry '{name}' has a non-string 'description' "
+                f"(got {type(description).__name__}).[/red]"
+            )
+            sys.exit(1)
+
+        labels.append(
+            {
+                "name": name.strip(),
+                "color": color_raw.strip().lstrip("#").lower(),
+                "description": description,
+            }
+        )
+
+    return labels
+
+
+def _fetch_github_labels(console: Console) -> dict[str, dict[str, str]]:
+    """Fetch the current label set from GitHub via ``gh label list``.
+
+    Parses the returned JSON into a ``{name: {color, description}}`` map
+    with colors lowercased for case-insensitive comparison.
+
+    Args:
+        console: Rich console for error output.
+
+    Returns:
+        Dict keyed by label name.
+    """
+    try:
+        result = subprocess.run(
+            ["gh", "label", "list", "--limit", "200", "--json", "name,color,description"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        stderr = (e.stderr or "").strip()
+        console.print("[red]Failed to fetch labels from GitHub:[/red]")
+        console.print(f"[red]{stderr}[/red]")
+        sys.exit(1)
+
+    try:
+        data = json.loads(result.stdout or "[]")
+    except json.JSONDecodeError as e:
+        console.print(f"[red]Could not parse `gh label list` output: {e}[/red]")
+        sys.exit(1)
+
+    if not isinstance(data, list):
+        console.print("[red]Unexpected `gh label list` output (not a list).[/red]")
+        sys.exit(1)
+
+    labels: dict[str, dict[str, str]] = {}
+    for entry in data:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("name")
+        if not isinstance(name, str):
+            continue
+        color = entry.get("color", "") or ""
+        description = entry.get("description", "") or ""
+        labels[name] = {
+            "name": name,
+            "color": str(color).lower(),
+            "description": str(description),
+        }
+    return labels
+
+
+def _reconcile_labels(
+    desired: list[dict[str, str]],
+    current: dict[str, dict[str, str]],
+    *,
+    prune: bool,
+    dry_run: bool,
+    console: Console,
+) -> dict[str, int]:
+    """Reconcile desired labels with the current GitHub state.
+
+    Performs create/edit/delete operations (or prints the planned actions
+    in ``dry_run`` mode). Colors are compared case-insensitively.
+
+    Args:
+        desired: Normalized list of labels from the YAML file.
+        current: Map of current GitHub labels keyed by name.
+        prune: If True, delete labels present on GitHub but absent from the file.
+        dry_run: If True, print planned actions and make no mutating API calls.
+        console: Rich console for output.
+
+    Returns:
+        Dict of counters: ``created``, ``updated``, ``unchanged``, ``deleted``, ``skipped``.
+    """
+    counters = {"created": 0, "updated": 0, "unchanged": 0, "deleted": 0, "skipped": 0}
+    desired_names = {entry["name"] for entry in desired}
+
+    for entry in desired:
+        name = entry["name"]
+        color = entry["color"]
+        description = entry["description"]
+        existing = current.get(name)
+
+        if existing is None:
+            prefix = "would create" if dry_run else "created"
+            console.print(f"[green]+ {prefix}[/green] {name} (color={color})")
+            counters["created"] += 1
+            if not dry_run:
+                _run_label_cmd(
+                    [
+                        "gh",
+                        "label",
+                        "create",
+                        name,
+                        "--color",
+                        color,
+                        "--description",
+                        description,
+                    ],
+                    console,
+                )
+            continue
+
+        if existing["color"] == color and existing["description"] == description:
+            console.print(f"[dim]= no change[/dim] {name}")
+            counters["unchanged"] += 1
+            continue
+
+        prefix = "would update" if dry_run else "updated"
+        console.print(f"[yellow]~ {prefix}[/yellow] {name} (color={color})")
+        counters["updated"] += 1
+        if not dry_run:
+            _run_label_cmd(
+                [
+                    "gh",
+                    "label",
+                    "edit",
+                    name,
+                    "--color",
+                    color,
+                    "--description",
+                    description,
+                ],
+                console,
+            )
+
+    extras = sorted(set(current) - desired_names)
+    for name in extras:
+        if prune:
+            prefix = "would delete" if dry_run else "deleted"
+            console.print(f"[red]- {prefix}[/red] {name}")
+            counters["deleted"] += 1
+            if not dry_run:
+                _run_label_cmd(["gh", "label", "delete", name, "--yes"], console)
+        else:
+            console.print(f"[dim]? skipped[/dim] {name} (not in file; use --prune to delete)")
+            counters["skipped"] += 1
+
+    return counters
+
+
+def _run_label_cmd(cmd: list[str], console: Console) -> None:
+    """Invoke a ``gh label`` subcommand and abort on failure.
+
+    Args:
+        cmd: Full command argument list.
+        console: Rich console for error output.
+    """
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        stderr = (e.stderr or "").strip()
+        console.print(f"[red]Command failed: {' '.join(cmd)}[/red]")
+        console.print(f"[red]{stderr}[/red]")
+        sys.exit(1)
+
+
+def task_labels_sync() -> dict[str, Any]:
+    """Sync GitHub labels with ``.github/labels.yml`` (idempotent).
+
+    Reads the labels file and reconciles the repository's GitHub labels:
+
+    - Missing labels are created.
+    - Labels whose color or description differ are updated.
+    - Labels present on GitHub but absent from the file are left alone
+      unless ``--prune`` is passed (then they are deleted).
+
+    Color comparison is case-insensitive.
+
+    Examples:
+        doit labels_sync                        # Reconcile, do not prune.
+        doit labels_sync --dry-run              # Preview changes only.
+        doit labels_sync --prune                # Also delete extra labels.
+        doit labels_sync --file=custom/labels.yml
+    """
+
+    def sync_labels(
+        dry_run: bool = False,
+        prune: bool = False,
+        file: str = DEFAULT_LABELS_FILE,
+    ) -> None:
+        console = Console()
+        console.print()
+        mode = "(dry run)" if dry_run else ""
+        console.print(
+            Panel.fit(
+                f"[bold cyan]Syncing GitHub Labels[/bold cyan] {mode}".rstrip(),
+                border_style="cyan",
+            )
+        )
+        console.print()
+
+        try:
+            desired = _load_labels_file(Path(file), console)
+            if not desired:
+                console.print(f"[yellow]No labels defined in {file}; nothing to sync.[/yellow]")
+                return
+
+            console.print(f"[dim]Loaded {len(desired)} label(s) from {file}[/dim]")
+            current = _fetch_github_labels(console)
+            console.print(f"[dim]Fetched {len(current)} label(s) from GitHub[/dim]")
+            console.print()
+
+            counters = _reconcile_labels(
+                desired,
+                current,
+                prune=prune,
+                dry_run=dry_run,
+                console=console,
+            )
+
+            console.print()
+            summary = (
+                f"{counters['created']} created, "
+                f"{counters['updated']} updated, "
+                f"{counters['unchanged']} unchanged, "
+                f"{counters['deleted']} deleted, "
+                f"{counters['skipped']} skipped"
+            )
+            console.print(
+                Panel.fit(
+                    f"[bold green]Label sync complete[/bold green]\n\n{summary}",
+                    border_style="green",
+                )
+            )
+        except SystemExit:
+            raise
+        except Exception as e:  # pragma: no cover - defensive catch-all
+            console.print(f"[red]Unexpected error during label sync: {e}[/red]")
+            sys.exit(1)
+
+    return {
+        "actions": [sync_labels],
+        "params": [
+            {
+                "name": "dry_run",
+                "long": "dry-run",
+                "type": bool,
+                "default": False,
+                "help": "Print planned changes without calling gh label create/edit/delete",
+            },
+            {
+                "name": "prune",
+                "long": "prune",
+                "type": bool,
+                "default": False,
+                "help": "Delete labels present on GitHub but absent from the file",
+            },
+            {
+                "name": "file",
+                "long": "file",
+                "default": DEFAULT_LABELS_FILE,
+                "help": f"Path to labels YAML file (default: {DEFAULT_LABELS_FILE})",
+            },
+        ],
+        "title": title_with_actions,
+    }

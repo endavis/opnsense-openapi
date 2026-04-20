@@ -592,7 +592,7 @@ def serve_docs(
 
     # Import Flask dependencies (only when needed)
     try:
-        from flask import (  # type: ignore[import-not-found]
+        from flask import (
             Flask,
             Response,
             jsonify,
@@ -600,7 +600,7 @@ def serve_docs(
             redirect,
             request,
         )
-        from flask_swagger_ui import get_swaggerui_blueprint  # type: ignore
+        from flask_swagger_ui import get_swaggerui_blueprint
     except ImportError:
         typer.secho(
             "Error: Flask dependencies not installed.",

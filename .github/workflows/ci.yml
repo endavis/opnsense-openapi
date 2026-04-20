@@ -1,73 +1,203 @@
 name: CI
 
 on:
-  push:
-    branches: [ main, master, feature/* ]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
+  setup:
+    # Skip CI if triggered by a label event that isn't 'full-matrix'
+    if: github.event.action != 'labeled' || github.event.label.name == 'full-matrix'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      oldest: ${{ steps.pv.outputs.oldest }}
+      newest: ${{ steps.pv.outputs.newest }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/python-versions.json
+            .github/actions/python-versions
+          sparse-checkout-cone-mode: false
+
+      - id: pv
+        uses: ./.github/actions/python-versions
+
+      - name: Set matrix based on config and label
+        id: set-matrix
+        env:
+          OLDEST: ${{ steps.pv.outputs.oldest }}
+          NEWEST: ${{ steps.pv.outputs.newest }}
+        run: |
+          oldest="$OLDEST"
+          newest="$NEWEST"
+
+          oldest_minor=${oldest#3.}
+          newest_minor=${newest#3.}
+
+          if [[ "${{ github.event.label.name }}" == "full-matrix" ]]; then
+            # Middle versions only (bookends already tested)
+            versions=""
+            for ((i=oldest_minor+1; i<newest_minor; i++)); do
+              if [[ -n "$versions" ]]; then
+                versions="$versions,"
+              fi
+              versions="$versions\"3.$i\""
+            done
+
+            if [[ -z "$versions" ]]; then
+              echo "No middle versions to test (oldest=$oldest, newest=$newest)"
+              echo 'matrix={"include":[]}' >> $GITHUB_OUTPUT
+            else
+              echo "Middle versions: $versions"
+              echo "matrix={\"os\":[\"ubuntu-latest\",\"windows-latest\",\"macos-latest\"],\"python-version\":[$versions]}" >> $GITHUB_OUTPUT
+            fi
+          else
+            # Bookend versions (oldest + newest)
+            echo "Bookend versions: $oldest, $newest"
+            echo "matrix={\"os\":[\"ubuntu-latest\",\"windows-latest\",\"macos-latest\"],\"python-version\":[\"$oldest\",\"$newest\"]}" >> $GITHUB_OUTPUT
+          fi
+
   test:
-    name: Test & Lint
-    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ needs.setup.outputs.matrix != '{"include":[]}' }}
+    runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
-        python-version: ["3.12"]
+      fail-fast: false
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
+    env:
+      UV_CACHE_DIR: ${{ github.workspace }}/.uv-cache
+      HYPOTHESIS_PROFILE: ci
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Configure git line endings (Windows)
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf false
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v3
-      with:
-        enable-cache: true
+      - uses: actions/checkout@v6
 
-    - name: Set up Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: uv sync --all-extras --dev
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
 
-    - name: Run Linting
-      run: |
-        uv run ruff check .
-        uv run ruff format --check .
-        uv run mypy src/
+      - name: Cache uv dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
 
-    - name: Run Tests
-      run: uv run pytest
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
 
-  generate-matrix:
-    name: Test Generation (Version Matrix)
+      - name: Check code formatting
+        run: uv run ruff format --check src/ tests/
+
+      - name: Run linting
+        run: uv run ruff check src/ tests/
+
+      - name: Run type checking
+        run: uv run mypy src/
+
+      - name: Run security scan
+        run: uv run bandit -c pyproject.toml -r src/
+
+      - name: Run spell check
+        run: uv run codespell src/ tests/ docs/ README.md
+
+      - name: Run dependency audit
+        run: uv run pip-audit --skip-editable
+
+      - name: Run tests with coverage
+        run: uv run pytest --cov=opnsense_openapi --cov-report=xml:tmp/coverage.xml --cov-report=term -v
+
+      - name: Upload coverage to Codecov
+        if: matrix.python-version == needs.setup.outputs.newest && matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v6
+        with:
+          files: ./tmp/coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  docs:
+    needs: setup
+    if: ${{ needs.setup.outputs.matrix != '{"include":[]}' }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Test against recent major versions
-        opnsense-version: ["24.7", "25.1", "25.7.6"]
+    env:
+      UV_CACHE_DIR: ${{ github.workspace }}/.uv-cache
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ needs.setup.outputs.newest }}
 
-    - name: Set up Python
-      run: uv python install 3.12
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
 
-    - name: Install dependencies
-      run: uv sync --all-extras --dev
+      - name: Cache uv dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
 
-    - name: Generate Spec for ${{ matrix.opnsense-version }}
-      run: |
-        # We don't have a live OPNsense instance in CI, so we can only test the
-        # download and generate parsing logic.
-        # Note: Download might fail if tags don't exist or git fails, but this ensures
-        # the code runs.
-        uv run opnsense-openapi download ${{ matrix.opnsense-version }}
-        uv run opnsense-openapi generate ${{ matrix.opnsense-version }}
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
 
-    - name: Verify Spec Validity
-      run: |
-        # Basic check that JSON was created and is valid
-        ls -l src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json
-        python -c "import json; json.load(open('src/opnsense_openapi/specs/opnsense-${{ matrix.opnsense-version }}.json'))"
+      - name: Build documentation
+        run: uv run doit docs_build
+
+  ci-complete:
+    # Always run unless this is a non-full-matrix label event
+    if: always() && (github.event.action != 'labeled' || github.event.label.name == 'full-matrix')
+    needs: [setup, test, docs]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check CI status
+        run: |
+          setup_result="${{ needs.setup.result }}"
+          test_result="${{ needs.test.result }}"
+          docs_result="${{ needs.docs.result }}"
+
+          echo "Setup result: $setup_result"
+          echo "Test result: $test_result"
+          echo "Docs result: $docs_result"
+
+          # Setup must succeed
+          if [[ "$setup_result" != "success" ]]; then
+            echo "Setup job failed"
+            exit 1
+          fi
+
+          # Test must succeed or be skipped (skipped = no middle versions)
+          if [[ "$test_result" != "success" && "$test_result" != "skipped" ]]; then
+            echo "Test job failed"
+            exit 1
+          fi
+
+          # Docs must succeed or be skipped (skipped = no middle versions)
+          if [[ "$docs_result" != "success" && "$docs_result" != "skipped" ]]; then
+            echo "Docs job failed"
+            exit 1
+          fi
+
+          echo "CI completed successfully"

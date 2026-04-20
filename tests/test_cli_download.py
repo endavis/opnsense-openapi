@@ -13,7 +13,7 @@ def test_download_command_success(tmp_path, monkeypatch):
     controllers_path = tmp_path / "24.1" / "src"
     controllers_path.mkdir(parents=True)
 
-    def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
+    def fake_download(self, version: str, force: bool = False):
         assert version == "24.1"
         return controllers_path
 
@@ -27,7 +27,7 @@ def test_download_command_success(tmp_path, monkeypatch):
 
 
 def test_download_command_failure(tmp_path, monkeypatch):
-    def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
+    def fake_download(self, version: str, force: bool = False):
         raise RuntimeError("boom")
 
     monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
@@ -50,10 +50,10 @@ def test_generate_command_success(tmp_path, monkeypatch):
     controllers_path = tmp_path / "controllers"
     controllers_path.mkdir()
 
-    def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
+    def fake_download(self, version: str, force: bool = False):
         return controllers_path
 
-    def fake_parse_directory(self, path):  # noqa: ANN001
+    def fake_parse_directory(self, path):
         return [
             ApiController(
                 module="Test",
@@ -78,7 +78,7 @@ def test_generate_command_success(tmp_path, monkeypatch):
 def test_generate_command_download_failure(tmp_path, monkeypatch):
     """Test generate command when download fails."""
 
-    def fake_download(self, version: str, force: bool = False):  # noqa: ANN001
+    def fake_download(self, version: str, force: bool = False):
         raise RuntimeError("download failed")
 
     monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)

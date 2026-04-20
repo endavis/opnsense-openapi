@@ -1,0 +1,74 @@
+name: Mutation Testing
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"  # Sunday midnight UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mutate:
+    runs-on: ubuntu-latest
+    env:
+      UV_CACHE_DIR: ${{ github.workspace }}/.uv-cache
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - id: pv
+        uses: ./.github/actions/python-versions
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ steps.pv.outputs.newest }}
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.UV_CACHE_DIR }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run mutmut
+        timeout-minutes: 120
+        run: |
+          mkdir -p tmp
+          uv run mutmut run > tmp/mutmut-run-raw.log 2>&1 || true
+
+      - name: Mutation results
+        if: always()
+        run: |
+          mkdir -p tmp
+          if [ -f tmp/mutmut-run-raw.log ]; then
+            # Strip spinner/carriage-return noise from log.
+            # mutmut renders progress with braille spinners + \r; convert \r to \n,
+            # drop blank lines, and drop the repeating spinner phrases.
+            tr '\r' '\n' < tmp/mutmut-run-raw.log \
+              | grep -v '^[[:space:]]*$' \
+              | grep -avE 'Generating mutants|Running stats|Running clean tests|Running mutation testing|Running forced fail test|^[[:space:]]*[^[:alnum:]]*[[:space:]]*[0-9]+/[0-9]+' \
+              > tmp/mutmut-run.log || true
+            echo "=== Mutation run log ==="
+            cat tmp/mutmut-run.log
+          fi
+          uv run mutmut results 2>/dev/null | tee tmp/mutmut-results.txt || true
+          echo ""
+          echo "=== Summary ==="
+          awk -F': ' '{print $NF}' tmp/mutmut-results.txt 2>/dev/null | sort | uniq -c | sort -rn || true
+
+      - name: Upload mutation results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mutation-results
+          path: tmp/mutmut-results.txt
+          retention-days: 90
