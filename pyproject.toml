@@ -59,7 +59,7 @@ dev = [
     "hypothesis>=6.151.13",
     "build>=1.0.0",
     "twine>=5.0.0",
-    "pygments>=2.17,<2.19",
+    "pygments>=2.20",
 ]
 security = [
     "pip-audit>=2.6",
