@@ -15,6 +15,7 @@ from .downloader import SourceDownloader
 # ENFORCE: Ensure your generator file is named 'generator.py'
 # or update this import to 'from .openapi_generator import OpenApiGenerator'
 from .generator import OpenApiGenerator
+from .logging import LogLevel, setup_logging
 from .parser import ControllerParser
 from .specs import find_best_matching_spec, list_available_specs
 from .validator import SpecValidator
@@ -39,8 +40,26 @@ def main(
             callback=_version_callback,
         ),
     ] = False,
+    log_level: Annotated[
+        LogLevel | None,
+        typer.Option(
+            "--log-level",
+            help=(
+                "Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). "
+                "Defaults to INFO, or DEBUG if the DEBUG env var is set."
+            ),
+        ),
+    ] = None,
+    log_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--log-file",
+            help="Optional path for structured JSON log output.",
+        ),
+    ] = None,
 ) -> None:
     """Global CLI options."""
+    setup_logging(level=log_level, log_file=log_file)
 
 
 @app.command()

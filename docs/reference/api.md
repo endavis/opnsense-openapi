@@ -74,3 +74,12 @@ Downloads upstream OPNsense source archives used during spec generation.
     options:
       show_root_heading: true
       show_root_full_path: true
+
+## Logging
+
+Centralized logging configuration shared by the CLI and library code.
+
+::: opnsense_openapi.logging
+    options:
+      show_root_heading: true
+      show_root_full_path: true
