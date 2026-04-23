@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776963793921,
+  "lastUpdate": 1776967334973,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -38,6 +38,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000025112056536763823",
             "extra": "mean: 953.7856401944597 usec\nrounds: 617"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5b92a5af413b5c6a8308ac57ab3c5f5c7ab3015",
+          "message": "chore: resolve docs/examples drift; skip upstream .py examples (merges PR #18, addresses #14)\n\nchore: resolve docs/examples drift from template sync\n\nPR #13's template sync brought in docs/examples/{README,api,add-a-feature}.md\nwith markers expanded, but those files describe code shapes that do not\nexist in this project (FastAPI service scaffolding, greet()/core.py\nwalkthrough). Per the plan attached to issue #14, formally skip the\nupstream .py examples and clean up the docs to honestly describe what\nthe project actually ships.\n\nDecision: skip upstream examples/api/, examples/advanced_usage.py,\nexamples/cli_usage.py, and upstream's examples/basic_usage.py\npermanently. The FastAPI scaffolding has no architectural fit for a\ncode-generator CLI; the example scripts target a generic-package shape.\nThe project's three OPNsense-specific scripts under examples/\n(basic_usage.py, diagnose_api.py, openapi_example.py) are correct\nas-is and remain unchanged.\n\nCleanup:\n- Rewrote docs/examples/README.md to honestly index the project's three\n  real scripts, with frontmatter shape preserved.\n- Deleted docs/examples/api.md (692-line FastAPI development guide).\n- Deleted docs/examples/add-a-feature.md (built around scaffolding\n  skipped in PR #17).\n- Removed inbound references in mkdocs.yml (2 nav entries),\n  docs/index.md (1 bullet), docs/usage/cli.md (1 link), and\n  docs/development/ai/first-5-minutes.md (1 TODO bullet, plus a stale\n  reference to upstream issue #342 that came along with it).\n- Regenerated docs/TABLE_OF_CONTENTS.md; 5 stale entries gone.\n\nPer-file exclusion follow-up (re-issued from PR #17):\ntools/pyproject_template/check_template_updates.py does not yet support\na project-local exclusion list. Until that mechanism lands, future\nmanage.py check runs will continue to flag the deliberately-skipped\nupstream files. The skip decisions are recorded in this PR and PRs\n#13/#17 rather than in tooling.\n\nAddresses #14\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-04-23T19:01:47+01:00",
+          "tree_id": "97801d82952b799a3871542d37cc6ffd00c036f5",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/f5b92a5af413b5c6a8308ac57ab3c5f5c7ab3015"
+        },
+        "date": 1776967334648,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 701.8886146660558,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0017784169900939431",
+            "extra": "mean: 1.4247274839694892 msec\nrounds: 655"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1056.3101133567752,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00006210034302666509",
+            "extra": "mean: 946.6916839621737 usec\nrounds: 636"
           }
         ]
       }
