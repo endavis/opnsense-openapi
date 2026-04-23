@@ -1,7 +1,30 @@
-# Copy this file to .envrc.local and fill in your credentials
-# .envrc.local is gitignored and will not be committed
+# .envrc.local - Personal settings (git-ignored)
+# Copy this file to .envrc.local and customize
 
-# OPNsense API credentials
+# OPNsense API credentials (NEVER commit these!)
 export OPNSENSE_URL="https://your-opnsense-host"
 export OPNSENSE_API_KEY="your-api-key"
 export OPNSENSE_API_SECRET="your-api-secret"
+
+# Development preferences
+# export DEBUG=true
+# export LOG_LEVEL=DEBUG
+
+# Override cache locations if needed (defaults set in .envrc point to tmp/)
+# export UV_CACHE_DIR="$(pwd)/tmp/.uv_cache"
+# export RUFF_CACHE_DIR="$(pwd)/tmp/.ruff_cache"
+# export MYPY_CACHE_DIR="$(pwd)/tmp/.mypy_cache"
+# export COVERAGE_FILE="$(pwd)/tmp/.coverage"
+# export PRE_COMMIT_HOME="$(pwd)/tmp/.pre-commit"
+
+# Custom environment variables for your workflow
+# export EDITOR=vim
+# export BROWSER=firefox
+
+# Claude Code LSP support (enables fast code navigation)
+# Uncomment to enable Language Server Protocol in Claude Code
+# See .claude/lsp-setup.md for setup instructions
+# export ENABLE_LSP_TOOL=1
+
+# Pyright LSP debug logging (uncomment for troubleshooting LSP issues)
+# export PYRIGHT_PYTHON_DEBUG=1
