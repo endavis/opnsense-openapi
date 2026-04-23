@@ -103,6 +103,10 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
+# Enable preview mode but require rules to be listed by exact code so we
+# opt into PLW1514 without pulling in every other unstable preview rule.
+preview = true
+explicit-preview-rules = true
 select = [
     "E",    # pycodestyle errors
     "F",    # pyflakes
@@ -116,6 +120,7 @@ select = [
     "RUF",  # Ruff-specific rules
     "SIM",  # flake8-simplify
     "ASYNC", # flake8-async
+    "PLW1514",  # require explicit encoding on text-mode file I/O (preview rule)
 ]
 ignore = []
 
@@ -184,6 +189,8 @@ module = ["flask.*", "flask_swagger_ui.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+# Standalone scripts using sys.path manipulation; excluded from discovery
+# but still followed via imports from bootstrap.py
 module = "tools.pyproject_template.*"
 follow_imports = "skip"
 ignore_missing_imports = true
@@ -192,6 +199,7 @@ ignore_missing_imports = true
 minversion = "8.0"
 addopts = "--strict-config --strict-markers --benchmark-disable"
 testpaths = ["tests"]
+pythonpath = ["."]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
@@ -265,18 +273,19 @@ ignore-words-list = "crate"
 min_confidence = 80
 paths = ["src", "tests"]
 exclude = [
-    "*/tests/*",
+    "*/tests/*",      # Test fixtures often appear unused
     "*/__pycache__/*",
     "*/generated/*",
 ]
+# Common false positives in Python projects
 ignore_names = [
-    "test_*",
-    "fixture_*",
-    "*_fixture",
-    "setUp",
-    "tearDown",
-    "setUpClass",
-    "tearDownClass",
+    "test_*",         # Pytest test functions
+    "fixture_*",      # Pytest fixtures
+    "*_fixture",      # Pytest fixtures
+    "setUp",          # unittest methods
+    "tearDown",       # unittest methods
+    "setUpClass",     # unittest methods
+    "tearDownClass",  # unittest methods
 ]
 ignore_decorators = [
     "@pytest.fixture",
@@ -301,16 +310,17 @@ update_changelog_on_bump = true
 major_version_zero = true
 merge_prerelease = true
 bump_pattern = "^(feat|fix|refactor|perf)"
-bump_map = {"feat" = "MINOR", "fix" = "PATCH", "refactor" = "PATCH", "perf" = "PATCH"}
+bump_map = { "feat" = "MINOR", "fix" = "PATCH", "refactor" = "PATCH", "perf" = "PATCH" }
 change_type_order = ["BREAKING CHANGE", "feat", "fix", "refactor", "perf"]
 
 [tool.pyright]
+# LSP support for Claude Code - provides fast code navigation and type checking
 include = [
     "src",
     "tests",
-    "*.py",
-    "tools",
-    ".github",
+    "*.py",           # Root level Python files (dodo.py, setup-repo.py, configure.py)
+    "tools",          # Tools directory (migrate_existing_project.py)
+    ".github",        # Any Python in GitHub workflows/scripts
 ]
 exclude = [
     "**/__pycache__",
@@ -319,7 +329,7 @@ exclude = [
     "**/.pytest_cache",
     "**/.mypy_cache",
     "**/.ruff_cache",
-    "**/site",
+    "**/site",        # mkdocs build output
     "**/.git",
     "src/opnsense_openapi/generated",
 ]

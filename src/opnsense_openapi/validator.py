@@ -27,7 +27,7 @@ class SpecValidator:
         """
         self.client = client
         self.spec_path = spec_path
-        with spec_path.open() as f:
+        with spec_path.open(encoding="utf-8") as f:
             self.spec = json.load(f)
 
         # Pre-resolve refs if needed, or rely on jsonschema's ref resolver

@@ -69,7 +69,9 @@ def _auto_generate_client(version: str) -> bool:
 
     config_data = {"package_name_override": "opnsense_openapi_client"}
 
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as config_file:
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".json", delete=False, encoding="utf-8"
+    ) as config_file:
         json.dump(config_data, config_file)
         config_path = config_file.name
 

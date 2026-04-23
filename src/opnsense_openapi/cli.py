@@ -703,7 +703,7 @@ def serve_docs(
         """Serve the OpenAPI specification file."""
         import json
 
-        with open(spec_path) as f:
+        with open(spec_path, encoding="utf-8") as f:
             spec = json.load(f)
 
         # If proxy is enabled, update server URL to use the proxy

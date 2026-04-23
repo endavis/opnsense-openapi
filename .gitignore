@@ -35,7 +35,6 @@ env/
 htmlcov/
 .tox/
 .hypothesis/
-.benchmarks/
 
 # Type checking and linting
 .mypy_cache/
@@ -51,7 +50,6 @@ dmypy.json
 *.swo
 *~
 .DS_Store
-Thumbs.db
 
 # direnv
 .direnv/

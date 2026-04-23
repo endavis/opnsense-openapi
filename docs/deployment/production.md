@@ -473,7 +473,7 @@ COPY --chown=appuser:appuser . .
 
 USER appuser
 
-CMD ["python", "-m", "package_name"]
+CMD ["python", "-m", "opnsense_openapi"]
 ```
 
 ### Read-only Filesystems
@@ -656,8 +656,8 @@ jobs:
 uv build
 
 # This creates:
-# - dist/package_name-x.y.z.tar.gz (source distribution)
-# - dist/package_name-x.y.z-py3-none-any.whl (wheel)
+# - dist/opnsense_openapi-x.y.z.tar.gz (source distribution)
+# - dist/opnsense_openapi-x.y.z-py3-none-any.whl (wheel)
 
 # Publish to PyPI
 uv publish
@@ -670,11 +670,11 @@ uv publish --token pypi-xxxxxxxxxxxx
 
 ```bash
 # Check package on PyPI
-pip index versions package-name
+pip index versions opnsense-openapi
 
 # Test installation in clean environment
 uv venv /tmp/test-install
-uv pip install --python /tmp/test-install package-name
+uv pip install --python /tmp/test-install opnsense-openapi
 ```
 
 ### Version Management
