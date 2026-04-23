@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Example scripts demonstrating how to use the package
+description: OPNsense-specific example scripts that ship with this project
 audience:
   - users
 tags:
@@ -10,101 +10,72 @@ tags:
 
 # Examples
 
-This directory contains example scripts demonstrating how to use the package.
+The project ships three OPNsense-specific scripts under `examples/`. Each one is
+a runnable demonstration of `OPNsenseClient` against a live OPNsense instance.
 
-## Running Examples
+## Prerequisites
 
-Make sure you have the package installed:
+Install the package and set the credentials each script reads from the
+environment:
 
 ```bash
-# Install in development mode
 uv pip install -e .
 
-# Or install from PyPI
-pip install opnsense-openapi
-```
-
-Then run any example:
-
-```bash
-python examples/basic_usage.py
-python examples/advanced_usage.py
-python examples/cli_usage.py
+export OPNSENSE_URL="https://opnsense.local"
+export OPNSENSE_API_KEY="your-api-key"
+export OPNSENSE_API_SECRET="your-api-secret"
+export OPNSENSE_VERIFY_SSL="false"   # or "true" with a valid cert
+export OPNSENSE_VERSION="24.7.1"      # optional; enables OpenAPI features without auto-detection
 ```
 
 ## Available Examples
 
-### basic_usage.py
+### `basic_usage.py`
 
-Simple example demonstrating basic functionality.
-
-**What it covers:**
-- Importing the package
-- Basic operations
-- Simple error handling
-
-### advanced_usage.py
-
-Advanced example with more complex features.
-
-**What it covers:**
-- Advanced configuration
-- Custom settings
-- Complex data processing
-- Best practices
-
-### cli_usage.py
-
-Example of using the command-line interface (if available).
-
-**What it covers:**
-- CLI commands
-- Options and arguments
-- Output formatting
-
-### Add a Feature (End-to-End Walkthrough)
-
-Narrative guide that walks through adding a hypothetical `farewell` feature from issue creation to merged PR.
-
-**What it covers:**
-- The full workflow: issue, branch, code, tests, docs, PR
-- Core module and CLI subcommand patterns
-- Thin-adapter pattern for CLI commands
-- Architectural boundaries (runtime vs dev tooling)
-
-See the [Add a Feature Walkthrough](add-a-feature.md) for the full guide.
-
-### api/ (FastAPI Application)
-
-Complete REST API example demonstrating FastAPI best practices.
-
-**What it covers:**
-- Application factory pattern
-- Router organization
-- Pydantic validation
-- Dependency injection
-- Error handling
-- OpenAPI documentation
-
-See the [API Development Guide](api.md) for detailed documentation.
-
-**Running the API example:**
+Initializes `OPNsenseClient` with auto-detection (or a pinned `spec_version`)
+and walks through the traditional client API: firmware info, firewall aliases,
+OpenAPI endpoint discovery, and using the client as a context manager.
 
 ```bash
-# Install FastAPI dependencies
-uv add fastapi uvicorn[standard]
-
-# Run the server
-uvicorn examples.api.main:app --reload
-
-# Visit http://localhost:8000/docs for Swagger UI
+python examples/basic_usage.py
 ```
+
+### `diagnose_api.py`
+
+Diagnostic script that probes a configurable list of OPNsense API endpoints
+with both `GET` and `POST`, reports per-endpoint status, and surfaces version
+information from successful responses. Useful for verifying credentials and
+identifying which endpoints exist on a given OPNsense version.
+
+```bash
+python examples/diagnose_api.py
+```
+
+### `openapi_example.py`
+
+Focused walkthrough of the OpenAPI integration: listing all endpoints, filtering
+by substring, introspecting an endpoint's path and query parameters, and
+accessing the underlying OpenAPI wrapper directly.
+
+```bash
+python examples/openapi_example.py
+```
+
+## Why these are the project's examples
+
+`opnsense-openapi` is a CLI code generator for the OPNsense REST API, not a
+generic Python package or a service. The upstream `pyproject-template` ships
+example scripts (`advanced_usage.py`, `cli_usage.py`) and a FastAPI sample under
+`examples/api/` that target a different shape of project; those are
+intentionally not adopted here. See [issue
+#14](https://github.com/endavis/opnsense-openapi/issues/14) for the decision
+record.
 
 ## Contributing Examples
 
-Have an interesting use case? We'd love to add it!
+Have an interesting use case? Pull requests welcome:
 
-1. Create a new `.py` file in this directory
-2. Add clear comments explaining what it does
-3. Add it to this README
-4. Submit a pull request
+1. Add a new `.py` file in `examples/`.
+2. Include a module docstring explaining what it does and any required env vars.
+3. Add an entry to this README under **Available Examples**.
+4. Open a PR following the standard workflow.

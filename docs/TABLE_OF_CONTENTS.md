@@ -9,12 +9,11 @@ Complete index of all documentation, organized by audience and as a full alphabe
 
 ### For Users
 <!-- BEGIN:audience=users -->
-- [API Development Guide](examples/api.md) - Building REST APIs with FastAPI - patterns, testing, and best practices
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
-- [Examples](examples/README.md) - Example scripts demonstrating how to use the package
+- [Examples](examples/README.md) - OPNsense-specific example scripts that ship with this project
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
@@ -30,12 +29,10 @@ Complete index of all documentation, organized by audience and as a full alphabe
 
 ### For Contributors
 <!-- BEGIN:audience=contributors -->
-- [Add a Feature: End-to-End Walkthrough](examples/add-a-feature.md) - Step-by-step example of adding a module, CLI subcommand, tests, and docs to the project
 - [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Gemini, Copilot, and Codex for this project
 - [AI Architectural Conventions](development/ai/architectural-conventions.md) - Imperative-form architectural rules AI agents must follow when generating code
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
-- [API Development Guide](examples/api.md) - Building REST APIs with FastAPI - patterns, testing, and best practices
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
@@ -73,7 +70,6 @@ Complete index of all documentation, organized by audience and as a full alphabe
 
 ## Complete Index
 <!-- BEGIN:all -->
-- [Add a Feature: End-to-End Walkthrough](examples/add-a-feature.md) - Step-by-step example of adding a module, CLI subcommand, tests, and docs to the project
 - [ADR-9001: Use uv for package management](decisions/9001-use-uv-for-package-management.md)
 - [ADR-9002: Use doit for task automation](decisions/9002-use-doit-for-task-automation.md)
 - [ADR-9003: Use ruff for linting and formatting](decisions/9003-use-ruff-for-linting-and-formatting.md)
@@ -96,7 +92,6 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [AI Architectural Conventions](development/ai/architectural-conventions.md) - Imperative-form architectural rules AI agents must follow when generating code
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
-- [API Development Guide](examples/api.md) - Building REST APIs with FastAPI - patterns, testing, and best practices
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [Architecture Decision Records](decisions/README.md)
 - [Architecture Documentation](ARCHITECTURE.md)
@@ -106,7 +101,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Dependabot Auto-merge](development/dependabot-automerge.md) - How the dependabot auto-merge workflow evaluates, enables, and skips PRs
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
-- [Examples](examples/README.md) - Example scripts demonstrating how to use the package
+- [Examples](examples/README.md) - OPNsense-specific example scripts that ship with this project
 - [First 5 Minutes with an AI Agent](development/ai/first-5-minutes.md) - Narrative walkthrough of the AI agent workflow from issue to merge
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
 - [Heuristic Schema Generation Guide](HEURISTICS.md)
