@@ -35,7 +35,7 @@ If you are not sure what state you are in, run `/where-am-i` at any time. It ins
 
 ### 2. Pick an issue
 
-Every change starts from an issue. Either list the open backlog with `gh issue list` and pick one, or create a new issue with `doit issue --type=<type>` (types are `feature`, `bug`, `refactor`, `doc`, `chore`). The template enforces Issue → Branch → Commit → PR → Merge; there is no supported path that skips the issue.
+Every change starts from an issue. Either list the open backlog with `gh issue list` and pick one, or create a new issue with `doit issue --type=<type>` (types are `feature`, `bug`, `refactor`, `docs`, `chore`). The template enforces Issue → Branch → Commit → PR → Merge; there is no supported path that skips the issue.
 
 For the rest of this walkthrough assume you have picked issue number `42`.
 
@@ -52,11 +52,11 @@ What you'll see (illustrative — your plan will look different):
 The provider module currently makes a network call on every lookup...
 
 ### Files to create
-- `src/package_name/cache.py` — new LRU cache wrapper
+- `src/opnsense_openapi/cache.py` — new LRU cache wrapper
 - `tests/test_cache.py` — unit tests for hit, miss, eviction
 
 ### Files to modify
-- `src/package_name/provider.py` — wrap lookups in the cache
+- `src/opnsense_openapi/provider.py` — wrap lookups in the cache
 
 ### Test plan
 - Unit tests for cache hit, cache miss, eviction ordering

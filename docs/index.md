@@ -1,5 +1,5 @@
 ---
-title: Package Name Documentation
+title: opnsense-openapi Documentation
 description: Welcome and overview of the project
 audience:
   - users
@@ -9,13 +9,13 @@ tags:
   - getting-started
 ---
 
-# Package Name Documentation
+# opnsense-openapi Documentation
 
-Welcome to the documentation for Package Name!
+Welcome to the documentation for opnsense-openapi!
 
 ## Overview
 
-Package Name is a modern Python project template with comprehensive tooling for development, testing, documentation, and deployment.
+opnsense-openapi is a modern Python project template with comprehensive tooling for development, testing, documentation, and deployment.
 
 ## Quick Links
 
@@ -44,7 +44,7 @@ Package Name is a modern Python project template with comprehensive tooling for 
 ## Quick Start
 
 ```python
-from package_name import greet
+from opnsense_openapi import greet
 
 # Simple greeting example
 message = greet("Python")

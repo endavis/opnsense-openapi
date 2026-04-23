@@ -56,9 +56,7 @@ BLOCKED_WORKFLOW_COMMANDS = {
         "Releases must be run manually by the user, not by AI agents. "
         "AI can help prepare (update changelog, verify CI) but not execute releases."
     ),
-    ("doit", "release_dev"): "Releases must be run manually by the user, not by AI agents.",
     ("doit", "release_tag"): "Releases must be run manually by the user, not by AI agents.",
-    ("doit", "release_pr"): "Releases must be run manually by the user, not by AI agents.",
 }
 
 # Governance labels that require human approval - AI should never add these
@@ -441,7 +439,7 @@ def _log(entry: dict) -> None:
     if not os.environ.get("HOOK_BLOCKCOMMAND_DEBUG"):
         return
     try:
-        with LOG_FILE.open("a") as f:
+        with LOG_FILE.open("a", encoding="utf-8") as f:
             f.write(json.dumps(entry) + "\n")
     except OSError:
         pass  # Never fail due to logging

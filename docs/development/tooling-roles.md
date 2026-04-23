@@ -29,13 +29,13 @@ audience, a different lifecycle, and a different set of allowed dependencies.
 
 | Layer | Path | Audience | Purpose |
 | :--- | :--- | :--- | :--- |
-| **Runtime** | `src/package_name/` | End users of the published package | The actual application/library code that gets shipped to PyPI. |
+| **Runtime** | `src/opnsense_openapi/` | End users of the published package | The actual application/library code that gets shipped to PyPI. |
 | **Dev tooling** | `tools/` | Contributors and CI | Helpers, scaffolding, install scripts, doit task definitions, and template-management code. Not shipped. |
 | **Dev entry point** | `dodo.py` | Contributors and CI | The doit task discovery file. Loads tasks from `tools/doit/`. Not shipped. |
 
 The hard rule that holds these layers together:
 
-> **`src/package_name/` never imports from `tools/` or `dodo.py`.**
+> **`src/opnsense_openapi/` never imports from `tools/` or `dodo.py`.**
 
 Runtime code must be installable and runnable without any dev tooling
 present. If you find yourself wanting to import from `tools/` inside the
@@ -46,7 +46,7 @@ itself (and needs to be tested as runtime code).
 
 | Tool | Role | Audience | Never use for |
 | :--- | :--- | :--- | :--- |
-| **Application console script** | The package's user-facing command-line interface, defined as a `[project.scripts]` entry under `src/package_name/`. | End users of the published package. | Development workflow tasks. See the [CLI Guide](../usage/cli.md) for the application CLI. |
+| **Application console script** | The package's user-facing command-line interface, defined as a `[project.scripts]` entry under `src/opnsense_openapi/`. | End users of the published package. | Development workflow tasks. See the [CLI Guide](../usage/cli.md) for the application CLI. |
 | **`doit`** | Development task runner. Wraps tests, linting, type-checking, releases, issue and PR creation, and other contributor workflows. | Contributors and CI. | Fronting the application's user-facing CLI. doit is a *dev* surface, not a runtime surface. |
 | **`uv`** | Package and environment management. Installs dependencies, runs Python, manages the lockfile. | Contributors and CI. | Replacing the application's runtime entry point. |
 | **`gh`** | GitHub API access for operations not wrapped by `doit` (read-only queries, ad-hoc API calls). | Contributors and CI. | Write operations that already have a `doit` wrapper (e.g. use `doit pr` not `gh pr create`). |
@@ -70,12 +70,14 @@ The template is opinionated about a small number of things:
   `tools/doit/` exist to make contributor workflows reproducible. They are
   not part of the package's public API.
 - **The application's user-facing CLI is a console script under
-  `src/package_name/`, not a doit task.** End users should never need to
+  `src/opnsense_openapi/`, not a doit task.** End users should never need to
   install `doit` to use the published package. See the
   [CLI Guide](../usage/cli.md) for how the CLI is structured and how to
   add subcommands.
 - **ADRs document the *why*.** When a tooling decision is non-obvious, it
-  gets an ADR under `docs/template/decisions/` or `docs/decisions/`.
+  gets an ADR under `docs/decisions/`. Template-meta decisions use the
+  9XXX-series (created via `doit adr --template`); project-level decisions
+  use the 0001-series (created via `doit adr`).
 
 ## Dependency placement
 
@@ -94,8 +96,8 @@ legitimate runtime use.
 
 ## See also
 
-- [ADR-9002: Use doit for task automation](../template/decisions/9002-use-doit-for-task-automation.md)
-- [ADR-9005: AI agent command restrictions](../template/decisions/9005-ai-agent-command-restrictions.md)
+- [ADR-9002: Use doit for task automation](../decisions/9002-use-doit-for-task-automation.md)
+- [ADR-9005: AI agent command restrictions](../decisions/9005-ai-agent-command-restrictions.md)
 - [Doit Tasks Reference](doit-tasks-reference.md)
 - [`AGENTS.md`](../../AGENTS.md) — imperative tool reference for contributors and AI agents
 - [New Project Setup](../template/new-project.md)

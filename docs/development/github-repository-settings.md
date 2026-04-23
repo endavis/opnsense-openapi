@@ -36,6 +36,7 @@ These are the general repository-level settings applied by
 | **Allow squash merge** | Yes | Only merge strategy allowed (linear history) |
 | **Allow merge commit** | No | Enforces squash-only policy |
 | **Allow rebase merge** | No | Enforces squash-only policy |
+| **Allow auto-merge** | Yes | Required by the [Dependabot Auto-merge](dependabot-automerge.md) workflow so it can call `gh pr merge --auto` |
 | **Delete branch on merge** | Yes | Cleans up feature branches automatically |
 | **Visibility** | Public | Template default; private repos may lack some security features |
 
@@ -67,7 +68,7 @@ to the default branch.
 | | Allowed merge methods: squash only |
 | **Required status checks** | `require-label` (from the Merge Gate workflow) |
 | | Strict policy: Yes (branch must be up to date) |
-| **Code scanning** | CodeQL -- errors threshold, high-or-higher security alerts |
+| **Required status checks** | `CodeQL` check-run emitted by `.github/workflows/codeql.yml` |
 | **Code quality** | Errors severity threshold |
 | **Bypass actors** | Repository admin role (always) |
 
@@ -99,7 +100,7 @@ To add a label: edit `.github/labels.yml`, run `doit labels_sync --dry-run` to p
 | `documentation` | `#0075ca` | Improvements or additions to documentation | Issue template, release notes |
 | `duplicate` | `#cfd3d7` | This issue or pull request already exists | Manual triage |
 | `enhancement` | `#a2eeef` | New feature or request | Issue template, release notes |
-| `full-matrix` | `#1D76DB` | Run CI on all supported Python versions | CI workflow (triggers full matrix) |
+| `full-matrix` | `#1D76DB` | Run CI on all supported Python versions | `CI (full matrix)` workflow (dispatches `ci.yml` with `full_matrix: true`) |
 | `github_actions` | `#000000` | Pull requests that update GitHub Actions code | Dependabot PRs |
 | `good first issue` | `#7057ff` | Good for newcomers | Manual triage |
 | `help wanted` | `#008672` | Extra attention is needed | Manual triage |
@@ -131,7 +132,9 @@ each workflow, its trigger, and required permissions.
 
 | Workflow | File | Trigger | Permissions |
 | :--- | :--- | :--- | :--- |
-| **CI** | `ci.yml` | PR to `main` (opened, synchronize, reopened, labeled), `workflow_dispatch`, `workflow_call` | `contents: read` |
+| **CI** | `ci.yml` | PR to `main` (opened, synchronize, reopened), `workflow_dispatch`, `workflow_call` | `contents: read` |
+| **CI (full matrix)** | `ci-full-matrix.yml` | PR to `main` (labeled with `full-matrix`) -- dispatches `ci.yml` with `full_matrix: true` | `contents: read` |
+| **CodeQL** | `codeql.yml` | Push to `main`, PR to `main`, Scheduled (Monday 04:27 UTC) | `contents: read`, `security-events: write`, `actions: read` |
 | **Merge Gate** | `merge-gate.yml` | PR to `main` (opened, labeled, unlabeled, synchronize, reopened) | `contents: read` |
 | **PR Validation** | `pr-checks.yml` | PR (opened, edited, synchronize) | Default |
 | **Breaking Change Detection** | `breaking-change-detection.yml` | PR (opened, synchronize, edited) | `contents: read`, `issues: write`, `pull-requests: write` |
@@ -143,8 +146,10 @@ each workflow, its trigger, and required permissions.
 ### Key workflow details
 
 - **CI** uses a matrix strategy with Python versions from
-  `.github/python-versions.json`. Adding the `full-matrix` label to a PR runs
-  all versions; otherwise, only the bookend versions are tested.
+  `.github/python-versions.json`; only the bookend versions are tested on
+  every push. Adding the `full-matrix` label to a PR triggers the dedicated
+  `CI (full matrix)` workflow, which calls `ci.yml` with
+  `full_matrix: true` to cover the middle versions.
 - **Merge Gate** requires the `ready-to-merge` label on a PR before the
   `require-label` status check passes. This is a manual gate added by a reviewer.
 - **Release** publishes to TestPyPI first, then PyPI, then creates a GitHub
@@ -172,22 +177,42 @@ Configure the trusted publisher on PyPI and TestPyPI:
 - **Workflow:** `release.yml` (for PyPI) or `testpypi.yml` (for TestPyPI)
 - **Environment:** `pypi` or `testpypi` respectively
 
-**Automated:** No. Environments must be created manually in the repository
-settings, and trusted publishers must be configured on PyPI/TestPyPI.
+**Automated:** Partial. Run `doit publish_setup` to create the `testpypi`
+and `pypi` environments in one step (idempotent). Trusted publishers must
+still be configured manually on PyPI and TestPyPI — see the instructions
+printed by `doit publish_setup` and the
+[release automation guide](release-and-automation.md#github-environments-trusted-publishing).
 
 ## Secrets and Variables
 
-| Secret/Variable | Required | Purpose |
-| :--- | :--- | :--- |
-| `GITHUB_TOKEN` | Automatic | Provided by GitHub Actions; used by most workflows |
-| `CODECOV_TOKEN` | Optional | Upload coverage reports to Codecov |
-| `RELEASE_APP_ID` | Optional | GitHub App ID for release automation |
-| `RELEASE_APP_PRIVATE_KEY` | Optional | GitHub App private key for release automation |
+| Secret/Variable | Kind | Required | Purpose |
+| :--- | :--- | :--- | :--- |
+| `GITHUB_TOKEN` | Secret | Automatic | Provided by GitHub Actions; used by most workflows |
+| `CODECOV_TOKEN` | Secret | Optional | Upload coverage reports to Codecov |
+| `RELEASE_APP_ID` | **Variable** | Recommended | GitHub App ID used by release automation and the dependabot auto-merge workflow |
+| `RELEASE_APP_PRIVATE_KEY` | Secret | Recommended | GitHub App private key matching `RELEASE_APP_ID` |
 
 PyPI publishing uses OIDC (trusted publishers), so no `PYPI_TOKEN` secret is
 needed.
 
-**Automated:** No. Secrets must be added manually in repository settings.
+!!! note "App credentials are strongly recommended"
+    `RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` are technically optional,
+    but the dependabot auto-merge workflow degrades gracefully without them:
+    the `ready-to-merge` label is still applied (via `GITHUB_TOKEN`), but the
+    Merge Gate will **not** re-run automatically on the `labeled` event — a
+    consequence of GitHub's workflow-triggering
+    [loop-prevention rule](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow).
+    Configure the App for fully automated dependabot merges. See
+    [Dependabot Auto-merge → Required GitHub App configuration](dependabot-automerge.md#required-github-app-configuration).
+
+!!! warning "`RELEASE_APP_ID` is a Variable, not a Secret"
+    `RELEASE_APP_ID` is stored as a **repository Variable**
+    (`vars.RELEASE_APP_ID`), not a Secret. Workflows reference it as
+    `${{ vars.RELEASE_APP_ID }}`. Storing it as a Secret would silently
+    produce an empty string at runtime.
+
+**Automated:** No. Secrets and variables must be added manually in
+repository settings.
 
 ## Security Settings
 
@@ -199,14 +224,16 @@ Security features are configured by `_configure_security_settings()` in
 | **Secret scanning** | Enabled | Detects accidentally committed secrets |
 | **Secret scanning push protection** | Enabled | Blocks pushes containing secrets |
 | **Dependabot security updates** | Enabled | Automatic PRs for vulnerable dependencies |
-| **CodeQL analysis** | Configured | Static analysis for security vulnerabilities |
+| **CodeQL analysis** | Workflow-driven | Runs from `.github/workflows/codeql.yml` on every push to `main`, PR to `main`, and weekly schedule |
 
 !!! note
     Secret scanning and push protection are available for free on public
     repositories. Private repositories require GitHub Advanced Security (GHAS).
 
-**Automated:** Yes, security settings are copied from the template. CodeQL is
-configured separately by `configure_codeql()`.
+**Automated:** Yes, security settings are copied from the template. CodeQL
+runs as a committed GitHub Actions workflow (`.github/workflows/codeql.yml`)
+and is replicated automatically when the template generator copies workflow
+files into a new repository — no extra API call is required.
 
 ## Dependabot
 
@@ -302,11 +329,10 @@ PRs with these labels are excluded from auto-generated notes:
 After creating a new repository from the template, these items require manual
 configuration:
 
-1. **Environments** -- Create `testpypi` and `pypi` environments
+1. **Environments** -- Run `doit publish_setup` to create the `testpypi` and `pypi` environments in one step
 2. **OIDC Trusted Publishers** -- Configure on PyPI and TestPyPI
 3. **Secrets** -- Add `CODECOV_TOKEN` and optional release app credentials
 4. **CODEOWNERS** -- Replace `@username` with the actual owner
 5. **Dependabot** -- Verify Dependabot is enabled in repository settings
-6. **CodeQL** -- Verify CodeQL is active after initial setup
 
 For the full post-setup checklist, see the [New Project Setup](../template/new-project.md) guide.

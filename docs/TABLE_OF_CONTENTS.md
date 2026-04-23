@@ -10,7 +10,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 ### For Users
 <!-- BEGIN:audience=users -->
 - [API Development Guide](examples/api.md) - Building REST APIs with FastAPI - patterns, testing, and best practices
-- [API Reference](reference/api.md) - Complete API documentation for Package Name
+- [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
@@ -20,7 +20,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
 - [Migration Guide](template/migration.md) - Migrate existing Python projects to use this template
 - [New Project Setup](template/new-project.md) - Create a new Python project from this template
-- [Package Name Documentation](index.md) - Welcome and overview of the project
+- [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
 - [Template Management](template/manage.md) - Unified interface for creating projects, checking updates, and syncing
 - [Template Tools Reference](template/tools-reference.md) - Complete reference for all template tools in tools/pyproject_template/
@@ -36,7 +36,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
 - [API Development Guide](examples/api.md) - Building REST APIs with FastAPI - patterns, testing, and best practices
-- [API Reference](reference/api.md) - Complete API documentation for Package Name
+- [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
@@ -46,8 +46,8 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [First 5 Minutes with an AI Agent](development/ai/first-5-minutes.md) - Narrative walkthrough of the AI agent workflow from issue to merge
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
+- [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Optional Extensions](development/extensions.md) - Additional tools and extensions for testing, security, and more
-- [Package Name Documentation](index.md) - Welcome and overview of the project
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
 - [Python Project Coding Standards](development/coding-standards.md) - Guidelines for exceptions, typing, structure, testing, and documentation
 - [Release Automation & Security](development/release-and-automation.md) - Automated versioning, release management, and security tooling
@@ -74,21 +74,22 @@ Complete index of all documentation, organized by audience and as a full alphabe
 ## Complete Index
 <!-- BEGIN:all -->
 - [Add a Feature: End-to-End Walkthrough](examples/add-a-feature.md) - Step-by-step example of adding a module, CLI subcommand, tests, and docs to the project
-- [ADR-9001: Use uv for package management](template/decisions/9001-use-uv-for-package-management.md)
-- [ADR-9002: Use doit for task automation](template/decisions/9002-use-doit-for-task-automation.md)
-- [ADR-9003: Use ruff for linting and formatting](template/decisions/9003-use-ruff-for-linting-and-formatting.md)
-- [ADR-9004: Auto-discover doit tasks from modules](template/decisions/9004-auto-discover-doit-tasks.md)
-- [ADR-9005: AI agent command restrictions via hooks](template/decisions/9005-ai-agent-command-restrictions.md)
-- [ADR-9006: Merge-gate workflow requiring ready-to-merge label](template/decisions/9006-merge-gate-workflow.md)
-- [ADR-9007: Use mypy for static type checking](template/decisions/9007-use-mypy-for-type-checking.md)
-- [ADR-9008: PR-based development workflow](template/decisions/9008-pr-based-development-workflow.md)
-- [ADR-9009: Use pre-commit hooks for quality gates](template/decisions/9009-use-pre-commit-hooks-for-quality-gates.md)
-- [ADR-9010: Use conventional commits format](template/decisions/9010-use-conventional-commits-format.md)
-- [ADR-9011: Use pytest for testing](template/decisions/9011-use-pytest-for-testing.md)
-- [ADR-9012: Use mkdocs with Material theme for documentation](template/decisions/9012-use-mkdocs-with-material-theme-for-documentation.md)
-- [ADR-9013: Python version support policy with bookend CI strategy](template/decisions/9013-python-version-support-policy.md)
-- [ADR-9014: Use click for application CLI](template/decisions/9014-use-click-for-application-cli.md)
-- [ADR-9015: install_tools framework: archive extraction and custom URLs](template/decisions/9015-install-tools-framework-archive-extraction-and-custom-urls.md)
+- [ADR-9001: Use uv for package management](decisions/9001-use-uv-for-package-management.md)
+- [ADR-9002: Use doit for task automation](decisions/9002-use-doit-for-task-automation.md)
+- [ADR-9003: Use ruff for linting and formatting](decisions/9003-use-ruff-for-linting-and-formatting.md)
+- [ADR-9004: Auto-discover doit tasks from modules](decisions/9004-auto-discover-doit-tasks.md)
+- [ADR-9005: AI agent command restrictions via hooks](decisions/9005-ai-agent-command-restrictions.md)
+- [ADR-9006: Merge-gate workflow requiring ready-to-merge label](decisions/9006-merge-gate-workflow.md)
+- [ADR-9007: Use mypy for static type checking](decisions/9007-use-mypy-for-type-checking.md)
+- [ADR-9008: PR-based development workflow](decisions/9008-pr-based-development-workflow.md)
+- [ADR-9009: Use pre-commit hooks for quality gates](decisions/9009-use-pre-commit-hooks-for-quality-gates.md)
+- [ADR-9010: Use conventional commits format](decisions/9010-use-conventional-commits-format.md)
+- [ADR-9011: Use pytest for testing](decisions/9011-use-pytest-for-testing.md)
+- [ADR-9012: Use mkdocs with Material theme for documentation](decisions/9012-use-mkdocs-with-material-theme-for-documentation.md)
+- [ADR-9013: Python version support policy with bookend CI strategy](decisions/9013-python-version-support-policy.md)
+- [ADR-9014: Use click for application CLI](decisions/9014-use-click-for-application-cli.md)
+- [ADR-9015: install_tools framework: archive extraction and custom URLs](decisions/9015-install-tools-framework-archive-extraction-and-custom-urls.md)
+- [ADR-9016: Unify ADR directories under docs/decisions](decisions/9016-unify-adr-directories.md)
 - [ADR-NNNN: Title](decisions/adr-template.md)
 - [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Gemini, Copilot, and Codex for this project
 - [AI Agent Sync Checklist](template/ai-sync-checklist.md) - Step-by-step checklist for AI agents synchronizing downstream projects with pyproject-template
@@ -96,7 +97,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
 - [API Development Guide](examples/api.md) - Building REST APIs with FastAPI - patterns, testing, and best practices
-- [API Reference](reference/api.md) - Complete API documentation for Package Name
+- [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [Architecture Decision Records](decisions/README.md)
 - [Architecture Documentation](ARCHITECTURE.md)
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
@@ -114,15 +115,14 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
 - [Migration Guide](template/migration.md) - Migrate existing Python projects to use this template
 - [New Project Setup](template/new-project.md) - Create a new Python project from this template
+- [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Optional Extensions](development/extensions.md) - Additional tools and extensions for testing, security, and more
-- [Package Name Documentation](index.md) - Welcome and overview of the project
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
 - [Publishing to PyPI](PUBLISHING.md)
 - [Python Project Coding Standards](development/coding-standards.md) - Guidelines for exceptions, typing, structure, testing, and documentation
 - [Release Automation & Security](development/release-and-automation.md) - Automated versioning, release management, and security tooling
 - [Ruff Auto-Fix on Edit Hook](development/ai/ruff-fix-hook.md) - PostToolUse hook that runs ruff --fix on edited Python files
 - [Slash Commands and Workflows](development/ai/slash-commands.md) - Reference for the slash commands and dual-agent workflow this template ships with
-- [Template Architecture Decision Records](template/decisions/README.md)
 - [Template Management](template/manage.md) - Unified interface for creating projects, checking updates, and syncing
 - [Template Tools Reference](template/tools-reference.md) - Complete reference for all template tools in tools/pyproject_template/
 - [Tooling Roles and Architectural Boundaries](development/tooling-roles.md) - What each tool is for, who uses it, and where runtime code ends and dev tooling begins

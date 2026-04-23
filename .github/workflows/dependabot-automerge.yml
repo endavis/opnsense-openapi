@@ -1,8 +1,12 @@
+# Requires the `allow_auto_merge` repository setting to be enabled.
+# See docs/development/github-repository-settings.md for the full list
+# of required repository settings, and docs/development/dependabot-automerge.md
+# for how this workflow uses it.
 name: Dependabot Auto-merge
 
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review, labeled]
+    types: [opened, reopened, synchronize, ready_for_review]
   schedule:
     - cron: '0 */6 * * *'
   workflow_dispatch:
@@ -11,14 +15,17 @@ permissions:
   pull-requests: write
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   evaluate:
     name: Evaluate dependabot PR
     runs-on: ubuntu-latest
     if: >-
       github.event_name == 'pull_request_target' &&
-      github.actor == 'dependabot[bot]' &&
-      github.event.action != 'labeled'
+      github.actor == 'dependabot[bot]'
     outputs:
       qualifies: ${{ steps.decide.outputs.qualifies }}
       reason: ${{ steps.decide.outputs.reason }}
@@ -28,7 +35,7 @@ jobs:
 
       - name: Fetch dependabot metadata
         id: meta
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -111,24 +118,51 @@ jobs:
     needs: evaluate
     if: needs.evaluate.outputs.qualifies == 'true'
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PR_NUMBER: ${{ needs.evaluate.outputs.pr_number }}
     steps:
-      - name: Enable auto-merge (squash)
-        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
+      - name: Generate App token
+        id: app-token
+        if: ${{ vars.RELEASE_APP_ID != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 
       - name: Add ready-to-merge label
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
         run: gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label ready-to-merge
 
+      - name: Enable auto-merge (squash)
+        id: automerge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
+
       - name: Post sticky status comment
+        if: always()
         uses: actions/github-script@v9
+        env:
+          AUTOMERGE_OUTCOME: ${{ steps.automerge.outcome }}
+          APP_TOKEN_CONFIGURED: ${{ steps.app-token.outputs.token != '' }}
         with:
           script: |
             const prNumber = Number(process.env.PR_NUMBER);
             const marker = '<!-- dependabot-automerge:status -->';
-            const body =
-              marker +
-              '\n✅ **Auto-merge enabled.** This PR will merge automatically when required CI checks pass. To block, add label `automerge-blocked`.';
+            const succeeded = process.env.AUTOMERGE_OUTCOME === 'success';
+            const appTokenConfigured = process.env.APP_TOKEN_CONFIGURED === 'true';
+
+            let body;
+            if (succeeded) {
+              body = marker +
+                '\n✅ **Auto-merge enabled.** This PR will merge automatically when required CI checks pass. To block, add label `automerge-blocked`.';
+            } else if (!appTokenConfigured) {
+              body = marker +
+                '\n⚠️ **Auto-merge could not be enabled, and the App token is not configured.** The `ready-to-merge` label has been applied with `GITHUB_TOKEN`, which does not trigger downstream workflows — so the Merge Gate will **not** re-run automatically. To unstick this PR, either remove and re-add the `ready-to-merge` label manually (which will trigger the Merge Gate as your user), or configure the `RELEASE_APP_ID` variable and `RELEASE_APP_PRIVATE_KEY` secret so future runs can apply the label with an App token. See `docs/development/dependabot-automerge.md` for details.';
+            } else {
+              body = marker +
+                '\n⚠️ **Auto-merge could not be enabled**, but the `ready-to-merge` label has been applied so the Merge Gate is satisfied. A maintainer will need to merge this PR manually (or re-run the workflow once the underlying issue is resolved). See the workflow run logs for details. To opt this PR out of auto-merge entirely, add the `automerge-blocked` label.';
+            }
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
@@ -171,58 +205,6 @@ jobs:
             const body =
               marker +
               `\n⏸️ **Auto-merge skipped:** ${reason}. Human review required.`;
-
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              per_page: 100,
-            });
-            for (const c of comments) {
-              if (c.user && c.user.type === 'Bot' && c.body && c.body.includes(marker)) {
-                await github.rest.issues.deleteComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: c.id,
-                });
-              }
-            }
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              body,
-            });
-
-  handle-blocked-label:
-    name: Handle blocking label
-    runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'pull_request_target' &&
-      github.event.action == 'labeled' &&
-      github.event.pull_request.user.login == 'dependabot[bot]' &&
-      (github.event.label.name == 'automerge-blocked' || github.event.label.name == 'do-not-merge')
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PR_NUMBER: ${{ github.event.pull_request.number }}
-      LABEL_NAME: ${{ github.event.label.name }}
-    steps:
-      - name: Disable auto-merge
-        run: gh pr merge --disable-auto "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" || true
-
-      - name: Remove ready-to-merge label
-        run: gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --remove-label ready-to-merge || true
-
-      - name: Post sticky blocked comment
-        uses: actions/github-script@v9
-        with:
-          script: |
-            const prNumber = Number(process.env.PR_NUMBER);
-            const label = process.env.LABEL_NAME;
-            const marker = '<!-- dependabot-automerge:status -->';
-            const body =
-              marker +
-              `\n🛑 **Auto-merge disabled** by \`${label}\` label.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
