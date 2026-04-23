@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776970169050,
+  "lastUpdate": 1776971280564,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -114,6 +114,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00018351343771384429",
             "extra": "mean: 998.9670223641233 usec\nrounds: 626"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2757344f0c6ac955685c8a4b7744358ca699bbe3",
+          "message": "chore: complete .envrc and .envrc.local.example sync (merges PR #22, addresses #21)\n\nchore: complete .envrc and .envrc.local.example sync from PR #13\n\nPR #13 (template sync, addresses #12) section 4 explicitly listed\n.envrc and .envrc.local.example for sync but the implementation\nskipped both. Gap discovered while preparing the v0.3.0 release.\n\n.envrc — replaced project's 4-line stub with upstream's 43-line\nversion verbatim (no project-specific content to preserve):\n\n- Auto-activate .venv with helpful \"run uv sync --all-extras --dev\"\n  hint when missing.\n- Redirect dev tool caches into tmp/: UV_CACHE_DIR, RUFF_CACHE_DIR,\n  MYPY_CACHE_DIR, COVERAGE_FILE, PRE_COMMIT_HOME.\n- source_env + watch_file .envrc.local so direnv reloads on edit.\n- Load diagnostics output and tip to create .envrc.local if missing.\n\n.envrc.local.example — merged. Preserved the OPNsense credentials\nblock (annotated \"NEVER commit these!\" inline) and appended upstream's\ngeneric examples: DEBUG/LOG_LEVEL toggles, cache overrides,\nEDITOR/BROWSER, ENABLE_LSP_TOOL=1 (pairs with .claude/lsp-setup.md\nadopted in PR #13), PYRIGHT_PYTHON_DEBUG=1. Dropped upstream's generic\nAPI_KEY/DATABASE_URL placeholders since the OPNsense block already\nserves the concrete-credentials role.\n\ndiff .envrc tmp/extracted/pyproject-template-main/.envrc returns clean.\n\nAddresses #21\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-04-23T20:07:32+01:00",
+          "tree_id": "d0fa5903e5cac122c6e0ef6577aa028c3024f613",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/2757344f0c6ac955685c8a4b7744358ca699bbe3"
+        },
+        "date": 1776971279916,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 759.9414122712351,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0014054391300809775",
+            "extra": "mean: 1.3158909145526132 msec\nrounds: 749"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1073.7729633212882,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003353340796967029",
+            "extra": "mean: 931.2955663429065 usec\nrounds: 618"
           }
         ]
       }
