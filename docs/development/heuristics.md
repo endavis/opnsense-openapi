@@ -1,3 +1,14 @@
+---
+title: Heuristic Schema Generation
+description: How the generator infers response schemas when none are declared
+audience:
+  - contributors
+tags:
+  - heuristics
+  - internals
+  - generator
+---
+
 # Heuristic Schema Generation Guide
 
 ## Quick Reference
@@ -669,6 +680,6 @@ Track coverage improvements over time:
 
 ## Further Reading
 
-- [Full Architecture Documentation](./ARCHITECTURE.md)
+- [Full Architecture Documentation](./architecture.md)
 - [OPNsense MVC Documentation](https://docs.opnsense.org/development/backend.html)
 - [OpenAPI Specification](https://swagger.io/specification/)

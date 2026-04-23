@@ -84,7 +84,7 @@ opnsense-openapi download <version>
 opnsense-openapi generate <version>
 ```
 
-See [GENERATED_CLIENT_USAGE.md](docs/GENERATED_CLIENT_USAGE.md) for complete documentation.
+See [Generated Client Usage](docs/usage/generated-client.md) for complete documentation.
 
 ## CLI Commands
 
