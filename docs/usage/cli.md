@@ -190,6 +190,3 @@ What to cover for every new subcommand:
 - [Tooling Roles and Architectural Boundaries](../development/tooling-roles.md) —
   why runtime CLI and dev tooling are kept separate.
 - [ADR-9014: Use click for application CLI](../decisions/9014-use-click-for-application-cli.md)
-
-- [Add a Feature End-to-End](../examples/add-a-feature.md) —
-  narrative walkthrough of adding a module, CLI subcommand, tests, and docs.
