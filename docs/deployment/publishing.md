@@ -1,3 +1,14 @@
+---
+title: Publishing to PyPI
+description: Release-time procedure for publishing the package to PyPI
+audience:
+  - contributors
+tags:
+  - release
+  - pypi
+  - deployment
+---
+
 # Publishing to PyPI
 
 ## One-Time Setup

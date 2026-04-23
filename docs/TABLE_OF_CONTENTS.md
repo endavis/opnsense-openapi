@@ -14,6 +14,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
 - [Examples](examples/README.md) - OPNsense-specific example scripts that ship with this project
+- [Generated Client Usage](usage/generated-client.md) - Use generated OPNsense clients with automatic version detection
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
@@ -34,6 +35,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
+- [Architecture](development/architecture.md) - How the OPNsense OpenAPI generator parses and emits clients
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
@@ -42,10 +44,12 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
 - [First 5 Minutes with an AI Agent](development/ai/first-5-minutes.md) - Narrative walkthrough of the AI agent workflow from issue to merge
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
+- [Heuristic Schema Generation](development/heuristics.md) - How the generator infers response schemas when none are declared
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
 - [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Optional Extensions](development/extensions.md) - Additional tools and extensions for testing, security, and more
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
+- [Publishing to PyPI](deployment/publishing.md) - Release-time procedure for publishing the package to PyPI
 - [Python Project Coding Standards](development/coding-standards.md) - Guidelines for exceptions, typing, structure, testing, and documentation
 - [Release Automation & Security](development/release-and-automation.md) - Automated versioning, release management, and security tooling
 - [Ruff Auto-Fix on Edit Hook](development/ai/ruff-fix-hook.md) - PostToolUse hook that runs ruff --fix on edited Python files
@@ -93,8 +97,8 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
+- [Architecture](development/architecture.md) - How the OPNsense OpenAPI generator parses and emits clients
 - [Architecture Decision Records](decisions/README.md)
-- [Architecture Documentation](ARCHITECTURE.md)
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
@@ -103,8 +107,9 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
 - [Examples](examples/README.md) - OPNsense-specific example scripts that ship with this project
 - [First 5 Minutes with an AI Agent](development/ai/first-5-minutes.md) - Narrative walkthrough of the AI agent workflow from issue to merge
+- [Generated Client Usage](usage/generated-client.md) - Use generated OPNsense clients with automatic version detection
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
-- [Heuristic Schema Generation Guide](HEURISTICS.md)
+- [Heuristic Schema Generation](development/heuristics.md) - How the generator infers response schemas when none are declared
 - [install_tools Framework](development/install-tools-framework.md)
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
@@ -113,7 +118,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Optional Extensions](development/extensions.md) - Additional tools and extensions for testing, security, and more
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
-- [Publishing to PyPI](PUBLISHING.md)
+- [Publishing to PyPI](deployment/publishing.md) - Release-time procedure for publishing the package to PyPI
 - [Python Project Coding Standards](development/coding-standards.md) - Guidelines for exceptions, typing, structure, testing, and documentation
 - [Release Automation & Security](development/release-and-automation.md) - Automated versioning, release management, and security tooling
 - [Ruff Auto-Fix on Edit Hook](development/ai/ruff-fix-hook.md) - PostToolUse hook that runs ruff --fix on edited Python files
@@ -122,7 +127,6 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Template Tools Reference](template/tools-reference.md) - Complete reference for all template tools in tools/pyproject_template/
 - [Tooling Roles and Architectural Boundaries](development/tooling-roles.md) - What each tool is for, who uses it, and where runtime code ends and dev tooling begins
 - [Usage Guide](usage/basics.md) - Package usage and development workflows
-- [Using Generated Clients with Auto-Detection](GENERATED_CLIENT_USAGE.md)
 - [Using This Template](template/index.md) - Overview of using pyproject-template for your Python projects
 <!-- END:all -->
 

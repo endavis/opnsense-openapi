@@ -1,3 +1,15 @@
+---
+title: Architecture
+description: How the OPNsense OpenAPI generator parses and emits clients
+audience:
+  - contributors
+tags:
+  - architecture
+  - internals
+  - parser
+  - generator
+---
+
 # Architecture Documentation
 
 ## Overview

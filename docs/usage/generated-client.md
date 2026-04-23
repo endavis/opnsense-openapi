@@ -1,3 +1,14 @@
+---
+title: Generated Client Usage
+description: Use generated OPNsense clients with automatic version detection
+audience:
+  - users
+tags:
+  - usage
+  - client
+  - auto-detection
+---
+
 # Using Generated Clients with Auto-Detection
 
 This document shows how to use the generated OpenAPI clients with automatic version detection.
