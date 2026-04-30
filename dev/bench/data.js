@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777576862219,
+  "lastUpdate": 1777578309490,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -266,6 +266,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0001213683829312942",
             "extra": "mean: 964.1808906745292 usec\nrounds: 622"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6699f60a6496fc85746ff5e473a97527182622a3",
+          "message": "chore: add structural lint for spec path routing (merges PR #39, addresses #35)\n\n* chore: add structural lint for spec path routing\n\nAdds tests/test_spec_path_routing.py, the missing structural test layer\nidentified after #32 shipped 56 specs whose paths did not reverse-map to\nreal OPNsense controllers. The lint walks every path in the latest\ncommitted spec (`opnsense_openapi.list_available_specs()[-1]`), parses\neach `/api/{module}/{controller}/{action}` segment, applies\n`to_class_name(controller) + \"Controller.php\"`, and asserts the file\nexists under the matching OPNsense source archive. Module resolution\nmirrors Mvc/Router.php's case-insensitive namespace fallback so\n`/api/dhcrelay` resolves to OPNsense/DHCRelay, `/api/openvpn` to\nOPNsense/OpenVPN, etc. All failures are collected and reported in a\nsingle assertion, so a single test run surfaces every broken path.\n\nThe e2e test is gated by the new `requires_opnsense_source` pytest\nmarker and downloads the source archive via SourceDownloader on demand;\nwhen the download cannot proceed (no network) it skips with a clear\nreason. CI gains three steps that resolve the latest spec version,\ncache `tmp/opnsense_source` keyed on it, and pre-download the archive\nso the lint runs unconditionally on the newest-Python ubuntu-latest\nmatrix cell. Five unmarked unit tests over synthetic fake-tree fixtures\nexercise the path-checking helper on every CI pass with no network.\n\nAn earlier run of this lint, before #37 regenerated the committed\nspecs, correctly flagged ~120 broken paths in the not-yet-regenerated\n26.1.6 spec — concrete evidence the lint catches the regression class\nit is designed to catch.\n\nA live-API contract test (`@pytest.mark.live_opnsense`) is intentionally\nout of scope here and will be tracked as a separate follow-up issue.\n\nAddresses #35\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n* fix: make spec routing lint case-sensitive on macOS and Windows\n\nPath.is_file() succeeds for casing-mismatched lookups on case-insensitive\nfilesystems (APFS, NTFS), so the lint silently passed for\n/api/interfaces/vlansettings/ on Mac and Windows runners — fooled into\nresolving it to the real VlanSettingsController.php. Linux caught the\nregression correctly; the test suite gave a false-clean signal everywhere\nelse.\n\nSwitch to listing each Api/ directory once and comparing the expected\nfilename against the entries via Python string equality (case-sensitive\nregardless of host FS). Memoize per-Api-dir so the e2e test (~738 paths)\ndoesn't re-list the same directory hundreds of times.\n\nSurfaced by PR #39's Mac/Windows CI run.\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-04-30T20:44:46+01:00",
+          "tree_id": "78ef08c087b83dde78c39c80e03a2e3ccaf7ad40",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/6699f60a6496fc85746ff5e473a97527182622a3"
+        },
+        "date": 1777578309188,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 742.94106357881,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0026594105053228474",
+            "extra": "mean: 1.3460017880596278 msec\nrounds: 670"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1297.7538713475926,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000714317479856272",
+            "extra": "mean: 770.56213976969 usec\nrounds: 694"
           }
         ]
       }
