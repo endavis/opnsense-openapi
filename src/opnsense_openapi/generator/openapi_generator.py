@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from ..parser import ApiController
+from ..utils import to_snake_case
 
 logger = logging.getLogger(__name__)
 
@@ -445,7 +446,12 @@ class OpenApiGenerator:
         requires_uuid = has_verb and has_noun and not is_exception
 
         # Build Path
-        path_base = f"/api/{module.lower()}/{controller.lower()}/{action}"
+        # Controller segment uses snake_case to match OPNsense Mvc/Router.php
+        # which converts snake_case URL segments to CamelCase class names via
+        # str_replace('_', '', ucwords($element, '_')) . 'Controller'.
+        # Module segment stays lowercase: OPNsense's Router does case-insensitive
+        # directory matching for the namespace as a backwards-compat fallback.
+        path_base = f"/api/{module.lower()}/{to_snake_case(controller)}/{action}"
         if requires_uuid:
             url = f"{path_base}/{{uuid}}"
             parameters = [
