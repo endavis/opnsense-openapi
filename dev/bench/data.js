@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776971518494,
+  "lastUpdate": 1777573653743,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -190,6 +190,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000047827092106949985",
             "extra": "mean: 946.6588306189318 usec\nrounds: 614"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1a0f2e68f02636ff8596674cf87c2a74c157eb2f",
+          "message": "fix: emit snake_case controller segments in generated URL paths (merges PR #36, addresses #32)\n\nOPNsense's Mvc/Router.php converts snake_case URL segments to CamelCase\ncontroller class names. The generator was emitting collapsed-lowercase\nsegments (vlansettings), which the router does not route. Use\nto_snake_case(controller) for the URL path so multi-word controllers\n(VlanSettings, OneToOne, HasyncStatus) produce routable paths.\n\nAddresses #32\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-04-30T19:27:00+01:00",
+          "tree_id": "4d637667b092106993519a76aebf9a1753655031",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/1a0f2e68f02636ff8596674cf87c2a74c157eb2f"
+        },
+        "date": 1777573653419,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 667.9211162323131,
+            "unit": "iter/sec",
+            "range": "stddev: 0.002973806029451714",
+            "extra": "mean: 1.4971827895499337 msec\nrounds: 689"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1076.109096615372,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000036523984238091537",
+            "extra": "mean: 929.273809825831 usec\nrounds: 631"
           }
         ]
       }
