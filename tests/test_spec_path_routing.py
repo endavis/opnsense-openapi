@@ -86,6 +86,11 @@ def check_spec_paths(spec: dict[str, Any], controllers_root: Path) -> list[tuple
     """
     failures: list[tuple[str, str]] = []
     paths: dict[str, Any] = spec.get("paths", {})
+    # Cache the on-disk filename set for each Api directory we look into.
+    # Compared as Python strings (case-sensitive) regardless of the host
+    # filesystem's case sensitivity — Path.is_file() would silently succeed
+    # for casing-mismatched lookups on macOS (APFS) and Windows (NTFS).
+    api_listings: dict[Path, set[str]] = {}
 
     for path in paths:
         match = PATH_PATTERN.match(path)
@@ -107,15 +112,21 @@ def check_spec_paths(spec: dict[str, Any], controllers_root: Path) -> list[tuple
             )
             continue
 
+        api_dir = module_dir / "Api"
+        if api_dir not in api_listings:
+            api_listings[api_dir] = (
+                {entry.name for entry in api_dir.iterdir() if entry.is_file()}
+                if api_dir.is_dir()
+                else set()
+            )
+
         expected_filename = f"{to_class_name(controller)}Controller.php"
-        expected_file = module_dir / "Api" / expected_filename
-        if not expected_file.is_file():
+        if expected_filename not in api_listings[api_dir]:
             failures.append(
                 (
                     path,
-                    f"controller file not found: expected {expected_file} "
-                    f"(controller segment {controller!r} -> "
-                    f"{to_class_name(controller)}Controller.php)",
+                    f"controller file not found: expected {api_dir / expected_filename} "
+                    f"(controller segment {controller!r} -> {expected_filename})",
                 )
             )
 
