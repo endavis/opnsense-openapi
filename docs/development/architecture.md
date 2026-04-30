@@ -636,6 +636,14 @@ print(f"Coverage: {with_schema}/{total} ({with_schema/total*100:.1f}%)")
 EOF
 ```
 
+### Spec Path Routing Lint
+
+A structural lint in `tests/test_spec_path_routing.py` verifies that every
+`/api/{module}/{controller}/{action}` path in the latest committed spec
+reverse-maps to a real `*Controller.php` file in the matching OPNsense
+source archive. See [Spec Path Routing Lint](ci-cd-testing.md#spec-path-routing-lint)
+in the CI/CD Testing Guide for details.
+
 ## Performance
 
 ### Benchmarks
