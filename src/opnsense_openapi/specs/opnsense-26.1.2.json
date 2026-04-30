@@ -4446,7 +4446,7 @@
         }
       }
     },
-    "/api/kea/ctrlagent/get": {
+    "/api/kea/ctrl_agent/get": {
       "get": {
         "tags": [
           "Kea"
@@ -5226,7 +5226,7 @@
         }
       }
     },
-    "/api/firewall/filterutil/ruleStats": {
+    "/api/firewall/filter_util/ruleStats": {
       "post": {
         "tags": [
           "Firewall"
@@ -5252,7 +5252,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/listCategories": {
+    "/api/firewall/filter_base/listCategories": {
       "get": {
         "tags": [
           "Firewall"
@@ -5278,7 +5278,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/listNetworkSelectOptions": {
+    "/api/firewall/filter_base/listNetworkSelectOptions": {
       "get": {
         "tags": [
           "Firewall"
@@ -5304,7 +5304,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/listPortSelectOptions": {
+    "/api/firewall/filter_base/listPortSelectOptions": {
       "get": {
         "tags": [
           "Firewall"
@@ -5330,7 +5330,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/apply": {
+    "/api/firewall/filter_base/apply": {
       "post": {
         "tags": [
           "Firewall"
@@ -5352,7 +5352,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/cancelRollback": {
+    "/api/firewall/filter_base/cancelRollback": {
       "post": {
         "tags": [
           "Firewall"
@@ -5374,7 +5374,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/savepoint": {
+    "/api/firewall/filter_base/savepoint": {
       "post": {
         "tags": [
           "Firewall"
@@ -5396,7 +5396,7 @@
         }
       }
     },
-    "/api/firewall/filterbase/revert": {
+    "/api/firewall/filter_base/revert": {
       "post": {
         "tags": [
           "Firewall"
@@ -6108,7 +6108,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/aliases": {
+    "/api/firewall/alias_util/aliases": {
       "post": {
         "tags": [
           "Firewall"
@@ -6134,7 +6134,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/list": {
+    "/api/firewall/alias_util/list": {
       "get": {
         "tags": [
           "Firewall"
@@ -6160,7 +6160,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/updateBogons": {
+    "/api/firewall/alias_util/updateBogons": {
       "post": {
         "tags": [
           "Firewall"
@@ -6192,7 +6192,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/flush": {
+    "/api/firewall/alias_util/flush": {
       "post": {
         "tags": [
           "Firewall"
@@ -6214,7 +6214,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/delete": {
+    "/api/firewall/alias_util/delete": {
       "post": {
         "tags": [
           "Firewall"
@@ -6236,7 +6236,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/add": {
+    "/api/firewall/alias_util/add": {
       "post": {
         "tags": [
           "Firewall"
@@ -6268,7 +6268,7 @@
         }
       }
     },
-    "/api/firewall/aliasutil/findReferences": {
+    "/api/firewall/alias_util/findReferences": {
       "post": {
         "tags": [
           "Firewall"
@@ -7692,7 +7692,7 @@
         }
       }
     },
-    "/api/core/hasyncstatus/version": {
+    "/api/core/hasync_status/version": {
       "post": {
         "tags": [
           "Core"
@@ -7709,7 +7709,7 @@
         }
       }
     },
-    "/api/core/hasyncstatus/services": {
+    "/api/core/hasync_status/services": {
       "post": {
         "tags": [
           "Core"
@@ -7726,7 +7726,7 @@
         }
       }
     },
-    "/api/core/hasyncstatus/stop": {
+    "/api/core/hasync_status/stop": {
       "post": {
         "tags": [
           "Core"
@@ -7759,7 +7759,7 @@
         }
       }
     },
-    "/api/core/hasyncstatus/start": {
+    "/api/core/hasync_status/start": {
       "post": {
         "tags": [
           "Core"
@@ -7792,7 +7792,7 @@
         }
       }
     },
-    "/api/core/hasyncstatus/restart": {
+    "/api/core/hasync_status/restart": {
       "post": {
         "tags": [
           "Core"
@@ -7825,7 +7825,7 @@
         }
       }
     },
-    "/api/core/hasyncstatus/restartAll": {
+    "/api/core/hasync_status/restartAll": {
       "post": {
         "tags": [
           "Core"
@@ -8422,7 +8422,7 @@
         }
       }
     },
-    "/api/core/initialsetup/configure": {
+    "/api/core/initial_setup/configure": {
       "post": {
         "tags": [
           "Core"
@@ -8439,7 +8439,7 @@
         }
       }
     },
-    "/api/core/initialsetup/abort": {
+    "/api/core/initial_setup/abort": {
       "post": {
         "tags": [
           "Core"
@@ -12920,7 +12920,7 @@
         }
       }
     },
-    "/api/ipsec/manualspd/search": {
+    "/api/ipsec/manual_spd/search": {
       "post": {
         "tags": [
           "IPsec"
@@ -12942,7 +12942,7 @@
         }
       }
     },
-    "/api/ipsec/manualspd/set": {
+    "/api/ipsec/manual_spd/set": {
       "post": {
         "tags": [
           "IPsec"
@@ -12977,7 +12977,7 @@
         }
       }
     },
-    "/api/ipsec/manualspd/add": {
+    "/api/ipsec/manual_spd/add": {
       "post": {
         "tags": [
           "IPsec"
@@ -13012,7 +13012,7 @@
         }
       }
     },
-    "/api/ipsec/manualspd/get": {
+    "/api/ipsec/manual_spd/get": {
       "get": {
         "tags": [
           "IPsec"
@@ -13041,7 +13041,7 @@
         }
       }
     },
-    "/api/ipsec/manualspd/toggle": {
+    "/api/ipsec/manual_spd/toggle": {
       "post": {
         "tags": [
           "IPsec"
@@ -13063,7 +13063,7 @@
         }
       }
     },
-    "/api/ipsec/manualspd/del": {
+    "/api/ipsec/manual_spd/del": {
       "post": {
         "tags": [
           "IPsec"
@@ -13197,7 +13197,7 @@
         }
       }
     },
-    "/api/ipsec/keypairs/searchItem": {
+    "/api/ipsec/key_pairs/searchItem": {
       "post": {
         "tags": [
           "IPsec"
@@ -13219,7 +13219,7 @@
         }
       }
     },
-    "/api/ipsec/keypairs/setItem/{uuid}": {
+    "/api/ipsec/key_pairs/setItem/{uuid}": {
       "post": {
         "tags": [
           "IPsec"
@@ -13265,7 +13265,7 @@
         }
       }
     },
-    "/api/ipsec/keypairs/addItem": {
+    "/api/ipsec/key_pairs/addItem": {
       "post": {
         "tags": [
           "IPsec"
@@ -13300,7 +13300,7 @@
         }
       }
     },
-    "/api/ipsec/keypairs/getItem/{uuid}": {
+    "/api/ipsec/key_pairs/getItem/{uuid}": {
       "get": {
         "tags": [
           "IPsec"
@@ -13333,7 +13333,7 @@
         }
       }
     },
-    "/api/ipsec/keypairs/delItem/{uuid}": {
+    "/api/ipsec/key_pairs/delItem/{uuid}": {
       "post": {
         "tags": [
           "IPsec"
@@ -13366,7 +13366,7 @@
         }
       }
     },
-    "/api/ipsec/keypairs/genKeyPair": {
+    "/api/ipsec/key_pairs/genKeyPair": {
       "post": {
         "tags": [
           "IPsec"
@@ -13548,7 +13548,7 @@
         }
       }
     },
-    "/api/ipsec/presharedkeys/searchItem": {
+    "/api/ipsec/pre_shared_keys/searchItem": {
       "post": {
         "tags": [
           "IPsec"
@@ -13570,7 +13570,7 @@
         }
       }
     },
-    "/api/ipsec/presharedkeys/setItem/{uuid}": {
+    "/api/ipsec/pre_shared_keys/setItem/{uuid}": {
       "post": {
         "tags": [
           "IPsec"
@@ -13616,7 +13616,7 @@
         }
       }
     },
-    "/api/ipsec/presharedkeys/addItem": {
+    "/api/ipsec/pre_shared_keys/addItem": {
       "post": {
         "tags": [
           "IPsec"
@@ -13651,7 +13651,7 @@
         }
       }
     },
-    "/api/ipsec/presharedkeys/getItem/{uuid}": {
+    "/api/ipsec/pre_shared_keys/getItem/{uuid}": {
       "get": {
         "tags": [
           "IPsec"
@@ -13684,7 +13684,7 @@
         }
       }
     },
-    "/api/ipsec/presharedkeys/delItem/{uuid}": {
+    "/api/ipsec/pre_shared_keys/delItem/{uuid}": {
       "post": {
         "tags": [
           "IPsec"
@@ -13805,7 +13805,7 @@
         }
       }
     },
-    "/api/ipsec/legacysubsystem/status": {
+    "/api/ipsec/legacy_subsystem/status": {
       "get": {
         "tags": [
           "IPsec"
@@ -13852,7 +13852,7 @@
         }
       }
     },
-    "/api/ipsec/legacysubsystem/applyConfig": {
+    "/api/ipsec/legacy_subsystem/applyConfig": {
       "post": {
         "tags": [
           "IPsec"
@@ -15715,7 +15715,7 @@
         }
       }
     },
-    "/api/openvpn/clientoverwrites/search": {
+    "/api/openvpn/client_overwrites/search": {
       "post": {
         "tags": [
           "OpenVPN"
@@ -15737,7 +15737,7 @@
         }
       }
     },
-    "/api/openvpn/clientoverwrites/get": {
+    "/api/openvpn/client_overwrites/get": {
       "get": {
         "tags": [
           "OpenVPN"
@@ -15766,7 +15766,7 @@
         }
       }
     },
-    "/api/openvpn/clientoverwrites/add": {
+    "/api/openvpn/client_overwrites/add": {
       "post": {
         "tags": [
           "OpenVPN"
@@ -15801,7 +15801,7 @@
         }
       }
     },
-    "/api/openvpn/clientoverwrites/set": {
+    "/api/openvpn/client_overwrites/set": {
       "post": {
         "tags": [
           "OpenVPN"
@@ -15836,7 +15836,7 @@
         }
       }
     },
-    "/api/openvpn/clientoverwrites/del": {
+    "/api/openvpn/client_overwrites/del": {
       "post": {
         "tags": [
           "OpenVPN"
@@ -15858,7 +15858,7 @@
         }
       }
     },
-    "/api/openvpn/clientoverwrites/toggle": {
+    "/api/openvpn/client_overwrites/toggle": {
       "post": {
         "tags": [
           "OpenVPN"
@@ -16656,7 +16656,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/set": {
+    "/api/diagnostics/packet_capture/set": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16691,7 +16691,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/start": {
+    "/api/diagnostics/packet_capture/start": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16724,7 +16724,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/stop": {
+    "/api/diagnostics/packet_capture/stop": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16757,7 +16757,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/remove": {
+    "/api/diagnostics/packet_capture/remove": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16774,7 +16774,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/view": {
+    "/api/diagnostics/packet_capture/view": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16791,7 +16791,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/download": {
+    "/api/diagnostics/packet_capture/download": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16817,7 +16817,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/macInfo": {
+    "/api/diagnostics/packet_capture/macInfo": {
       "get": {
         "tags": [
           "Diagnostics"
@@ -16843,7 +16843,7 @@
         }
       }
     },
-    "/api/diagnostics/packetcapture/searchJobs": {
+    "/api/diagnostics/packet_capture/searchJobs": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -16865,7 +16865,7 @@
         }
       }
     },
-    "/api/diagnostics/dnsdiagnostics/set": {
+    "/api/diagnostics/dns_diagnostics/set": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -17062,7 +17062,7 @@
         }
       }
     },
-    "/api/diagnostics/cpuusage/getCPUType": {
+    "/api/diagnostics/cpu_usage/getCPUType": {
       "get": {
         "tags": [
           "Diagnostics"
@@ -17088,7 +17088,7 @@
         }
       }
     },
-    "/api/diagnostics/cpuusage/stream": {
+    "/api/diagnostics/cpu_usage/stream": {
       "post": {
         "tags": [
           "Diagnostics"
@@ -18727,7 +18727,7 @@
         }
       }
     },
-    "/api/interfaces/vlansettings/searchItem": {
+    "/api/interfaces/vlan_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -18768,7 +18768,7 @@
         }
       }
     },
-    "/api/interfaces/vlansettings/setItem/{uuid}": {
+    "/api/interfaces/vlan_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -18830,7 +18830,7 @@
         }
       }
     },
-    "/api/interfaces/vlansettings/addItem": {
+    "/api/interfaces/vlan_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -18881,7 +18881,7 @@
         }
       }
     },
-    "/api/interfaces/vlansettings/getItem/{uuid}": {
+    "/api/interfaces/vlan_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -18933,7 +18933,7 @@
         }
       }
     },
-    "/api/interfaces/vlansettings/delItem/{uuid}": {
+    "/api/interfaces/vlan_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -18985,7 +18985,7 @@
         }
       }
     },
-    "/api/interfaces/vlansettings/reconfigure": {
+    "/api/interfaces/vlan_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19022,7 +19022,7 @@
         }
       }
     },
-    "/api/interfaces/bridgesettings/searchItem": {
+    "/api/interfaces/bridge_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19063,7 +19063,7 @@
         }
       }
     },
-    "/api/interfaces/bridgesettings/setItem/{uuid}": {
+    "/api/interfaces/bridge_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19125,7 +19125,7 @@
         }
       }
     },
-    "/api/interfaces/bridgesettings/addItem": {
+    "/api/interfaces/bridge_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19176,7 +19176,7 @@
         }
       }
     },
-    "/api/interfaces/bridgesettings/getItem/{uuid}": {
+    "/api/interfaces/bridge_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -19228,7 +19228,7 @@
         }
       }
     },
-    "/api/interfaces/bridgesettings/delItem/{uuid}": {
+    "/api/interfaces/bridge_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19280,7 +19280,7 @@
         }
       }
     },
-    "/api/interfaces/bridgesettings/reconfigure": {
+    "/api/interfaces/bridge_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19383,7 +19383,7 @@
         }
       }
     },
-    "/api/interfaces/neighborsettings/searchItem": {
+    "/api/interfaces/neighbor_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19424,7 +19424,7 @@
         }
       }
     },
-    "/api/interfaces/neighborsettings/setItem/{uuid}": {
+    "/api/interfaces/neighbor_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19486,7 +19486,7 @@
         }
       }
     },
-    "/api/interfaces/neighborsettings/addItem": {
+    "/api/interfaces/neighbor_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19537,7 +19537,7 @@
         }
       }
     },
-    "/api/interfaces/neighborsettings/getItem/{uuid}": {
+    "/api/interfaces/neighbor_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -19589,7 +19589,7 @@
         }
       }
     },
-    "/api/interfaces/neighborsettings/delItem/{uuid}": {
+    "/api/interfaces/neighbor_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19641,7 +19641,7 @@
         }
       }
     },
-    "/api/interfaces/neighborsettings/reconfigure": {
+    "/api/interfaces/neighbor_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19678,7 +19678,7 @@
         }
       }
     },
-    "/api/interfaces/vxlansettings/searchItem": {
+    "/api/interfaces/vxlan_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19719,7 +19719,7 @@
         }
       }
     },
-    "/api/interfaces/vxlansettings/setItem/{uuid}": {
+    "/api/interfaces/vxlan_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19781,7 +19781,7 @@
         }
       }
     },
-    "/api/interfaces/vxlansettings/addItem": {
+    "/api/interfaces/vxlan_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19832,7 +19832,7 @@
         }
       }
     },
-    "/api/interfaces/vxlansettings/getItem/{uuid}": {
+    "/api/interfaces/vxlan_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -19884,7 +19884,7 @@
         }
       }
     },
-    "/api/interfaces/vxlansettings/delItem/{uuid}": {
+    "/api/interfaces/vxlan_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19936,7 +19936,7 @@
         }
       }
     },
-    "/api/interfaces/vxlansettings/reconfigure": {
+    "/api/interfaces/vxlan_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -19973,7 +19973,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/searchItem": {
+    "/api/interfaces/gif_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20014,7 +20014,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/setItem/{uuid}": {
+    "/api/interfaces/gif_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20076,7 +20076,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/addItem": {
+    "/api/interfaces/gif_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20127,7 +20127,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/getItem/{uuid}": {
+    "/api/interfaces/gif_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -20179,7 +20179,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/delItem/{uuid}": {
+    "/api/interfaces/gif_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20231,7 +20231,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/getIfOptions": {
+    "/api/interfaces/gif_settings/getIfOptions": {
       "get": {
         "tags": [
           "Interfaces"
@@ -20257,7 +20257,7 @@
         }
       }
     },
-    "/api/interfaces/gifsettings/reconfigure": {
+    "/api/interfaces/gif_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20294,7 +20294,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/getUnusedVhid": {
+    "/api/interfaces/vip_settings/getUnusedVhid": {
       "get": {
         "tags": [
           "Interfaces"
@@ -20320,7 +20320,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/searchItem": {
+    "/api/interfaces/vip_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20361,7 +20361,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/setItem/{uuid}": {
+    "/api/interfaces/vip_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20423,7 +20423,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/addItem": {
+    "/api/interfaces/vip_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20474,7 +20474,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/getItem/{uuid}": {
+    "/api/interfaces/vip_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -20526,7 +20526,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/delItem/{uuid}": {
+    "/api/interfaces/vip_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20578,7 +20578,7 @@
         }
       }
     },
-    "/api/interfaces/vipsettings/reconfigure": {
+    "/api/interfaces/vip_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20615,7 +20615,7 @@
         }
       }
     },
-    "/api/interfaces/laggsettings/searchItem": {
+    "/api/interfaces/lagg_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20656,7 +20656,7 @@
         }
       }
     },
-    "/api/interfaces/laggsettings/setItem/{uuid}": {
+    "/api/interfaces/lagg_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20718,7 +20718,7 @@
         }
       }
     },
-    "/api/interfaces/laggsettings/addItem": {
+    "/api/interfaces/lagg_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20769,7 +20769,7 @@
         }
       }
     },
-    "/api/interfaces/laggsettings/getItem/{uuid}": {
+    "/api/interfaces/lagg_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -20821,7 +20821,7 @@
         }
       }
     },
-    "/api/interfaces/laggsettings/delItem/{uuid}": {
+    "/api/interfaces/lagg_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20873,7 +20873,7 @@
         }
       }
     },
-    "/api/interfaces/laggsettings/reconfigure": {
+    "/api/interfaces/lagg_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20910,7 +20910,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/searchItem": {
+    "/api/interfaces/gre_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -20951,7 +20951,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/setItem/{uuid}": {
+    "/api/interfaces/gre_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21013,7 +21013,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/addItem": {
+    "/api/interfaces/gre_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21064,7 +21064,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/getItem/{uuid}": {
+    "/api/interfaces/gre_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -21116,7 +21116,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/delItem/{uuid}": {
+    "/api/interfaces/gre_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21168,7 +21168,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/getIfOptions": {
+    "/api/interfaces/gre_settings/getIfOptions": {
       "get": {
         "tags": [
           "Interfaces"
@@ -21194,7 +21194,7 @@
         }
       }
     },
-    "/api/interfaces/gresettings/reconfigure": {
+    "/api/interfaces/gre_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21231,7 +21231,7 @@
         }
       }
     },
-    "/api/interfaces/loopbacksettings/searchItem": {
+    "/api/interfaces/loopback_settings/searchItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21272,7 +21272,7 @@
         }
       }
     },
-    "/api/interfaces/loopbacksettings/setItem/{uuid}": {
+    "/api/interfaces/loopback_settings/setItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21334,7 +21334,7 @@
         }
       }
     },
-    "/api/interfaces/loopbacksettings/addItem": {
+    "/api/interfaces/loopback_settings/addItem": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21385,7 +21385,7 @@
         }
       }
     },
-    "/api/interfaces/loopbacksettings/getItem/{uuid}": {
+    "/api/interfaces/loopback_settings/getItem/{uuid}": {
       "get": {
         "tags": [
           "Interfaces"
@@ -21437,7 +21437,7 @@
         }
       }
     },
-    "/api/interfaces/loopbacksettings/delItem/{uuid}": {
+    "/api/interfaces/loopback_settings/delItem/{uuid}": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21489,7 +21489,7 @@
         }
       }
     },
-    "/api/interfaces/loopbacksettings/reconfigure": {
+    "/api/interfaces/loopback_settings/reconfigure": {
       "post": {
         "tags": [
           "Interfaces"
@@ -21741,11 +21741,11 @@
                   {
                     "type": "string",
                     "enum": [
-                      "auto",
                       "tlsv1",
+                      "auto",
                       "tlsv12",
-                      "tlsv11",
-                      "tlsv13"
+                      "tlsv13",
+                      "tlsv11"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -21851,35 +21851,35 @@
                     {
                       "type": "string",
                       "enum": [
-                        "checksum",
-                        "uptime",
                         "resource",
                         "data",
-                        "invalid",
-                        "saturation",
-                        "packetout",
-                        "content",
-                        "gid",
-                        "instance",
-                        "speed",
-                        "bytein",
-                        "byteout",
-                        "size",
-                        "fsflags",
-                        "connection",
-                        "action",
-                        "link",
-                        "nonexist",
-                        "timestamp",
-                        "packetin",
-                        "ppid",
-                        "icmp",
-                        "timeout",
-                        "exec",
-                        "uid",
                         "status",
+                        "icmp",
+                        "checksum",
+                        "fsflags",
+                        "content",
+                        "instance",
                         "permission",
-                        "pid"
+                        "uid",
+                        "action",
+                        "gid",
+                        "exec",
+                        "timestamp",
+                        "link",
+                        "speed",
+                        "uptime",
+                        "byteout",
+                        "invalid",
+                        "size",
+                        "packetout",
+                        "saturation",
+                        "pid",
+                        "nonexist",
+                        "ppid",
+                        "bytein",
+                        "timeout",
+                        "connection",
+                        "packetin"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -21932,15 +21932,15 @@
                     {
                       "type": "string",
                       "enum": [
+                        "filesystem",
+                        "host",
+                        "file",
+                        "fifo",
                         "custom",
-                        "directory",
                         "network",
                         "process",
-                        "file",
-                        "filesystem",
-                        "fifo",
                         "system",
-                        "host"
+                        "directory"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22062,29 +22062,29 @@
                     {
                       "type": "string",
                       "enum": [
-                        "NetworkInterface",
-                        "UID",
-                        "GID",
-                        "SpaceUsage",
+                        "PID",
+                        "PPID",
+                        "FileChecksum",
+                        "ProgramStatus",
                         "Timestamp",
-                        "Uptime",
-                        "ProcessResource",
-                        "Permisssion",
-                        "ProcessDiskIO",
-                        "Custom",
-                        "Existence",
+                        "FilesystemMountFlags",
+                        "FileSize",
+                        "NetworkPing",
                         "SystemResource",
                         "DiskIO",
-                        "InodeUsage",
-                        "PID",
+                        "ProcessResource",
+                        "UID",
+                        "Permisssion",
                         "Connection",
-                        "ProgramStatus",
-                        "NetworkPing",
-                        "FileChecksum",
-                        "FileSize",
-                        "FilesystemMountFlags",
-                        "PPID",
-                        "FileContent"
+                        "SpaceUsage",
+                        "GID",
+                        "NetworkInterface",
+                        "Custom",
+                        "Existence",
+                        "InodeUsage",
+                        "FileContent",
+                        "Uptime",
+                        "ProcessDiskIO"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22108,12 +22108,12 @@
                     {
                       "type": "string",
                       "enum": [
-                        "alert",
+                        "stop",
                         "exec",
-                        "start",
-                        "restart",
                         "unmonitor",
-                        "stop"
+                        "alert",
+                        "restart",
+                        "start"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22223,11 +22223,11 @@
                   {
                     "type": "string",
                     "enum": [
-                      "auto",
                       "tlsv1",
+                      "auto",
                       "tlsv12",
-                      "tlsv11",
-                      "tlsv13"
+                      "tlsv13",
+                      "tlsv11"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -22333,35 +22333,35 @@
                     {
                       "type": "string",
                       "enum": [
-                        "checksum",
-                        "uptime",
                         "resource",
                         "data",
-                        "invalid",
-                        "saturation",
-                        "packetout",
-                        "content",
-                        "gid",
-                        "instance",
-                        "speed",
-                        "bytein",
-                        "byteout",
-                        "size",
-                        "fsflags",
-                        "connection",
-                        "action",
-                        "link",
-                        "nonexist",
-                        "timestamp",
-                        "packetin",
-                        "ppid",
-                        "icmp",
-                        "timeout",
-                        "exec",
-                        "uid",
                         "status",
+                        "icmp",
+                        "checksum",
+                        "fsflags",
+                        "content",
+                        "instance",
                         "permission",
-                        "pid"
+                        "uid",
+                        "action",
+                        "gid",
+                        "exec",
+                        "timestamp",
+                        "link",
+                        "speed",
+                        "uptime",
+                        "byteout",
+                        "invalid",
+                        "size",
+                        "packetout",
+                        "saturation",
+                        "pid",
+                        "nonexist",
+                        "ppid",
+                        "bytein",
+                        "timeout",
+                        "connection",
+                        "packetin"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22414,15 +22414,15 @@
                     {
                       "type": "string",
                       "enum": [
+                        "filesystem",
+                        "host",
+                        "file",
+                        "fifo",
                         "custom",
-                        "directory",
                         "network",
                         "process",
-                        "file",
-                        "filesystem",
-                        "fifo",
                         "system",
-                        "host"
+                        "directory"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22544,29 +22544,29 @@
                     {
                       "type": "string",
                       "enum": [
-                        "NetworkInterface",
-                        "UID",
-                        "GID",
-                        "SpaceUsage",
+                        "PID",
+                        "PPID",
+                        "FileChecksum",
+                        "ProgramStatus",
                         "Timestamp",
-                        "Uptime",
-                        "ProcessResource",
-                        "Permisssion",
-                        "ProcessDiskIO",
-                        "Custom",
-                        "Existence",
+                        "FilesystemMountFlags",
+                        "FileSize",
+                        "NetworkPing",
                         "SystemResource",
                         "DiskIO",
-                        "InodeUsage",
-                        "PID",
+                        "ProcessResource",
+                        "UID",
+                        "Permisssion",
                         "Connection",
-                        "ProgramStatus",
-                        "NetworkPing",
-                        "FileChecksum",
-                        "FileSize",
-                        "FilesystemMountFlags",
-                        "PPID",
-                        "FileContent"
+                        "SpaceUsage",
+                        "GID",
+                        "NetworkInterface",
+                        "Custom",
+                        "Existence",
+                        "InodeUsage",
+                        "FileContent",
+                        "Uptime",
+                        "ProcessDiskIO"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22590,12 +22590,12 @@
                     {
                       "type": "string",
                       "enum": [
-                        "alert",
+                        "stop",
                         "exec",
-                        "start",
-                        "restart",
                         "unmonitor",
-                        "stop"
+                        "alert",
+                        "restart",
+                        "start"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22705,11 +22705,11 @@
                   {
                     "type": "string",
                     "enum": [
-                      "auto",
                       "tlsv1",
+                      "auto",
                       "tlsv12",
-                      "tlsv11",
-                      "tlsv13"
+                      "tlsv13",
+                      "tlsv11"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -22815,35 +22815,35 @@
                     {
                       "type": "string",
                       "enum": [
-                        "checksum",
-                        "uptime",
                         "resource",
                         "data",
-                        "invalid",
-                        "saturation",
-                        "packetout",
-                        "content",
-                        "gid",
-                        "instance",
-                        "speed",
-                        "bytein",
-                        "byteout",
-                        "size",
-                        "fsflags",
-                        "connection",
-                        "action",
-                        "link",
-                        "nonexist",
-                        "timestamp",
-                        "packetin",
-                        "ppid",
-                        "icmp",
-                        "timeout",
-                        "exec",
-                        "uid",
                         "status",
+                        "icmp",
+                        "checksum",
+                        "fsflags",
+                        "content",
+                        "instance",
                         "permission",
-                        "pid"
+                        "uid",
+                        "action",
+                        "gid",
+                        "exec",
+                        "timestamp",
+                        "link",
+                        "speed",
+                        "uptime",
+                        "byteout",
+                        "invalid",
+                        "size",
+                        "packetout",
+                        "saturation",
+                        "pid",
+                        "nonexist",
+                        "ppid",
+                        "bytein",
+                        "timeout",
+                        "connection",
+                        "packetin"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -22896,15 +22896,15 @@
                     {
                       "type": "string",
                       "enum": [
+                        "filesystem",
+                        "host",
+                        "file",
+                        "fifo",
                         "custom",
-                        "directory",
                         "network",
                         "process",
-                        "file",
-                        "filesystem",
-                        "fifo",
                         "system",
-                        "host"
+                        "directory"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -23026,29 +23026,29 @@
                     {
                       "type": "string",
                       "enum": [
-                        "NetworkInterface",
-                        "UID",
-                        "GID",
-                        "SpaceUsage",
+                        "PID",
+                        "PPID",
+                        "FileChecksum",
+                        "ProgramStatus",
                         "Timestamp",
-                        "Uptime",
-                        "ProcessResource",
-                        "Permisssion",
-                        "ProcessDiskIO",
-                        "Custom",
-                        "Existence",
+                        "FilesystemMountFlags",
+                        "FileSize",
+                        "NetworkPing",
                         "SystemResource",
                         "DiskIO",
-                        "InodeUsage",
-                        "PID",
+                        "ProcessResource",
+                        "UID",
+                        "Permisssion",
                         "Connection",
-                        "ProgramStatus",
-                        "NetworkPing",
-                        "FileChecksum",
-                        "FileSize",
-                        "FilesystemMountFlags",
-                        "PPID",
-                        "FileContent"
+                        "SpaceUsage",
+                        "GID",
+                        "NetworkInterface",
+                        "Custom",
+                        "Existence",
+                        "InodeUsage",
+                        "FileContent",
+                        "Uptime",
+                        "ProcessDiskIO"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -23072,12 +23072,12 @@
                     {
                       "type": "string",
                       "enum": [
-                        "alert",
+                        "stop",
                         "exec",
-                        "start",
-                        "restart",
                         "unmonitor",
-                        "stop"
+                        "alert",
+                        "restart",
+                        "start"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -24621,8 +24621,8 @@
                 "type": "string",
                 "enum": [
                   "base64",
-                  "text",
-                  "standard"
+                  "standard",
+                  "text"
                 ],
                 "description": "Selected option value (string from enum)."
               },
@@ -25024,8 +25024,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "range",
-                        "interface"
+                        "interface",
+                        "range"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -25057,12 +25057,12 @@
                     {
                       "type": "string",
                       "enum": [
-                        "ra-advrouter",
-                        "off-link",
-                        "ra-only",
-                        "ra-names",
                         "ra-stateless",
-                        "slaac"
+                        "ra-advrouter",
+                        "ra-names",
+                        "off-link",
+                        "slaac",
+                        "ra-only"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -25083,8 +25083,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "high",
-                        "low"
+                        "low",
+                        "high"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -25449,8 +25449,8 @@
                 "type": "string",
                 "enum": [
                   "base64",
-                  "text",
-                  "standard"
+                  "standard",
+                  "text"
                 ],
                 "description": "Selected option value (string from enum)."
               },
@@ -25852,8 +25852,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "range",
-                        "interface"
+                        "interface",
+                        "range"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -25885,12 +25885,12 @@
                     {
                       "type": "string",
                       "enum": [
-                        "ra-advrouter",
-                        "off-link",
-                        "ra-only",
-                        "ra-names",
                         "ra-stateless",
-                        "slaac"
+                        "ra-advrouter",
+                        "ra-names",
+                        "off-link",
+                        "slaac",
+                        "ra-only"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -25911,8 +25911,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "high",
-                        "low"
+                        "low",
+                        "high"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -26277,8 +26277,8 @@
                 "type": "string",
                 "enum": [
                   "base64",
-                  "text",
-                  "standard"
+                  "standard",
+                  "text"
                 ],
                 "description": "Selected option value (string from enum)."
               },
@@ -26680,8 +26680,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "range",
-                        "interface"
+                        "interface",
+                        "range"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -26713,12 +26713,12 @@
                     {
                       "type": "string",
                       "enum": [
-                        "ra-advrouter",
-                        "off-link",
-                        "ra-only",
-                        "ra-names",
                         "ra-stateless",
-                        "slaac"
+                        "ra-advrouter",
+                        "ra-names",
+                        "off-link",
+                        "slaac",
+                        "ra-only"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -26739,8 +26739,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "high",
-                        "low"
+                        "low",
+                        "high"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -27444,12 +27444,12 @@
                         {
                           "type": "string",
                           "enum": [
-                            "udp6",
                             "tcp4",
                             "tls4",
-                            "tcp6",
                             "tls6",
-                            "udp4"
+                            "udp6",
+                            "udp4",
+                            "tcp6"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -27488,14 +27488,14 @@
                         {
                           "type": "string",
                           "enum": [
-                            "err",
-                            "emerg",
                             "alert",
-                            "notice",
-                            "crit",
                             "info",
+                            "debug",
+                            "notice",
                             "warn",
-                            "debug"
+                            "crit",
+                            "err",
+                            "emerg"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -27516,28 +27516,28 @@
                         {
                           "type": "string",
                           "enum": [
-                            "syslog",
-                            "local0",
-                            "news",
-                            "local7",
-                            "local5",
-                            "mail",
                             "daemon",
-                            "uucp",
                             "local4",
-                            "user",
-                            "local2",
-                            "local1",
-                            "local3",
-                            "ftp",
-                            "security",
-                            "ntp",
-                            "auth",
-                            "lpr",
-                            "authpriv",
-                            "cron",
-                            "console",
                             "kern",
+                            "local3",
+                            "local5",
+                            "lpr",
+                            "local7",
+                            "ftp",
+                            "local2",
+                            "cron",
+                            "ntp",
+                            "authpriv",
+                            "news",
+                            "user",
+                            "local0",
+                            "uucp",
+                            "security",
+                            "syslog",
+                            "console",
+                            "mail",
+                            "auth",
+                            "local1",
                             "local6"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -27658,12 +27658,12 @@
                         {
                           "type": "string",
                           "enum": [
-                            "udp6",
                             "tcp4",
                             "tls4",
-                            "tcp6",
                             "tls6",
-                            "udp4"
+                            "udp6",
+                            "udp4",
+                            "tcp6"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -27702,14 +27702,14 @@
                         {
                           "type": "string",
                           "enum": [
-                            "err",
-                            "emerg",
                             "alert",
-                            "notice",
-                            "crit",
                             "info",
+                            "debug",
+                            "notice",
                             "warn",
-                            "debug"
+                            "crit",
+                            "err",
+                            "emerg"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -27730,28 +27730,28 @@
                         {
                           "type": "string",
                           "enum": [
-                            "syslog",
-                            "local0",
-                            "news",
-                            "local7",
-                            "local5",
-                            "mail",
                             "daemon",
-                            "uucp",
                             "local4",
-                            "user",
-                            "local2",
-                            "local1",
-                            "local3",
-                            "ftp",
-                            "security",
-                            "ntp",
-                            "auth",
-                            "lpr",
-                            "authpriv",
-                            "cron",
-                            "console",
                             "kern",
+                            "local3",
+                            "local5",
+                            "lpr",
+                            "local7",
+                            "ftp",
+                            "local2",
+                            "cron",
+                            "ntp",
+                            "authpriv",
+                            "news",
+                            "user",
+                            "local0",
+                            "uucp",
+                            "security",
+                            "syslog",
+                            "console",
+                            "mail",
+                            "auth",
+                            "local1",
                             "local6"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -27851,9 +27851,9 @@
                         {
                           "type": "string",
                           "enum": [
+                            "Mbit",
                             "Kbit",
                             "Gbit",
-                            "Mbit",
                             "bit"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -27879,11 +27879,11 @@
                         {
                           "type": "string",
                           "enum": [
-                            "none",
+                            "dst-ip",
+                            "dst-ip6",
                             "src-ip6",
                             "src-ip",
-                            "dst-ip",
-                            "dst-ip6"
+                            "none"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -27910,9 +27910,9 @@
                           "enum": [
                             "fq_pie",
                             "fq_codel",
+                            "rr",
                             "fifo",
-                            "qfq",
-                            "rr"
+                            "qfq"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28020,11 +28020,11 @@
                         {
                           "type": "string",
                           "enum": [
-                            "none",
+                            "dst-ip",
+                            "dst-ip6",
                             "src-ip6",
                             "src-ip",
-                            "dst-ip",
-                            "dst-ip6"
+                            "none"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28162,19 +28162,19 @@
                         {
                           "type": "string",
                           "enum": [
-                            "ipv6_icmp",
-                            "igmp",
-                            "esp",
-                            "ip6",
-                            "ip4",
+                            "udp",
                             "gre",
                             "tcp_ack_not",
-                            "udp",
-                            "tcp_ack",
                             "ah",
+                            "ip4",
+                            "ip6",
+                            "igmp",
+                            "tcp_ack",
                             "ip",
-                            "icmp",
-                            "tcp"
+                            "tcp",
+                            "esp",
+                            "ipv6_icmp",
+                            "icmp"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28257,27 +28257,27 @@
                         {
                           "type": "string",
                           "enum": [
-                            "af22",
-                            "af33",
-                            "ef",
+                            "af32",
                             "af43",
-                            "be",
-                            "af42",
-                            "cs5",
-                            "af11",
-                            "cs2",
-                            "af41",
-                            "cs4",
-                            "cs1",
                             "af21",
-                            "cs7",
-                            "af12",
-                            "cs3",
                             "af31",
-                            "af23",
-                            "cs6",
                             "af13",
-                            "af32"
+                            "cs5",
+                            "af23",
+                            "cs1",
+                            "cs2",
+                            "af33",
+                            "af41",
+                            "cs7",
+                            "ef",
+                            "cs3",
+                            "cs4",
+                            "be",
+                            "af11",
+                            "af42",
+                            "af22",
+                            "cs6",
+                            "af12"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28298,8 +28298,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "out",
-                            "in"
+                            "in",
+                            "out"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28387,9 +28387,9 @@
                         {
                           "type": "string",
                           "enum": [
+                            "Mbit",
                             "Kbit",
                             "Gbit",
-                            "Mbit",
                             "bit"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -28415,11 +28415,11 @@
                         {
                           "type": "string",
                           "enum": [
-                            "none",
+                            "dst-ip",
+                            "dst-ip6",
                             "src-ip6",
                             "src-ip",
-                            "dst-ip",
-                            "dst-ip6"
+                            "none"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28446,9 +28446,9 @@
                           "enum": [
                             "fq_pie",
                             "fq_codel",
+                            "rr",
                             "fifo",
-                            "qfq",
-                            "rr"
+                            "qfq"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28556,11 +28556,11 @@
                         {
                           "type": "string",
                           "enum": [
-                            "none",
+                            "dst-ip",
+                            "dst-ip6",
                             "src-ip6",
                             "src-ip",
-                            "dst-ip",
-                            "dst-ip6"
+                            "none"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28698,19 +28698,19 @@
                         {
                           "type": "string",
                           "enum": [
-                            "ipv6_icmp",
-                            "igmp",
-                            "esp",
-                            "ip6",
-                            "ip4",
+                            "udp",
                             "gre",
                             "tcp_ack_not",
-                            "udp",
-                            "tcp_ack",
                             "ah",
+                            "ip4",
+                            "ip6",
+                            "igmp",
+                            "tcp_ack",
                             "ip",
-                            "icmp",
-                            "tcp"
+                            "tcp",
+                            "esp",
+                            "ipv6_icmp",
+                            "icmp"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28793,27 +28793,27 @@
                         {
                           "type": "string",
                           "enum": [
-                            "af22",
-                            "af33",
-                            "ef",
+                            "af32",
                             "af43",
-                            "be",
-                            "af42",
-                            "cs5",
-                            "af11",
-                            "cs2",
-                            "af41",
-                            "cs4",
-                            "cs1",
                             "af21",
-                            "cs7",
-                            "af12",
-                            "cs3",
                             "af31",
-                            "af23",
-                            "cs6",
                             "af13",
-                            "af32"
+                            "cs5",
+                            "af23",
+                            "cs1",
+                            "cs2",
+                            "af33",
+                            "af41",
+                            "cs7",
+                            "ef",
+                            "cs3",
+                            "cs4",
+                            "be",
+                            "af11",
+                            "af42",
+                            "af22",
+                            "cs6",
+                            "af12"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -28834,8 +28834,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "out",
-                            "in"
+                            "in",
+                            "out"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -29031,8 +29031,8 @@
                       {
                         "type": "string",
                         "enum": [
-                          "dhcp",
                           "static",
+                          "dhcp",
                           "pppoe"
                         ],
                         "description": "Selected option value (string from enum)."
@@ -29391,8 +29391,8 @@
                           "type": "string",
                           "enum": [
                             "disable",
-                            "alert",
-                            "drop"
+                            "drop",
+                            "alert"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -29449,9 +29449,9 @@
                         {
                           "type": "string",
                           "enum": [
-                            "drop",
                             "alert",
                             "disable",
+                            "drop",
                             "default"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -29511,8 +29511,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "drop",
                             "alert",
+                            "drop",
                             "pass"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -29601,9 +29601,9 @@
                   {
                     "type": "string",
                     "enum": [
-                      "divert",
+                      "pcap",
                       "netmap",
-                      "pcap"
+                      "divert"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -29680,8 +29680,8 @@
                   {
                     "type": "string",
                     "enum": [
-                      "W0D23",
-                      "D0"
+                      "D0",
+                      "W0D23"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -29732,10 +29732,10 @@
                       {
                         "type": "string",
                         "enum": [
-                          "high",
                           "custom",
+                          "medium",
                           "low",
-                          "medium"
+                          "high"
                         ],
                         "description": "Selected option value (string from enum)."
                       },
@@ -29790,10 +29790,10 @@
                   {
                     "type": "string",
                     "enum": [
-                      "vvvv",
-                      "v",
                       "vvv",
-                      "vv"
+                      "vv",
+                      "v",
+                      "vvvv"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -29888,19 +29888,19 @@
                           {
                             "type": "string",
                             "enum": [
-                              "version",
-                              "issuer",
-                              "certificate",
-                              "subject",
-                              "ja3",
-                              "not_before",
-                              "fingerprint",
-                              "ja4",
+                              "ja3s",
                               "sni",
                               "chain",
-                              "ja3s",
+                              "not_before",
                               "not_after",
                               "serial",
+                              "ja3",
+                              "certificate",
+                              "issuer",
+                              "ja4",
+                              "version",
+                              "fingerprint",
+                              "subject",
                               "session_resumed"
                             ],
                             "description": "Selected option value (string from enum)."
@@ -29985,8 +29985,8 @@
                           "type": "string",
                           "enum": [
                             "disable",
-                            "alert",
-                            "drop"
+                            "drop",
+                            "alert"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -30043,9 +30043,9 @@
                         {
                           "type": "string",
                           "enum": [
-                            "drop",
                             "alert",
                             "disable",
+                            "drop",
                             "default"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -30105,8 +30105,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "drop",
                             "alert",
+                            "drop",
                             "pass"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -30195,9 +30195,9 @@
                   {
                     "type": "string",
                     "enum": [
-                      "divert",
+                      "pcap",
                       "netmap",
-                      "pcap"
+                      "divert"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -30274,8 +30274,8 @@
                   {
                     "type": "string",
                     "enum": [
-                      "W0D23",
-                      "D0"
+                      "D0",
+                      "W0D23"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -30326,10 +30326,10 @@
                       {
                         "type": "string",
                         "enum": [
-                          "high",
                           "custom",
+                          "medium",
                           "low",
-                          "medium"
+                          "high"
                         ],
                         "description": "Selected option value (string from enum)."
                       },
@@ -30384,10 +30384,10 @@
                   {
                     "type": "string",
                     "enum": [
-                      "vvvv",
-                      "v",
                       "vvv",
-                      "vv"
+                      "vv",
+                      "v",
+                      "vvvv"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -30482,19 +30482,19 @@
                           {
                             "type": "string",
                             "enum": [
-                              "version",
-                              "issuer",
-                              "certificate",
-                              "subject",
-                              "ja3",
-                              "not_before",
-                              "fingerprint",
-                              "ja4",
+                              "ja3s",
                               "sni",
                               "chain",
-                              "ja3s",
+                              "not_before",
                               "not_after",
                               "serial",
+                              "ja3",
+                              "certificate",
+                              "issuer",
+                              "ja4",
+                              "version",
+                              "fingerprint",
+                              "subject",
                               "session_resumed"
                             ],
                             "description": "Selected option value (string from enum)."
@@ -30677,17 +30677,17 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt9",
-                      "opt10",
                       "opt11",
-                      "opt1",
                       "opt8",
+                      "opt9",
                       "opt6",
-                      "opt7",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt10",
+                      "opt5",
+                      "opt1",
+                      "opt7"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -30868,12 +30868,12 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt1",
                       "opt6",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt5",
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -30894,9 +30894,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -30998,9 +30998,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -31037,12 +31037,12 @@
                         {
                           "type": "string",
                           "enum": [
-                            "opt2",
                             "opt3",
-                            "opt4",
-                            "opt1",
                             "opt6",
-                            "opt5"
+                            "opt4",
+                            "opt2",
+                            "opt5",
+                            "opt1"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -31106,34 +31106,34 @@
                           "type": "string",
                           "enum": [
                             "hgz017",
+                            "hgz021",
                             "hgz009",
-                            "oisd0",
-                            "ep",
-                            "hgz019",
-                            "hgz005",
                             "hgz002",
+                            "ep",
+                            "ag",
+                            "hgz003",
+                            "hgz016",
+                            "oisd1",
+                            "hgz005",
+                            "hgz008",
+                            "oisd2",
+                            "hgz019",
+                            "sb",
+                            "hgz015",
+                            "el",
+                            "hgz014",
+                            "hgz012",
+                            "oisd0",
+                            "hgz006",
+                            "hgz011",
+                            "hgz004",
+                            "hgz007",
+                            "hgz013",
                             "hgz020",
                             "hgz001",
-                            "hgz012",
-                            "hgz008",
-                            "atf",
-                            "hgz015",
-                            "hgz004",
-                            "hgz013",
-                            "hgz014",
-                            "hgz003",
-                            "hgz011",
-                            "hgz021",
-                            "oisd2",
-                            "hgz006",
-                            "yy",
-                            "ag",
-                            "hgz007",
-                            "sb",
-                            "oisd1",
                             "hgz010",
-                            "hgz016",
-                            "el",
+                            "atf",
+                            "yy",
                             "hgz018"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -31323,9 +31323,9 @@
                         {
                           "type": "string",
                           "enum": [
-                            "AAAA",
-                            "TXT",
                             "MX",
+                            "TXT",
+                            "AAAA",
                             "A"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -31565,17 +31565,17 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt9",
-                      "opt10",
                       "opt11",
-                      "opt1",
                       "opt8",
+                      "opt9",
                       "opt6",
-                      "opt7",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt10",
+                      "opt5",
+                      "opt1",
+                      "opt7"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -31756,12 +31756,12 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt1",
                       "opt6",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt5",
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -31782,9 +31782,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -31886,9 +31886,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -31925,12 +31925,12 @@
                         {
                           "type": "string",
                           "enum": [
-                            "opt2",
                             "opt3",
-                            "opt4",
-                            "opt1",
                             "opt6",
-                            "opt5"
+                            "opt4",
+                            "opt2",
+                            "opt5",
+                            "opt1"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -31994,34 +31994,34 @@
                           "type": "string",
                           "enum": [
                             "hgz017",
+                            "hgz021",
                             "hgz009",
-                            "oisd0",
-                            "ep",
-                            "hgz019",
-                            "hgz005",
                             "hgz002",
+                            "ep",
+                            "ag",
+                            "hgz003",
+                            "hgz016",
+                            "oisd1",
+                            "hgz005",
+                            "hgz008",
+                            "oisd2",
+                            "hgz019",
+                            "sb",
+                            "hgz015",
+                            "el",
+                            "hgz014",
+                            "hgz012",
+                            "oisd0",
+                            "hgz006",
+                            "hgz011",
+                            "hgz004",
+                            "hgz007",
+                            "hgz013",
                             "hgz020",
                             "hgz001",
-                            "hgz012",
-                            "hgz008",
-                            "atf",
-                            "hgz015",
-                            "hgz004",
-                            "hgz013",
-                            "hgz014",
-                            "hgz003",
-                            "hgz011",
-                            "hgz021",
-                            "oisd2",
-                            "hgz006",
-                            "yy",
-                            "ag",
-                            "hgz007",
-                            "sb",
-                            "oisd1",
                             "hgz010",
-                            "hgz016",
-                            "el",
+                            "atf",
+                            "yy",
                             "hgz018"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -32211,9 +32211,9 @@
                         {
                           "type": "string",
                           "enum": [
-                            "AAAA",
-                            "TXT",
                             "MX",
+                            "TXT",
+                            "AAAA",
                             "A"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -32453,17 +32453,17 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt9",
-                      "opt10",
                       "opt11",
-                      "opt1",
                       "opt8",
+                      "opt9",
                       "opt6",
-                      "opt7",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt10",
+                      "opt5",
+                      "opt1",
+                      "opt7"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -32644,12 +32644,12 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt1",
                       "opt6",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt5",
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -32670,9 +32670,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -32774,9 +32774,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -32813,12 +32813,12 @@
                         {
                           "type": "string",
                           "enum": [
-                            "opt2",
                             "opt3",
-                            "opt4",
-                            "opt1",
                             "opt6",
-                            "opt5"
+                            "opt4",
+                            "opt2",
+                            "opt5",
+                            "opt1"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -32882,34 +32882,34 @@
                           "type": "string",
                           "enum": [
                             "hgz017",
+                            "hgz021",
                             "hgz009",
-                            "oisd0",
-                            "ep",
-                            "hgz019",
-                            "hgz005",
                             "hgz002",
+                            "ep",
+                            "ag",
+                            "hgz003",
+                            "hgz016",
+                            "oisd1",
+                            "hgz005",
+                            "hgz008",
+                            "oisd2",
+                            "hgz019",
+                            "sb",
+                            "hgz015",
+                            "el",
+                            "hgz014",
+                            "hgz012",
+                            "oisd0",
+                            "hgz006",
+                            "hgz011",
+                            "hgz004",
+                            "hgz007",
+                            "hgz013",
                             "hgz020",
                             "hgz001",
-                            "hgz012",
-                            "hgz008",
-                            "atf",
-                            "hgz015",
-                            "hgz004",
-                            "hgz013",
-                            "hgz014",
-                            "hgz003",
-                            "hgz011",
-                            "hgz021",
-                            "oisd2",
-                            "hgz006",
-                            "yy",
-                            "ag",
-                            "hgz007",
-                            "sb",
-                            "oisd1",
                             "hgz010",
-                            "hgz016",
-                            "el",
+                            "atf",
+                            "yy",
                             "hgz018"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -33099,9 +33099,9 @@
                         {
                           "type": "string",
                           "enum": [
-                            "AAAA",
-                            "TXT",
                             "MX",
+                            "TXT",
+                            "AAAA",
                             "A"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -33341,17 +33341,17 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt9",
-                      "opt10",
                       "opt11",
-                      "opt1",
                       "opt8",
+                      "opt9",
                       "opt6",
-                      "opt7",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt10",
+                      "opt5",
+                      "opt1",
+                      "opt7"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -33532,12 +33532,12 @@
                   {
                     "type": "string",
                     "enum": [
-                      "opt2",
                       "opt3",
-                      "opt4",
-                      "opt1",
                       "opt6",
-                      "opt5"
+                      "opt4",
+                      "opt2",
+                      "opt5",
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -33558,9 +33558,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -33662,9 +33662,9 @@
                   {
                     "type": "string",
                     "enum": [
+                      "opt2",
                       "opt3",
-                      "opt1",
-                      "opt2"
+                      "opt1"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -33701,12 +33701,12 @@
                         {
                           "type": "string",
                           "enum": [
-                            "opt2",
                             "opt3",
-                            "opt4",
-                            "opt1",
                             "opt6",
-                            "opt5"
+                            "opt4",
+                            "opt2",
+                            "opt5",
+                            "opt1"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -33770,34 +33770,34 @@
                           "type": "string",
                           "enum": [
                             "hgz017",
+                            "hgz021",
                             "hgz009",
-                            "oisd0",
-                            "ep",
-                            "hgz019",
-                            "hgz005",
                             "hgz002",
+                            "ep",
+                            "ag",
+                            "hgz003",
+                            "hgz016",
+                            "oisd1",
+                            "hgz005",
+                            "hgz008",
+                            "oisd2",
+                            "hgz019",
+                            "sb",
+                            "hgz015",
+                            "el",
+                            "hgz014",
+                            "hgz012",
+                            "oisd0",
+                            "hgz006",
+                            "hgz011",
+                            "hgz004",
+                            "hgz007",
+                            "hgz013",
                             "hgz020",
                             "hgz001",
-                            "hgz012",
-                            "hgz008",
-                            "atf",
-                            "hgz015",
-                            "hgz004",
-                            "hgz013",
-                            "hgz014",
-                            "hgz003",
-                            "hgz011",
-                            "hgz021",
-                            "oisd2",
-                            "hgz006",
-                            "yy",
-                            "ag",
-                            "hgz007",
-                            "sb",
-                            "oisd1",
                             "hgz010",
-                            "hgz016",
-                            "el",
+                            "atf",
+                            "yy",
                             "hgz018"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -33987,9 +33987,9 @@
                         {
                           "type": "string",
                           "enum": [
-                            "AAAA",
-                            "TXT",
                             "MX",
+                            "TXT",
+                            "AAAA",
                             "A"
                           ],
                           "description": "Selected option value (string from enum)."
@@ -34403,24 +34403,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -34973,24 +34973,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -35543,24 +35543,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -36113,24 +36113,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -36683,24 +36683,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -37253,24 +37253,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -37823,24 +37823,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -38393,24 +38393,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -38963,24 +38963,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -39533,24 +39533,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -40103,24 +40103,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -40673,24 +40673,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -41243,24 +41243,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -41813,24 +41813,24 @@
                           {
                             "type": "string",
                             "enum": [
-                              "o29",
-                              "o15",
-                              "o17",
                               "o21",
-                              "o24",
-                              "o5",
-                              "o18",
                               "o19",
                               "o20",
+                              "o24",
+                              "o30",
                               "o28",
-                              "o23",
-                              "o1",
-                              "o14",
                               "o22",
                               "o31",
-                              "o2",
+                              "o5",
+                              "o1",
+                              "o18",
+                              "o29",
+                              "o14",
+                              "o17",
                               "o16",
-                              "o30"
+                              "o2",
+                              "o15",
+                              "o23"
                             ],
                             "description": "Selected option value (string from enum)."
                           },
@@ -42403,14 +42403,14 @@
                         {
                           "type": "string",
                           "enum": [
-                            "bypass_dns",
                             "local",
-                            "ipv6",
                             "bypass_dhcp",
-                            "def1",
+                            "block_local",
                             "autolocal",
-                            "notipv4",
-                            "block_local"
+                            "def1",
+                            "bypass_dns",
+                            "ipv6",
+                            "notipv4"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -42553,8 +42553,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "crypt",
-                            "auth"
+                            "auth",
+                            "crypt"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -42715,14 +42715,14 @@
                         {
                           "type": "string",
                           "enum": [
-                            "bypass_dns",
                             "local",
-                            "ipv6",
                             "bypass_dhcp",
-                            "def1",
+                            "block_local",
                             "autolocal",
-                            "notipv4",
-                            "block_local"
+                            "def1",
+                            "bypass_dns",
+                            "ipv6",
+                            "notipv4"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -42865,8 +42865,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "crypt",
-                            "auth"
+                            "auth",
+                            "crypt"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -43139,14 +43139,14 @@
                         {
                           "type": "string",
                           "enum": [
-                            "bypass_dns",
                             "local",
-                            "ipv6",
                             "bypass_dhcp",
-                            "def1",
+                            "block_local",
                             "autolocal",
-                            "notipv4",
-                            "block_local"
+                            "def1",
+                            "bypass_dns",
+                            "ipv6",
+                            "notipv4"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -43289,8 +43289,8 @@
                         {
                           "type": "string",
                           "enum": [
-                            "crypt",
-                            "auth"
+                            "auth",
+                            "crypt"
                           ],
                           "description": "Selected option value (string from enum)."
                         },
@@ -43414,10 +43414,10 @@
                       "type": "string",
                       "enum": [
                         "assist",
-                        "managed",
                         "router",
-                        "unmanaged",
-                        "stateless"
+                        "managed",
+                        "stateless",
+                        "unmanaged"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43438,8 +43438,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "off",
-                        "on"
+                        "on",
+                        "off"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43460,8 +43460,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "off",
-                        "on"
+                        "on",
+                        "off"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43482,8 +43482,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "off",
-                        "on"
+                        "on",
+                        "off"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43605,9 +43605,9 @@
                     {
                       "type": "string",
                       "enum": [
-                        "high",
+                        "medium",
                         "low",
-                        "medium"
+                        "high"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43727,10 +43727,10 @@
                       "type": "string",
                       "enum": [
                         "assist",
-                        "managed",
                         "router",
-                        "unmanaged",
-                        "stateless"
+                        "managed",
+                        "stateless",
+                        "unmanaged"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43751,8 +43751,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "off",
-                        "on"
+                        "on",
+                        "off"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43773,8 +43773,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "off",
-                        "on"
+                        "on",
+                        "off"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43795,8 +43795,8 @@
                     {
                       "type": "string",
                       "enum": [
-                        "off",
-                        "on"
+                        "on",
+                        "off"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -43918,9 +43918,9 @@
                     {
                       "type": "string",
                       "enum": [
-                        "high",
+                        "medium",
                         "low",
-                        "medium"
+                        "high"
                       ],
                       "description": "Selected option value (string from enum)."
                     },
@@ -44140,8 +44140,8 @@
                   {
                     "type": "string",
                     "enum": [
-                      "arp",
                       "ip",
+                      "arp",
                       "ip6",
                       "any"
                     ],
@@ -44307,8 +44307,8 @@
                   {
                     "type": "string",
                     "enum": [
-                      "v5",
-                      "v9"
+                      "v9",
+                      "v5"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -44426,8 +44426,8 @@
                   {
                     "type": "string",
                     "enum": [
-                      "icmp",
-                      "udp"
+                      "udp",
+                      "icmp"
                     ],
                     "description": "Selected option value (string from enum)."
                   },
@@ -44587,9 +44587,9 @@
               {
                 "type": "string",
                 "enum": [
-                  "opt1",
                   "opt2",
-                  "opt0"
+                  "opt0",
+                  "opt1"
                 ],
                 "description": "Selected option value (string from enum)."
               },

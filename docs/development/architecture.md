@@ -457,6 +457,19 @@ uv run opnsense-openapi generate 25.7.6
 # Output: src/opnsense_openapi/specs/opnsense-25.7.6.json
 ```
 
+### Regenerating All Committed Specs
+
+To rebuild every spec under `src/opnsense_openapi/specs/` against the current
+generator (e.g. after a generator fix), run the maintainer helper:
+
+```bash
+tools/regenerate_all_specs.sh
+```
+
+It iterates every committed version, calls `opnsense-openapi generate` per
+version, deletes the per-version source cache between runs to bound disk use,
+and removes any spec whose download fails.
+
 ### Programmatic Usage
 
 ```python
