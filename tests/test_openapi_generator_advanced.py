@@ -207,3 +207,75 @@ def test_response_wrapping_fallback(generator):
 
     # Should fallback to "settings" (lowercase controller name)
     assert "settings" in response_schema["properties"]
+
+
+@pytest.mark.parametrize(
+    ("module", "controller_class", "expected_segment"),
+    [
+        # Single word - regression guard, must still work
+        ("Test", "SettingsController", "settings"),
+        # The reported bug: VlanSettings collapsed to "vlansettings"
+        ("Interfaces", "VlanSettingsController", "vlan_settings"),
+        # Three-word controller
+        ("Firewall", "OneToOneController", "one_to_one"),
+        # Consecutive uppercase at start
+        ("Firewall", "DNatController", "d_nat"),
+        # Mid-name uppercase, found in real OPNsense source
+        ("Core", "HasyncStatusController", "hasync_status"),
+        # Two-word, also surfaced in the issue body
+        ("Firewall", "FilterBaseController", "filter_base"),
+    ],
+)
+def test_controller_path_uses_snake_case(generator, module, controller_class, expected_segment):
+    """URL controller segment must be snake_case to match OPNsense's Router."""
+    endpoint = ApiEndpoint(name="get", method="GET", description="Get item", parameters=[])
+    controller = ApiController(
+        module=module,
+        controller=controller_class,
+        base_class="ApiMutableModelControllerBase",
+        endpoints=[endpoint],
+        model_name=None,
+    )
+
+    # Mirror the test_response_wrapping_fallback pattern: mock model parsing to
+    # return a schema so the schema-based path is exercised.
+    generator._find_and_parse_model = MagicMock(return_value={"type": "object"})
+    generator._process_controller(controller)
+
+    expected_path = f"/api/{module.lower()}/{expected_segment}/get"
+    assert expected_path in generator.spec["paths"], (
+        f"Expected {expected_path!r} in generated paths, got {list(generator.spec['paths'])!r}"
+    )
+
+
+@pytest.mark.parametrize(
+    ("module", "controller_class", "collapsed_segment"),
+    [
+        # The reported bug: collapsed form must NOT appear
+        ("Interfaces", "VlanSettingsController", "vlansettings"),
+        # Three-word controller collapsed form
+        ("Firewall", "OneToOneController", "onetoone"),
+        # Mid-name uppercase collapsed form
+        ("Core", "HasyncStatusController", "hasyncstatus"),
+    ],
+)
+def test_controller_path_does_not_use_collapsed_lowercase(
+    generator, module, controller_class, collapsed_segment
+):
+    """The legacy `controller.lower()` collapsed form must not appear in paths."""
+    endpoint = ApiEndpoint(name="get", method="GET", description="Get item", parameters=[])
+    controller = ApiController(
+        module=module,
+        controller=controller_class,
+        base_class="ApiMutableModelControllerBase",
+        endpoints=[endpoint],
+        model_name=None,
+    )
+
+    generator._find_and_parse_model = MagicMock(return_value={"type": "object"})
+    generator._process_controller(controller)
+
+    forbidden_path = f"/api/{module.lower()}/{collapsed_segment}/get"
+    assert forbidden_path not in generator.spec["paths"], (
+        f"Collapsed path {forbidden_path!r} must not be emitted"
+    )
