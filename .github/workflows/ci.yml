@@ -128,6 +128,27 @@ jobs:
       - name: Run dependency audit
         run: uv run pip-audit --skip-editable
 
+      - name: Resolve latest committed spec version
+        id: latest-spec
+        if: matrix.python-version == needs.setup.outputs.newest && matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          version=$(uv run python -c "from opnsense_openapi import list_available_specs; print(list_available_specs()[-1])")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Latest committed spec: $version"
+
+      - name: Cache OPNsense source archive
+        if: matrix.python-version == needs.setup.outputs.newest && matrix.os == 'ubuntu-latest'
+        uses: actions/cache@v5
+        with:
+          path: tmp/opnsense_source
+          key: opnsense-source-${{ steps.latest-spec.outputs.version }}
+
+      - name: Download OPNsense source for spec path routing lint
+        if: matrix.python-version == needs.setup.outputs.newest && matrix.os == 'ubuntu-latest'
+        run: |
+          uv run python -c "from opnsense_openapi.downloader import SourceDownloader; SourceDownloader().download('${{ steps.latest-spec.outputs.version }}')"
+
       - name: Run tests with coverage
         run: uv run pytest --cov=opnsense_openapi --cov-report=xml:tmp/coverage.xml --cov-report=term -v
 

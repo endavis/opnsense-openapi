@@ -206,6 +206,7 @@ python_functions = ["test_*"]
 markers = [
     "benchmark: marks tests as performance benchmarks (deselect with '--benchmark-disable')",
     "property: marks tests as property-based tests (run with Hypothesis)",
+    "requires_opnsense_source: lint requires a downloaded OPNsense source archive (skipped if missing)",
 ]
 
 [tool.pytest-benchmark]

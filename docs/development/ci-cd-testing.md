@@ -786,6 +786,61 @@ The `gh-benchmarks` branch can optionally serve a trend chart via GitHub Pages:
 
 This step is optional and not required for the core tracking functionality.
 
+## Spec Path Routing Lint
+
+### What It Checks
+
+The structural lint in `tests/test_spec_path_routing.py` verifies that every
+`/api/{module}/{controller}/{action}` path in the latest committed OpenAPI
+spec resolves to a real `*Controller.php` file in the matching OPNsense
+source archive. It exists to catch regressions of issue #32, where the
+generator emitted collapsed-lowercase URL segments (e.g.,
+`/api/interfaces/vlansettings`) that did not reverse-map to any real
+controller (`OPNsense/Interfaces/Api/VlanSettingsController.php`).
+
+The lint walks the latest spec returned by `opnsense_openapi.list_available_specs()`,
+parses each path, applies `to_class_name(controller_segment) + "Controller.php"`,
+and asserts the resulting file exists. Module directory resolution is
+case-insensitive to mirror OPNsense's `Mvc/Router.php` namespace fallback
+(so `/api/dhcrelay` resolves to `OPNsense/DHCRelay`, etc.). All failures
+are collected and reported in a single assertion so a single test run
+surfaces every broken path.
+
+### The `requires_opnsense_source` Marker
+
+The lint test is decorated with `@pytest.mark.requires_opnsense_source`.
+When the OPNsense source archive cannot be materialized (e.g., no network
+in a developer sandbox), the test skips with a clear reason instead of
+hard-failing. CI pre-downloads the archive in a dedicated workflow step
+and caches it keyed on the spec version, so the lint runs unconditionally
+in CI and stays fast across reruns.
+
+### Running Locally
+
+```bash
+uv run pytest tests/test_spec_path_routing.py -v
+```
+
+The test downloads the OPNsense source via `SourceDownloader` if the
+archive is not already cached at `tmp/opnsense_source/{version}/`. To
+pre-populate the cache without running the test:
+
+```bash
+uv run python -c "from opnsense_openapi.downloader import SourceDownloader; SourceDownloader().download('26.1.6')"
+```
+
+The unmarked unit tests in the same file exercise the path-checking helper
+against synthetic fake-tree fixtures (no network required) and run on
+every CI pass.
+
+### Live-API Contract Test (Out of Scope)
+
+A live-API contract test (`@pytest.mark.live_opnsense`) that exercises
+spec endpoints against a real OPNsense instance is tracked as a separate
+follow-up issue and is **not** implemented here. The structural lint
+described above ships first because it provides PR-time signal without
+requiring a live target.
+
 ## Troubleshooting
 
 ### Coverage Below Threshold
