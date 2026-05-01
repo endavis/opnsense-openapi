@@ -1,0 +1,62 @@
+# Sync exclusions: upstream files we deliberately diverge from.
+#
+# Patterns are matched (fnmatch) against upstream-relative paths.
+# This file is hand-managed and never touched by automation.
+# See docs/template/manage.md for details.
+
+exclude = [
+    # ----------------------------------------------------------------------
+    # Project-specific source — not template-managed
+    # ----------------------------------------------------------------------
+    "src/package_name/**",
+    "tests/test_cli.py",
+    "tests/test_core.py",
+    "tests/test_example.py",
+    "tests/test_logging.py",
+    "tests/conftest.py",
+    "tests/benchmarks/test_bench_core.py",
+    "tests/benchmarks/test_bench_logging.py",
+    "tests/template/test_properties.py",
+    "tests/test_dependabot_automerge_workflow.py",
+
+    # FastAPI example app — irrelevant to a wrapper-generator project
+    "examples/**",
+    "docs/examples/add-a-feature.md",
+    "docs/examples/api.md",
+    "docs/examples/README.md",
+
+    # ----------------------------------------------------------------------
+    # Files where the only diff is placeholder substitution
+    # (`__PROJECT_NAME__`, `__PACKAGE_NAME__`, `__PYPI_NAME__`, etc.)
+    # ----------------------------------------------------------------------
+    ".claude/CLAUDE.md",
+    ".claude/lsp-setup.md",
+    ".github/CODEOWNERS",
+    ".github/SECURITY.md",
+    ".github/workflows/breaking-change-detection.yml",
+    ".github/workflows/release.yml",
+    ".github/workflows/testpypi.yml",
+    "docs/getting-started/installation.md",
+    "docs/index.md",
+    "docs/reference/api.md",
+    "docs/usage/basics.md",
+    "docs/usage/cli.md",
+
+    # ----------------------------------------------------------------------
+    # Heavily project-customized — skip wholesale
+    # ----------------------------------------------------------------------
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "AGENTS.md",                   # merged manually each sync
+    ".github/CONTRIBUTING.md",     # merged manually each sync
+    ".envrc.local.example",
+    ".gitignore",
+    ".gemini/settings.json",
+    "mkdocs.yml",
+    "docs/TABLE_OF_CONTENTS.md",
+    "pyproject.toml",              # always merged: dep bumps + project config
+    "tools/doit/testing.py",       # keeps --cov=opnsense_openapi
+    ".github/workflows/ci.yml",    # has project-specific spec download steps
+    ".github/workflows/dependabot-automerge.yml",  # has project request-rebase job
+]

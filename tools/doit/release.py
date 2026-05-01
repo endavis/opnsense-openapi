@@ -5,6 +5,8 @@ import os
 import re
 import subprocess  # nosec B404 - subprocess is required for doit tasks
 import sys
+import tomllib
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from doit.tools import title_with_actions
@@ -255,6 +257,39 @@ def _extract_next_version_from_cz_output(stdout: str) -> str | None:
     return None
 
 
+def _get_pypi_name_from_pyproject() -> str | None:
+    """Return ``[project].name`` from ``pyproject.toml`` in the current directory.
+
+    Used by ``task_release_tag`` to substitute the project's PyPI name into the
+    "Next steps" URL printout. Reading at runtime (instead of relying on the
+    template's spawn-time placeholder substitution) means the same code works
+    in the template repo and in every spawned project, without expanding the
+    substitution allowlist to cover ``tools/doit/``.
+
+    Returns:
+        The project name string when ``pyproject.toml`` exists and contains
+        ``[project].name``; ``None`` for any failure (missing file, missing
+        ``[project]`` table, missing ``name`` key, malformed TOML, OS error).
+        The caller is expected to fall back to a literal placeholder so the
+        success-path printout never crashes after the tag has been pushed.
+    """
+    pyproject_path = Path("pyproject.toml")
+    if not pyproject_path.exists():
+        return None
+    try:
+        with pyproject_path.open("rb") as f:
+            data = tomllib.load(f)
+    except (tomllib.TOMLDecodeError, OSError):
+        return None
+    project = data.get("project")
+    if not isinstance(project, dict):
+        return None
+    name = project.get("name")
+    if not isinstance(name, str):
+        return None
+    return name
+
+
 def task_release() -> dict[str, Any]:
     """Create a release PR with changelog updates (PR-based release flow).
 
@@ -263,11 +298,12 @@ def task_release() -> dict[str, Any]:
     reviewer merges the PR, run ``doit release_tag`` to tag ``main`` and
     trigger the publish workflow.
 
-    CLI params (see the ``params`` entry in the returned dict): ``--increment``
-    forces a version increment type; ``--prerelease`` produces a pre-release
-    (alpha/beta/rc). The action function ``create_release_pr`` accepts these
-    as keyword arguments so doit's param parsing reaches them — see #650 for
-    why the closure approach was wrong.
+    CLI params (see the ``params`` entry in the returned dict): ``--prerelease``
+    alone uses conventional-commit hints; ``--increment`` alone forces a bump
+    type; both together force a pre-release of the chosen bump type (see #475).
+    The action function ``create_release_pr`` accepts these as keyword arguments
+    so doit's param parsing reaches them — see #650 for why the closure approach
+    was wrong.
     """
 
     def create_release_pr(increment: str = "", prerelease: str = "") -> None:
@@ -297,14 +333,6 @@ def task_release() -> dict[str, Any]:
             console.print(
                 f"[bold red]❌ Error: Invalid prerelease value '{prerelease}'. "
                 f"Allowed values: alpha, beta, rc (or empty for a production release).[/bold red]"
-            )
-            sys.exit(1)
-
-        # prerelease and increment are mutually exclusive
-        if prerelease and increment:
-            console.print(
-                "[bold red]❌ Error: --prerelease and --increment "
-                "are mutually exclusive.[/bold red]"
             )
             sys.exit(1)
 
@@ -674,11 +702,16 @@ def task_release_tag() -> dict[str, Any]:
         console.print("=" * 70)
         console.print("\nNext steps:")
         console.print("1. Monitor GitHub Actions for build and publish.")
+        # Resolve the PyPI name at runtime from pyproject.toml so the same
+        # code works in the template repo and in every spawned project. Fall
+        # back to the literal placeholder if the lookup fails — the tag has
+        # already been pushed, so the printout must not crash.
+        pypi_name = _get_pypi_name_from_pyproject() or "package-name"
         console.print(
-            "2. Check TestPyPI: [link=https://test.pypi.org/project/package-name/]https://test.pypi.org/project/package-name/[/link]"
+            f"2. Check TestPyPI: [link=https://test.pypi.org/project/{pypi_name}/]https://test.pypi.org/project/{pypi_name}/[/link]"
         )
         console.print(
-            "3. Check PyPI: [link=https://pypi.org/project/package-name/]https://pypi.org/project/package-name/[/link]"
+            f"3. Check PyPI: [link=https://pypi.org/project/{pypi_name}/]https://pypi.org/project/{pypi_name}/[/link]"
         )
 
     return {
