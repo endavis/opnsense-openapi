@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777630891048,
+  "lastUpdate": 1777632180217,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -380,6 +380,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000038855413152686406",
             "extra": "mean: 937.868846774137 usec\nrounds: 620"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a9dd688b07f0f683ce2ce1a1662e46bd4cebf1ff",
+          "message": "fix: distinguish codegen failure modes in OPNsenseClient.api (merges PR #43, addresses #33)\n\nAddresses #33",
+          "timestamp": "2026-05-01T11:42:24+01:00",
+          "tree_id": "83439a8d2207827e8ba03bd28ac4c9388b14be56",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/a9dd688b07f0f683ce2ce1a1662e46bd4cebf1ff"
+        },
+        "date": 1777632179353,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 712.926401280721,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0017931820177125356",
+            "extra": "mean: 1.4026693333331068 msec\nrounds: 669"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1043.1382914109306,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000020321405347567683",
+            "extra": "mean: 958.6456639870995 usec\nrounds: 622"
           }
         ]
       }
