@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777636985974,
+  "lastUpdate": 1777645359507,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -532,6 +532,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000026533348919206816",
             "extra": "mean: 929.1419507936852 usec\nrounds: 630"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "979eb89ebb68cf0ccd7a4cbe17ecddd2fec2c5a4",
+          "message": "chore: sync to latest pyproject-template (0cdab3e3 → 170df8c9) (merges PR #49, addresses #48)\n\n* chore: sync cluster 1 — pyproject.toml dep version bumps + benchmarks ruff ignore (#48)\n\nCluster 1 of pyproject-template sync (170df8c9):\n- Bumped dev deps: ruff>=0.15.11, mkdocstrings>=1.0.4, pyproject-fmt>=2.21.1, hypothesis>=6.152.1\n- Added tests/benchmarks/*.py ruff per-file-ignore for ANN401 (benchmark fixture has no py.typed)\n- Preserved: project name/deps, ui extra, custom markers (live_opnsense, requires_opnsense_source),\n  fail_under=80, project-specific exclusions (generated/, jsonschema overrides)\n- tools/doit/testing.py: no change required — already has --cov=opnsense_openapi from PR #46\n\nPre-existing test failures in tests/template/test_pyproject_template_main.py\n(test_get_recommended_action_*) are unrelated and will be addressed when the\nsync tool itself is replaced in cluster 2.\n\n* chore: sync cluster 2 — adopt new pyproject_template tooling and matching template tests (#48)\n\nAdopt upstream tools/pyproject_template/{manage,check_template_updates,cleanup,setup_repo,utils}.py\nand the corresponding test files. Adds new test_check_template_updates.py for the\nnew sync-tool-side coverage.\n\nNote: test_get_recommended_action_outdated_template and\ntest_get_recommended_action_up_to_date will fail until tmp/extracted/ is cleaned\nup by the final manage.py sync step. These are environmental — the assertions\nare correct against an empty tree.\n\ntest_properties.py left at the project-customized version (omits\nTestGreetProperties; package_name.core scaffolding is not adopted in this project).\n\nAddresses #48\n\nCo-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n* chore: sync cluster 3 — adopt upstream doit task modules and matching tests (#48)\n\nAdopt upstream tools/doit/{base,docs,github,install_tools,quality,release,security}.py\nalong with new and updated tests for those modules. project.py and testing.py\nare project-specific and untouched.\n\nWatchpoints verified:\n- tools/doit/project.py byte-identical to main\n- tools/doit/testing.py keeps --cov=opnsense_openapi (unchanged)\n\nAddresses #48\n\nCo-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n* chore: sync cluster 4 — adopt upstream workflow + GitHub config updates (#48)\n\nAdopt:\n- .github/workflows/codeql.yml — bump codeql-action init/analyze to @v4\n- .github/workflows/pr-checks.yml — explicit minimal permissions block\n- .github/dependabot.yml — 7-day cooldown defending against fast-yanked supply-chain attacks (security PRs bypass)\n- .github/CONTRIBUTING.md — substantial docs updates re: GitHub App vs PAT release auth, dependabot auto-merge prerequisites, new release CLI flag combinations\n\ntests/test_codeql_workflow.py — updated v3 assertions to v4 to match the\ncodeql-action bump. (Test documents repo's actual pinned version.)\n\nSkip with project-specific reasons:\n- ci.yml — only differs by --cov=package_name vs --cov=opnsense_openapi (project value preserved)\n- breaking-change-detection.yml, release.yml, testpypi.yml — only differ on package name placeholder\n- dependabot-automerge.yml — keep our request-rebase scheduled job\n- CODEOWNERS, SECURITY.md — only placeholder differences\n\nAddresses #48\n\nCo-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n* chore: sync cluster 5 — adopt upstream documentation updates (#48)\n\nTake upstream verbatim for template-managed docs:\n- docs/decisions/{9002,9014,9015,README}.md — ADRs\n- docs/deployment/{development,production}.md\n- docs/development/AI_SETUP.md\n- docs/development/ai/{architectural-conventions,command-blocking,enforcement-principles,first-5-minutes,slash-commands}.md\n- docs/development/{ci-cd-testing,dependabot-automerge,doit-tasks-reference,extensions,github-repository-settings,install-tools-framework,release-and-automation,tooling-roles}.md\n- docs/template/{manage,new-project}.md — covers new sync-exclude.toml mechanism, three trusted publishers\n\nSkip (project-specific or placeholder-only diff):\n- docs/decisions/0001-*.md, docs/development/{architecture,heuristics,spec-version-resolution}.md\n- docs/deployment/publishing.md, docs/usage/generated-client.md\n- docs/examples/README.md (OPNsense-specific content), docs/getting-started/installation.md, docs/index.md\n- docs/reference/api.md (custom API reference), docs/TABLE_OF_CONTENTS.md\n- docs/usage/{basics,cli}.md (placeholder-only diffs)\n- docs/examples/{add-a-feature,api}.md (upstream-only template scaffolds, irrelevant to this project)\n\nAddresses #48\n\nCo-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n* chore: sync cluster 6 — adopt AI infrastructure (.agents/, .gemini/, .codex/) (#48)\n\nNew files / additions from upstream:\n- .agents/skills/{plan-issue,implement,finalize}/ — Codex skills\n- .gemini/commands/{finalize,implement,plan-issue-stdout}.md — standalone Gemini workflow\n- tests/template/test_ai_agent_assets.py — smoke tests for the new AI assets\n\nUpdates from upstream:\n- .codex/config.toml — current schema (codex_hooks feature, removed obsolete approval_policy/shell_env_policy tables)\n- .gemini/commands/plan-issue.md — clarifies dual workflow modes\n- .claude/commands/plan-both.md — calls /plan-issue-stdout for Gemini half so it doesn't post to GitHub\n- AGENTS.md — Gemini standalone workflow + Codex skills directory in AI Config Directories table\n\nSkip with project-specific reasons:\n- README.md, mkdocs.yml — wholesale project content / nav, not template-managed\n- .envrc.local.example — OPNsense credentials specific\n- .gitignore, CHANGELOG.md, LICENSE — project additions only / project-specific values\n- tests/test_cli.py, test_core.py, test_example.py (upstream-only) — placeholder package_name modules\n- tests/benchmarks/test_bench_core.py, test_bench_logging.py — reference package_name.core.greet\n- tests/conftest.py, test_logging.py — placeholder-only diffs (test_logging) or project-specific fixtures (conftest)\n- tests/test_dependabot_automerge_workflow.py — asserts schedule/workflow_dispatch present (we keep request-rebase job)\n- .claude/CLAUDE.md, .claude/lsp-setup.md — placeholder-only diffs\n\nAddresses #48\n\nCo-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n* chore: sync cluster 6 — mark template sync at 170df8c9 (#48)\n\nUpdate .config/pyproject_template/settings.toml to record the new sync point\nand add the new .config/pyproject_template/sync-exclude.toml hand-managed\nexclusion list (introduced upstream in this sync cycle).\n\nThe exclude list captures the 56 files where this project deliberately\ndiverges from the template (project-specific source under\nsrc/opnsense_openapi, OPNsense-specific examples and docs, root configs that\nare merged manually, files where the only diff is placeholder substitution).\nAfter applying the exclude list, manage.py check reports zero remaining diff.\n\nAddresses #48\n\nCo-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-05-01T15:22:05+01:00",
+          "tree_id": "fad671c01e8dffa691ec1d3f08a7e1a033967a5b",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/979eb89ebb68cf0ccd7a4cbe17ecddd2fec2c5a4"
+        },
+        "date": 1777645359205,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 456.581519339514,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0066499736277567415",
+            "extra": "mean: 2.190189391472939 msec\nrounds: 516"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1314.0690006451703,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000021111587276449484",
+            "extra": "mean: 760.9950463096144 usec\nrounds: 691"
           }
         ]
       }
