@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777634059849,
+  "lastUpdate": 1777635243860,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -456,6 +456,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00004494363860923169",
             "extra": "mean: 765.3771498515993 usec\nrounds: 674"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96465f5cee4c5d32e5387e7cad73f100dba4c1ee",
+          "message": "chore: lift test coverage to 79.82% (PR-b of #6 plan) (merges PR #46, addresses #6)\n\nchore: lift coverage to 79.82% via APIWrapper and OPNsenseClient tests\n\nAdds two new test modules and fixes the doit coverage placeholder bug:\n\n- tests/test_openapi.py (36 tests) covers APIWrapper construction,\n  endpoint discovery, schema introspection with $ref resolution,\n  _build_sample_from_schema, validate_body, call_endpoint, and\n  suggest_parameters. Lifts openapi.py from 26.82% to 97.96%.\n\n- tests/test_client_base.py (17 tests) fills OPNsenseClient paths\n  not covered by the existing tests/test_client.py: get/post happy\n  and error paths, the detect_version() three-endpoint fallback\n  chain, the openapi lazy-load property, list_endpoints, and\n  close/__exit__. Lifts client/base.py from 60.00% to 91.33%.\n\n- tools/doit/testing.py: replace --cov=package_name (an unsubstituted\n  pyproject-template placeholder that caused doit coverage to report\n  0.00%) with --cov=opnsense_openapi. doit coverage now reports real\n  numbers, which is what makes ratcheting fail_under measurable.\n\n- pyproject.toml: bump [tool.coverage.report] fail_under from 60 to\n  70 as the intermediate PR-b ratchet. PR-c will bump it to 80.\n\nTotal coverage 61.86% -> 79.82%. PR-b of the multi-PR plan on #6.\nPR-c (cli.py + generator branches + final ratchet to 80) follows.\n\nAddresses #6",
+          "timestamp": "2026-05-01T12:33:35+01:00",
+          "tree_id": "43db6f3507aa0464263b44a07d2e3676cf1a433c",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/96465f5cee4c5d32e5387e7cad73f100dba4c1ee"
+        },
+        "date": 1777635242971,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 535.6162087744807,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0044915341569864995",
+            "extra": "mean: 1.867008472891541 msec\nrounds: 664"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1069.5424102187455,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003122011269822412",
+            "extra": "mean: 934.9792868853862 usec\nrounds: 610"
           }
         ]
       }
