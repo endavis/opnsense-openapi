@@ -14,7 +14,11 @@ from urllib.parse import urljoin
 import httpx
 
 from opnsense_openapi.openapi import APIWrapper, SuggestedParameters
-from opnsense_openapi.specs import find_best_matching_spec, version_from_spec_path
+from opnsense_openapi.specs import (
+    find_best_matching_spec,
+    list_available_specs,
+    version_from_spec_path,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +61,7 @@ def _resolved_module_dir(version: str) -> tuple[Path, str, Path]:
     return spec_path, resolved_version, client_dir
 
 
-def _auto_generate_client(version: str) -> bool:
+def _auto_generate_client(version: str) -> str:
     """Automatically generate Python client if spec exists but client doesn't.
 
     The generated-client directory is keyed off the *resolved* spec version,
@@ -70,25 +74,48 @@ def _auto_generate_client(version: str) -> bool:
         version: OPNsense version string (e.g., '24.7.1' or '26.1.6_2')
 
     Returns:
-        True if client was generated or already exists, False if spec doesn't exist
+        The resolved spec version (e.g. ``"26.1.6"`` for an input of
+        ``"26.1.6_2"``). Callers can use this to derive the canonical
+        generated-client module path without re-resolving the spec.
+
+    Raises:
+        RuntimeError: With a cause-tagged message identifying which of three
+            distinct failure modes occurred:
+
+            - **Spec missing** — no committed spec resolves for ``version``.
+              The message lists currently available versions and suggests
+              ``opnsense-openapi generate {version}``.
+            - **CLI missing** — ``openapi-python-client`` is not on
+              ``PATH``. The message includes the resolved spec path and the
+              correct install command (``uv tool install
+              openapi-python-client``).
+            - **Codegen failed** — ``openapi-python-client`` ran but exited
+              non-zero. The message includes the version, spec path, return
+              code, and captured stderr.
     """
     # Check if spec file exists and derive the canonical client dir.
     try:
-        spec_path, _, client_dir = _resolved_module_dir(version)
-    except FileNotFoundError:
-        logger.debug(f"No spec file found for version {version}")
-        return False
+        spec_path, resolved_version, client_dir = _resolved_module_dir(version)
+    except FileNotFoundError as exc:
+        available = list_available_specs()
+        available_str = ", ".join(available) if available else "<none>"
+        raise RuntimeError(
+            f"No OpenAPI spec for version {version}; available=[{available_str}]. "
+            f"Generate with: opnsense-openapi generate {version}"
+        ) from exc
 
     if client_dir.exists():
         logger.debug(f"Generated client already exists at {client_dir}")
-        return True
+        return resolved_version
 
     # Check if openapi-python-client is available
     if not shutil.which("openapi-python-client"):
-        logger.warning(
-            "openapi-python-client not found. Install it with: uv pip install openapi-python-client"
+        raise RuntimeError(
+            f"openapi-python-client is not on PATH; cannot generate the typed "
+            f"client for version {version} (spec found at {spec_path}). "
+            f"Install with `uv tool install openapi-python-client` and retry, "
+            f"or run `opnsense-openapi generate {version}` manually."
         )
-        return False
 
     # Generate the client
     logger.info(f"Auto-generating Python client for version {version}...")
@@ -121,12 +148,25 @@ def _auto_generate_client(version: str) -> bool:
             config_path,
         ]
 
-        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        logger.info(f"✓ Successfully generated client for version {version}")
-        return True
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Failed to generate client: {e}")
-        return False
+        try:
+            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError as exc:
+            stderr_bytes = exc.stderr if isinstance(exc.stderr, bytes | bytearray) else b""
+            stderr_text = (
+                stderr_bytes.decode("utf-8", errors="replace").strip()
+                if stderr_bytes
+                else "<empty>"
+            )
+            raise RuntimeError(
+                f"openapi-python-client failed for version {version} "
+                f"(spec={spec_path}, returncode={exc.returncode}). "
+                f"Re-run interactively for full output: "
+                f"opnsense-openapi generate {version}. "
+                f"Captured stderr: {stderr_text}"
+            ) from exc
+
+        logger.info(f"Successfully generated client for version {version}")
+        return resolved_version
     finally:
         # Clean up temp config file
         with contextlib.suppress(Exception):
@@ -401,7 +441,10 @@ class OPNsenseClient:
             GeneratedAPI wrapper for version-agnostic access
 
         Raises:
-            RuntimeError: If no version is available or no generated client exists
+            RuntimeError: If no version is available, the spec is missing,
+                ``openapi-python-client`` is not on ``PATH``, or codegen
+                failed. The message identifies which of those occurred (see
+                :func:`_auto_generate_client`).
 
         Example (No version-specific imports needed!):
             >>> client = OPNsenseClient(..., auto_detect_version=True)
@@ -424,29 +467,12 @@ class OPNsenseClient:
                 "or enable auto_detect_version."
             )
 
-        # Try to auto-generate the client if it doesn't exist
-        if not _auto_generate_client(version):
-            # Spec doesn't exist - provide instructions to generate it
-            raise RuntimeError(
-                f"No OpenAPI spec found for version {version}. "
-                f"Generate it with:\n"
-                f"  opnsense-openapi download {version}\n"
-                f"  opnsense-openapi generate {version}"
-            )
-
-        # Resolve again to derive the canonical module path. ``_auto_generate_client``
-        # already used this derivation; call it once more here so the importlib
-        # path matches the directory ``_auto_generate_client`` populated.
-        try:
-            _, resolved_version, _ = _resolved_module_dir(version)
-        except FileNotFoundError as e:
-            # Should be unreachable: ``_auto_generate_client`` already returned True.
-            raise RuntimeError(
-                f"No OpenAPI spec found for version {version}. "
-                f"Generate it with:\n"
-                f"  opnsense-openapi download {version}\n"
-                f"  opnsense-openapi generate {version}"
-            ) from e
+        # Auto-generate (or confirm) the typed client. The helper raises
+        # ``RuntimeError`` with a cause-tagged message on any failure mode
+        # (spec missing, CLI missing, codegen failed) and returns the
+        # *resolved* spec version on success — which is what we need below
+        # to build the importlib path.
+        resolved_version: str = _auto_generate_client(version)
 
         # Import the generated client for the *resolved* version, so that
         # ``26.1.6`` and ``26.1.6_2`` share a single generated client.
