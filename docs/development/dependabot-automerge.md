@@ -115,7 +115,7 @@ env:
 ### Configuring the App
 
 Follow the full setup in
-[GitHub Repository Settings → Release Permissions](../../.github/CONTRIBUTING.md#organization-repositories-github-app-recommended).
+[GitHub Repository Settings → Release Permissions](../../.github/CONTRIBUTING.md#recommended-github-app).
 The auto-merge workflow reuses the same App as the release workflow. When
 creating or updating the App, ensure the repository permissions include:
 
@@ -167,26 +167,68 @@ Lists live in `.github/automerge-config.json`:
 Globs use `*` as a wildcard and are matched case-insensitively against the full
 dependency name. Edit the file via a normal PR to change policy.
 
-## Rebase handling for stale PRs
+## Version-update cooldown
 
-The workflow includes a scheduled job (every 6 hours, plus `workflow_dispatch`)
-that finds qualifying dependabot PRs whose branches have fallen behind `main`
-and asks dependabot to rebase:
+To defend against supply-chain attacks that publish malicious versions and
+are detected and yanked within hours-to-days, the `uv` ecosystem entry in
+`.github/dependabot.yml` sets a 7-day
+[`cooldown`](https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#cooldown--):
 
+```yaml
+cooldown:
+  default-days: 7
+  include:
+    - "*"
 ```
-@dependabot rebase
+
+Dependabot waits 7 days from a new version's release date before opening a
+PR for it, so a malicious release that is yanked within a few days never
+produces a PR to auto-merge.
+
+**Security-update PRs bypass cooldown.** Per the dependabot docs: *"the
+`cooldown` option is only available for version updates, not security
+updates."* Advisory-driven PRs continue to land at full speed, so CVE
+patching latency is unchanged.
+
+**The `github-actions` ecosystem is not covered.** Dependabot's `cooldown`
+only supports SemVer ecosystems and explicitly excludes `github-actions`.
+Action bumps continue to flow through auto-merge under the existing
+`automerge-config.json` rules; tighter handling for actions is tracked
+separately.
+
+## Stale PRs
+
+When `main` advances after a dependabot PR is opened, the PR ends up
+`BEHIND` and stops auto-merging. There is no fully-automated rebase path
+the workflow can use, so the unstick step is manual:
+
+```bash
+gh pr comment <number> --body "@dependabot rebase"
 ```
 
-This follows the signed-commit rule documented in the
+Dependabot rebases the branch and force-pushes. The `synchronize` event
+re-runs the Merge Gate and CI, and the already-enabled auto-merge fires
+when checks go green.
+
+> [!IMPORTANT]
+> The comment **must be posted by a real user** (your `gh` CLI auth, or
+> the PR sidebar UI). Dependabot's command parser rejects `@dependabot`
+> commands from GitHub Apps, including the App configured for this repo
+> — see upstream issue
+> [dependabot/dependabot-core#9147](https://github.com/dependabot/dependabot-core/issues/9147).
+> Posting the rebase request from a workflow that authenticates as the
+> App, or as `github-actions[bot]` via `GITHUB_TOKEN`, fails with
+> *"Sorry, only users with push access can use that command."*
+
+This also follows the signed-commit rule documented in the
 [Dependabot PRs](../../AGENTS.md#dependabot-prs) section of `AGENTS.md`:
-**never** call the GitHub `update-branch` API or rebase locally, because both
-strip dependabot's verified commit signatures. The job also skips any PR that
-already received a `@dependabot rebase` comment within the last hour, so it
-does not spam the bot while a rebase is in progress.
+**never** call the GitHub `update-branch` API or rebase locally, because
+both strip dependabot's verified commit signatures.
 
 ## Related
 
 - `AGENTS.md` section [Dependabot PRs](../../AGENTS.md#dependabot-prs)
+- `.github/dependabot.yml`
 - `.github/workflows/dependabot-automerge.yml`
 - `.github/workflows/dependabot-blocked-label.yml`
 - `.github/automerge-config.json`

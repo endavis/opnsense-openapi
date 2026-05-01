@@ -52,11 +52,11 @@ What you'll see (illustrative — your plan will look different):
 The provider module currently makes a network call on every lookup...
 
 ### Files to create
-- `src/opnsense_openapi/cache.py` — new LRU cache wrapper
+- `src/__PACKAGE_NAME__/cache.py` — new LRU cache wrapper
 - `tests/test_cache.py` — unit tests for hit, miss, eviction
 
 ### Files to modify
-- `src/opnsense_openapi/provider.py` — wrap lookups in the cache
+- `src/__PACKAGE_NAME__/provider.py` — wrap lookups in the cache
 
 ### Test plan
 - Unit tests for cache hit, cache miss, eviction ordering
@@ -146,3 +146,5 @@ Run `/where-am-i`. It is read-only, has no side effects, and will tell you the c
 - [AI Agent Setup](../AI_SETUP.md) — per-CLI configuration, permissions, and hooks.
 - [Architectural Conventions](architectural-conventions.md) — imperative rules for AI-generated code.
 - [AGENTS.md](../../../AGENTS.md) — universal context file and workflow reference.
+- <!-- TODO: wire this link up properly when #342 lands -->
+  For an end-to-end example of the *coding* side of a feature (creating a module, CLI subcommand, tests, and docs), see [the add-a-feature example](../../examples/add-a-feature.md) (tracked in [#342](https://github.com/endavis/pyproject-template/issues/342)).

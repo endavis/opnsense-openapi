@@ -101,4 +101,5 @@ The Issue contains the full discussion; the ADR summarizes the outcome.
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [0001](0001-spec-matching-floor-over-highest-module-path-keyed-by-resolved-spec-version.md) | Spec matching: floor over highest, module path keyed by resolved spec version | Accepted |
+
+_(No project-level ADRs yet.)_
