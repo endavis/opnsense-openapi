@@ -14,7 +14,7 @@ from urllib.parse import urljoin
 import httpx
 
 from opnsense_openapi.openapi import APIWrapper, SuggestedParameters
-from opnsense_openapi.specs import find_best_matching_spec
+from opnsense_openapi.specs import find_best_matching_spec, version_from_spec_path
 
 logger = logging.getLogger(__name__)
 
@@ -27,25 +27,57 @@ class APIResponseError(Exception):
         self.response_text = response_text
 
 
+def _resolved_module_dir(version: str) -> tuple[Path, str, Path]:
+    """Resolve the spec for ``version`` and return its canonical client paths.
+
+    Both ``_auto_generate_client`` and the :pyattr:`OPNsenseClient.api`
+    property need the *same* derivation: resolve the spec, then key the
+    generated-client directory off the spec's version (not the raw user
+    input). Centralizing here keeps them in lock-step and ensures that a
+    raw input like ``26.1.6_2`` lands in ``generated/v26_1_6/`` whenever the
+    resolver maps it to ``opnsense-26.1.6.json``.
+
+    Args:
+        version: Raw OPNsense version string (may include a ``_N`` suffix).
+
+    Returns:
+        Tuple of ``(spec_path, resolved_version, client_dir)`` where
+        ``resolved_version`` is the version segment of ``spec_path`` (e.g.
+        ``"26.1.6"``) and ``client_dir`` is
+        ``src/opnsense_openapi/generated/v{resolved_with_underscores}/``.
+
+    Raises:
+        FileNotFoundError: If no spec can be resolved for ``version`` (the
+            error originates in :func:`find_best_matching_spec`).
+    """
+    spec_path: Path = find_best_matching_spec(version)
+    resolved_version: str = version_from_spec_path(spec_path)
+    version_module: str = resolved_version.replace(".", "_")
+    client_dir: Path = Path(__file__).parent.parent / "generated" / f"v{version_module}"
+    return spec_path, resolved_version, client_dir
+
+
 def _auto_generate_client(version: str) -> bool:
     """Automatically generate Python client if spec exists but client doesn't.
 
+    The generated-client directory is keyed off the *resolved* spec version,
+    not the raw input. This means ``26.1.6_2`` and ``26.1.6_3`` both land in
+    ``generated/v26_1_6/`` whenever the resolver maps them to
+    ``opnsense-26.1.6.json``, and the second invocation finds an existing
+    client without re-running codegen.
+
     Args:
-        version: OPNsense version string (e.g., '24.7.1')
+        version: OPNsense version string (e.g., '24.7.1' or '26.1.6_2')
 
     Returns:
         True if client was generated or already exists, False if spec doesn't exist
     """
-    # Check if spec file exists
+    # Check if spec file exists and derive the canonical client dir.
     try:
-        spec_path = find_best_matching_spec(version)
+        spec_path, _, client_dir = _resolved_module_dir(version)
     except FileNotFoundError:
         logger.debug(f"No spec file found for version {version}")
         return False
-
-    # Check if generated client already exists
-    version_module = version.replace(".", "_")
-    client_dir = Path(__file__).parent.parent / "generated" / f"v{version_module}"
 
     if client_dir.exists():
         logger.debug(f"Generated client already exists at {client_dir}")
@@ -402,8 +434,23 @@ class OPNsenseClient:
                 f"  opnsense-openapi generate {version}"
             )
 
-        # Import the generated client for this version
-        version_module: str = version.replace(".", "_")
+        # Resolve again to derive the canonical module path. ``_auto_generate_client``
+        # already used this derivation; call it once more here so the importlib
+        # path matches the directory ``_auto_generate_client`` populated.
+        try:
+            _, resolved_version, _ = _resolved_module_dir(version)
+        except FileNotFoundError as e:
+            # Should be unreachable: ``_auto_generate_client`` already returned True.
+            raise RuntimeError(
+                f"No OpenAPI spec found for version {version}. "
+                f"Generate it with:\n"
+                f"  opnsense-openapi download {version}\n"
+                f"  opnsense-openapi generate {version}"
+            ) from e
+
+        # Import the generated client for the *resolved* version, so that
+        # ``26.1.6`` and ``26.1.6_2`` share a single generated client.
+        version_module: str = resolved_version.replace(".", "_")
         module_path: str = f"opnsense_openapi.generated.v{version_module}.opnsense_openapi_client"
 
         try:
@@ -417,8 +464,10 @@ class OPNsenseClient:
             api_client: Any = generated.Client(base_url=f"{self.base_url}/api")
             api_client.set_httpx_client(self._client)
 
-            # Wrap in GeneratedAPI for version-agnostic access
-            return GeneratedAPI(api_client, version)
+            # Wrap in GeneratedAPI for version-agnostic access. Pass the
+            # resolved version so ``GeneratedAPI`` builds importlib paths
+            # against the directory ``_auto_generate_client`` populated.
+            return GeneratedAPI(api_client, resolved_version)
 
         except ImportError as e:
             # This should rarely happen now that we auto-generate, but keep as fallback

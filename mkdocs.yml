@@ -72,6 +72,7 @@ nav:
   - Development:
       - Coding Standards: development/coding-standards.md
       - Architecture: development/architecture.md
+      - Spec Version Resolution: development/spec-version-resolution.md
       - Heuristics: development/heuristics.md
       - CI/CD & Testing: development/ci-cd-testing.md
       - GitHub Repository Settings: development/github-repository-settings.md
@@ -101,6 +102,7 @@ nav:
       - Tools Reference: template/tools-reference.md
   - Decisions:
       - Overview: decisions/README.md
+      - ADR-0001 Spec matching: decisions/0001-spec-matching-floor-over-highest-module-path-keyed-by-resolved-spec-version.md
       - ADR-9001 uv: decisions/9001-use-uv-for-package-management.md
       - ADR-9002 doit: decisions/9002-use-doit-for-task-automation.md
       - ADR-9003 ruff: decisions/9003-use-ruff-for-linting-and-formatting.md
