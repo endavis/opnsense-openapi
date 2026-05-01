@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777632180217,
+  "lastUpdate": 1777634059849,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -418,6 +418,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000020321405347567683",
             "extra": "mean: 958.6456639870995 usec\nrounds: 622"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9fb463b6f3f7705f04fafc225a85475563368711",
+          "message": "fix: raise APIResponseError on non-JSON responses in post() (merges PR #45, addresses #44)\n\nAddresses #44",
+          "timestamp": "2026-05-01T12:13:57+01:00",
+          "tree_id": "25012e6de41455ee5e7b52366db72d45b3cd4d6e",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/9fb463b6f3f7705f04fafc225a85475563368711"
+        },
+        "date": 1777634059541,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 771.0313510565027,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001978519064057935",
+            "extra": "mean: 1.2969641229630338 msec\nrounds: 675"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1306.545407311797,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00004494363860923169",
+            "extra": "mean: 765.3771498515993 usec\nrounds: 674"
           }
         ]
       }
