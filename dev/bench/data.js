@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777578309490,
+  "lastUpdate": 1777628635674,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -304,6 +304,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0000714317479856272",
             "extra": "mean: 770.56213976969 usec\nrounds: 694"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "236fd4b852046f3e300722691985c30944c86b9f",
+          "message": "chore: add live-API contract test for spec path routing (merges PR #41, addresses #40)\n\nAdds tests/test_live_opnsense.py with one opt-in live test\n(@pytest.mark.live_opnsense) and 13 unmarked unit tests for the\nmodule-level helpers. The live test is the runtime counterpart to the\nstructural lint shipped in PR #39: it samples ~25 read-only ops from\nthe matching committed spec and asserts each returns non-404 with a\ntop-level JSON type matching the operation's declared response schema.\nRegisters the live_opnsense marker in pyproject.toml and replaces the\n\"Out of Scope\" placeholder in docs/development/ci-cd-testing.md with\na full section on opt-in usage, env vars, and the version-match rule.\n\nAddresses #40",
+          "timestamp": "2026-05-01T10:43:31+01:00",
+          "tree_id": "794bb68102572a15a4edb1f36aa95205f948b098",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/236fd4b852046f3e300722691985c30944c86b9f"
+        },
+        "date": 1777628635401,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 694.1598461530377,
+            "unit": "iter/sec",
+            "range": "stddev: 0.003123927576018635",
+            "extra": "mean: 1.440590384969538 msec\nrounds: 652"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1034.9339174791967,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000762613517624311",
+            "extra": "mean: 966.245267558449 usec\nrounds: 598"
           }
         ]
       }
