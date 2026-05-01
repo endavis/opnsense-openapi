@@ -17,6 +17,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### BREAKING CHANGE
+
+- find_best_matching_spec(version) now defaults to
+mode="floor" instead of returning the highest committed
+major.minor.x. Callers that need the prior behavior must pass
+mode="highest" explicitly. Floor mode also raises FileNotFoundError
+when no committed spec is at or below the request, instead of
+silently returning a spec above the box.
+
+### Fix
+
+- raise APIResponseError on non-JSON responses in post() (merges PR #45, addresses #44)
+- distinguish codegen failure modes in OPNsenseClient.api (merges PR #43, addresses #33)
+- emit snake_case controller segments in generated URL paths (merges PR #36, addresses #32)
+
+### Refactor
+
+- stabilize generated-client module path; add floor spec matching (merges PR #42, addresses #34)
+
+## v0.3.0 (2026-04-23)
+
 ### Feat
 
 - add specs for OPNsense 26.1.2-26.1.6 (merges PR #11, addresses #10)
