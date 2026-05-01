@@ -10,10 +10,10 @@ import subprocess
 from pathlib import Path
 from unittest.mock import patch
 
-from opnsense_openapi.client.base import _auto_generate_client
+from opnsense_openapi.client.base import _auto_generate_client, _resolved_module_dir
 
 
-def test_auto_generate_returns_false_when_spec_missing(tmp_path: Path) -> None:
+def test_auto_generate_returns_false_when_spec_missing() -> None:
     """_auto_generate_client returns False if no spec file matches the version."""
     with patch(
         "opnsense_openapi.client.base.find_best_matching_spec",
@@ -95,3 +95,71 @@ def test_auto_generate_returns_false_on_generator_failure(tmp_path: Path) -> Non
         ),
     ):
         assert _auto_generate_client("24.7") is False
+
+
+# --- Module-path stability across security-patch revisions ----------------
+
+
+def test_resolved_module_dir_strips_security_patch_suffix(tmp_path: Path) -> None:
+    """``26.1.6`` and ``26.1.6_2`` resolve to the same generated-client directory.
+
+    This is the core invariant for issue #34: distinct security-patch revisions
+    of the same release must share a single generated client, since the
+    OpenAPI surface does not change between them.
+    """
+    spec_path = tmp_path / "opnsense-26.1.6.json"
+    spec_path.write_text("{}")
+
+    with patch(
+        "opnsense_openapi.client.base.find_best_matching_spec",
+        return_value=spec_path,
+    ):
+        _, resolved_a, dir_a = _resolved_module_dir("26.1.6")
+        _, resolved_b, dir_b = _resolved_module_dir("26.1.6_2")
+
+    assert resolved_a == resolved_b == "26.1.6"
+    assert dir_a == dir_b
+    assert dir_a.name == "v26_1_6"
+
+
+def test_auto_generate_skips_codegen_for_security_patch_revision(tmp_path: Path) -> None:
+    """A second invocation with a ``_N`` suffix finds the existing client.
+
+    Sequence:
+        1. First call (raw version ``26.1.6``) — no client yet, codegen runs.
+        2. Second call (raw version ``26.1.6_2``, same resolver target) —
+           the canonical ``v26_1_6`` directory now exists, so codegen is
+           **not** invoked again.
+    """
+    spec_path = tmp_path / "opnsense-26.1.6.json"
+    spec_path.write_text("{}")
+
+    # Track which client_dir paths the auto-generator considered "existing".
+    existed: set[str] = set()
+
+    def fake_exists(self: Path) -> bool:
+        return str(self) in existed
+
+    def fake_check_call(cmd: list[str], **_: object) -> int:
+        # Record that this run "created" the client_dir, so the next
+        # client_dir.exists() returns True.
+        idx = cmd.index("--output-path")
+        existed.add(cmd[idx + 1])
+        return 0
+
+    with (
+        patch(
+            "opnsense_openapi.client.base.find_best_matching_spec",
+            return_value=spec_path,
+        ),
+        patch("pathlib.Path.exists", new=fake_exists),
+        patch("shutil.which", return_value="/usr/bin/openapi-python-client"),
+        patch("subprocess.check_call", side_effect=fake_check_call) as check_call,
+    ):
+        # First call: no v26_1_6 dir yet → codegen runs.
+        assert _auto_generate_client("26.1.6") is True
+        # Second call with security-patch suffix: short-circuits.
+        assert _auto_generate_client("26.1.6_2") is True
+
+    # codegen invoked exactly once across both calls.
+    assert check_call.call_count == 1
