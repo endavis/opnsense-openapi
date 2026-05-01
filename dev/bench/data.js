@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777628635674,
+  "lastUpdate": 1777630891048,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -342,6 +342,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0000762613517624311",
             "extra": "mean: 966.245267558449 usec\nrounds: 598"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e092f298675d810c70574590cb6f2a56479843d3",
+          "message": "refactor: stabilize generated-client module path; add floor spec matching (merges PR #42, addresses #34)\n\nFix two failure modes observed against a 26.1.6_2 box during direct-API\nintegration:\n\n1. Wrong-direction matching. find_best_matching_spec(\"25.7.5\") against\n   committed [25.7.4, 25.7.6, 25.7.7] previously returned 25.7.7 and the\n   generated client surfaced endpoints the box did not have. Default\n   selection now returns the highest committed spec at or below the\n   request (floor matching).\n\n2. Module-path churn across security patches. The auto-generator keyed\n   its output directory off the raw user-supplied version, so each\n   security-patch boot (26.1.6_1, 26.1.6_2, ...) wrote a fresh\n   generated/v26_1_6_N/ even though the resolver mapped them all to\n   opnsense-26.1.6.json. The generated directory is now keyed off the\n   resolved spec version, collapsing these to a single\n   generated/v26_1_6/.\n\nAdds a public version_from_spec_path helper and a private\n_resolved_module_dir helper shared by _auto_generate_client and the\nOPNsenseClient.api property so both stay in lock-step. _version_key\nnow strips trailing _N suffixes; the OpenAPI surface does not change\nbetween security patches of the same release.\n\nThe four CLI call sites were audited and require no code change — floor\nis the correct default for validate, build-client, and serve-docs; the\nno-version fallback exact-matches and is mode-irrelevant.\n\nDocuments the decision in ADR-0001 and adds a dedicated docs page at\ndocs/development/spec-version-resolution.md.\n\nBREAKING CHANGE: find_best_matching_spec(version) now defaults to\nmode=\"floor\" instead of returning the highest committed\nmajor.minor.x. Callers that need the prior behavior must pass\nmode=\"highest\" explicitly. Floor mode also raises FileNotFoundError\nwhen no committed spec is at or below the request, instead of\nsilently returning a spec above the box.",
+          "timestamp": "2026-05-01T11:21:08+01:00",
+          "tree_id": "c7cd0e3a5716f1aaf14fc2a8451f70665a7a28b5",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/e092f298675d810c70574590cb6f2a56479843d3"
+        },
+        "date": 1777630890774,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 728.1453646223947,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0015556807742247057",
+            "extra": "mean: 1.3733521472303611 msec\nrounds: 686"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1066.2471660505275,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000038855413152686406",
+            "extra": "mean: 937.868846774137 usec\nrounds: 620"
           }
         ]
       }
