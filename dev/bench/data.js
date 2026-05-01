@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777635243860,
+  "lastUpdate": 1777636985974,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -494,6 +494,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003122011269822412",
             "extra": "mean: 934.9792868853862 usec\nrounds: 610"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc4081a3c55ae054edd1ac40e5686ae9fa5aa4fe",
+          "message": "chore: lift test coverage to 95.72% and ratchet threshold to 80% (PR-c of #6 plan) (merges PR #47, addresses #6)\n\nFinal ratchet of the multi-PR plan to meet the 80% project coverage policy.\nPR-b (#46) shipped the doit-coverage placeholder fix, APIWrapper /\nOPNsenseClient tests, and the 60 -> 70 ratchet. This PR finishes the work\nand closes #6.\n\nTests:\n- tests/test_cli_comprehensive.py: +17 tests for setup orchestration,\n  build-client install hint / auto-detect / no-spec / --overwrite / --output,\n  and validate detected-version / no-version / SKIPPED / long-path-truncation.\n- tests/test_openapi_generator_advanced.py: +22 tests covering\n  _parse_xml_model, _find_and_parse_model, _resolve_external_enums (6\n  branches), _add_path_to_spec heuristics, _parse_model_nodes edge cases,\n  and _get_xml_tag_text.\n- tests/test_cli_serve_docs.py (new): 6 tests for serve_docs pre-Flask\n  error paths (--list, --no-auto-detect without --version, missing flask\n  install hint, explicit-version no-spec, no-specs-at-all, auto-detect-fallback).\n\nCoverage exclusions:\n- src/opnsense_openapi/cli.py: # pragma: no cover on api_spec, proxy,\n  proxy_options, and index Flask route handlers in serve_docs (interactive\n  HTTP closures registered with the running Flask app, exercised only via\n  live HTTP requests, not unit-testable), plus the blocking flask_app.run()\n  call. All non-Flask code paths in serve_docs remain covered.\n\nThreshold:\n- pyproject.toml: [tool.coverage.report] fail_under raised from 70 to 80,\n  the project policy target.\n\nCoverage delta:\n- cli.py: 42.22% -> 94.64% (statements 317 -> 278 due to pragmas).\n- generator/openapi_generator.py: 72.00% -> 97.82%.\n- Total: 79.82% -> 95.72%.\n\nAddresses #6",
+          "timestamp": "2026-05-01T13:02:36+01:00",
+          "tree_id": "2e2a4c9621e44d64378b93a91b361049ad39689a",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/fc4081a3c55ae054edd1ac40e5686ae9fa5aa4fe"
+        },
+        "date": 1777636985113,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 676.8707791804411,
+            "unit": "iter/sec",
+            "range": "stddev: 0.003162988962433967",
+            "extra": "mean: 1.4773868672700061 msec\nrounds: 663"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1076.2618124666385,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000026533348919206816",
+            "extra": "mean: 929.1419507936852 usec\nrounds: 630"
           }
         ]
       }
