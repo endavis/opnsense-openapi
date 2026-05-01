@@ -246,3 +246,322 @@ def test_build_client_failure(mock_call, mock_which, mock_find_spec):
 
     assert result.exit_code == 1
     assert "Error generating client" in result.stderr
+
+
+# === Build Client: install hint, auto-detect, overwrite, no version ===
+
+
+@patch("shutil.which")
+def test_build_client_install_hint_emitted(mock_which):
+    """Missing openapi-python-client tool emits the install hint (cli.py:344)."""
+    mock_which.return_value = None
+
+    result = runner.invoke(app, ["build-client", "--version", "25.7.6"])
+
+    assert result.exit_code == 1
+    # Stderr carries the secho error; stdout carries the typer.echo install hint.
+    assert "uv tool install openapi-python-client" in result.stdout
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+@patch("opnsense_openapi.client.OPNsenseClient")
+def test_build_client_auto_detects_version(
+    mock_client_cls,
+    mock_call,
+    mock_which,
+    mock_find_spec,
+):
+    """build-client without --version uses OPNsenseClient auto-detect."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_find_spec.return_value = Path("spec.json")
+    mock_client_cls.return_value._detected_version = "24.7.5"
+
+    result = runner.invoke(app, ["build-client"])
+
+    assert result.exit_code == 0
+    # The detected version should appear in output and used for spec lookup.
+    assert "24.7.5" in result.stdout
+    mock_find_spec.assert_called_once_with("24.7.5")
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+@patch("opnsense_openapi.client.OPNsenseClient")
+def test_build_client_auto_detect_failure_then_no_version(
+    mock_client_cls,
+    mock_call,
+    mock_which,
+):
+    """If auto-detect raises and no --version is given, command exits with hint."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_client_cls.side_effect = Exception("network down")
+
+    result = runner.invoke(app, ["build-client"])
+
+    assert result.exit_code == 1
+    assert "Please specify --version" in result.stderr
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_build_client_no_spec_found(mock_call, mock_which, mock_find_spec):
+    """build-client surfaces 'No spec found' when find_best_matching_spec raises."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_find_spec.side_effect = FileNotFoundError
+
+    result = runner.invoke(app, ["build-client", "--version", "25.7.6"])
+
+    assert result.exit_code == 1
+    assert "No spec found" in result.stderr
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_build_client_overwrite_passes_flag(mock_call, mock_which, mock_find_spec):
+    """--overwrite must propagate to the openapi-python-client subprocess command."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_find_spec.return_value = Path("spec.json")
+
+    result = runner.invoke(app, ["build-client", "--version", "25.7.6", "--overwrite"])
+
+    assert result.exit_code == 0
+    cmd = mock_call.call_args.args[0]
+    assert "--overwrite" in cmd
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_build_client_custom_output_path(mock_call, mock_which, mock_find_spec, tmp_path):
+    """When --output is provided, the explicit path is used (skips default-version dir branch)."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_find_spec.return_value = Path("spec.json")
+    custom = tmp_path / "client_out"
+
+    result = runner.invoke(app, ["build-client", "--version", "25.7.6", "--output", str(custom)])
+
+    assert result.exit_code == 0
+    cmd = mock_call.call_args.args[0]
+    assert str(custom) in cmd
+
+
+# === Validate: spec-found / detected-version branches ===
+
+
+def test_validate_no_version_and_detect_fails(mock_client_init):
+    """validate() exits with 'Could not determine version' when detect returns None."""
+    # Construct a client whose _detected_version is None
+    instance = MagicMock()
+    instance._detected_version = None
+    mock_client_init.return_value = instance
+
+    with patch.dict(
+        "os.environ", {"OPNSENSE_URL": "x", "OPNSENSE_API_KEY": "x", "OPNSENSE_API_SECRET": "x"}
+    ):
+        result = runner.invoke(app, ["validate"])  # No --version
+
+    assert result.exit_code == 1
+    assert "Could not determine version" in result.stderr
+
+
+def test_validate_uses_detected_version(mock_client_init, mock_find_spec, mock_validator):
+    """validate() picks up client._detected_version when --version omitted."""
+    instance = MagicMock()
+    instance._detected_version = "25.1.0"
+    mock_client_init.return_value = instance
+
+    mock_find_spec.return_value = Path("spec.json")
+    mock_validator.return_value.validate_endpoints.return_value = []
+
+    with patch.dict(
+        "os.environ", {"OPNSENSE_URL": "x", "OPNSENSE_API_KEY": "x", "OPNSENSE_API_SECRET": "x"}
+    ):
+        result = runner.invoke(app, ["validate"])
+
+    assert result.exit_code == 0
+    assert "Detected version: 25.1.0" in result.stdout
+
+
+def test_validate_skipped_result(mock_client_init, mock_find_spec, mock_validator):
+    """validate() prints SKIPPED for results that are neither valid nor errored."""
+    mock_find_spec.return_value = Path("spec.json")
+    mock_validator.return_value.validate_endpoints.return_value = [
+        {
+            "path": "/api/skipped",
+            "method": "GET",
+            "valid": False,
+            "error": None,
+            "status": None,
+        }
+    ]
+
+    with patch.dict(
+        "os.environ", {"OPNSENSE_URL": "x", "OPNSENSE_API_KEY": "x", "OPNSENSE_API_SECRET": "x"}
+    ):
+        result = runner.invoke(app, ["validate", "--version", "25.7.6"])
+
+    assert result.exit_code == 0
+    assert "SKIPPED" in result.stdout
+    assert "0 passed, 0 failed, 1 skipped" in result.stdout
+
+
+def test_validate_long_path_is_truncated(mock_client_init, mock_find_spec, mock_validator):
+    """validate() truncates long paths (>50 chars) with '...' when printing."""
+    long_path = "/api/" + "x" * 80
+    mock_find_spec.return_value = Path("spec.json")
+    mock_validator.return_value.validate_endpoints.return_value = [
+        {
+            "path": long_path,
+            "method": "GET",
+            "valid": True,
+            "error": None,
+            "status": 200,
+        }
+    ]
+
+    with patch.dict(
+        "os.environ", {"OPNSENSE_URL": "x", "OPNSENSE_API_KEY": "x", "OPNSENSE_API_SECRET": "x"}
+    ):
+        result = runner.invoke(app, ["validate", "--version", "25.7.6"])
+
+    assert result.exit_code == 0
+    # Truncation marker
+    assert "..." in result.stdout
+    # Full long path should not appear unbroken
+    assert long_path not in result.stdout
+
+
+# === Setup Command Tests (3-step orchestration) ===
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_setup_success(
+    mock_call,
+    mock_which,
+    mock_downloader,
+    mock_parser,
+    mock_generator,
+):
+    """Full setup orchestration: download -> generate -> build-client."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+
+    dl = mock_downloader.return_value
+    dl.download.return_value = Path("/tmp/source/src/opnsense/mvc/app/controllers")
+
+    parser_inst = mock_parser.return_value
+    parser_inst.parse_directory.return_value = [MagicMock()]
+
+    gen_inst = mock_generator.return_value
+    gen_inst.generate.return_value = Path("/tmp/spec.json")
+
+    result = runner.invoke(app, ["setup", "25.7.6"])
+
+    assert result.exit_code == 0
+    # All three orchestration banners should fire.
+    assert "[1/3]" in result.stdout
+    assert "[2/3]" in result.stdout
+    assert "[3/3]" in result.stdout
+    assert "Setup complete" in result.stdout
+    dl.download.assert_called_once()
+    parser_inst.parse_directory.assert_called_once()
+    gen_inst.generate.assert_called_once()
+    mock_call.assert_called_once()
+
+
+@patch("shutil.which")
+def test_setup_missing_openapi_python_client(mock_which):
+    """setup early-exits with install hint when openapi-python-client is absent."""
+    mock_which.return_value = None
+
+    result = runner.invoke(app, ["setup", "25.7.6"])
+
+    assert result.exit_code == 1
+    assert "uv tool install openapi-python-client" in result.stdout
+
+
+@patch("shutil.which")
+def test_setup_download_failure(mock_which, mock_downloader):
+    """setup propagates a RuntimeError from the downloader as exit code 1."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_downloader.return_value.download.side_effect = RuntimeError("git failure")
+
+    result = runner.invoke(app, ["setup", "25.7.6"])
+
+    assert result.exit_code == 1
+    assert "git failure" in result.stderr
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_setup_build_client_subprocess_failure(
+    mock_call,
+    mock_which,
+    mock_downloader,
+    mock_parser,
+    mock_generator,
+):
+    """setup surfaces subprocess.CalledProcessError from the build-client step."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+
+    dl = mock_downloader.return_value
+    dl.download.return_value = Path("/tmp/source/src/opnsense/mvc/app/controllers")
+
+    mock_parser.return_value.parse_directory.return_value = [MagicMock()]
+    mock_generator.return_value.generate.return_value = Path("/tmp/spec.json")
+    mock_call.side_effect = subprocess.CalledProcessError(1, "openapi-python-client")
+
+    result = runner.invoke(app, ["setup", "25.7.6"])
+
+    assert result.exit_code == 1
+    assert "Error generating client" in result.stderr
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_setup_overwrite_flag_propagates(
+    mock_call,
+    mock_which,
+    mock_downloader,
+    mock_parser,
+    mock_generator,
+):
+    """setup --overwrite must reach the openapi-python-client subprocess command."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_downloader.return_value.download.return_value = Path(
+        "/tmp/source/src/opnsense/mvc/app/controllers"
+    )
+    mock_parser.return_value.parse_directory.return_value = [MagicMock()]
+    mock_generator.return_value.generate.return_value = Path("/tmp/spec.json")
+
+    result = runner.invoke(app, ["setup", "25.7.6", "--overwrite"])
+
+    assert result.exit_code == 0
+    cmd = mock_call.call_args.args[0]
+    assert "--overwrite" in cmd
+
+
+@patch("shutil.which")
+@patch("subprocess.check_call")
+def test_setup_custom_output_path(
+    mock_call,
+    mock_which,
+    mock_downloader,
+    mock_parser,
+    mock_generator,
+    tmp_path,
+):
+    """setup --output overrides the default version-derived output directory."""
+    mock_which.return_value = "/usr/bin/openapi-python-client"
+    mock_downloader.return_value.download.return_value = Path(
+        "/tmp/source/src/opnsense/mvc/app/controllers"
+    )
+    mock_parser.return_value.parse_directory.return_value = [MagicMock()]
+    mock_generator.return_value.generate.return_value = Path("/tmp/spec.json")
+
+    custom = tmp_path / "out_dir"
+    result = runner.invoke(app, ["setup", "25.7.6", "--output", str(custom)])
+
+    assert result.exit_code == 0
+    cmd = mock_call.call_args.args[0]
+    assert str(custom) in cmd

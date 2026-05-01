@@ -718,7 +718,7 @@ def serve_docs(
 
     # Serve the OpenAPI spec file
     @flask_app.route("/api/spec")
-    def api_spec() -> Response:
+    def api_spec() -> Response:  # pragma: no cover - interactive Flask handler
         """Serve the OpenAPI specification file."""
         import json
 
@@ -738,7 +738,7 @@ def serve_docs(
 
     # Proxy endpoint to forward requests to OPNsense instance
     @flask_app.route("/proxy/<path:api_path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-    def proxy(
+    def proxy(  # pragma: no cover - interactive Flask handler
         api_path: str,
     ) -> tuple[Response, Literal[503]] | Response | tuple[Response, Literal[500]]:
         """Proxy requests to the actual OPNsense instance."""
@@ -794,7 +794,7 @@ def serve_docs(
 
     # Handle OPTIONS requests for CORS preflight
     @flask_app.route("/proxy/<path:api_path>", methods=["OPTIONS"])
-    def proxy_options(api_path: str) -> Response:
+    def proxy_options(api_path: str) -> Response:  # pragma: no cover - interactive Flask handler
         """Handle CORS preflight requests."""
         response = make_response()
         response.headers["Access-Control-Allow-Origin"] = "*"
@@ -804,7 +804,7 @@ def serve_docs(
 
     # Root redirect
     @flask_app.route("/")
-    def index() -> Response:
+    def index() -> Response:  # pragma: no cover - interactive Flask handler
         """Redirect to Swagger UI."""
         return redirect(swagger_url)  # type: ignore
 
@@ -816,4 +816,4 @@ def serve_docs(
     typer.echo(f"📄 Serving spec for version: {version_to_use}")
     typer.echo("\n💡 Tip: Use Ctrl+C to stop the server\n")
 
-    flask_app.run(host=host, port=port, debug=False)
+    flask_app.run(host=host, port=port, debug=False)  # pragma: no cover - blocking server
