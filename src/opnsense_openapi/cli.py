@@ -341,7 +341,7 @@ def build_client(
         typer.secho(
             "Error: 'openapi-python-client' not found in PATH.", fg=typer.colors.RED, err=True
         )
-        typer.echo("Install it with: uv pip install openapi-python-client")
+        typer.echo("Install it with: uv tool install openapi-python-client")
         raise typer.Exit(code=1)
 
     # Determine version
@@ -475,7 +475,7 @@ def setup(
         typer.secho(
             "Error: 'openapi-python-client' not found in PATH.", fg=typer.colors.RED, err=True
         )
-        typer.echo("Install it with: uv pip install openapi-python-client")
+        typer.echo("Install it with: uv tool install openapi-python-client")
         raise typer.Exit(code=1)
 
     # Step 1: Download source

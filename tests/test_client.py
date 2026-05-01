@@ -1,5 +1,7 @@
 """Tests for OPNsense API client."""
 
+from pathlib import Path
+
 import pytest
 
 from opnsense_openapi.client import OPNsenseClient
@@ -139,46 +141,48 @@ def test_api_response_error() -> None:
 
 
 def test_auto_generate_client_spec_missing() -> None:
-    """Test auto-generation when spec doesn't exist."""
+    """Test auto-generation raises a spec-missing RuntimeError when no spec exists."""
     from opnsense_openapi.client.base import _auto_generate_client
 
-    result = _auto_generate_client("99.99.99")
-    assert result is False
+    with pytest.raises(RuntimeError) as exc_info:
+        _auto_generate_client("99.99.99")
+
+    msg = str(exc_info.value)
+    assert "No OpenAPI spec for version 99.99.99" in msg
+    assert "opnsense-openapi generate 99.99.99" in msg
 
 
 def test_auto_generate_client_spec_exists() -> None:
-    """Test auto-generation when spec exists."""
+    """Test auto-generation when a spec exists.
+
+    Returns the *resolved* spec version (a string) when codegen succeeds or the
+    generated client already exists; raises a CLI-missing RuntimeError when the
+    spec is present but ``openapi-python-client`` is not on PATH.
+    """
     import shutil
-    from pathlib import Path
 
     from opnsense_openapi.client.base import _auto_generate_client
 
-    # This should return True because the spec exists (24.7.1)
-    # If the client already exists, it returns True
-    # If it needs to generate and openapi-python-client is available, it returns True
-    # If openapi-python-client is not available, it returns False
-    result = _auto_generate_client("24.7.1")
-
-    # Check if the generated client exists OR if openapi-python-client is not available
+    # Check whether the generated client dir already exists or the tool is on PATH.
     version_module = "24_7_1"
     client_dir = (
         Path(__file__).parent.parent / "src/opnsense_openapi/generated" / f"v{version_module}"
     )
     has_tool = shutil.which("openapi-python-client") is not None
 
-    if client_dir.exists():
-        # Client already exists, should return True
-        assert result is True
-    elif has_tool:
-        # Tool is available and spec exists, should have generated and returned True
-        assert result is True
+    if client_dir.exists() or has_tool:
+        # Either the generated client is already present, or codegen will
+        # succeed: function should return the resolved version string.
+        result = _auto_generate_client("24.7.1")
+        assert result == "24.7.1"
     else:
-        # Tool is not available, should return False
-        assert result is False
+        # Spec exists but the tool is missing → CLI-missing error.
+        with pytest.raises(RuntimeError, match="openapi-python-client is not on PATH"):
+            _auto_generate_client("24.7.1")
 
 
 def test_api_property_no_spec_error_message() -> None:
-    """Test that api property provides helpful error when spec is missing."""
+    """Test that api property provides a spec-missing error when the spec is absent."""
     client = OPNsenseClient(
         base_url="https://opnsense.local",
         api_key="test_key",
@@ -191,6 +195,45 @@ def test_api_property_no_spec_error_message() -> None:
         _ = client.api
 
     error_msg = str(exc_info.value)
-    assert "No OpenAPI spec found" in error_msg
-    assert "opnsense-openapi download" in error_msg
-    assert "opnsense-openapi generate" in error_msg
+    assert "No OpenAPI spec for version 99.99.99" in error_msg
+    assert "opnsense-openapi generate 99.99.99" in error_msg
+
+
+def test_api_property_cli_missing_error_message(tmp_path: Path) -> None:
+    """Test that api property names the missing CLI rather than a phantom missing spec.
+
+    When the spec is present but ``openapi-python-client`` is not on PATH, the
+    error must say so and recommend the correct install command — not the
+    misleading "No OpenAPI spec found" message we used to surface.
+    """
+    from unittest.mock import patch
+
+    spec_path = tmp_path / "opnsense-24.7.1.json"
+    spec_path.write_text("{}")
+
+    client = OPNsenseClient(
+        base_url="https://opnsense.local",
+        api_key="test_key",
+        api_secret="test_secret",
+        spec_version="24.7.1",
+        auto_detect_version=False,
+    )
+
+    with (
+        patch(
+            "opnsense_openapi.client.base.find_best_matching_spec",
+            return_value=spec_path,
+        ),
+        # Ensure the generated client dir does not exist for this version,
+        # so the helper falls through to the shutil.which check.
+        patch("pathlib.Path.exists", return_value=False),
+        patch("opnsense_openapi.client.base.shutil.which", return_value=None),
+        pytest.raises(RuntimeError) as exc_info,
+    ):
+        _ = client.api
+
+    error_msg = str(exc_info.value)
+    assert "openapi-python-client is not on PATH" in error_msg
+    assert "uv tool install openapi-python-client" in error_msg
+    # Must not regress to the old misleading "spec missing" wording.
+    assert "No OpenAPI spec for version" not in error_msg

@@ -2,6 +2,10 @@
 
 These cover the module-level client auto-generation helper in isolation. Tests
 for ``OPNsenseClient`` itself are intentionally scoped to PR-b.
+
+The helper raises ``RuntimeError`` with a cause-tagged message for each of
+three distinct failure modes (spec missing, CLI missing, codegen failed) and
+returns the *resolved* spec version on success.
 """
 
 from __future__ import annotations
@@ -10,20 +14,34 @@ import subprocess
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 from opnsense_openapi.client.base import _auto_generate_client, _resolved_module_dir
 
 
-def test_auto_generate_returns_false_when_spec_missing() -> None:
-    """_auto_generate_client returns False if no spec file matches the version."""
-    with patch(
-        "opnsense_openapi.client.base.find_best_matching_spec",
-        side_effect=FileNotFoundError("no spec"),
+def test_auto_generate_raises_when_spec_missing() -> None:
+    """_auto_generate_client raises a spec-missing error when no spec resolves."""
+    with (
+        patch(
+            "opnsense_openapi.client.base.find_best_matching_spec",
+            side_effect=FileNotFoundError("no spec"),
+        ),
+        pytest.raises(RuntimeError) as exc_info,
     ):
-        assert _auto_generate_client("99.99") is False
+        _auto_generate_client("99.99")
+
+    msg = str(exc_info.value)
+    assert "No OpenAPI spec for version 99.99" in msg
+    assert "available=" in msg
+    assert "opnsense-openapi generate 99.99" in msg
 
 
-def test_auto_generate_returns_true_when_client_exists(tmp_path: Path) -> None:
-    """_auto_generate_client short-circuits when the generated client directory exists."""
+def test_auto_generate_returns_resolved_version_when_client_exists(tmp_path: Path) -> None:
+    """_auto_generate_client short-circuits when the generated client directory exists.
+
+    The return value is the *resolved* spec version (the version segment of
+    the spec filename), not the raw input.
+    """
     spec_path = tmp_path / "opnsense-24.7.json"
     spec_path.write_text("{}")
 
@@ -34,11 +52,11 @@ def test_auto_generate_returns_true_when_client_exists(tmp_path: Path) -> None:
         ),
         patch("pathlib.Path.exists", return_value=True),
     ):
-        assert _auto_generate_client("24.7") is True
+        assert _auto_generate_client("24.7") == "24.7"
 
 
-def test_auto_generate_returns_false_when_cli_missing(tmp_path: Path) -> None:
-    """_auto_generate_client returns False when openapi-python-client is absent."""
+def test_auto_generate_raises_when_cli_missing(tmp_path: Path) -> None:
+    """_auto_generate_client raises a CLI-missing error when openapi-python-client is absent."""
     spec_path = tmp_path / "opnsense-24.7.json"
     spec_path.write_text("{}")
 
@@ -50,12 +68,21 @@ def test_auto_generate_returns_false_when_cli_missing(tmp_path: Path) -> None:
         ),
         patch("pathlib.Path.exists", return_value=False),
         patch("shutil.which", return_value=None),
+        pytest.raises(RuntimeError) as exc_info,
     ):
-        assert _auto_generate_client("24.7") is False
+        _auto_generate_client("24.7")
+
+    msg = str(exc_info.value)
+    assert "openapi-python-client is not on PATH" in msg
+    assert "uv tool install openapi-python-client" in msg
+    assert str(spec_path) in msg
 
 
 def test_auto_generate_invokes_client_generator(tmp_path: Path) -> None:
-    """_auto_generate_client shells out to openapi-python-client with expected args."""
+    """_auto_generate_client shells out to openapi-python-client with expected args.
+
+    On success, returns the resolved spec version.
+    """
     spec_path = tmp_path / "opnsense-24.7.json"
     spec_path.write_text("{}")
 
@@ -68,7 +95,7 @@ def test_auto_generate_invokes_client_generator(tmp_path: Path) -> None:
         patch("shutil.which", return_value="/usr/bin/openapi-python-client"),
         patch("subprocess.check_call") as check_call,
     ):
-        assert _auto_generate_client("24.7") is True
+        assert _auto_generate_client("24.7") == "24.7"
 
     check_call.assert_called_once()
     cmd = check_call.call_args.args[0]
@@ -77,10 +104,12 @@ def test_auto_generate_invokes_client_generator(tmp_path: Path) -> None:
     assert str(spec_path) in cmd
 
 
-def test_auto_generate_returns_false_on_generator_failure(tmp_path: Path) -> None:
-    """_auto_generate_client returns False when the generator subprocess fails."""
+def test_auto_generate_raises_with_stderr_on_generator_failure(tmp_path: Path) -> None:
+    """_auto_generate_client raises a codegen-failed error containing the captured stderr."""
     spec_path = tmp_path / "opnsense-24.7.json"
     spec_path.write_text("{}")
+
+    captured_stderr = b"openapi-python-client: error: bad ref #/components/schemas/Foo"
 
     with (
         patch(
@@ -91,10 +120,19 @@ def test_auto_generate_returns_false_on_generator_failure(tmp_path: Path) -> Non
         patch("shutil.which", return_value="/usr/bin/openapi-python-client"),
         patch(
             "subprocess.check_call",
-            side_effect=subprocess.CalledProcessError(returncode=1, cmd=["x"]),
+            side_effect=subprocess.CalledProcessError(
+                returncode=2, cmd=["x"], stderr=captured_stderr
+            ),
         ),
+        pytest.raises(RuntimeError) as exc_info,
     ):
-        assert _auto_generate_client("24.7") is False
+        _auto_generate_client("24.7")
+
+    msg = str(exc_info.value)
+    assert "openapi-python-client failed for version 24.7" in msg
+    assert str(spec_path) in msg
+    assert "returncode=2" in msg
+    assert "bad ref #/components/schemas/Foo" in msg
 
 
 # --- Module-path stability across security-patch revisions ----------------
@@ -130,6 +168,8 @@ def test_auto_generate_skips_codegen_for_security_patch_revision(tmp_path: Path)
         2. Second call (raw version ``26.1.6_2``, same resolver target) —
            the canonical ``v26_1_6`` directory now exists, so codegen is
            **not** invoked again.
+
+    Both calls must return the resolved version (``"26.1.6"``).
     """
     spec_path = tmp_path / "opnsense-26.1.6.json"
     spec_path.write_text("{}")
@@ -157,9 +197,9 @@ def test_auto_generate_skips_codegen_for_security_patch_revision(tmp_path: Path)
         patch("subprocess.check_call", side_effect=fake_check_call) as check_call,
     ):
         # First call: no v26_1_6 dir yet → codegen runs.
-        assert _auto_generate_client("26.1.6") is True
+        assert _auto_generate_client("26.1.6") == "26.1.6"
         # Second call with security-patch suffix: short-circuits.
-        assert _auto_generate_client("26.1.6_2") is True
+        assert _auto_generate_client("26.1.6_2") == "26.1.6"
 
     # codegen invoked exactly once across both calls.
     assert check_call.call_count == 1
