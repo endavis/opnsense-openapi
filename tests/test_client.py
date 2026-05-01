@@ -140,6 +140,40 @@ def test_api_response_error() -> None:
     assert error.response_text == "<html>Error</html>"
 
 
+def test_post_non_json_response_raises_api_response_error() -> None:
+    """post() must raise APIResponseError (not AttributeError) on non-JSON responses.
+
+    Regression test for #44: the ``json`` parameter of ``post()`` previously
+    shadowed the ``json`` module, so the ``except json.JSONDecodeError`` clause
+    raised ``AttributeError`` instead of the documented ``APIResponseError``.
+    """
+    import json as _json
+    from unittest.mock import MagicMock
+
+    from opnsense_openapi.client.base import APIResponseError
+
+    client = OPNsenseClient(
+        base_url="https://opnsense.local",
+        api_key="k",
+        api_secret="s",
+        auto_detect_version=False,
+    )
+
+    fake_response = MagicMock()
+    fake_response.text = "<html>not json</html>"
+    fake_response.raise_for_status = MagicMock()
+    fake_response.json = MagicMock(
+        side_effect=_json.JSONDecodeError("Expecting value", "<html>not json</html>", 0)
+    )
+    client._client.post = MagicMock(return_value=fake_response)  # type: ignore[method-assign]
+
+    with pytest.raises(APIResponseError) as exc_info:
+        client.post("module", "controller", "command", json={"k": "v"})
+
+    assert "Invalid JSON response" in str(exc_info.value)
+    assert exc_info.value.response_text == "<html>not json</html>"
+
+
 def test_auto_generate_client_spec_missing() -> None:
     """Test auto-generation raises a spec-missing RuntimeError when no spec exists."""
     from opnsense_openapi.client.base import _auto_generate_client

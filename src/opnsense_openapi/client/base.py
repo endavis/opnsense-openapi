@@ -7,6 +7,7 @@ import json
 import logging
 import shutil
 import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urljoin
@@ -281,7 +282,7 @@ class OPNsenseClient:
         response.raise_for_status()
         try:
             return cast(dict[str, Any], response.json())
-        except json.JSONDecodeError as e:
+        except JSONDecodeError as e:
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def post(
@@ -315,7 +316,7 @@ class OPNsenseClient:
         response.raise_for_status()
         try:
             return cast(dict[str, Any], response.json())
-        except json.JSONDecodeError as e:  # type: ignore[union-attr]
+        except JSONDecodeError as e:
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def close(self) -> None:
