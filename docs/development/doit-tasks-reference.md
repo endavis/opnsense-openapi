@@ -674,7 +674,7 @@ doit pr_merge --auto-close
 **Options:**
 - `--pr`: PR number to merge (defaults to PR for current branch)
 - `--delete-branch`: Delete the source branch after merge (default: `true`)
-- `--auto-close`: Close linked issues (parsed from `Addresses #XX` in the PR body) after a successful merge (default: `false`)
+- `--auto-close`: Close linked issues (parsed from `Addresses #XX` at the start of a line in the PR body) after a successful merge (default: `false`)
 
 ### `adr`
 
@@ -1138,6 +1138,7 @@ The following hooks run automatically on `git commit`:
 | `no-commit-to-main` | Prevent direct commits to main |
 | `no-local-config` | Prevent committing local config files |
 | `protect-dynamic-version` | Protect version configuration |
+| `uv-lock-check` | Validate `uv.lock` is in sync with `pyproject.toml` when `pyproject.toml` is staged |
 | `conventional-pre-commit` | Enforce conventional commit format |
 
 ### Dynamic Version Protection
