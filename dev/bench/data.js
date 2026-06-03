@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777645659859,
+  "lastUpdate": 1780498073513,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -608,6 +608,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00006004788334294525",
             "extra": "mean: 931.6495931142716 usec\nrounds: 639"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74be8b22273755b42fd9bd29d226f5da4f1c99af",
+          "message": "chore: sync dev tooling, deps & CI to pyproject-template (PR 1 of 4) (merges PR #65, addresses #64)\n\nchore: sync dev tooling, deps & CI to pyproject-template (PR 1/4, #64)\n\nPR 1 of 4 of the pyproject-template sync (170df8c9 -> e3d32ea): doit task framework, dev/security dependency pins, pre-commit config, and CI workflow. Wiring audit into 'doit check' surfaced CVEs; bumped transitive idna and urllib3 in uv.lock. Project-specific config preserved (runtime deps, --cov=opnsense_openapi, fail_under=80, hatch-vcs versioning).\n\nAddresses #64\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-06-03T15:47:26+01:00",
+          "tree_id": "22192fd1dc65fb2a5a12fd33da018727f7a7e0b9",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/74be8b22273755b42fd9bd29d226f5da4f1c99af"
+        },
+        "date": 1780498073064,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 718.301400569596,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001782882021405116",
+            "extra": "mean: 1.3921732565285598 msec\nrounds: 651"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1055.5522976455347,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000049429393828772644",
+            "extra": "mean: 947.3713450584618 usec\nrounds: 597"
           }
         ]
       }
