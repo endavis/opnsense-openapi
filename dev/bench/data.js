@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780498073513,
+  "lastUpdate": 1780501782327,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -646,6 +646,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000049429393828772644",
             "extra": "mean: 947.3713450584618 usec\nrounds: 597"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f25ee650c33dac4dd499f83dd76f46781b7999d",
+          "message": "chore: sync AI hooks to pyproject-template (PR 2 of 4) (merges PR #66, addresses #64)\n\nchore: sync AI hooks to pyproject-template (PR 2/4, #64)\n\nPR 2 of 4 of the pyproject-template sync. Adds the new AI hook scripts (checkpoint/restore, context-mode, cbm, bash-ban) plus their tests, and merges the additive block-dangerous-commands update. Only safe defaults are wired in .claude/settings.json; cbm-*, context-mode-*, and bash-ban-raw-tools ship present-but-unwired (opt-in; cbm gate is fail-closed). Preserved project statusLine, ruff-fix-on-edit wiring, and the Gemini tool allow-list.\n\nAddresses #64\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-06-03T16:49:13+01:00",
+          "tree_id": "d81d04930ec379ac324b9d277d1a506f0c28cdb8",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/5f25ee650c33dac4dd499f83dd76f46781b7999d"
+        },
+        "date": 1780501781731,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 476.960619838714,
+            "unit": "iter/sec",
+            "range": "stddev: 0.006354842160326274",
+            "extra": "mean: 2.0966091505377396 msec\nrounds: 651"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 860.3945339135701,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00027997549107271744",
+            "extra": "mean: 1.1622574999999404 msec\nrounds: 432"
           }
         ]
       }
