@@ -60,7 +60,7 @@ codex
 - [Configuring Codex](https://developers.openai.com/codex/local-config/)
 - [Codex Security Guide](https://developers.openai.com/codex/security/)
 
-**Codex parity status:** Codex does not use repo-defined slash commands in this template. Instead, it uses repo-scoped workflow skills checked into `.agents/skills/` and invoked through Codex's built-in skill surface such as `/skills` or explicit mentions like `$plan-issue`, `$implement`, and `$finalize`. LSP integration is not documented for Codex here. Codex is not part of the dual-agent workflow (Claude and Gemini are); it works as a standalone alternative for contributors who prefer the OpenAI CLI. The shared dangerous-command hook at `tools/hooks/ai/block-dangerous-commands.py` applies to Codex via `.codex/config.toml`, and the approval-policy rules remain a secondary defense layer. For the broader workflow picture, see [Slash Commands and Workflows](ai/slash-commands.md).
+**Codex parity status:** Codex does not use repo-defined slash commands in this template. Instead, it uses repo-scoped workflow skills checked into `.agents/skills/` and invoked through Codex's built-in skill surface such as `/skills` or explicit mentions like `$codex-plan`, `$codex-implement`, and `$ghi-finalize`. LSP integration is not documented for Codex here. Codex works as a standalone alternative for contributors who prefer the OpenAI CLI. The shared dangerous-command hook at `tools/hooks/ai/block-dangerous-commands.py` applies to Codex via `.codex/config.toml`, and the approval-policy rules remain a secondary defense layer. For the broader workflow picture, see [Slash Commands and Workflows](ai/slash-commands.md).
 
 ### 2. Gemini CLI (Google)
 
