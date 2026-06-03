@@ -23,9 +23,9 @@ This template is designed primarily for **Claude Code**, which is the only agent
 | Agent | Permission model | Hooks support | Slash commands | LSP | Dual-agent role |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Codex CLI** | TOML approval policies (`.codex/config.toml`) plus repo skills (`.agents/skills/`) | Project-level `tools/hooks/ai/` apply via Codex hooks | Built-in only; repo workflow uses skills | Not documented | Standalone alternative (not part of dual-agent flow) |
-| **Gemini CLI** | JSON allowlists + lifecycle hooks (`.gemini/settings.json`) | Project-level hooks apply; Gemini lifecycle hooks supported | 5 (`/plan-issue`, `/implement`, `/finalize` standalone; `/plan-issue-stdout`, `/review-pr` orchestration-only) | Not documented | Standalone alternative; second-opinion reviewer / planner in dual-agent flow |
-| **GitHub Copilot CLI** | JSON hook config (`.github/hooks/copilot-hooks.json`) | Project-level hooks apply; Copilot `preToolUse` hook wired | Auto-discovers from `.claude/commands/` | Not documented | Standalone alternative (auto-discovers Claude commands) |
-| **Claude Code** | Layered permissions (`.claude/settings.local.json` + `.claude/settings.json` PreToolUse hooks) | Project-level hooks plus Claude PreToolUse hooks | 8 (`plan-issue`, `implement`, `finalize`, `close-issue`, `plan-both`, `review-both`, `gemini-review`, `where-am-i`) | Supported | Primary orchestrator in single-agent and dual-agent flows |
+| **Gemini CLI** | JSON allowlists + lifecycle hooks (`.gemini/settings.json`) | Project-level hooks apply; Gemini lifecycle hooks supported | 4 self-action (`/gemini:plan`, `/gemini:implement`, `/gemini:review`, `/gemini:adversarial-review`) + `/ghi-finalize` + 3 multi-orchestrator (`/multi-plan`, `/multi-review`, `/multi-adversarial-review`) + 12 delegation commands (`.gemini/commands/<target>/`) | Not documented | Standalone alternative; second-opinion reviewer / planner in multi-agent flow |
+| **GitHub Copilot CLI** | JSON hook config (`.github/hooks/copilot-hooks.json`) | Project-level hooks apply; Copilot `preToolUse` hook wired | 4 self-action (`/copilot-plan`, `/copilot-implement`, `/copilot-review`, `/copilot-adversarial-review`) and 12 cross-agent bridges (`/{claude,codex,gemini}-{plan,implement,review,adversarial-review}`) — all under `.github/skills/<target>-<action>/SKILL.md` (Copilot-only path, invisible to Claude). Copilot uses hyphen naming because skill names cannot contain colons. `/ghi-finalize` and `/multi-*` come from `.agents/skills/` | Not documented | Standalone alternative |
+| **Claude Code** | Layered permissions (`.claude/settings.local.json` + `.claude/settings.json` PreToolUse hooks) | Project-level hooks plus Claude PreToolUse hooks | 4 self-action (`/claude:plan`, `/claude:implement`, `/claude:review`, `/claude:adversarial-review`) + `/ghi-finalize`, `/ghi-status` + 3 multi-orchestrator (`/multi-plan`, `/multi-review`, `/multi-adversarial-review`) + 12 delegation commands (`.claude/commands/<target>/`) | Supported | Primary orchestrator in single-agent and multi-agent flows |
 
 The project-level dangerous-command hooks under `tools/hooks/ai/` apply to all four agents regardless of per-agent config and cannot be bypassed by editing `.claude/settings.local.json`, `.codex/config.toml`, `.gemini/settings.json`, or `.github/hooks/copilot-hooks.json`. See [AI Enforcement Principles](ai/enforcement-principles.md) and [Command Blocking](ai/command-blocking.md).
 
@@ -60,7 +60,7 @@ codex
 - [Configuring Codex](https://developers.openai.com/codex/local-config/)
 - [Codex Security Guide](https://developers.openai.com/codex/security/)
 
-**Codex parity status:** Codex does not use repo-defined slash commands in this template. Instead, it uses repo-scoped workflow skills checked into `.agents/skills/` and invoked through Codex's built-in skill surface such as `/skills` or explicit mentions like `$codex-plan`, `$codex-implement`, and `$ghi-finalize`. LSP integration is not documented for Codex here. Codex works as a standalone alternative for contributors who prefer the OpenAI CLI. The shared dangerous-command hook at `tools/hooks/ai/block-dangerous-commands.py` applies to Codex via `.codex/config.toml`, and the approval-policy rules remain a secondary defense layer. For the broader workflow picture, see [Slash Commands and Workflows](ai/slash-commands.md).
+**Codex parity status:** Codex does not use repo-defined slash commands in this template. Instead, it uses repo-scoped workflow skills checked into `.agents/skills/` and invoked through Codex's built-in skill surface such as `/skills` or explicit mentions like `$codex-plan`, `$codex-implement`, `$codex-review`, `$codex-adversarial-review`, and `$ghi-finalize`. LSP integration is not documented for Codex here. Codex works as a standalone alternative for contributors who prefer the OpenAI CLI. The shared dangerous-command hook at `tools/hooks/ai/block-dangerous-commands.py` applies to Codex via `.codex/config.toml`, and the approval-policy rules remain a secondary defense layer. For the broader workflow picture, see [Slash Commands and Workflows](ai/slash-commands.md).
 
 ### 2. Gemini CLI (Google)
 
@@ -79,6 +79,14 @@ Gemini CLI can read `AGENTS.md` (or `GEMINI.md`) from the project root. The conf
 - `ShellTool` - Execute shell commands
 - `ReadFileTool`, `WriteFileTool` - File operations
 - `LSTool`, `GrepTool` - File exploration
+
+#### Token Efficiency
+
+`.gemini/settings.json` ships with a compression default aimed at token efficiency in long sessions, mirroring the Claude tuning:
+
+| Setting | Value | Effect | Rationale |
+| :--- | :--- | :--- | :--- |
+| `chatCompression.contextPercentageThreshold` | `0.5` | Compression triggers at 50% of context window usage. | Reclaims token space earlier to avoid hitting hard context limits in long sessions. |
 
 **Setup:**
 ```bash
@@ -155,13 +163,53 @@ claude
 
 For complete setup instructions and troubleshooting, see `.claude/lsp-setup.md` in the repository root.
 
+#### Environment Variables
+
+`.claude/settings.json` ships an `env` block with three Claude Code defaults aimed at token efficiency and session survival on long-running work. These propagate to downstream consumers via the template-sync mechanism, so all projects derived from this template inherit the same defaults.
+
+| Var | Value | Effect | Risk |
+| :--- | :--- | :--- | :--- |
+| `ENABLE_PROMPT_CACHING_1H` | `1` | Extends prompt cache TTL from 5 minutes to 1 hour. Cuts cost on repeated reads of the same context within a session. | None — pure efficiency flag. |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `50` | Auto-compaction triggers at 50% of the context window instead of the default (~92%). Sessions compact earlier, leaving more headroom for the post-compact continuation. | More frequent compaction churn; mitigated by the [PreCompact handoff hook](ai/auto-checkpoint-hook.md) which preserves context across compaction events. |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | `claude-sonnet-4-6` | Subagents (e.g. those spawned by `/claude:implement`) default to Sonnet 4.6 instead of inheriting the parent's Opus model. | Subagent output quality drops below Opus on hard reasoning tasks. Mitigate per-agent (see below). |
+
+**Per-agent model overrides:**
+
+`CLAUDE_CODE_SUBAGENT_MODEL` is a default. Any agent file under `.claude/agents/` that declares an explicit `model:` in its YAML frontmatter wins:
+
+```yaml
+---
+name: high-stakes-reviewer
+model: claude-opus-4-7   # overrides the env-var default for this agent only
+---
+```
+
+Agents without a `model:` line inherit the env-var default. This template's `.claude/agents/implement-worker.md` deliberately does not override — implement-worker runs on Sonnet 4.6 as an explicit cost/quality trade-off. Future high-stakes subagents (e.g. design review, security review) can opt into Opus on a per-file basis.
+
+**Per-developer overrides:**
+
+To opt out or tune values for your local environment, override them in `.claude/settings.local.json` (already gitignored, used elsewhere in this template for personal config). Example:
+
+```json
+{
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"
+  }
+}
+```
+
+**Cross-references:**
+
+- The 50% autocompact threshold is paired with the [PreCompact handoff hook](ai/auto-checkpoint-hook.md) — earlier compaction has lower cost because the hook preserves context across compaction events automatically.
+- For operators who need more aggressive token reduction, see [AI Agent Token-Efficiency Add-Ons](ai/token-efficiency-add-ons.md) — a catalogue of opt-in external tools (RTK, Headroom, Caveman) with tipping-point guidance and trust caveats.
+
 ### 4. GitHub Copilot CLI
 
 **Configuration:** `.copilot/` directory
 
 > **Note**: Project-level dangerous-command hooks under `tools/hooks/ai/` apply to this agent regardless of the per-agent config below. See [AI Enforcement Principles](ai/enforcement-principles.md) and [Command Blocking](ai/command-blocking.md).
 
-GitHub Copilot CLI reads `AGENTS.md` directly and auto-discovers project skills from `.claude/commands/`, so the full slash-command workflow (`/plan-issue`, `/implement`, `/finalize`, `/close-issue`, `/where-am-i`, etc.) is available in Copilot sessions without any parallel command files. The `implement-worker` subagent used by `/implement` is shared with Claude (defined in `.claude/agents/implement-worker.md`).
+GitHub Copilot CLI reads `AGENTS.md` directly and discovers project skills from `skills/` directories — `.github/skills/`, `.agents/skills/`, and `.claude/skills/` (per `@github/copilot` SDK `sdk/index.d.ts`). It does **not** read any `commands/` directory. Self-action and cross-agent bridge skills (`/copilot-plan`, `/copilot-implement`, `/copilot-review`, `/copilot-adversarial-review`, and the 12 cross-agent bridges `/<target>-<action>`) live under `.github/skills/<target>-<action>/SKILL.md`. The `.github/skills/` location is chosen specifically because it's the only Copilot project skill path that Claude does **not** also read — placing bridges there avoids duplicating slash commands in Claude. Hyphen naming is structural — skill names are derived from directory names and cannot contain colons. Copilot also natively discovers per-stack instruction files from `.github/instructions/*.instructions.md`; see [`.github/instructions/README.md`](../../.github/instructions/README.md) for the scaffold and format.
 
 **Hook wiring:**
 
@@ -192,14 +240,17 @@ copilot
 **Files:**
 - `.copilot/README.md` - Description of the Copilot CLI config directory
 - `.github/hooks/copilot-hooks.json` - `preToolUse` hook wiring
-- `.claude/commands/*.md` - Slash commands (auto-discovered by Copilot CLI)
-- `.claude/agents/implement-worker.md` - Shared subagent definition
+- `.github/instructions/*.instructions.md` - Copilot-native per-stack instruction files (auto-discovered)
+- `.github/instructions/README.md` - Instruction-file scaffold and format reference
+- `.github/skills/<target>-<action>/SKILL.md` — Copilot-host workflow skills (16 files: 4 self-action + 12 cross-agent bridges; placed under `.github/skills/` so Claude does not also surface them)
+- `.agents/skills/` — interoperable Codex skill path, also read by Copilot (provides `/ghi-finalize`, `/ghi-status`, `/multi-*`)
+- `.claude/agents/implement-worker.md` — Shared subagent definition
 
 **Documentation:**
 - [GitHub Copilot CLI](https://github.com/github/copilot-cli)
 - [Copilot CLI Hooks](https://docs.github.com/en/copilot/how-tos/use-copilot-for-common-tasks/use-copilot-in-the-cli)
 
-**Copilot parity status:** Copilot CLI ships no parallel command or agent files — it auto-discovers from `.claude/commands/` and `.claude/agents/`, so every Claude slash command works unchanged in Copilot sessions. Copilot is not part of the dual-agent workflow (Claude and Gemini are); it works as a standalone alternative for contributors who prefer GitHub Copilot. The project-level hooks under `tools/hooks/ai/` apply to Copilot via `.github/hooks/copilot-hooks.json` — see [Command Blocking](ai/command-blocking.md). For the broader slash-command picture, see [Slash Commands and Workflows](ai/slash-commands.md).
+**Copilot parity status:** Copilot CLI exposes 16 cross-agent matrix cells under `.github/skills/<target>-<action>/SKILL.md` — 4 self-action skills (`/copilot-plan`, `/copilot-implement`, `/copilot-review`, `/copilot-adversarial-review`) plus 12 cross-agent bridges (`/{claude,codex,gemini}-{plan,implement,review,adversarial-review}`). The bridge bodies cannot be shared with Claude or Gemini because each target CLI requires a different invocation (`claude -p`, `codex -a never exec`, `gemini -y -p`). The other workflow skills (`/ghi-finalize`, `/ghi-status`, `/multi-*`) come from `.agents/skills/`. The `.github/skills/` location was chosen because it's the only Copilot project skill path that Claude does not also read — bridges there do not surface as duplicate slash commands in Claude. Hyphen naming is a structural constraint (skill names cannot contain colons), not a stylistic choice. The project-level hooks under `tools/hooks/ai/` apply to Copilot via `.github/hooks/copilot-hooks.json` — see [Command Blocking](ai/command-blocking.md). For the broader slash-command picture, see [Slash Commands and Workflows](ai/slash-commands.md).
 
 ### 5. Other AI Tools
 
@@ -236,7 +287,7 @@ This template ships several files that influence agent behavior. They fall into 
 - **`AGENTS.md`** (project root, ~20 KB) — universal source of truth for architecture, workflow, tooling hierarchy, and security rules. Read directly by Codex CLI, Gemini CLI, and GitHub Copilot CLI; imported by Claude Code via `@../AGENTS.md` in `.claude/CLAUDE.md`.
 - **`.claude/CLAUDE.md`** (~2 KB) — Claude-specific complement. First line is `@../AGENTS.md`, which imports the universal rules; the rest adds Claude-specific layers (token-efficiency guidance, the mandatory TodoWrite plan-test-code loop, the development workflow reminder, and the commit workflow reminder).
 - **`GEMINI.md`** (project root, ~1 KB) — Gemini-specific complement. Covers Gemini's stdout-only collaboration mode (so Claude handles GitHub writes), the output signing footer, and Gemini's tool-usage rules. Read alongside `AGENTS.md` by Gemini CLI, not instead of it.
-- **`.copilot/README.md`** — describes the Copilot CLI config directory. Copilot CLI reads `AGENTS.md` directly and auto-discovers slash commands from `.claude/commands/`; no Copilot-specific context markdown is required.
+- **`.copilot/README.md`** — describes the Copilot CLI config directory. Copilot CLI reads `AGENTS.md` directly, auto-discovers slash commands from `.claude/commands/`, and uses `.github/instructions/*.instructions.md` for Copilot-native per-stack instruction files.
 - **`.codex/config.toml`** — Codex approval policy file (TOML). Not a context file; configures permissions only. Codex reads `AGENTS.md` directly for instructions.
 - **`.claude/settings.json`** — Claude PreToolUse hooks and statusline configuration. Committed.
 - **`.claude/settings.local.json`** — local Claude permissions overlay. Not committed.
@@ -399,7 +450,8 @@ gemini --yolo
 
 **`.copilot/` auto-detection:**
 - The `.copilot/` directory exists primarily to document Copilot-specific wiring; Copilot CLI does not require any config files there
-- If you move the repository, Copilot CLI still loads `AGENTS.md` from the repo root and the hook from `.github/hooks/copilot-hooks.json`
+- Copilot CLI also auto-discovers `.github/instructions/*.instructions.md` without any import or directive
+- If you move the repository, Copilot CLI still loads `AGENTS.md` from the repo root, the hook from `.github/hooks/copilot-hooks.json`, and instruction files from `.github/instructions/`
 
 ## Resources
 
