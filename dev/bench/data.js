@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780501782327,
+  "lastUpdate": 1780507835457,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -684,6 +684,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00027997549107271744",
             "extra": "mean: 1.1622574999999404 msec\nrounds: 432"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef69d4926fae2fdb47cce610b9a7c6a76648ff06",
+          "message": "chore: sync command/skill workflow to pyproject-template (PR 3 of 4) (merges PR #67, addresses #64)\n\nchore: sync command/skill workflow to pyproject-template (PR 3/4, #64)\n\nPR 3 of 4 of the pyproject-template sync. Replaces the old flat workflow commands with the template's namespaced agent-grid layout across .claude/commands, .gemini/commands (.toml), .agents/skills, .github/skills, and .copilot/commands. Rewrites command references in AGENTS.md/.claude/CLAUDE.md/GEMINI.md/.copilot/README.md while preserving project-specific content. BREAKING: slash commands rename (/plan-issue->/claude:plan, /finalize->/ghi-finalize, etc.). Adds delegation-matrix + asset tests. Remaining doc prose updates are PR 4.\n\nAddresses #64\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-06-03T18:30:05+01:00",
+          "tree_id": "fb6fa340b3d31e421a446f0c19889c9ee80cb9db",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/ef69d4926fae2fdb47cce610b9a7c6a76648ff06"
+        },
+        "date": 1780507835108,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 729.1773249486035,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00172353430578123",
+            "extra": "mean: 1.3714085254509054 msec\nrounds: 609"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1061.2347424471534,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003515886542275886",
+            "extra": "mean: 942.2985886176801 usec\nrounds: 615"
           }
         ]
       }
