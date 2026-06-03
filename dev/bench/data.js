@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780507835457,
+  "lastUpdate": 1780519901493,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -722,6 +722,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003515886542275886",
             "extra": "mean: 942.2985886176801 usec\nrounds: 615"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "51c731b6f159473ad29a74783a4eebeddd5b5798",
+          "message": "chore: sync docs, statusline & record sync point (PR 4 of 4) (merges PR #68, addresses #64)\n\nchore: sync docs, statusline & record template sync point (PR 4/4, #64)\n\nFinal PR of the pyproject-template sync (170df8c9 -> e3d32ea). Syncs remaining docs (incl. full rewrites PR 3 only touched minimally), adds 3 new ai docs, the claude-usage statusline add-on, and 2 new tests. Also closes 5 e3d32ea-drift files missed by the per-PR dir scoping (.claude/agents/implement-worker.md, .claude/rules, .gemini/policies, .gemini/rules, .github/instructions). Records the sync point in settings.toml; manage.py check now reports no differences beyond sync-exclude.toml.\n\nAddresses #64\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-06-03T21:51:04+01:00",
+          "tree_id": "75510abf4e94361ff4721a06a58134d9dc0d2b89",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/51c731b6f159473ad29a74783a4eebeddd5b5798"
+        },
+        "date": 1780519900443,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 727.9959817211027,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001679768597539712",
+            "extra": "mean: 1.373633955555407 msec\nrounds: 675"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1062.6051955204614,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002816927820900677",
+            "extra": "mean: 941.0832962379809 usec\nrounds: 638"
           }
         ]
       }
