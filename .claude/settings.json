@@ -1,4 +1,9 @@
 {
+  "env": {
+    "ENABLE_PROMPT_CACHING_1H": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6"
+  },
   "statusLine": {
     "type": "command",
     "command": "bash $CLAUDE_PROJECT_DIR/.claude/statusline-command.sh"
@@ -7,6 +12,15 @@
     "PreToolUse": [
       {
         "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $CLAUDE_PROJECT_DIR/tools/hooks/ai/block-dangerous-commands.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
             "type": "command",
@@ -22,6 +36,28 @@
           {
             "type": "command",
             "command": "python3 $CLAUDE_PROJECT_DIR/tools/hooks/ai/ruff-fix-on-edit.py"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 90,
+            "command": "python3 $CLAUDE_PROJECT_DIR/tools/hooks/ai/precompact-checkpoint.py"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $CLAUDE_PROJECT_DIR/tools/hooks/ai/session-resume-restore.py"
           }
         ]
       }
