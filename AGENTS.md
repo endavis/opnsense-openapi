@@ -113,7 +113,7 @@ You are a senior coding partner. Your goal is efficient, tested, and compliant c
 | **Testing** | `.github/CONTRIBUTING.md` | Test patterns, coverage rules. |
 | **Security** | `.github/SECURITY.md` | Policy, sensitive data handling. |
 | **Architecture & Layering** | `docs/development/ai/architectural-conventions.md` | Imperative-form rules for AI agents. |
-| **Slash Commands & Workflows** | `docs/development/ai/slash-commands.md` | Reference for /plan-issue, /implement, /finalize, dual-agent workflow. |
+| **Slash Commands & Workflows** | `docs/development/ai/slash-commands.md` | Reference for /<ai>:plan, /<ai>:implement, /ghi-finalize, self-action and cross-agent workflows. |
 | **AI Agent Walkthrough** | `docs/development/ai/first-5-minutes.md` | Narrative onboarding for the AI agent workflow (plan → implement → review → PR → merge). |
 
 ## Common Pitfalls
@@ -301,16 +301,20 @@ Each supported AI CLI has a dedicated config directory at the repo root:
 
 | CLI | Config Directory | Notes |
 | :--- | :--- | :--- |
-| Claude Code | `.claude/` | Commands, agents, settings. Primary source of slash commands. |
-| Gemini CLI | `.gemini/` | Commands and settings. Supports a standalone workflow (`/plan-issue`, `/implement`, `/finalize`) and Claude-orchestrated dual-agent flows. |
-| GitHub Copilot CLI | `.copilot/` | Config directory. Skills auto-discovered from `.claude/commands/`. Hook wired in `.github/hooks/copilot-hooks.json`. |
-| Codex CLI | `.codex/`, `.agents/skills/` | `config.toml` for approvals/hooks plus repo-scoped skills for the Codex workflow. No custom slash commands. |
+| Claude Code | `.claude/` | Commands, agents, rules, settings. Primary source of slash commands. |
+| Gemini CLI | `.gemini/` | Commands, settings, and rules/ subdirectory for per-stack rule files. Supports a standalone workflow (`/gemini:plan`, `/gemini:implement`, `/ghi-finalize`) and multi-agent orchestration flows. |
+| GitHub Copilot CLI | `.copilot/`, `.github/skills/` | Config directory. Copilot CLI does **not** read `commands/` — only `skills/` paths (`.github/skills/`, `.agents/skills/`, `.claude/skills/`). Self-action and cross-agent bridges live under `.github/skills/<target>-<action>/SKILL.md` with hyphen naming (skill names cannot contain colons). `.github/skills/` is used specifically because it's the only Copilot skill path that Claude does **not** also read — placing the bridges there avoids surfacing duplicate slash commands in Claude. Hook wired in `.github/hooks/copilot-hooks.json`. Per-stack instruction files live in `.github/instructions/` (Copilot-native; Claude/Gemini cannot read them). See `.github/instructions/README.md`. |
+| Codex CLI | `.codex/`, `.agents/skills/` | `config.toml` for approvals/hooks plus repo-scoped skills for the Codex workflow. No custom slash commands. Rule-shaped skills live in `.agents/skills/<name>/SKILL.md`; the `description:` frontmatter is the skill-gate trigger. See `.agents/skills/README.md`. |
 
-Copilot CLI does **not** need a `commands/` subdirectory: it discovers skills from `.claude/commands/` automatically, so the full workflow (`/plan-issue`, `/implement`, `/finalize`, etc.) works out of the box.
+Copilot CLI ships self-action and cross-agent skills under `.github/skills/<target>-<action>/SKILL.md` (16 entries: 4 self-action + 12 cross-agent bridges). The surface uses hyphen naming (`/copilot-plan`, `/claude-plan`, `/codex-plan`, `/gemini-plan`, etc.) because skill names — derived from directory names — cannot contain colons. Self-action skills run inline in the Copilot session; cross-agent skills shell out to `claude -p`, `codex -a never exec`, or `gemini -y -p`.
 
-Gemini CLI ships standalone implementations of `/plan-issue`, `/implement`, and `/finalize` under `.gemini/commands/`. They share the GitHub-artifact contract (plan comment header `## Implementation Plan for #<n>: <title>`, `<type>/<n>-<slug>` branch names, `Addresses #<n>` PR body) with the Claude versions, so users can switch agents mid-workflow without losing state.
+Gemini CLI ships standalone implementations of `/gemini:plan`, `/gemini:implement`, `/gemini:review`, `/gemini:adversarial-review`, and `/ghi-finalize` under `.gemini/commands/gemini/` and `.gemini/commands/`. They share the GitHub-artifact contract (plan comment header `## Implementation Plan for #<n>: <title>`, `<type>/<n>-<slug>` branch names, `Addresses #<n>` PR body) with the Claude versions, so users can switch agents mid-workflow without losing state.
 
-Codex CLI does **not** use repo-defined slash commands in this template. Its repo-native workflow is provided through checked-in skills under `.agents/skills/`, invoked with built-in Codex skill selection such as `/skills` or explicit mentions like `$plan-issue`.
+Codex CLI does **not** use repo-defined slash commands in this template. Its repo-native workflow is provided through checked-in skills under `.agents/skills/`, invoked with built-in Codex skill selection such as `/skills` or explicit mentions like `$codex-plan`. Rule-shaped skills (per-stack self-check checklists) follow the same discipline as `.claude/rules/`, `.gemini/rules/`, and `.github/instructions/` — ≤30 lines, numbered self-checks, observed-failures footer — with the key distinction that the `description:` frontmatter field acts as the skill-gate trigger instead of an import directive or glob. See `.agents/skills/README.md`.
+
+**Self-action and cross-agent delegation matrix:** every agent can act on itself or delegate to another agent. Slash naming differs by host because of file-layout constraints: Claude and Gemini support `<target>:<action>` (colon, e.g. `/claude:plan 42`); Copilot and Codex use `<target>-<action>` (hyphen, e.g. `/copilot-plan 42`, `$codex-implement 42`) because skill names cannot contain colons. Self-action files live in `.<ai>/commands/<ai>/` (Claude, Gemini), `.github/skills/<ai>-<action>/` (Copilot), or `.agents/skills/<ai>-<action>/` (Codex). Cross-agent bridges live under `.claude/commands/<target>/`, `.gemini/commands/<target>/`, `.github/skills/<target>-<action>/`, and `.agents/skills/delegate-<target>-<action>/`. See [Cross-Agent Delegation Matrix](docs/development/ai/cross-agent-delegation.md).
+
+**Multi-agent orchestrators (`/multi-*`):** any host agent can also run `/multi-plan <ais...> <issue#>`, `/multi-review <ais...>`, and `/multi-adversarial-review <ais...>` to dispatch a task to **any combination** of agents in parallel and synthesize their outputs. Command files live in `.claude/commands/multi-*.md`, `.gemini/commands/multi-*.toml`, `.copilot/commands/multi-*.md`, and `.agents/skills/multi-*/SKILL.md`.
 
 ### Temporary Files
 
@@ -331,6 +335,8 @@ Where `<agent-type>` is one of: `claude`, `gemini`, `copilot`, `codex`, or the r
 
 **Cleanup rule:** Agents must delete their temporary files when the task is complete. Do not leave stale files in `tmp/agents/`.
 
+**Exception:** `tmp/checkpoints/` is the one location outside `tmp/agents/<agent-type>/`. Checkpoints written by `/checkpoint` are portable project-state captures meant to be readable by any agent — Claude can write a checkpoint and Gemini or Codex can restore from it.
+
 ## Token Efficiency
 - **Be Concise:** Minimal text output.
 - **Use Local Tools:** Prefer native file tools over sub-agents (see [AI Agent File Operations](#ai-agent-file-operations)).
@@ -349,7 +355,7 @@ Where `<agent-type>` is one of: `claude`, `gemini`, `copilot`, `codex`, or the r
 - **Commits:** One logical change per commit. Use conventional commits.
 - **Releases:** Never run `doit release` without explicit command.
 - **PRs:** Use `doit pr` to create PRs and `doit pr_merge` to merge with proper commit format. Issues are not automatically closed. Ask the user if they would like the related issue closed — pass `--auto-close` to `doit pr_merge` to close linked issues in one step.
-- **The Merge Gate action:** is a manual action for the user to add to a PR. It requires the ready-to-merge label and should never be added by automation. Exception: the dependabot auto-merge workflow (`.github/workflows/dependabot-automerge.yml`) applies the `ready-to-merge` label to qualifying dependabot PRs only.
+- **The Merge Gate action:** is a manual action for the user to add to a PR. It requires the ready-to-merge label and should never be added by automation. Exception: the dependabot auto-merge workflow (`.github/workflows/dependabot-automerge.yml`) applies the `ready-to-merge` label to qualifying dependabot PRs only. AI agents may apply the label only when the human has set `ALLOW_AI_READY_TO_MERGE=1` in the shell that launched the AI CLI (see `docs/development/ai/command-blocking.md`).
 - **Issues:** Use `doit issue --type=<type>` to create issues (types: feature, bug, refactor, docs, chore). Labels are auto-applied. Manually close after PR merge with comment "Addressed in PR #XXX". Issues are not closed automatically when PRs are merged.
 - **ADRs:** When implementing architectural decisions (typically `feat` or `refactor`, rarely `fix`), update related ADRs in `docs/decisions/` to add the issue link. Create new ADRs for significant decisions using `doit adr`. Every ADR must link to the documentation in `docs/` that describes the implementation. Doc and chore issues do not need ADRs. Issues with the `needs-adr` label require an ADR before the PR can be merged.
 
@@ -410,7 +416,7 @@ Before creating a PR, verify:
 - [ ] Branch name follows convention: `<type>/<issue>-<description>`
 - [ ] Commits follow conventional format: `<type>: <subject>`
 - [ ] PR title follows conventional format: `<type>: <subject>`
-- [ ] PR description references the issue: "Addresses #XX"
+- [ ] PR description references the issue: "Addresses #XX" (at start of line)
 - [ ] If issue has `needs-adr` label: ADR created and included in PR
 - [ ] If implementing architectural decision: Related ADR updated with issue link
 - [ ] If ADR created/updated: Links to documentation in `docs/` included
