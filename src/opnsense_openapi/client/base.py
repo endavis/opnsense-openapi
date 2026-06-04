@@ -192,6 +192,11 @@ class OPNsenseClient:
         auto_detect_version: bool = True,
         auth: Any = None,
         headers: dict[str, str] | None = None,
+        proxy: str | httpx.Proxy | None = None,
+        trust_env: bool = True,
+        transport: httpx.BaseTransport | None = None,
+        mounts: dict[str, httpx.BaseTransport | None] | None = None,
+        session: httpx.Client | None = None,
     ) -> None:
         """Initialize OPNsense API client.
 
@@ -207,6 +212,44 @@ class OPNsenseClient:
                                 detect version from server
             auth: Custom httpx auth object (overrides api_key/api_secret)
             headers: Custom headers to include in requests
+            proxy: Proxy URL or ``httpx.Proxy`` object for all requests.  A plain
+                string such as ``"http://proxy:8080"`` or a SOCKS URL such as
+                ``"socks5h://127.0.0.1:1080"`` are both accepted.  SOCKS support
+                requires the ``opnsense-openapi[socks]`` extra (``pip install
+                opnsense-openapi[socks]``); httpx raises a clear ``ImportError``
+                if ``socksio`` is absent.
+                Ignored when ``session`` is provided (cannot be retrofitted onto
+                an existing ``httpx.Client``).
+            trust_env: Whether to honour proxy settings from environment variables
+                (``HTTP_PROXY``, ``HTTPS_PROXY``, ``ALL_PROXY``, ``NO_PROXY``).
+                Defaults to ``True`` (current behaviour).  Set to ``False`` to
+                disable env-var proxies.
+                Ignored when ``session`` is provided.
+            transport: Custom ``httpx.BaseTransport`` for all requests.  Takes
+                precedence over ``proxy``, ``mounts``, and ``verify`` — httpx
+                applies its own resolution order.
+                ``httpx.MockTransport`` is useful in tests.
+                Ignored when ``session`` is provided.
+            mounts: Per-URL-pattern transport map passed directly to
+                ``httpx.Client``.  ``proxy`` is shorthand for an ``all://`` mount;
+                if both are given httpx merges them (explicit mount entries win for
+                their patterns).
+                Ignored when ``session`` is provided.
+            session: Pre-built ``httpx.Client`` to use instead of creating a new
+                one.  When provided, ``verify_ssl``, ``timeout``, ``proxy``,
+                ``trust_env``, ``transport``, and ``mounts`` are all **ignored**
+                (they cannot be retrofitted onto an existing client).  Auth and
+                headers are applied onto the injected session only when they carry
+                non-empty values.  The caller retains ownership: ``close()`` and
+                the context-manager exit do **not** close an injected session.
+
+        httpx precedence rules (when building a new client):
+            1. A custom ``transport`` overrides ``proxy``, ``mounts``, and
+               ``verify`` — httpx routes every request through it directly.
+            2. ``proxy`` is shorthand for mounting a single transport on the
+               ``all://`` pattern.
+            3. If both ``proxy`` and ``mounts`` are given, httpx merges them;
+               explicit ``mounts`` entries win for their URL patterns.
         """
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key or ""
@@ -219,13 +262,27 @@ class OPNsenseClient:
         if client_auth is None and api_key and api_secret:
             client_auth = (api_key, api_secret)
 
-        self._client: httpx.Client = httpx.Client(
-            auth=client_auth,
-            headers=headers,
-            verify=verify_ssl,
-            timeout=timeout,
-            follow_redirects=True,
-        )
+        if session is not None:
+            # Caller-owned session: apply credentials/headers only when provided.
+            self._client = session
+            self._owns_client = False
+            if client_auth is not None:
+                self._client.auth = client_auth
+            if headers:
+                self._client.headers.update(headers)
+        else:
+            self._client = httpx.Client(
+                auth=client_auth,
+                headers=headers,
+                verify=verify_ssl,
+                timeout=timeout,
+                proxy=proxy,
+                trust_env=trust_env,
+                transport=transport,
+                mounts=mounts,
+                follow_redirects=True,
+            )
+            self._owns_client = True
 
         # OpenAPI wrapper (lazily initialized)
         self._openapi: APIWrapper | None = None
@@ -320,8 +377,14 @@ class OPNsenseClient:
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
 
     def close(self) -> None:
-        """Close the HTTP client."""
-        self._client.close()
+        """Close the HTTP client.
+
+        Only closes the underlying ``httpx.Client`` when this instance owns it
+        (i.e. no pre-built ``session`` was injected).  A caller-owned session is
+        left open so the caller can reuse or close it on their own schedule.
+        """
+        if self._owns_client:
+            self._client.close()
 
     def __enter__(self) -> OPNsenseClient:
         """Context manager entry."""

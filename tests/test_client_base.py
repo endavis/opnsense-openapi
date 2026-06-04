@@ -473,3 +473,215 @@ def test_context_manager_closes_on_exit() -> None:
     ):
         pass
     inner.close.assert_called_once()
+
+
+# --------------- proxy / transport / session passthrough ----------------------
+
+
+def test_proxy_threaded_into_httpx_client() -> None:
+    """``proxy`` is forwarded to the ``httpx.Client`` constructor."""
+    inner = MagicMock(spec=httpx.Client)
+    with patch("httpx.Client", return_value=inner) as mock_cls:
+        OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+            proxy="socks5h://127.0.0.1:1080",
+        )
+    assert mock_cls.call_args.kwargs["proxy"] == "socks5h://127.0.0.1:1080"
+
+
+def test_trust_env_false_threaded_into_httpx_client() -> None:
+    """Explicit ``trust_env=False`` is forwarded to the ``httpx.Client`` constructor."""
+    inner = MagicMock(spec=httpx.Client)
+    with patch("httpx.Client", return_value=inner) as mock_cls:
+        OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+            trust_env=False,
+        )
+    assert mock_cls.call_args.kwargs["trust_env"] is False
+
+
+def test_trust_env_default_is_true() -> None:
+    """Default ``trust_env`` is ``True`` (preserves current env-var proxy behaviour)."""
+    inner = MagicMock(spec=httpx.Client)
+    with patch("httpx.Client", return_value=inner) as mock_cls:
+        OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+        )
+    assert mock_cls.call_args.kwargs["trust_env"] is True
+
+
+def test_transport_threaded_into_httpx_client() -> None:
+    """``transport`` is forwarded to the ``httpx.Client`` constructor."""
+    inner = MagicMock(spec=httpx.Client)
+    mock_transport = MagicMock(spec=httpx.BaseTransport)
+    with patch("httpx.Client", return_value=inner) as mock_cls:
+        OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+            transport=mock_transport,
+        )
+    assert mock_cls.call_args.kwargs["transport"] is mock_transport
+
+
+def test_mounts_threaded_into_httpx_client() -> None:
+    """``mounts`` is forwarded to the ``httpx.Client`` constructor."""
+    inner = MagicMock(spec=httpx.Client)
+    mock_transport = MagicMock(spec=httpx.BaseTransport)
+    mounts_map: dict[str, httpx.BaseTransport | None] = {"https://opnsense.local": mock_transport}
+    with patch("httpx.Client", return_value=inner) as mock_cls:
+        OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+            mounts=mounts_map,
+        )
+    assert mock_cls.call_args.kwargs["mounts"] is mounts_map
+
+
+def test_defaults_preserve_proxy_transport_mounts_none() -> None:
+    """Default invocation passes ``proxy=None``, ``transport=None``, ``mounts=None``."""
+    inner = MagicMock(spec=httpx.Client)
+    with patch("httpx.Client", return_value=inner) as mock_cls:
+        OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+        )
+    kwargs = mock_cls.call_args.kwargs
+    assert kwargs["proxy"] is None
+    assert kwargs["transport"] is None
+    assert kwargs["mounts"] is None
+    assert kwargs["trust_env"] is True
+
+
+def test_session_injection_uses_provided_client() -> None:
+    """When ``session`` is provided, ``_client`` is set to it; ``httpx.Client`` is not called."""
+    injected = MagicMock(spec=httpx.Client)
+    injected.headers = MagicMock()
+    with patch("httpx.Client") as mock_cls:
+        client = OPNsenseClient(
+            base_url="https://opnsense.local",
+            auto_detect_version=False,
+            session=injected,
+        )
+    mock_cls.assert_not_called()
+    assert client._client is injected
+
+
+def test_session_injection_applies_auth_when_provided() -> None:
+    """Auth is applied to an injected session when ``api_key``/``api_secret`` are given."""
+    injected = MagicMock(spec=httpx.Client)
+    injected.headers = MagicMock()
+    OPNsenseClient(
+        base_url="https://opnsense.local",
+        api_key="k",
+        api_secret="s",
+        auto_detect_version=False,
+        session=injected,
+    )
+    assert injected.auth == ("k", "s")
+
+
+def test_session_injection_applies_headers_when_provided() -> None:
+    """Headers are merged onto an injected session when ``headers`` is truthy."""
+    injected = MagicMock(spec=httpx.Client)
+    injected.headers = MagicMock()
+    custom_headers = {"X-Custom": "value"}
+    OPNsenseClient(
+        base_url="https://opnsense.local",
+        auto_detect_version=False,
+        session=injected,
+        headers=custom_headers,
+    )
+    injected.headers.update.assert_called_once_with(custom_headers)
+
+
+def test_session_injection_leaves_session_untouched_without_credentials() -> None:
+    """An injected session without auth or headers is left completely untouched."""
+    injected = MagicMock(spec=httpx.Client)
+    injected.headers = MagicMock()
+    OPNsenseClient(
+        base_url="https://opnsense.local",
+        auto_detect_version=False,
+        session=injected,
+    )
+    # auth should not be set; headers.update should not be called
+    assert not hasattr(injected, "_auth_set_by_test")
+    injected.headers.update.assert_not_called()
+
+
+def test_close_does_not_close_injected_session() -> None:
+    """``close()`` must NOT close an injected (caller-owned) session."""
+    injected = MagicMock(spec=httpx.Client)
+    injected.headers = MagicMock()
+    client = OPNsenseClient(
+        base_url="https://opnsense.local",
+        auto_detect_version=False,
+        session=injected,
+    )
+    client.close()
+    injected.close.assert_not_called()
+
+
+def test_context_manager_does_not_close_injected_session() -> None:
+    """Exiting the context manager must NOT close an injected session."""
+    injected = MagicMock(spec=httpx.Client)
+    injected.headers = MagicMock()
+    with OPNsenseClient(
+        base_url="https://opnsense.local",
+        auto_detect_version=False,
+        session=injected,
+    ):
+        pass
+    injected.close.assert_not_called()
+
+
+def test_close_closes_owned_client() -> None:
+    """``close()`` closes the client when it was built internally (no ``session``)."""
+    inner = MagicMock(spec=httpx.Client)
+    with patch("httpx.Client", return_value=inner):
+        client = OPNsenseClient(
+            base_url="https://opnsense.local",
+            api_key="key",
+            api_secret="secret",
+            auto_detect_version=False,
+        )
+    client.close()
+    inner.close.assert_called_once()
+
+
+def test_functional_mock_transport_roundtrip(
+    mock_httpx_response: Callable[..., httpx.Response],
+) -> None:
+    """A ``transport=httpx.MockTransport(...)`` wires through to ``client.get(...)``."""
+    captured: dict[str, httpx.Request] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["request"] = request
+        return mock_httpx_response(200, json={"mocked": True})
+
+    mock_transport = httpx.MockTransport(handler)
+    client = OPNsenseClient(
+        base_url="https://opnsense.local",
+        api_key="key",
+        api_secret="secret",
+        auto_detect_version=False,
+        transport=mock_transport,
+    )
+    result = client.get("core", "firmware", "info")
+    assert result == {"mocked": True}
+    # The request was routed through the injected transport to the built URL.
+    assert str(captured["request"].url) == "https://opnsense.local/api/core/firmware/info"

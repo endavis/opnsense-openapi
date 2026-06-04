@@ -267,6 +267,128 @@ except Exception as e:
         raise
 ```
 
+## Proxy / Transport Configuration
+
+`OPNsenseClient` exposes a full-passthrough surface for httpx networking options.
+All new parameters default to the existing behaviour, so there is no breaking
+change.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `proxy` | `str \| httpx.Proxy \| None` | `None` | Proxy URL for all requests |
+| `trust_env` | `bool` | `True` | Honour proxy env vars (`HTTP_PROXY`, etc.) |
+| `transport` | `httpx.BaseTransport \| None` | `None` | Custom transport (overrides proxy/mounts/verify) |
+| `mounts` | `dict[str, httpx.BaseTransport \| None] \| None` | `None` | Per-URL-pattern transport map |
+| `session` | `httpx.Client \| None` | `None` | Pre-built httpx client (caller retains ownership) |
+
+### httpx Precedence Rules
+
+1. A custom `transport` overrides `proxy`, `mounts`, and `verify_ssl`.
+2. `proxy` is shorthand for mounting a transport on the `all://` pattern.
+3. If both `proxy` and `mounts` are given, httpx merges them; explicit `mounts`
+   entries win for their URL patterns.
+
+### SSH Tunnel — SOCKS Proxy (`ssh -D`)
+
+Use `socks5h://` when the OPNsense hostname only resolves inside the remote
+network (the `h` suffix delegates DNS resolution to the SOCKS server):
+
+```bash
+# Install SOCKS support (pulls in socksio via httpx):
+pip install "opnsense-openapi[socks]"
+
+# Open the SOCKS proxy in a separate terminal:
+ssh -D 1080 -N user@bastion
+```
+
+```python
+from opnsense_openapi import OPNsenseClient
+
+client = OPNsenseClient(
+    base_url="https://opnsense.internal",
+    api_key="your-key",
+    api_secret="your-secret",
+    proxy="socks5h://127.0.0.1:1080",  # remote DNS through the tunnel
+    verify_ssl=False,
+)
+```
+
+Use `socks5://` (no `h`) when the OPNsense hostname resolves locally, so DNS
+lookup happens on the client side before the connection is forwarded.
+
+If `socksio` is not installed, httpx raises a clear `ImportError` explaining the
+missing dependency.
+
+### SSH Tunnel — Local Port-Forward (`ssh -L`)
+
+No proxy is needed; point `base_url` at the forwarded port directly:
+
+```bash
+ssh -L 8443:opnsense.internal:443 -N user@bastion
+```
+
+```python
+from opnsense_openapi import OPNsenseClient
+
+client = OPNsenseClient(
+    base_url="https://localhost:8443",
+    api_key="your-key",
+    api_secret="your-secret",
+    verify_ssl=False,
+)
+```
+
+### Custom Transport (e.g. for Testing)
+
+```python
+import httpx
+from opnsense_openapi import OPNsenseClient
+
+def handler(request: httpx.Request) -> httpx.Response:
+    return httpx.Response(200, json={"product_version": "25.1"})
+
+client = OPNsenseClient(
+    base_url="https://opnsense.local",
+    api_key="key",
+    api_secret="secret",
+    transport=httpx.MockTransport(handler),
+    auto_detect_version=False,
+)
+result = client.get("core", "firmware", "info")
+# result == {"product_version": "25.1"}
+```
+
+### Injected Session
+
+Inject a pre-configured `httpx.Client` when you need to share a session across
+multiple clients or manage its lifecycle yourself:
+
+```python
+import httpx
+from opnsense_openapi import OPNsenseClient
+
+shared_session = httpx.Client(verify=False, timeout=60)
+
+client = OPNsenseClient(
+    base_url="https://opnsense.local",
+    api_key="key",
+    api_secret="secret",
+    session=shared_session,
+    auto_detect_version=False,
+)
+
+# OPNsenseClient applies auth/headers onto shared_session but does NOT close it.
+# The caller is responsible for closing shared_session when done.
+client.close()          # no-op for the session
+shared_session.close()  # caller closes explicitly
+```
+
+**Important:** When `session` is provided, `verify_ssl`, `timeout`, `proxy`,
+`trust_env`, `transport`, and `mounts` are all **ignored** — they cannot be
+retrofitted onto an existing `httpx.Client`.
+
 ## Legacy Wrapper (Still Supported)
 
 The dynamic wrapper still works for backwards compatibility:

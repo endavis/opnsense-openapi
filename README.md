@@ -86,6 +86,52 @@ opnsense-openapi generate <version>
 
 See [Generated Client Usage](docs/usage/generated-client.md) for complete documentation.
 
+### Accessing OPNsense Through an SSH Tunnel
+
+When the OPNsense instance is only reachable through a bastion host, use an SSH
+SOCKS proxy or a local port-forward.
+
+**Option A — SOCKS proxy (`ssh -D`)**: remote DNS, best when the OPNsense
+hostname only resolves inside the remote network:
+
+```bash
+# In a separate terminal, open the SOCKS proxy:
+ssh -D 1080 -N user@bastion
+```
+
+```python
+# Install SOCKS support first:
+# pip install "opnsense-openapi[socks]"
+from opnsense_openapi import OPNsenseClient
+
+client = OPNsenseClient(
+    base_url="https://opnsense.internal",
+    api_key="your-key",
+    api_secret="your-secret",
+    proxy="socks5h://127.0.0.1:1080",  # 'socks5h' resolves DNS through the tunnel
+    verify_ssl=False,
+)
+```
+
+**Option B — local port-forward (`ssh -L`)**: no proxy needed, point
+`base_url` directly at the forwarded port:
+
+```bash
+# Forward local port 8443 to opnsense:443 through the bastion:
+ssh -L 8443:opnsense.internal:443 -N user@bastion
+```
+
+```python
+from opnsense_openapi import OPNsenseClient
+
+client = OPNsenseClient(
+    base_url="https://localhost:8443",
+    api_key="your-key",
+    api_secret="your-secret",
+    verify_ssl=False,
+)
+```
+
 ## CLI Commands
 
 ### Complete Setup (Recommended)
