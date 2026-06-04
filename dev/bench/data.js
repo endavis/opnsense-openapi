@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780573096737,
+  "lastUpdate": 1780577013115,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -798,6 +798,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000046649829925217776",
             "extra": "mean: 944.2325679215297 usec\nrounds: 611"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7581eb0c613dec1a1cd5a1203ad81b8785a8f1ae",
+          "message": "feat: expose proxy/transport configuration on OPNsenseClient (merges PR #69, addresses #63)\n\nAdd proxy, trust_env, transport, mounts, and session params to\nOPNsenseClient.__init__, threaded into the underlying httpx.Client.\nIncludes session-ownership guard on close(), 14 new tests, docs, and\nhttpx floor bump to >=0.28.0 with new [socks] optional extra.\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-06-04T13:43:08+01:00",
+          "tree_id": "168997c7cc4703a93df8fa184a81703bfd845448",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/7581eb0c613dec1a1cd5a1203ad81b8785a8f1ae"
+        },
+        "date": 1780577012678,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 771.0616354653102,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001955514255176646",
+            "extra": "mean: 1.2969131830771647 msec\nrounds: 650"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1275.4011323341663,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000017587568792331407",
+            "extra": "mean: 784.0670473373793 usec\nrounds: 676"
           }
         ]
       }
