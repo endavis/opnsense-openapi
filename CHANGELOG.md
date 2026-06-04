@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Feat
+
+- expose proxy/transport configuration on OPNsenseClient (merges PR #69, addresses #63)
+
+## v0.4.0 (2026-05-01)
+
 ### BREAKING CHANGE
 
 - find_best_matching_spec(version) now defaults to
