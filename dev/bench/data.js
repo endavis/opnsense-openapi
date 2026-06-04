@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780519901493,
+  "lastUpdate": 1780573096737,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -760,6 +760,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00002816927820900677",
             "extra": "mean: 941.0832962379809 usec\nrounds: 638"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8735cf34252d39d12556e779a4afd70da7838d2d",
+          "message": "chore(deps): bump the dev-dependencies group across 1 directory with 2 updates (merges PR #62)\n\nBumps the dev-dependencies group with 2 updates in the / directory: [ruff](https://github.com/astral-sh/ruff) and [mypy](https://github.com/python/mypy).\n\n\nUpdates `ruff` from 0.15.12 to 0.15.14\n- [Release notes](https://github.com/astral-sh/ruff/releases)\n- [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/astral-sh/ruff/compare/0.15.12...0.15.14)\n\nUpdates `mypy` from 1.20.2 to 2.1.0\n- [Changelog](https://github.com/python/mypy/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/python/mypy/compare/v1.20.2...v2.1.0)\n\n---\nupdated-dependencies:\n- dependency-name: mypy\n  dependency-version: 2.1.0\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n  dependency-group: dev-dependencies\n- dependency-name: ruff\n  dependency-version: 0.15.13\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: dev-dependencies\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-06-04T12:37:49+01:00",
+          "tree_id": "ff745a501e9cb10fca875e82fc39bb2b276b3e0c",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/8735cf34252d39d12556e779a4afd70da7838d2d"
+        },
+        "date": 1780573095889,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 711.2564625785689,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0021327094879328152",
+            "extra": "mean: 1.405962620535817 msec\nrounds: 672"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1059.0611190220086,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000046649829925217776",
+            "extra": "mean: 944.2325679215297 usec\nrounds: 611"
           }
         ]
       }
