@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782901462828,
+  "lastUpdate": 1782907566999,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -912,6 +912,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00013797526277253472",
             "extra": "mean: 988.5344753364222 usec\nrounds: 446"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bbdfc51be141dc943c5b3ac5090eed57336b4a73",
+          "message": "chore(deps): bump actions/cache from 5 to 6 (merges PR #82)\n\nBumps [actions/cache](https://github.com/actions/cache) from 5 to 6.\n- [Release notes](https://github.com/actions/cache/releases)\n- [Changelog](https://github.com/actions/cache/blob/main/RELEASES.md)\n- [Commits](https://github.com/actions/cache/compare/v5...v6)\n\n---\nupdated-dependencies:\n- dependency-name: actions/cache\n  dependency-version: '6'\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-01T13:05:38+01:00",
+          "tree_id": "82bd247a86d986534215a3c76b4e348482b5fc8c",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/bbdfc51be141dc943c5b3ac5090eed57336b4a73"
+        },
+        "date": 1782907566087,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 713.7132544014804,
+            "unit": "iter/sec",
+            "range": "stddev: 0.002132792879770144",
+            "extra": "mean: 1.40112292133148 msec\nrounds: 661"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1073.4795301443057,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00005998808545395961",
+            "extra": "mean: 931.550133858232 usec\nrounds: 635"
           }
         ]
       }
