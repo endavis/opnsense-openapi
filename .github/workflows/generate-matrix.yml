@@ -24,7 +24,7 @@ jobs:
         opnsense-version: ["24.7", "25.1", "25.7.6"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: astral-sh/setup-uv@v7
         with:
