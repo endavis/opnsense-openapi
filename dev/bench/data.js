@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780577500329,
+  "lastUpdate": 1782901462828,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -874,6 +874,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00005246989586733165",
             "extra": "mean: 782.1308742603126 usec\nrounds: 676"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "013c2d5a1177058ec6485caf0f82c9911078cd85",
+          "message": "chore(deps): bump cryptography and msgpack to patch pip-audit CVEs (merges PR #87, addresses #86)\n\nResolve the two advisories that made `doit check` fail at the audit task:\n\n- cryptography 46.0.7 -> 49.0.0 (GHSA-537c-gmf6-5ccf)\n- msgpack 1.1.2 -> 1.2.1 (GHSA-6v7p-g79w-8964)\n\nBoth are transitive dev/security-tooling dependencies (twine -> keyring ->\nsecretstorage, and pip-audit[filecache] -> cachecontrol), so only uv.lock\nchanges; no runtime or public API impact.\n\nAddresses #86\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+          "timestamp": "2026-07-01T11:22:32+01:00",
+          "tree_id": "0400b82369a1d0621d8ec284c23f27fe4a563365",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/013c2d5a1177058ec6485caf0f82c9911078cd85"
+        },
+        "date": 1782901462129,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 726.1144261642394,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0017723701215827618",
+            "extra": "mean: 1.377193406392687 msec\nrounds: 657"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1011.598507638973,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00013797526277253472",
+            "extra": "mean: 988.5344753364222 usec\nrounds: 446"
           }
         ]
       }
