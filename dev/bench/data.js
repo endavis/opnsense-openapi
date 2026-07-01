@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782907566999,
+  "lastUpdate": 1782907813160,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -950,6 +950,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00005998808545395961",
             "extra": "mean: 931.550133858232 usec\nrounds: 635"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf03404014b825830ce824a8d045ffd5ba277646",
+          "message": "chore(deps): bump codecov/codecov-action from 6 to 7 (merges PR #71)\n\nBumps [codecov/codecov-action](https://github.com/codecov/codecov-action) from 6 to 7.\n- [Release notes](https://github.com/codecov/codecov-action/releases)\n- [Changelog](https://github.com/codecov/codecov-action/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/codecov/codecov-action/compare/v6...v7)\n\n---\nupdated-dependencies:\n- dependency-name: codecov/codecov-action\n  dependency-version: '7'\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-07-01T13:09:42+01:00",
+          "tree_id": "af013d1a02164a966aa7d2b627fbe09b6320a518",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/bf03404014b825830ce824a8d045ffd5ba277646"
+        },
+        "date": 1782907812210,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1147.325499774913,
+            "unit": "iter/sec",
+            "range": "stddev: 0.003153393937740669",
+            "extra": "mean: 871.5922379448415 usec\nrounds: 954"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 2166.4831266065476,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000069516307330562185",
+            "extra": "mean: 461.57756214161776 usec\nrounds: 1046"
           }
         ]
       }
