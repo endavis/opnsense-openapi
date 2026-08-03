@@ -626,14 +626,14 @@ wheels = [
 
 [[package]]
 name = "flask-swagger-ui"
-version = "5.32.6"
+version = "5.32.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "flask" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/db/06cd2b77fff6c115c37dc8ec4db04ee6e5119799a27c7e19410f0f303c0e/flask_swagger_ui-5.32.6.tar.gz", hash = "sha256:38730cb566e5f1d70deb8bb1035ef1565b35dc50cdfd2a9e507779a751d46930", size = 613730, upload-time = "2026-05-18T10:31:09.328Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fd/04/7fa42b4e1f24d51d321b83563fb3a3fe235112e674a0d5560e7672674d77/flask_swagger_ui-5.32.9.tar.gz", hash = "sha256:50fb29e4fb925267184f74e4a56998095da3463bb58528ce4eaccc8adc72e692", size = 618016, upload-time = "2026-07-20T11:36:01.464Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/9f/a0510e3c648f2e6b58bbf5dc7db23668ec0ad5db90e1d84afb466a1f778f/flask_swagger_ui-5.32.6-py3-none-any.whl", hash = "sha256:83ec82f2b1da3628d89bc2eaa4836fdba7194353ff09d3d5c7d1e6892f345336", size = 618735, upload-time = "2026-05-18T10:31:07.034Z" },
+    { url = "https://files.pythonhosted.org/packages/72/d6/9b8c33a1ba1fedccb4c0377f497d8a65e8828e8ee5339635c60496f4b240/flask_swagger_ui-5.32.9-py3-none-any.whl", hash = "sha256:649044db1a8e143fe3a086a025d81a5d0f24be848b49dd659f63c87c3dc67deb", size = 623373, upload-time = "2026-07-20T11:35:59.934Z" },
 ]
 
 [[package]]
