@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783338645010,
+  "lastUpdate": 1792976409366,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1026,6 +1026,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0001757882920083",
             "extra": "mean: 956.0939507156178 usec\nrounds: 629"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "542b5b9e23a6cdf02b7540bb921b8089119cab71",
+          "message": "chore: upgrade dependencies with known vulnerabilities (merges PR #112, addresses #111)\n\nUpgrade anyio, certifi, cryptography, filelock, mkdocs-material, pip,\nurllib3, virtualenv and werkzeug in uv.lock to versions without known\nadvisories so `doit audit` (and `doit check`) passes again.\n\nAddresses #111\n\n\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T00:59:45Z",
+          "tree_id": "a3ed86b04ae3fbeb7ebd01c0d0577b4311249c23",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/542b5b9e23a6cdf02b7540bb921b8089119cab71"
+        },
+        "date": 1792976408984,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 857.8246596784386,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00006889758016014924",
+            "extra": "mean: 1.1657393952452437 msec\nrounds: 673"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1284.7421970607907,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002971747702829049",
+            "extra": "mean: 778.3662763531714 usec\nrounds: 702"
           }
         ]
       }
