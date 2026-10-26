@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793009740648,
+  "lastUpdate": 1793011709565,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1102,6 +1102,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000011382842632674862",
             "extra": "mean: 387.5360775265355 usec\nrounds: 1148"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "582b72dbf9b3ba78ce700f85d8cace9f88c4ac86",
+          "message": "chore: synchronize with pyproject-template (step 2 of 2) (merges PR #134, addresses #113)\n\nSyncs template 0b60a90 -> 21a1094 (2026-10-26), completing the sync\nstarted in PR #122.\n\nSyncs the following template improvements:\n- endavis/pyproject-template#977 (implement-issue replaces plan/implement/ghi-finalize)\n- endavis/pyproject-template#973, #979 (shared skills in .agents/skills, doit skills_sync)\n- endavis/pyproject-template#876, #882-#888 (add-dependency, mutation-triage, property-tests,\n  deprecate-api, python-version-bump, security-triage, dead-code-triage, perf-change skills)\n- endavis/pyproject-template#856, #857, #858, #864, #896 (pr --base, pr_merge guards, doit worktree)\n- endavis/pyproject-template#874, #877, #927 (mutmut 3 config, mutation run checks mutants)\n- endavis/pyproject-template#872 (doc frontmatter), #978 (strict docs build in doit check)\n- endavis/pyproject-template#935, #953 (wheel_check before publishing)\n- endavis/pyproject-template#898 (benchmark settings in addopts)\n- endavis/pyproject-template#954, #955 (daily check --continue, independent CI lint steps)\n- endavis/pyproject-template#895-#924 (doit output printed as text, not Rich markup)\n- endavis/pyproject-template#933 (doit install_jq, statusline missing-jq report)\n- endavis/pyproject-template#981, #989 (delegated agents get pre-fetched GitHub data)\n- endavis/pyproject-template#992, #994 (doit release honors commitizen settings)\n- endavis/pyproject-template#997 (review focus areas)\n- endavis/pyproject-template#1010, #1013, #1015, #1024 (dangerous-command hook parser fixes)\n\nProject-specific:\n- Removed the 42 files upstream deleted (old plan/implement chain, moved commands)\n- mutmut test selection lists this project's 18 package-importing tests\n- Coverage gate raised 77 -> 85 (measured 88.14%)\n- Kept mypy scope at src/ tools/ (tests/ deferred to #114)\n- Skipped tests/test_benchmark_settings.py (targets the template's sample benchmark)\n- Added ADR-0001 frontmatter; fixed 2 ruff findings in examples/ now that lint covers it\n\nAddresses #113\n\n\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T10:47:45Z",
+          "tree_id": "f7c2604b1d51b6a5ddd80b2c043b4d2812e0e812",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/582b72dbf9b3ba78ce700f85d8cace9f88c4ac86"
+        },
+        "date": 1793011708684,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1776.9951033484606,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000030419358147278386",
+            "extra": "mean: 562.7477521551193 usec\nrounds: 1856"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 2479.7057907789485,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003901088347598414",
+            "extra": "mean: 403.27364791363846 usec\nrounds: 2684"
           }
         ]
       }
