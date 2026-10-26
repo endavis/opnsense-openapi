@@ -101,4 +101,4 @@ Direct commits to `main` are blocked by a pre-commit hook. Workflow: Issue → B
 
 - Add/update tests when refactoring or adding features
 - Use fixtures and mocks appropriately
-- Coverage threshold: 80% (`[tool.coverage.report] fail_under = 80`). Current coverage (~52%) is below threshold — improving test coverage is a tracked follow-up.
+- Coverage threshold: 77% (`[tool.coverage.report] fail_under = 77`), measured over `opnsense_openapi` + `tools/` (excluding `tools/pyproject_template/`). Measured 80.02% at the #113 template sync; the ~3pp margin is deliberate. Raise it as `tools/` coverage improves.

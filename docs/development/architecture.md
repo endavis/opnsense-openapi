@@ -62,7 +62,7 @@ The OPNsense API Generator is a lightweight Python tool that automatically gener
                     │
                     ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│              Code Generator (code_generator.py)                  │
+│              Code Generator (openapi_generator.py)              │
 │  - Generates Python client code from OpenAPI spec               │
 │  - Creates method stubs for each endpoint                       │
 └─────────────────────────────────────────────────────────────────┘
@@ -641,7 +641,7 @@ EOF
 A structural lint in `tests/test_spec_path_routing.py` verifies that every
 `/api/{module}/{controller}/{action}` path in the latest committed spec
 reverse-maps to a real `*Controller.php` file in the matching OPNsense
-source archive. See [Spec Path Routing Lint](ci-cd-testing.md#spec-path-routing-lint)
+source archive. See [Spec Path Routing Lint](spec-path-routing.md#spec-path-routing-lint)
 in the CI/CD Testing Guide for details.
 
 ## Performance
@@ -734,7 +734,7 @@ EOF
 - **CLI**: `src/opnsense_openapi/cli.py`
 - **Controller Parser**: `src/opnsense_openapi/parser/controller_parser.py`
 - **OpenAPI Generator**: `src/opnsense_openapi/generator/openapi_generator.py`
-- **Code Generator**: `src/opnsense_openapi/generator/code_generator.py`
+- **Code Generator**: `src/opnsense_openapi/generator/openapi_generator.py`
 - **Source Downloader**: `src/opnsense_openapi/downloader/source_downloader.py`
 
 ### External Resources

@@ -66,7 +66,6 @@ All template tools are located in `tools/pyproject_template/`:
 | `bootstrap.py` | Remote setup script (curl and run) |
 | `setup_repo.py` | Full repository setup orchestration |
 | `configure.py` | Replace placeholders with your project info |
-| `migrate_existing_project.py` | Copy template files to existing project |
 | `check_template_updates.py` | Compare project against latest template |
 | `cleanup.py` | Remove template files after setup |
 
@@ -83,4 +82,4 @@ When you use this template, you get:
 - **CI/CD** with GitHub Actions (test, release to PyPI)
 - **Documentation** with MkDocs and Material theme
 - **Pre-commit hooks** enforcing code quality and conventional commits
-- **AI agent support** with pre-configured settings for Claude, Codex, and Gemini
+- **AI agent support** with pre-configured settings for Claude, Copilot, Codex, and Antigravity

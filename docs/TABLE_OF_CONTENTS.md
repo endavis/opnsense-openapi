@@ -18,8 +18,6 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
-- [Migration Guide](template/migration.md) - Migrate existing Python projects to use this template
-- [New Project Setup](template/new-project.md) - Create a new Python project from this template
 - [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
 - [Template Management](template/manage.md) - Unified interface for creating projects, checking updates, and syncing
@@ -30,12 +28,14 @@ Complete index of all documentation, organized by audience and as a full alphabe
 
 ### For Contributors
 <!-- BEGIN:audience=contributors -->
-- [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Gemini, Copilot, and Codex for this project
+- [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Copilot, Codex, and Antigravity for this project
+- [AI Agent Token-Efficiency Add-Ons](development/ai/token-efficiency-add-ons.md) - Opt-in catalogue of external tools for reducing token usage in Claude Code sessions
 - [AI Architectural Conventions](development/ai/architectural-conventions.md) - Imperative-form architectural rules AI agents must follow when generating code
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [Architecture](development/architecture.md) - How the OPNsense OpenAPI generator parses and emits clients
+- [Auto-Checkpoint and Session-Restore Hooks](development/ai/auto-checkpoint-hook.md) - PreCompact and SessionStart hooks that preserve context across autocompact events
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
@@ -46,6 +46,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
 - [Heuristic Schema Generation](development/heuristics.md) - How the generator infers response schemas when none are declared
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
+- [LSP Tool and Diagnostic Noise](development/ai/lsp-tool.md) - What the LSP tool gives an AI agent, why pyright diagnostics arrive stale, and the two opt-outs agents can flip on themselves
 - [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Optional Extensions](development/extensions.md) - Additional tools and extensions for testing, security, and more
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
@@ -54,19 +55,24 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Release Automation & Security](development/release-and-automation.md) - Automated versioning, release management, and security tooling
 - [Ruff Auto-Fix on Edit Hook](development/ai/ruff-fix-hook.md) - PostToolUse hook that runs ruff --fix on edited Python files
 - [Slash Commands and Workflows](development/ai/slash-commands.md) - Reference for the slash commands and dual-agent workflow this template ships with
+- [Spec Path Routing Checks](development/spec-path-routing.md) - The spec path routing lint and the live OPNsense API contract test, and how to run them
+- [Spec Version Resolution](development/spec-version-resolution.md) - How a live OPNsense version maps to a committed OpenAPI spec
 - [Template Tools Reference](template/tools-reference.md) - Complete reference for all template tools in tools/pyproject_template/
 - [Tooling Roles and Architectural Boundaries](development/tooling-roles.md) - What each tool is for, who uses it, and where runtime code ends and dev tooling begins
 <!-- END:audience=contributors -->
 
 ### For AI Agents
 <!-- BEGIN:audience=ai-agents -->
-- [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Gemini, Copilot, and Codex for this project
+- [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Copilot, Codex, and Antigravity for this project
 - [AI Agent Sync Checklist](template/ai-sync-checklist.md) - Step-by-step checklist for AI agents synchronizing downstream projects with pyproject-template
+- [AI Agent Token-Efficiency Add-Ons](development/ai/token-efficiency-add-ons.md) - Opt-in catalogue of external tools for reducing token usage in Claude Code sessions
 - [AI Architectural Conventions](development/ai/architectural-conventions.md) - Imperative-form architectural rules AI agents must follow when generating code
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
+- [Auto-Checkpoint and Session-Restore Hooks](development/ai/auto-checkpoint-hook.md) - PreCompact and SessionStart hooks that preserve context across autocompact events
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
 - [First 5 Minutes with an AI Agent](development/ai/first-5-minutes.md) - Narrative walkthrough of the AI agent workflow from issue to merge
+- [LSP Tool and Diagnostic Noise](development/ai/lsp-tool.md) - What the LSP tool gives an AI agent, why pyright diagnostics arrive stale, and the two opt-outs agents can flip on themselves
 - [Ruff Auto-Fix on Edit Hook](development/ai/ruff-fix-hook.md) - PostToolUse hook that runs ruff --fix on edited Python files
 - [Slash Commands and Workflows](development/ai/slash-commands.md) - Reference for the slash commands and dual-agent workflow this template ships with
 - [Tooling Roles and Architectural Boundaries](development/tooling-roles.md) - What each tool is for, who uses it, and where runtime code ends and dev tooling begins
@@ -74,6 +80,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 
 ## Complete Index
 <!-- BEGIN:all -->
+- [ADR-0001: Spec matching: floor over highest, module path keyed by resolved spec version](decisions/0001-spec-matching-floor-over-highest-module-path-keyed-by-resolved-spec-version.md)
 - [ADR-9001: Use uv for package management](decisions/9001-use-uv-for-package-management.md)
 - [ADR-9002: Use doit for task automation](decisions/9002-use-doit-for-task-automation.md)
 - [ADR-9003: Use ruff for linting and formatting](decisions/9003-use-ruff-for-linting-and-formatting.md)
@@ -90,18 +97,26 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [ADR-9014: Use click for application CLI](decisions/9014-use-click-for-application-cli.md)
 - [ADR-9015: install_tools framework: archive extraction and custom URLs](decisions/9015-install-tools-framework-archive-extraction-and-custom-urls.md)
 - [ADR-9016: Unify ADR directories under docs/decisions](decisions/9016-unify-adr-directories.md)
+- [ADR-9017: Template tooling and its tests are template-owned](decisions/9017-template-tooling-and-its-tests-are-template-owned.md)
+- [ADR-9018: AGENTS.md carries only shared, always-on instructions](decisions/9018-agentsmd-carries-only-shared-always-on-instructions.md)
+- [ADR-9019: The dangerous-command hook is a guardrail, not a security boundary](decisions/9019-the-dangerous-command-hook-is-a-guardrail-not-a-security-boundary.md)
+- [ADR-9020: A template version is a commit SHA](decisions/9020-a-template-version-is-a-commit-sha.md)
 - [ADR-NNNN: Title](decisions/adr-template.md)
-- [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Gemini, Copilot, and Codex for this project
+- [AI Agent Setup Guide](development/AI_SETUP.md) - Configure Claude, Copilot, Codex, and Antigravity for this project
 - [AI Agent Sync Checklist](template/ai-sync-checklist.md) - Step-by-step checklist for AI agents synchronizing downstream projects with pyproject-template
+- [AI Agent Token-Efficiency Add-Ons](development/ai/token-efficiency-add-ons.md) - Opt-in catalogue of external tools for reducing token usage in Claude Code sessions
 - [AI Architectural Conventions](development/ai/architectural-conventions.md) - Imperative-form architectural rules AI agents must follow when generating code
 - [AI Command Blocking](development/ai/command-blocking.md) - Hooks that block dangerous commands from AI agents
 - [AI Enforcement Principles](development/ai/enforcement-principles.md) - How we enforce AI agent behavior in code and settings
 - [API Reference](reference/api.md) - Complete API documentation for opnsense-openapi
 - [Architecture](development/architecture.md) - How the OPNsense OpenAPI generator parses and emits clients
 - [Architecture Decision Records](decisions/README.md)
+- [Auto-Checkpoint and Session-Restore Hooks](development/ai/auto-checkpoint-hook.md) - PreCompact and SessionStart hooks that preserve context across autocompact events
 - [CI/CD Testing Guide](development/ci-cd-testing.md) - GitHub Actions pipelines for testing, linting, and coverage
 - [Claude Code Statusline](development/ai/statusline.md) - Custom statusline showing git branch, Python version, and project info
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
+- [Consumer Notes](template/consumer-notes.md) - Breaking changes and behaviour changes that arrive when a project syncs from the template.
+- [Cross-Agent Delegation Matrix](development/ai/cross-agent-delegation.md)
 - [Dependabot Auto-merge](development/dependabot-automerge.md) - How the dependabot auto-merge workflow evaluates, enables, and skips PRs
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
@@ -113,8 +128,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [install_tools Framework](development/install-tools-framework.md)
 - [Installation Guide](getting-started/installation.md) - How to install and set up your project
 - [Keeping Up to Date](template/updates.md) - Stay in sync with improvements to the pyproject-template
-- [Migration Guide](template/migration.md) - Migrate existing Python projects to use this template
-- [New Project Setup](template/new-project.md) - Create a new Python project from this template
+- [LSP Tool and Diagnostic Noise](development/ai/lsp-tool.md) - What the LSP tool gives an AI agent, why pyright diagnostics arrive stale, and the two opt-outs agents can flip on themselves
 - [opnsense-openapi Documentation](index.md) - Welcome and overview of the project
 - [Optional Extensions](development/extensions.md) - Additional tools and extensions for testing, security, and more
 - [Production Deployment Guide](deployment/production.md) - Comprehensive guide for deploying Python applications to production
@@ -123,6 +137,8 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Release Automation & Security](development/release-and-automation.md) - Automated versioning, release management, and security tooling
 - [Ruff Auto-Fix on Edit Hook](development/ai/ruff-fix-hook.md) - PostToolUse hook that runs ruff --fix on edited Python files
 - [Slash Commands and Workflows](development/ai/slash-commands.md) - Reference for the slash commands and dual-agent workflow this template ships with
+- [Spec Path Routing Checks](development/spec-path-routing.md) - The spec path routing lint and the live OPNsense API contract test, and how to run them
+- [Spec Version Resolution](development/spec-version-resolution.md) - How a live OPNsense version maps to a committed OpenAPI spec
 - [Template Management](template/manage.md) - Unified interface for creating projects, checking updates, and syncing
 - [Template Tools Reference](template/tools-reference.md) - Complete reference for all template tools in tools/pyproject_template/
 - [Tooling Roles and Architectural Boundaries](development/tooling-roles.md) - What each tool is for, who uses it, and where runtime code ends and dev tooling begins

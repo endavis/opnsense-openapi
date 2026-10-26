@@ -649,6 +649,10 @@ doit pr --draft
 - `--body`: PR body content (non-interactive)
 - `--body-file`: File containing PR body (non-interactive)
 - `--draft`: Create as draft PR
+- `--no-push`: Skip the automatic push of a branch that has no upstream. The
+  task pushes by default; with this flag it aborts instead.
+- `--no-update-check`: Skip the check that aborts when the branch is behind
+  `origin/main`. Use only when you know the branch is deliberately behind.
 
 ### `pr_merge`
 
@@ -949,12 +953,18 @@ doit pre_commit_install
 ```
 
 **What it does:**
-- Installs pre-commit hooks to `.git/hooks/`
-- Hooks run automatically on `git commit`
+- Installs every hook type declared by `default_install_hook_types` in `.pre-commit-config.yaml`:
+  `pre-commit`, `commit-msg`, `post-merge` and `post-checkout`
+- Hooks run automatically on the matching git action
+
+**Why `commit-msg` matters:** it carries conventional-commit validation and the check that a
+commit's issue reference matches its branch (#741). A project that installed hooks *before* that
+type was declared does not have it, and neither check runs — silently, because a hook that was
+never installed cannot fail. Run this task again to pick it up, then confirm with `ls .git/hooks/`.
 
 **Equivalent command:**
 ```bash
-uv run pre-commit install
+uv run pre-commit install   # installs all declared hook types
 ```
 
 ### `pre_commit_run`
@@ -1086,7 +1096,6 @@ doit template_clean --dry-run
 **Setup mode (`--setup`)** removes:
 - `bootstrap.py`
 - `tools/pyproject_template/setup_repo.py`
-- `tools/pyproject_template/migrate_existing_project.py`
 - `docs/template/new-project.md`
 - `docs/template/migration.md`
 

@@ -118,7 +118,7 @@ see [ADR-9014: Use click for application CLI](../decisions/9014-use-click-for-ap
 3. **Delegate to a function in the runtime package.** Do not put business
    logic in `cli.py` — call into `opnsense_openapi.core` (or a new module)
    and use the CLI function as a thin adapter.
-4. **Add tests in `tests/test_cli.py`** (see [Testing CLI commands](#testing-cli-commands)
+4. **Add tests in `tests/test_cli_comprehensive.py`** (see [Testing CLI commands](#testing-cli-commands)
    below).
 
 Example: adding a `shout` subcommand that uppercases a name and greets
@@ -150,7 +150,7 @@ subprocess. This is faster than `subprocess.run`, has no shell-quoting
 pitfalls, and gives you direct access to exit codes and captured output.
 
 ```python
-# tests/test_cli.py
+# tests/test_cli_comprehensive.py
 from click.testing import CliRunner
 
 from opnsense_openapi.cli import main
