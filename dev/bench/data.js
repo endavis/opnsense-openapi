@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793017519983,
+  "lastUpdate": 1793018899681,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1254,6 +1254,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003451700026318664",
             "extra": "mean: 759.7287483778534 usec\nrounds: 1387"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7147b8d1ecddccf758ff55b1ba664528be61021",
+          "message": "feat: add specs for OPNsense 26.1.7 through 26.1.11 (merges PR #140, addresses #136)\n\n* chore: exempt bundled specs from the large-file pre-commit hook\n\ncheck-added-large-files rejects every new spec: each is ~1.3 MB against\nthe hook's 500 KB default. The specs are generated data that compress\n~30x in git and the wheel. Exclude src/opnsense_openapi/specs/ using the\nconfig's own placeholder for generated directories; the 500 KB guard\nstill applies everywhere else.\n\nAddresses #136\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n* feat: add specs for OPNsense 26.1.7 through 26.1.11\n\nGenerate the five 26.1 patch releases missing since 26.1.6 with the\ndeterministic generator (#138). Users on these versions previously fell\nback to the 26.1.6 spec.\n\nEach spec was generated twice under different PYTHONHASHSEED values\n(byte-identical), and every path was checked against that version's\nOPNsense source with the spec path routing lint: 738-743 paths per\nversion, none unresolved.\n\nAddresses #136\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T12:47:32Z",
+          "tree_id": "ae2fa53fc71fbeeb042e9ee30a235ee14799d86f",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/f7147b8d1ecddccf758ff55b1ba664528be61021"
+        },
+        "date": 1793018898855,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1223.099428521953,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000038841074938435736",
+            "extra": "mean: 817.5950185901435 usec\nrounds: 1291"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1835.8194020776455,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003113401009678164",
+            "extra": "mean: 544.7158902821668 usec\nrounds: 1914"
           }
         ]
       }
