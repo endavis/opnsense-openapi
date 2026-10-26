@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import httpx
@@ -9,7 +10,7 @@ from opnsense_openapi.validator import SpecValidator
 
 
 @pytest.fixture
-def mock_spec_path(tmp_path):
+def mock_spec_path(tmp_path: Path) -> Path:
     """Fixture to create a dummy spec.json file."""
     spec_content = {
         "openapi": "3.0.3",
@@ -116,7 +117,7 @@ def mock_spec_path(tmp_path):
 
 
 @pytest.fixture
-def mock_client():
+def mock_client() -> MagicMock:
     """Fixture to mock OPNsenseClient."""
     client = MagicMock(spec=OPNsenseClient)
     client.base_url = "http://localhost"
@@ -124,14 +125,14 @@ def mock_client():
     return client
 
 
-def test_validator_initialization(mock_client, mock_spec_path):
+def test_validator_initialization(mock_client: MagicMock, mock_spec_path: Path) -> None:
     """Test SpecValidator initializes correctly."""
     validator = SpecValidator(mock_client, mock_spec_path)
     assert validator.spec_path == mock_spec_path
     assert "paths" in validator.spec
 
 
-def test_validate_endpoints_valid(mock_client, mock_spec_path):
+def test_validate_endpoints_valid(mock_client: MagicMock, mock_spec_path: Path) -> None:
     """Test successful endpoint validation."""
     mock_client._client.get.return_value = httpx.Response(
         200, json={"status": "active"}, headers={"Content-Type": "application/json"}
@@ -147,7 +148,7 @@ def test_validate_endpoints_valid(mock_client, mock_spec_path):
     assert results[0]["status"] == 200
 
 
-def test_validate_endpoints_schema_mismatch(mock_client, mock_spec_path):
+def test_validate_endpoints_schema_mismatch(mock_client: MagicMock, mock_spec_path: Path) -> None:
     """Test schema mismatch failure."""
     mock_client._client.get.return_value = httpx.Response(
         200, json={"count": "ten"}, headers={"Content-Type": "application/json"}
@@ -163,7 +164,7 @@ def test_validate_endpoints_schema_mismatch(mock_client, mock_spec_path):
     assert mismatch_result["status"] == 200
 
 
-def test_validate_endpoints_invalid_json(mock_client, mock_spec_path):
+def test_validate_endpoints_invalid_json(mock_client: MagicMock, mock_spec_path: Path) -> None:
     """Test invalid JSON response when schema expects JSON."""
     mock_client._client.get.return_value = httpx.Response(
         200, content="this is not json", headers={"Content-Type": "application/json"}
@@ -181,7 +182,7 @@ def test_validate_endpoints_invalid_json(mock_client, mock_spec_path):
     assert invalid_json_result["status"] == 200
 
 
-def test_validate_endpoints_non_200_status(mock_client, mock_spec_path):
+def test_validate_endpoints_non_200_status(mock_client: MagicMock, mock_spec_path: Path) -> None:
     """Test non-200 HTTP status code."""
     mock_client._client.get.return_value = httpx.Response(404)
     validator = SpecValidator(mock_client, mock_spec_path)
@@ -195,8 +196,8 @@ def test_validate_endpoints_non_200_status(mock_client, mock_spec_path):
 
 
 def test_validate_endpoints_non_json_content_type_in_response_when_schema_expects_json(
-    mock_client, mock_spec_path
-):
+    mock_client: MagicMock, mock_spec_path: Path
+) -> None:
     """Test that if schema expects JSON but response has non-JSON content-type, it fails."""
     mock_client._client.get.return_value = httpx.Response(
         200, content="csv,data", headers={"Content-Type": "text/csv"}
@@ -214,7 +215,9 @@ def test_validate_endpoints_non_json_content_type_in_response_when_schema_expect
     assert json_but_bad_content_type_result["status"] == 200
 
 
-def test_validate_endpoints_missing_schema_definition(mock_client, mock_spec_path):
+def test_validate_endpoints_missing_schema_definition(
+    mock_client: MagicMock, mock_spec_path: Path
+) -> None:
     """Test missing schema definition for 200 OK."""
     mock_client._client.get.return_value = httpx.Response(200, json={})  # Mock valid JSON
     validator = SpecValidator(mock_client, mock_spec_path)
@@ -231,7 +234,7 @@ def test_validate_endpoints_missing_schema_definition(mock_client, mock_spec_pat
     assert no_schema_result["status"] == 200
 
 
-def test_validate_endpoints_skips_param_paths(mock_client, mock_spec_path):
+def test_validate_endpoints_skips_param_paths(mock_client: MagicMock, mock_spec_path: Path) -> None:
     """Test that endpoints with path parameters are skipped."""
     validator = SpecValidator(mock_client, mock_spec_path)
     results = list(validator.validate_endpoints(max_endpoints=100))  # Ensure all are processed
@@ -240,7 +243,9 @@ def test_validate_endpoints_skips_param_paths(mock_client, mock_spec_path):
     assert param_path_result is None  # Should be skipped
 
 
-def test_validate_endpoints_skips_dangerous_paths(mock_client, mock_spec_path):
+def test_validate_endpoints_skips_dangerous_paths(
+    mock_client: MagicMock, mock_spec_path: Path
+) -> None:
     """Test that dangerous paths are skipped."""
     validator = SpecValidator(mock_client, mock_spec_path)
     results = list(validator.validate_endpoints(max_endpoints=100))  # Ensure all are processed
@@ -249,7 +254,9 @@ def test_validate_endpoints_skips_dangerous_paths(mock_client, mock_spec_path):
     assert dangerous_path_result is None  # Should be skipped
 
 
-def test_validate_endpoints_max_endpoints_limit(mock_client, mock_spec_path):
+def test_validate_endpoints_max_endpoints_limit(
+    mock_client: MagicMock, mock_spec_path: Path
+) -> None:
     """Test max_endpoints limit."""
     # This test assumes mock_spec_path has enough endpoints to hit the limit
     mock_client._client.get.return_value = httpx.Response(

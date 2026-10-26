@@ -216,7 +216,7 @@ minversion = "8.0"
 # Disabled runs ignore them, so they apply only when a benchmark run adds --benchmark-enable.
 addopts = "--strict-config --strict-markers --benchmark-disable --benchmark-disable-gc --benchmark-warmup=on --benchmark-min-rounds=5"
 testpaths = ["tests"]
-pythonpath = [".", "tests"]
+pythonpath = ["."]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

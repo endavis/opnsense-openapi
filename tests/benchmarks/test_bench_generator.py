@@ -8,6 +8,7 @@ spec to disk.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -72,7 +73,9 @@ def controllers() -> list[ApiController]:
 
 
 @pytest.mark.benchmark
-def test_bench_generate_spec(benchmark, tmp_path: Path, controllers: list[ApiController]) -> None:
+def test_bench_generate_spec(
+    benchmark: Any, tmp_path: Path, controllers: list[ApiController]
+) -> None:
     """Benchmark generating an OpenAPI spec from synthetic controllers."""
     generator = OpenApiGenerator(tmp_path)
     spec_path = benchmark(generator.generate, controllers, "24.7")

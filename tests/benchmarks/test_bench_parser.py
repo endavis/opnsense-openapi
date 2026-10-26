@@ -11,6 +11,7 @@ finishes in well under a second.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -96,7 +97,7 @@ def controller_tree(tmp_path: Path) -> Path:
 
 
 @pytest.mark.benchmark
-def test_bench_parse_directory(benchmark, controller_tree: Path) -> None:
+def test_bench_parse_directory(benchmark: Any, controller_tree: Path) -> None:
     """Benchmark parsing a small synthetic controller directory."""
     parser = ControllerParser()
     controllers = benchmark(parser.parse_directory, controller_tree)

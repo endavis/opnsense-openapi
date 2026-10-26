@@ -211,14 +211,14 @@ def test_check_spec_paths_catches_collapsed_lowercase_controller(
         {"Interfaces": ["VlanSettingsController.php"]},
     )
 
-    broken_spec = {"paths": {"/api/interfaces/vlansettings/searchItem": {}}}
+    broken_spec: dict[str, Any] = {"paths": {"/api/interfaces/vlansettings/searchItem": {}}}
     failures = check_spec_paths(broken_spec, controllers_root)
     assert len(failures) == 1
     assert failures[0][0] == "/api/interfaces/vlansettings/searchItem"
     assert "VlansettingsController.php" in failures[0][1]
 
     # Conversely, the correctly snake_cased path resolves cleanly.
-    correct_spec = {"paths": {"/api/interfaces/vlan_settings/searchItem": {}}}
+    correct_spec: dict[str, Any] = {"paths": {"/api/interfaces/vlan_settings/searchItem": {}}}
     assert check_spec_paths(correct_spec, controllers_root) == []
 
 
@@ -239,7 +239,7 @@ def test_check_spec_paths_module_resolution_is_case_insensitive(
         },
     )
 
-    spec = {
+    spec: dict[str, Any] = {
         "paths": {
             "/api/dhcrelay/settings/get": {},
             "/api/openvpn/instances/search": {},
@@ -255,7 +255,7 @@ def test_check_spec_paths_reports_missing_module(tmp_path: Path) -> None:
         {"Interfaces": ["SettingsController.php"]},
     )
 
-    spec = {"paths": {"/api/nonexistent/foo/bar": {}}}
+    spec: dict[str, Any] = {"paths": {"/api/nonexistent/foo/bar": {}}}
     failures = check_spec_paths(spec, controllers_root)
     assert len(failures) == 1
     assert "module directory not found" in failures[0][1]
@@ -269,7 +269,7 @@ def test_check_spec_paths_skips_non_api_paths(tmp_path: Path) -> None:
     """
     controllers_root = _make_fake_controller_tree(tmp_path, {})
 
-    spec = {
+    spec: dict[str, Any] = {
         "paths": {
             "/health": {},
             "/api/onlytwo": {},
@@ -286,7 +286,7 @@ def test_check_spec_paths_collects_all_failures(tmp_path: Path) -> None:
         {"Interfaces": ["SettingsController.php"]},
     )
 
-    spec = {
+    spec: dict[str, Any] = {
         "paths": {
             "/api/interfaces/settings/get": {},  # ok
             "/api/interfaces/missing/get": {},  # bad controller

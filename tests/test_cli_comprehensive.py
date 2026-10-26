@@ -1,6 +1,7 @@
 """Comprehensive tests for the CLI."""
 
 import subprocess
+from collections.abc import Iterator
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -13,37 +14,37 @@ runner = CliRunner()
 
 
 @pytest.fixture
-def mock_downloader():
+def mock_downloader() -> Iterator[MagicMock]:
     with patch("opnsense_openapi.cli.SourceDownloader") as mock:
         yield mock
 
 
 @pytest.fixture
-def mock_parser():
+def mock_parser() -> Iterator[MagicMock]:
     with patch("opnsense_openapi.cli.ControllerParser") as mock:
         yield mock
 
 
 @pytest.fixture
-def mock_generator():
+def mock_generator() -> Iterator[MagicMock]:
     with patch("opnsense_openapi.cli.OpenApiGenerator") as mock:
         yield mock
 
 
 @pytest.fixture
-def mock_find_spec():
+def mock_find_spec() -> Iterator[MagicMock]:
     with patch("opnsense_openapi.cli.find_best_matching_spec") as mock:
         yield mock
 
 
 @pytest.fixture
-def mock_client_init():
+def mock_client_init() -> Iterator[MagicMock]:
     with patch("opnsense_openapi.client.OPNsenseClient") as mock:
         yield mock
 
 
 @pytest.fixture
-def mock_validator():
+def mock_validator() -> Iterator[MagicMock]:
     with patch("opnsense_openapi.cli.SpecValidator") as mock:
         yield mock
 
@@ -51,7 +52,7 @@ def mock_validator():
 # === Download Command Tests ===
 
 
-def test_download_success(mock_downloader):
+def test_download_success(mock_downloader: MagicMock) -> None:
     """Test successful download."""
     instance = mock_downloader.return_value
     instance.download.return_value = Path("tmp/controllers")
@@ -63,7 +64,7 @@ def test_download_success(mock_downloader):
     instance.download.assert_called_once_with("25.7.6", force=False)
 
 
-def test_download_options(mock_downloader):
+def test_download_options(mock_downloader: MagicMock) -> None:
     """Test download with options."""
     instance = mock_downloader.return_value
     instance.download.return_value = Path("custom/dir")
@@ -75,7 +76,7 @@ def test_download_options(mock_downloader):
     mock_downloader.assert_called_once_with(cache_dir=Path("custom"))
 
 
-def test_download_failure(mock_downloader):
+def test_download_failure(mock_downloader: MagicMock) -> None:
     """Test download failure handling."""
     instance = mock_downloader.return_value
     instance.download.side_effect = RuntimeError("Download failed")
@@ -89,7 +90,9 @@ def test_download_failure(mock_downloader):
 # === Generate Command Tests ===
 
 
-def test_generate_success(mock_downloader, mock_parser, mock_generator):
+def test_generate_success(
+    mock_downloader: MagicMock, mock_parser: MagicMock, mock_generator: MagicMock
+) -> None:
     """Test successful generation."""
     # Setup mocks
     dl_instance = mock_downloader.return_value
@@ -112,7 +115,9 @@ def test_generate_success(mock_downloader, mock_parser, mock_generator):
     gen_instance.generate.assert_called_once()
 
 
-def test_generate_missing_models_warning(mock_downloader, mock_parser, mock_generator):
+def test_generate_missing_models_warning(
+    mock_downloader: MagicMock, mock_parser: MagicMock, mock_generator: MagicMock
+) -> None:
     """Test warning when models directory is missing."""
     # Setup mocks
     dl_instance = mock_downloader.return_value
@@ -125,7 +130,7 @@ def test_generate_missing_models_warning(mock_downloader, mock_parser, mock_gene
     assert "Warning: Models directory not found" in result.stdout
 
 
-def test_generate_failure(mock_downloader):
+def test_generate_failure(mock_downloader: MagicMock) -> None:
     """Test generation failure at download stage."""
     mock_downloader.return_value.download.side_effect = RuntimeError("Git error")
 
@@ -138,7 +143,7 @@ def test_generate_failure(mock_downloader):
 # === Validate Command Tests ===
 
 
-def test_validate_missing_credentials():
+def test_validate_missing_credentials() -> None:
     """Test validation fails without env vars."""
     with patch.dict("os.environ", clear=True):
         result = runner.invoke(app, ["validate", "--version", "25.7.6"])
@@ -146,7 +151,7 @@ def test_validate_missing_credentials():
         assert "Live validation requires credentials" in result.stderr
 
 
-def test_validate_client_init_error(mock_client_init):
+def test_validate_client_init_error(mock_client_init: MagicMock) -> None:
     """Test failure during client initialization."""
     mock_client_init.side_effect = Exception("Connection failed")
 
@@ -158,7 +163,7 @@ def test_validate_client_init_error(mock_client_init):
         assert "Failed to initialize client" in result.stderr
 
 
-def test_validate_no_spec_found(mock_client_init, mock_find_spec):
+def test_validate_no_spec_found(mock_client_init: MagicMock, mock_find_spec: MagicMock) -> None:
     """Test validation fails if spec doesn't exist."""
     mock_find_spec.side_effect = FileNotFoundError
 
@@ -170,7 +175,9 @@ def test_validate_no_spec_found(mock_client_init, mock_find_spec):
         assert "No spec found" in result.stderr
 
 
-def test_validate_success(mock_client_init, mock_find_spec, mock_validator):
+def test_validate_success(
+    mock_client_init: MagicMock, mock_find_spec: MagicMock, mock_validator: MagicMock
+) -> None:
     """Test successful validation run."""
     mock_find_spec.return_value = Path("spec.json")
 
@@ -190,7 +197,9 @@ def test_validate_success(mock_client_init, mock_find_spec, mock_validator):
         assert "1 passed, 0 failed" in result.stdout
 
 
-def test_validate_failure_count(mock_client_init, mock_find_spec, mock_validator):
+def test_validate_failure_count(
+    mock_client_init: MagicMock, mock_find_spec: MagicMock, mock_validator: MagicMock
+) -> None:
     """Test validation with failures returns non-zero exit code."""
     mock_find_spec.return_value = Path("spec.json")
 
@@ -212,7 +221,7 @@ def test_validate_failure_count(mock_client_init, mock_find_spec, mock_validator
 
 
 @patch("shutil.which")
-def test_build_client_tool_missing(mock_which):
+def test_build_client_tool_missing(mock_which: MagicMock) -> None:
     """Test error when openapi-python-client is missing."""
     mock_which.return_value = None
     result = runner.invoke(app, ["build-client", "--version", "25.7.6"])
@@ -222,7 +231,9 @@ def test_build_client_tool_missing(mock_which):
 
 @patch("shutil.which")
 @patch("subprocess.check_call")
-def test_build_client_success(mock_call, mock_which, mock_find_spec):
+def test_build_client_success(
+    mock_call: MagicMock, mock_which: MagicMock, mock_find_spec: MagicMock
+) -> None:
     """Test successful client build."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_find_spec.return_value = Path("spec.json")
@@ -236,7 +247,9 @@ def test_build_client_success(mock_call, mock_which, mock_find_spec):
 
 @patch("shutil.which")
 @patch("subprocess.check_call")
-def test_build_client_failure(mock_call, mock_which, mock_find_spec):
+def test_build_client_failure(
+    mock_call: MagicMock, mock_which: MagicMock, mock_find_spec: MagicMock
+) -> None:
     """Test failure during subprocess execution."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_find_spec.return_value = Path("spec.json")
@@ -252,7 +265,7 @@ def test_build_client_failure(mock_call, mock_which, mock_find_spec):
 
 
 @patch("shutil.which")
-def test_build_client_install_hint_emitted(mock_which):
+def test_build_client_install_hint_emitted(mock_which: MagicMock) -> None:
     """Missing openapi-python-client tool emits the install hint (cli.py:344)."""
     mock_which.return_value = None
 
@@ -267,11 +280,11 @@ def test_build_client_install_hint_emitted(mock_which):
 @patch("subprocess.check_call")
 @patch("opnsense_openapi.client.OPNsenseClient")
 def test_build_client_auto_detects_version(
-    mock_client_cls,
-    mock_call,
-    mock_which,
-    mock_find_spec,
-):
+    mock_client_cls: MagicMock,
+    mock_call: MagicMock,
+    mock_which: MagicMock,
+    mock_find_spec: MagicMock,
+) -> None:
     """build-client without --version uses OPNsenseClient auto-detect."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_find_spec.return_value = Path("spec.json")
@@ -289,10 +302,10 @@ def test_build_client_auto_detects_version(
 @patch("subprocess.check_call")
 @patch("opnsense_openapi.client.OPNsenseClient")
 def test_build_client_auto_detect_failure_then_no_version(
-    mock_client_cls,
-    mock_call,
-    mock_which,
-):
+    mock_client_cls: MagicMock,
+    mock_call: MagicMock,
+    mock_which: MagicMock,
+) -> None:
     """If auto-detect raises and no --version is given, command exits with hint."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_client_cls.side_effect = Exception("network down")
@@ -305,7 +318,9 @@ def test_build_client_auto_detect_failure_then_no_version(
 
 @patch("shutil.which")
 @patch("subprocess.check_call")
-def test_build_client_no_spec_found(mock_call, mock_which, mock_find_spec):
+def test_build_client_no_spec_found(
+    mock_call: MagicMock, mock_which: MagicMock, mock_find_spec: MagicMock
+) -> None:
     """build-client surfaces 'No spec found' when find_best_matching_spec raises."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_find_spec.side_effect = FileNotFoundError
@@ -318,7 +333,9 @@ def test_build_client_no_spec_found(mock_call, mock_which, mock_find_spec):
 
 @patch("shutil.which")
 @patch("subprocess.check_call")
-def test_build_client_overwrite_passes_flag(mock_call, mock_which, mock_find_spec):
+def test_build_client_overwrite_passes_flag(
+    mock_call: MagicMock, mock_which: MagicMock, mock_find_spec: MagicMock
+) -> None:
     """--overwrite must propagate to the openapi-python-client subprocess command."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_find_spec.return_value = Path("spec.json")
@@ -332,7 +349,9 @@ def test_build_client_overwrite_passes_flag(mock_call, mock_which, mock_find_spe
 
 @patch("shutil.which")
 @patch("subprocess.check_call")
-def test_build_client_custom_output_path(mock_call, mock_which, mock_find_spec, tmp_path):
+def test_build_client_custom_output_path(
+    mock_call: MagicMock, mock_which: MagicMock, mock_find_spec: MagicMock, tmp_path: Path
+) -> None:
     """When --output is provided, the explicit path is used (skips default-version dir branch)."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_find_spec.return_value = Path("spec.json")
@@ -348,7 +367,7 @@ def test_build_client_custom_output_path(mock_call, mock_which, mock_find_spec, 
 # === Validate: spec-found / detected-version branches ===
 
 
-def test_validate_no_version_and_detect_fails(mock_client_init):
+def test_validate_no_version_and_detect_fails(mock_client_init: MagicMock) -> None:
     """validate() exits with 'Could not determine version' when detect returns None."""
     # Construct a client whose _detected_version is None
     instance = MagicMock()
@@ -364,7 +383,9 @@ def test_validate_no_version_and_detect_fails(mock_client_init):
     assert "Could not determine version" in result.stderr
 
 
-def test_validate_uses_detected_version(mock_client_init, mock_find_spec, mock_validator):
+def test_validate_uses_detected_version(
+    mock_client_init: MagicMock, mock_find_spec: MagicMock, mock_validator: MagicMock
+) -> None:
     """validate() picks up client._detected_version when --version omitted."""
     instance = MagicMock()
     instance._detected_version = "25.1.0"
@@ -382,7 +403,9 @@ def test_validate_uses_detected_version(mock_client_init, mock_find_spec, mock_v
     assert "Detected version: 25.1.0" in result.stdout
 
 
-def test_validate_skipped_result(mock_client_init, mock_find_spec, mock_validator):
+def test_validate_skipped_result(
+    mock_client_init: MagicMock, mock_find_spec: MagicMock, mock_validator: MagicMock
+) -> None:
     """validate() prints SKIPPED for results that are neither valid nor errored."""
     mock_find_spec.return_value = Path("spec.json")
     mock_validator.return_value.validate_endpoints.return_value = [
@@ -405,7 +428,9 @@ def test_validate_skipped_result(mock_client_init, mock_find_spec, mock_validato
     assert "0 passed, 0 failed, 1 skipped" in result.stdout
 
 
-def test_validate_long_path_is_truncated(mock_client_init, mock_find_spec, mock_validator):
+def test_validate_long_path_is_truncated(
+    mock_client_init: MagicMock, mock_find_spec: MagicMock, mock_validator: MagicMock
+) -> None:
     """validate() truncates long paths (>50 chars) with '...' when printing."""
     long_path = "/api/" + "x" * 80
     mock_find_spec.return_value = Path("spec.json")
@@ -437,12 +462,12 @@ def test_validate_long_path_is_truncated(mock_client_init, mock_find_spec, mock_
 @patch("shutil.which")
 @patch("subprocess.check_call")
 def test_setup_success(
-    mock_call,
-    mock_which,
-    mock_downloader,
-    mock_parser,
-    mock_generator,
-):
+    mock_call: MagicMock,
+    mock_which: MagicMock,
+    mock_downloader: MagicMock,
+    mock_parser: MagicMock,
+    mock_generator: MagicMock,
+) -> None:
     """Full setup orchestration: download -> generate -> build-client."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
 
@@ -470,7 +495,7 @@ def test_setup_success(
 
 
 @patch("shutil.which")
-def test_setup_missing_openapi_python_client(mock_which):
+def test_setup_missing_openapi_python_client(mock_which: MagicMock) -> None:
     """setup early-exits with install hint when openapi-python-client is absent."""
     mock_which.return_value = None
 
@@ -481,7 +506,7 @@ def test_setup_missing_openapi_python_client(mock_which):
 
 
 @patch("shutil.which")
-def test_setup_download_failure(mock_which, mock_downloader):
+def test_setup_download_failure(mock_which: MagicMock, mock_downloader: MagicMock) -> None:
     """setup propagates a RuntimeError from the downloader as exit code 1."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_downloader.return_value.download.side_effect = RuntimeError("git failure")
@@ -495,12 +520,12 @@ def test_setup_download_failure(mock_which, mock_downloader):
 @patch("shutil.which")
 @patch("subprocess.check_call")
 def test_setup_build_client_subprocess_failure(
-    mock_call,
-    mock_which,
-    mock_downloader,
-    mock_parser,
-    mock_generator,
-):
+    mock_call: MagicMock,
+    mock_which: MagicMock,
+    mock_downloader: MagicMock,
+    mock_parser: MagicMock,
+    mock_generator: MagicMock,
+) -> None:
     """setup surfaces subprocess.CalledProcessError from the build-client step."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
 
@@ -520,12 +545,12 @@ def test_setup_build_client_subprocess_failure(
 @patch("shutil.which")
 @patch("subprocess.check_call")
 def test_setup_overwrite_flag_propagates(
-    mock_call,
-    mock_which,
-    mock_downloader,
-    mock_parser,
-    mock_generator,
-):
+    mock_call: MagicMock,
+    mock_which: MagicMock,
+    mock_downloader: MagicMock,
+    mock_parser: MagicMock,
+    mock_generator: MagicMock,
+) -> None:
     """setup --overwrite must reach the openapi-python-client subprocess command."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_downloader.return_value.download.return_value = Path(
@@ -544,13 +569,13 @@ def test_setup_overwrite_flag_propagates(
 @patch("shutil.which")
 @patch("subprocess.check_call")
 def test_setup_custom_output_path(
-    mock_call,
-    mock_which,
-    mock_downloader,
-    mock_parser,
-    mock_generator,
-    tmp_path,
-):
+    mock_call: MagicMock,
+    mock_which: MagicMock,
+    mock_downloader: MagicMock,
+    mock_parser: MagicMock,
+    mock_generator: MagicMock,
+    tmp_path: Path,
+) -> None:
     """setup --output overrides the default version-derived output directory."""
     mock_which.return_value = "/usr/bin/openapi-python-client"
     mock_downloader.return_value.download.return_value = Path(
