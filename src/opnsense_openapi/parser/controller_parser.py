@@ -245,8 +245,9 @@ class ControllerParser:
         if not directory.exists():
             return controllers
 
-        # Find all PHP controller files
-        for php_file in directory.rglob("*Controller.php"):
+        # Find all PHP controller files. Sorted, because rglob yields filesystem
+        # order, which differs between machines and would reorder the spec (#138).
+        for php_file in sorted(directory.rglob("*Controller.php")):
             # Only parse files in 'Api' directories
             if "Api" in php_file.parts:
                 controller = self.parse_controller_file(php_file)

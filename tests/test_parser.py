@@ -164,6 +164,38 @@ class InfoController extends ApiControllerBase
         assert modules == {"Firewall", "System"}
 
 
+def test_parse_directory_returns_controllers_in_path_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Controllers come back in sorted path order, whatever order rglob yields (#138)."""
+    for module in ("Alpha", "Beta", "Gamma"):
+        api_dir = tmp_path / module / "Api"
+        api_dir.mkdir(parents=True)
+        (api_dir / "ItemController.php").write_text(
+            f"""<?php
+namespace OPNsense\\{module}\\Api;
+use OPNsense\\Base\\ApiControllerBase;
+
+class ItemController extends ApiControllerBase
+{{
+    public function getAction() {{}}
+}}
+"""
+        )
+
+    real_rglob = Path.rglob
+
+    def reversed_rglob(self: Path, pattern: str) -> list[Path]:
+        # Simulate a filesystem that lists entries in reverse order.
+        return sorted(real_rglob(self, pattern), reverse=True)
+
+    monkeypatch.setattr(Path, "rglob", reversed_rglob)
+
+    controllers = ControllerParser().parse_directory(tmp_path)
+
+    assert [c.module for c in controllers] == ["Alpha", "Beta", "Gamma"]
+
+
 def test_to_snake_case() -> None:
     """Test snake_case conversion."""
     assert to_snake_case("findAlias") == "find_alias"

@@ -150,6 +150,33 @@ def test_integer_as_string(generator: OpenApiGenerator) -> None:
     assert "Integer value" in props["count"]["description"]
 
 
+def test_option_field_enum_dedupes_in_first_seen_order(generator: OpenApiGenerator) -> None:
+    """Enum values keep the model's order and drop repeats, deterministically (#138)."""
+    xml_content = """
+    <model>
+        <items>
+            <myopt type="OptionField">
+                <OptionValues>
+                    <zeta>Z</zeta>
+                    <alpha>A</alpha>
+                    <mid>M</mid>
+                    <alpha>A again</alpha>
+                    <beta>B</beta>
+                </OptionValues>
+            </myopt>
+        </items>
+    </model>
+    """
+    root = ET.fromstring(xml_content)
+    items = root.find("items")
+    assert items is not None
+
+    props = generator._parse_model_nodes(items)
+
+    string_variant = props["myopt"]["oneOf"][1]
+    assert string_variant["enum"] == ["zeta", "alpha", "mid", "beta"]
+
+
 def test_boolean_as_enum(generator: OpenApiGenerator) -> None:
     """Test that BooleanField maps to string enum 0/1."""
     xml_content = """

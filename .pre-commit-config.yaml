@@ -96,7 +96,9 @@ repos:
         entry: uv run codespell
         language: system
         types: [text]
-        exclude: ^(\.git/|\.venv/|uv\.lock)
+        # Generated specs carry OPNsense's own model text (e.g. "Permisssion");
+        # `doit spell_check` already skips them via [tool.codespell] in pyproject.toml.
+        exclude: ^(\.git/|\.venv/|uv\.lock|src/opnsense_openapi/(specs|generated)/)
         stages: [pre-commit]
 
       # Branch naming enforcement

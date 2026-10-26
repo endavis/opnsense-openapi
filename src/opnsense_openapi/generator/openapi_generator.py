@@ -149,8 +149,13 @@ class OpenApiGenerator:
             self._process_controller(controller)
 
         output_path = self.output_dir / f"opnsense-{version}.json"
-        with output_path.open("w", encoding="utf-8") as f:
+        # newline="\n": text mode would write CRLF on Windows, making the spec
+        # differ byte-for-byte from one generated elsewhere (#138).
+        with output_path.open("w", encoding="utf-8", newline="\n") as f:
             json.dump(self.spec, f, indent=2)
+            # End with a newline so the committed spec is byte-identical to this
+            # output and still satisfies the end-of-file-fixer hook (#138).
+            f.write("\n")
 
         logger.info(f"Generated OpenAPI spec at {output_path}")
         return output_path
@@ -284,7 +289,9 @@ class OpenApiGenerator:
                         # because it can be read as an object map of options
                         string_variant = {
                             "type": "string",
-                            "enum": list(set(enum_values)),
+                            # De-duplicate keeping first-seen (model XML) order;
+                            # set() order varies per run (#138).
+                            "enum": list(dict.fromkeys(enum_values)),
                             "description": OPTION_FIELD_ENUM_SCHEMA["description"],
                         }
                         prop_def = {
