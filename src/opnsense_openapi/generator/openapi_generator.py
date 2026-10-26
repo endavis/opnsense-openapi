@@ -151,6 +151,9 @@ class OpenApiGenerator:
         output_path = self.output_dir / f"opnsense-{version}.json"
         with output_path.open("w", encoding="utf-8") as f:
             json.dump(self.spec, f, indent=2)
+            # End with a newline so the committed spec is byte-identical to this
+            # output and still satisfies the end-of-file-fixer hook (#138).
+            f.write("\n")
 
         logger.info(f"Generated OpenAPI spec at {output_path}")
         return output_path

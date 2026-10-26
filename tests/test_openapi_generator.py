@@ -254,3 +254,14 @@ class SettingsController extends ApiMutableModelControllerBase
 
     assert b'"opt19"' in outputs[0], "fixture must exercise enum generation"
     assert outputs[0] == outputs[1]
+
+
+def test_generated_spec_ends_with_a_single_newline(
+    sample_controllers: list[ApiController], tmp_path: Path
+) -> None:
+    """The spec file ends in exactly one newline, as end-of-file-fixer requires (#138)."""
+    spec_path = OpenApiGenerator(tmp_path).generate(sample_controllers, "24.7")
+
+    content = spec_path.read_bytes()
+    assert content.endswith(b"}\n")
+    assert not content.endswith(b"\n\n")
