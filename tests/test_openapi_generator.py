@@ -259,9 +259,14 @@ class SettingsController extends ApiMutableModelControllerBase
 def test_generated_spec_ends_with_a_single_newline(
     sample_controllers: list[ApiController], tmp_path: Path
 ) -> None:
-    """The spec file ends in exactly one newline, as end-of-file-fixer requires (#138)."""
+    """The spec ends in exactly one LF newline and uses LF throughout (#138).
+
+    end-of-file-fixer requires the final newline; LF on every platform keeps a
+    spec generated on Windows byte-identical to one generated elsewhere.
+    """
     spec_path = OpenApiGenerator(tmp_path).generate(sample_controllers, "24.7")
 
     content = spec_path.read_bytes()
+    assert b"\r\n" not in content
     assert content.endswith(b"}\n")
     assert not content.endswith(b"\n\n")

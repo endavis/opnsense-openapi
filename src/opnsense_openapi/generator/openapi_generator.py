@@ -149,7 +149,9 @@ class OpenApiGenerator:
             self._process_controller(controller)
 
         output_path = self.output_dir / f"opnsense-{version}.json"
-        with output_path.open("w", encoding="utf-8") as f:
+        # newline="\n": text mode would write CRLF on Windows, making the spec
+        # differ byte-for-byte from one generated elsewhere (#138).
+        with output_path.open("w", encoding="utf-8", newline="\n") as f:
             json.dump(self.spec, f, indent=2)
             # End with a newline so the committed spec is byte-identical to this
             # output and still satisfies the end-of-file-fixer hook (#138).
