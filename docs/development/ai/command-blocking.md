@@ -45,11 +45,14 @@ The hook uses Python's `shlex` module to properly parse shell quoting:
 
 #### Key Feature: Chained Command Detection
 
-The hook scans all token positions, so chained commands using `&&` or `;` are caught:
+The hook scans all token positions, so chained commands using `&&` or `;` are caught. The scan
+also runs on tokens where every `;`, `&&`, `||`, `|` and `&` is its own token, so a separator glued
+to the next command still ends the one before it (#1023):
 
 ```bash
 # BLOCKED - dangerous command after safe one
 git status; git push --force origin main
+true;git push --force origin main
 cd /path && doit release
 
 # ALLOWED - all commands in the chain are safe
@@ -59,9 +62,9 @@ git status; git push origin feat/branch
 
 #### Key Feature: Git Global Option Handling
 
-Git global options (e.g., `-C <path>`, `-c <k>=<v>`, `--git-dir=<dir>`) appear between the `git`
-token and the subcommand. The hook walks past them to find the real subcommand, so these are all
-caught:
+Git global options (e.g., `-C <path>`, `-c <k>=<v>`, `--git-dir=<dir>`, `--attr-source <ref>`,
+`--config-env <var>=<envvar>`) appear between the `git` token and the subcommand. The hook walks
+past them to find the real subcommand, so these are all caught:
 
 ```bash
 # BLOCKED - global options shift the subcommand position, but hook handles them
@@ -150,6 +153,38 @@ for the convention, and
 for why the scanner is not taught to recognise prose instead — the short version is that skipping
 bodies for a list of trusted receivers turns a mistake in that list into a bypass, and the flat
 scan is what covers interpreters nobody has listed.
+
+Finding the marker itself has to be quote-aware too: `echo "<<EOF"` is not a heredoc, it is an
+ordinary argument that happens to contain the characters `<<EOF`. `_heredoc_marker_match` walks
+each line with the same quote-tracking the comment stripper uses, carrying an open quote from one
+line to the next, and only tries the marker pattern outside a quote. A quoted `<<WORD`, including
+one that closes a string opened on an earlier line, is left alone, and the lines after it are not
+mistaken for its body (#1011). Where the quoting is too tangled to follow (a marker line that ends
+inside a quote, or a `$(...)`, `${...}` or backtick expansion inside a double quote, whose own
+quotes nest), the hook stops stripping heredoc bodies from that point on, so every later line is still
+scanned.
+
+```bash
+# BLOCKED - the quoted "<<EOF" is not a heredoc marker, so the read after it is still seen
+echo "<<EOF" ;
+cat ~/.netrc
+```
+
+The checks that need to know where a command *starts* (the merge rule, the credential-read check
+and the env-dump check) see the command with every heredoc body and terminator line removed.
+Without that, an unbalanced quote inside a heredoc body could open a quote that swallows everything
+after the terminator, hiding a real `git merge` or credential read from the scan meant to catch it.
+The merge rule also scans the full command, so a merge inside a body whose receiver the hook does not
+recognise as running it, such as `env -i bash <<EOF`, is still blocked:
+
+```bash
+# BLOCKED - the merge rule sees the heredoc-stripped command, so the quote in the
+# body does not swallow the `git merge` after the terminator
+cat <<'EOF'
+"
+EOF
+git merge feature "
+```
 
 ### Files
 
@@ -268,13 +303,15 @@ target list stays in one place.
 
 Codex will not run a hook it has not been told to trust; trust is persisted per hook (`trusted_hash`
 in the hooks config). **An untrusted hook is skipped silently** — no warning, no log line — which is
-why this hook appeared to work for as long as nobody checked.
+why this hook appeared to work for as long as nobody checked. This is hook trust, scoped to one
+hook's source; it is a different gate from the *project* trust covered next, and bypassing one does
+not bypass the other.
 
 Headless invocations therefore pass `--dangerously-bypass-hook-trust`, the way Antigravity's pass
 `--dangerously-skip-permissions`:
 
 ```bash
-codex -a never --dangerously-bypass-hook-trust exec '<prompt>'
+codex -a never --dangerously-bypass-hook-trust exec '<prompt>' < /dev/null
 ```
 
 The flag makes the safety hook **run**; it does not weaken it. What it bypasses is Codex's check
@@ -286,6 +323,93 @@ script.
 > consumer who would rather not accept that can trust the hook once in an interactive Codex session
 > (the trust persists) and drop the flag from the bridges.
 
+##### Codex requires *project* trust, a separate gate from hook trust
+
+Hook trust (above) governs one hook's source. A separate, earlier gate governs whether Codex loads
+the checkout's `.codex/` configuration — hooks **and** rules — at all: **project trust**, recorded
+per checkout path in `~/.codex/config.toml`'s `[projects."<abs path>"]` table.
+`--dangerously-bypass-hook-trust` does not grant it; the name only covers hook-source review.
+
+Measured with codex-cli 0.163.0, 2026-10-21 (#984), from a scratch `git clone` of this repo with a
+probe rule `.codex/rules/probe-984.rules` = `prefix_rule(pattern=["git", "ls-remote"],
+decision="allow")` — chosen because the maintainer's personal `~/.codex/rules` do not cover `git
+ls-remote`, so they cannot mask the result. Each row ran:
+
+```bash
+codex -a never --dangerously-bypass-hook-trust \
+  [-c 'projects={"<clone path>"={trust_level="<level>"}}'] \
+  exec 'Run exactly: git ls-remote https://github.com/endavis/pyproject-template refs/heads/main ...' \
+  < /dev/null
+```
+
+counting `hook: PreToolUse` lines on stderr:
+
+| Project trust for the clone | `hook: PreToolUse` lines | `git ls-remote` result | `.codex/` loaded? |
+| :--- | :--- | :--- | :--- |
+| No `[projects."<path>"]` entry in `~/.codex/config.toml` | 0 | `fatal: unable to access ...: Could not resolve host: github.com` | **No** |
+| `trust_level = "untrusted"` | 0 | same failure | **No** |
+| `trust_level = "trusted"` | 2 | resolves `refs/heads/main` (e.g. `ec0f479...`) | **Yes** |
+
+So in a checkout Codex has not trusted, a headless `codex exec` loads neither `.codex/rules/gh.rules`
+(the #980 fix) nor the `PreToolUse` dangerous-command hook — regardless of
+`--dangerously-bypass-hook-trust`. The main checkout in this repo loads because its
+`~/.codex/config.toml` already carries
+`[projects."<abs path to this checkout>"] trust_level = "trusted"`.
+
+One syntax note from the same measurement: the dotted override form
+`-c projects."<path>".trust_level="trusted"` had no effect; the inline-table form
+`-c 'projects={"<path>"={trust_level="trusted"}}'` did.
+
+**Trust step, one-time per checkout:** before relying on `.codex/` in a headless `codex exec` run,
+trust the checkout — accept the trust prompt in an interactive `codex` session opened in that
+directory, or add `[projects."<abs path>"] trust_level = "trusted"` to `~/.codex/config.toml` by
+hand. Until then, neither defense layer applies, headless or not. See also [Headless Codex host
+limits](cross-agent-delegation.md#headless-codex-host-limits) for what a trusted-but-headless Codex
+session still cannot do.
+
+##### `gh` has no network inside the sandbox — `.codex/rules/*.rules` is a separate mechanism
+
+`.codex/config.toml`'s `approval_policy` and `[[hooks.PreToolUse]]` control whether a command is
+*asked about* or run through the dangerous-command hook. They do not control whether a command runs
+*inside Codex's sandbox* or outside it — that is a third, separate mechanism: project-level
+`.codex/rules/*.rules` files, each a sequence of Starlark `prefix_rule(pattern=[...],
+decision="allow")` calls matched against the exec'd command's prefix.
+
+Measured with codex-cli 0.163.0 (#980): inside the sandbox, `gh` has no network at all — a DNS write to `:53`,
+and (with `GODEBUG=netdns=cgo`) a TCP write to `:443`, both return "permission denied", even with `-c
+sandbox_workspace_write.network_access=true`. A standalone `gh` command (or `git ls-remote`) that
+matches a `prefix_rule` allow runs *outside* the sandbox instead, with full network access —
+confirmed by a probe rule file that fixed a previously-failing `git ls-remote`. The allow rule
+decides only *where* a command runs; the `PreToolUse` hook still fires first (Codex logs `hook:
+PreToolUse` before each allow-ruled `gh` call), so `gh pr merge --admin` and the other blocked
+patterns are refused exactly as before.
+
+`.codex/rules/gh.rules` allows only the read-only subcommands delegated runs use: `gh pr
+{view,diff,checks,list}` and `gh issue {view,list}`. Everything else — `gh pr comment`, `gh api`
+(which writes with `-X`/`-f`), `gh pr merge` — matches no rule and stays in the sandbox, where it has
+no network, so GitHub writes from a delegated Codex run get no network path. That narrows the
+normal path; it does not guarantee that a delegated run can't write. A rule matches its prefix with
+any arguments after it, and the `PreToolUse` hook is a guardrail, not a security boundary
+([ADR-9019](../../decisions/9019-the-dangerous-command-hook-is-a-guardrail-not-a-security-boundary.md)).
+A guarantee needs a credential boundary, such as a token scoped for delegated runs. Check a change
+to the file with
+`codex execpolicy check --rules .codex/rules/gh.rules gh pr view 1`;
+`tests/template/test_ai_agent_assets.py` does the same for both sides of the line.
+
+Headless invocations also end in `< /dev/null`. `codex exec` reads extra input from stdin when stdin
+is not a terminal ("Reading additional input from stdin..."), and a caller whose stdin is an open
+pipe or socket — a backgrounded shell, an agent's tool runner — leaves it waiting forever.
+
+The allow rule only matches when `gh` is the exec'd prefix. If a command chains `gh` with `;`,
+`&&`, `|`, or any other command, the exec'd prefix is the shell, not `gh`, so the rule does not
+match and the chained call falls into the sandboxed, network-less path instead. `.codex/rules/gh.rules`
+still carries this allow rule for a headless Codex **host**'s own reads (its own `gh issue
+view`/`gh pr view` in `multi-plan`/`multi-review`'s precondition steps) — but as of #985 no prompt
+this repo hands Codex *non-interactively as a delegate* calls `gh` at all: the host pre-fetches the
+GitHub data a delegated prompt needs with `doit delegation_context` first, so there is no `gh` call
+left to chain-guard in a delegated prompt. See [Context-file
+convention](cross-agent-delegation.md#context-file-convention).
+
 #### Antigravity CLI (`agy`)
 
 `.agents/hooks.json`:
@@ -294,7 +418,7 @@ script.
   "block-dangerous-commands": {
     "PreToolUse": [
       {
-        "matcher": "run_command|write_to_file",
+        "matcher": "run_command|write_to_file|write_file|edit_file",
         "hooks": [
           {
             "type": "command",
@@ -308,9 +432,19 @@ script.
 ```
 
 Antigravity sends a distinct hook payload — a nested `toolCall` with PascalCase args
-(`{"toolCall": {"name": "run_command", "args": {"CommandLine": "..."}}}`); its file-write tool is
-`write_to_file` (`TargetFile` / `CodeContent`). The hook normalizes these to the canonical
-`command` / `file_path` / `content` keys.
+(`{"toolCall": {"name": "run_command", "args": {"CommandLine": "..."}}}`). Its file tools, as logged
+from a live `agy` 1.4.3 session (#1006):
+
+| Tool | Args | Normalized to |
+| :--- | :--- | :--- |
+| `run_command` | `CommandLine` | `command` |
+| `write_file` | `Path`, `Content`, `Overwrite` | `file_path`, `content` |
+| `edit_file` | `Path`, `Target`, `Replacement` | `file_path`, `new_string` |
+| `write_to_file` (older releases) | `TargetFile`, `CodeContent` | `file_path`, `content` |
+
+`agy` 1.4.3 never called `write_to_file`; before #1006 the matcher named only it and `run_command`,
+so `write_file` and `edit_file` never reached the hook. A test in
+`tests/test_hook_dangerous_command_matrix.py` checks that the matcher matches every tool in this table.
 
 Unlike Claude/Codex (which block via exit code 2), `agy` blocks only when the hook prints
 `{"decision": "deny", "reason": "..."}` on **stdout** (exit code 0); a safe command prints nothing
@@ -388,6 +522,14 @@ everyone:
 | `printenv PATH` | Allowed — not secret-shaped |
 | `env -u FORCE_COLOR doit check`, `env VAR=1 make` | Allowed — an *invocation*, not a dump |
 | `cat ~/.pypirc`, `~/.netrc`, `~/.aws/credentials`, `~/.docker/config.json`, `gh/hosts.yml` | **Blocked** — credential stores |
+| `echo hi; cat ~/.netrc`, `echo hi` *(newline)* `cat ~/.netrc`, `true` *(newline)* `printenv` | **Blocked** — a command position after a glued `;` or an unquoted newline counts (#1011) |
+
+Both checks above are anchored on where a command *starts*, so they need a tokenizer that treats an
+unquoted newline and a glued `;`/`&&`/`|` as separators of their own — `shlex.split` (what
+`tokenize()` uses) treats a newline as ordinary whitespace and leaves a glued separator stuck to
+its neighbour, so `hi;cat` never produced a `cat` in command position. `_structural_tokens` (built
+for the merge rule, and now shared by these two checks) is a plain `shlex.shlex` lex instead, with
+`;`, `&`, `|` and `\n` as punctuation characters.
 
 **What this is and is not.** It reduces *accidental* exposure — a secret dumped into a transcript
 that is then pasted into an issue, or read by a later summarisation step. It is not a boundary
@@ -490,7 +632,13 @@ Force push, delete, and merge operations are only blocked when targeting protect
 | `git branch -D feat/old` | ALLOWED |
 | `git merge branch` (on main) | BLOCKED (creates merge commit) |
 | `git merge --ff-only branch` (on main) | ALLOWED (fast-forward only) |
+| `git merge branch; echo --ff-only` (on main) | BLOCKED (`--ff-only` counts only on the merge itself) |
+| `git merge branch\necho --ff-only` (on main) | BLOCKED (a newline doesn't end the command either) |
+| `git merge branch # --ff-only` (on main) | BLOCKED (`#` starts a comment, not an argument) |
+| `git --attr-source HEAD merge branch` (on main) | BLOCKED (`--attr-source` is a value-taking global option) |
+| `git log --grep merge` (on main) | ALLOWED (a `git log`, not a merge) |
 | `git merge branch` (on feature) | ALLOWED |
+| `cat <<'EOF'` *(newline)* `"` *(newline)* `EOF` *(newline)* `git merge branch "` (on main) | BLOCKED (the merge rule reads the heredoc-stripped command, so the quote in the body doesn't swallow the merge after the terminator — #1011) |
 
 #### Blocked Workflow Commands
 
@@ -536,7 +684,7 @@ The hook reads `os.environ` at hook-startup time (the AI CLI's process environme
 
 #### Env-Var Persistence Blocks
 
-The hook fires on **Edit**, **Write**, and **MultiEdit** (Claude/Codex), **write_file**/**replace** (retained for Gemini compatibility), and **write_to_file** (Antigravity) in addition to Bash commands. Any operation whose payload contains the literal string `ALLOW_AI_READY_TO_MERGE` **and** whose target is a known persistence file is blocked.
+The hook fires on **Edit**, **Write**, and **MultiEdit** (Claude/Codex), **write_file**/**replace** (retained for Gemini compatibility), and **write_file**/**edit_file**/**write_to_file** (Antigravity) in addition to Bash commands. Any operation whose payload contains the literal string `ALLOW_AI_READY_TO_MERGE` **and** whose target is a known persistence file is blocked.
 
 **Protected file basenames** (Bash redirect target or `file_path` argument):
 

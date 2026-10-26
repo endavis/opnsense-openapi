@@ -20,7 +20,6 @@ You are a senior coding partner. Your goal is efficient, tested, and compliant c
 ## Agent Role & Expertise
 **You are an expert Python developer.**
 - **Mission:** Maintain code quality, follow patterns, and improve the codebase.
-- **Stack:** Python 3.12+, uv, doit, ruff, mypy, pytest.
 
 ## ⚠️ MANDATORY PROTOCOLS (READ FIRST)
 
@@ -28,7 +27,7 @@ You are a senior coding partner. Your goal is efficient, tested, and compliant c
 - **Questions != Instructions:** If the user asks "What...", "How...", or "Can we...", answer with a **PLAN** or **EXPLANATION**.
 - **NEVER implement based on a question.** Wait for explicit "Do it" or "Proceed".
 - **Stop & Verify:** If the user says "Stop", "Wait", "Hold on", "Cancel", "Wrong", or "No", immediately halt and ask for clarification.
-- **Summary Before Commit:** At the end of any implementation (docs, fix, feature, chore, etc.), summarize what was changed for the user before committing and wait for the user's explicit instruction to commit the changes.
+- **Summary Before Commit:** At the end of any implementation (docs, fix, feature, chore, etc.), summarize what was changed for the user before committing and wait for the user's explicit instruction to commit the changes. **Exception:** the user saying "implement issue X" (the `implement-issue` skill) authorizes commit, push, and PR creation on that issue's own branch without a further wait — see [Slash Commands and Workflows — implement issue N](docs/development/ai/slash-commands.md#implement-issue-n).
 - **Failing Tests:** Never modify a test to make it pass. Stop, explain *why* the test broke (what behavior changed, what the test was asserting), and discuss with the user whether the code or the test should change. A failing test is a signal, not a problem to silence.
 
 ### 2. Task Planning Protocol
@@ -118,15 +117,28 @@ Some of these are blocked in code as well as forbidden here — committing to `m
 | **Testing** | `.github/CONTRIBUTING.md` | Test patterns, coverage rules. |
 | **Security** | `.github/SECURITY.md` | Policy, sensitive data handling. |
 | **Architecture & Layering** | `docs/development/ai/architectural-conventions.md` | Imperative-form rules for AI agents. |
-| **Slash Commands & Workflows** | `docs/development/ai/slash-commands.md` | Reference for /<ai>:plan, /<ai>:implement, /ghi-finalize, self-action and cross-agent workflows. |
+| **Slash Commands & Workflows** | `docs/development/ai/slash-commands.md` | Reference for "implement issue N", self-action review/adversarial-review, and cross-agent workflows. |
 | **AI Agent Walkthrough** | `docs/development/ai/first-5-minutes.md` | Narrative onboarding for the AI agent workflow (plan → implement → review → PR → merge). |
+
+## Template Layers and Guarded Docs
+
+Configuration turns this template into a project. Know which layer a file belongs to before editing it:
+
+- **The package**: `src/package_name/`, renamed to the project's package on configuration.
+- **Dev tooling that ships**: `tools/doit/`, `tools/hooks/` and their tests. The tests ship too; shedding them broke a spawned project's coverage gate (#731).
+- **Template-owned, shed on configuration**: `tools/pyproject_template/`, `bootstrap.py`, `README.template.md` (renamed onto `README.md`), and only the tests in `TEMPLATE_OWNED_TEST_FILES`. `tests/template/` is not shed wholesale.
+
+A test is template-owned when its target does not survive configuration ([ADR-9017](docs/decisions/9017-template-tooling-and-its-tests-are-template-owned.md)). A test that ships must never depend on shed code (#691).
+
+**ADR numbering:** template decisions use the 9XXX series (`doit adr --template`), project decisions the 0001 series (`doit adr`). See [Tooling Roles](docs/development/tooling-roles.md).
+
+**Docs and AI config are test-guarded.** Editing docs, `AGENTS.md`, rule files or agent commands and skills can fail `doit test`, for example in `tests/test_instruction_pointers.py`, `tests/test_cross_agent_contract.py` and `tests/test_markdown_links.py`. A change to one agent's command, skill or rule must be mirrored across `.claude/`, `.github/` and `.agents/`.
 
 ## Common Pitfalls
 
 ### Anti-Patterns to Avoid
 - **Tight Coupling**: Always use dependency injection
 - **Silent Failures**: Always log errors and raise exceptions with context
-- **Mutable Defaults**: Never use `def foo(items=[])`
 - **String Concatenation for Paths**: Use `Path` objects
 
 ### Security Pitfalls
@@ -163,8 +175,8 @@ Some of these are blocked in code as well as forbidden here — committing to `m
 **How to Handle:**
 1. Document in commit message with `BREAKING CHANGE:` footer
 2. Document in PR description with migration guide
-3. Update CHANGELOG.md
-4. Breaking changes require major version bump
+3. Don't edit CHANGELOG.md: `doit release` writes it from the commit messages, footer included
+4. Breaking changes bump MINOR before 1.0 and MAJOR from 1.0 on: set `major_version_zero = false` in `[tool.commitizen]` before releasing 1.0 (`doit release` refuses 1.0 or later until you do)
 
 ## Tooling & Environment
 
@@ -172,7 +184,7 @@ Some of these are blocked in code as well as forbidden here — committing to `m
 
 ### Principle: Use the Highest-Level Tool Available
 
-This project wraps common operations in `doit` tasks that enforce conventions, validate inputs, and reduce errors. **Always check if a `doit` task exists before running a raw command.**
+This project wraps common operations in `doit` tasks that enforce conventions, validate inputs, and reduce errors. **Always check if a `doit` task exists (`doit list`) before running a raw command.**
 
 The tool hierarchy (prefer higher over lower):
 
@@ -199,10 +211,12 @@ The tool hierarchy (prefer higher over lower):
 | Create ADRs | `doit adr` | Manual file creation |
 | Sync GitHub labels | `doit labels_sync` | `gh label create` / `gh label edit` manually |
 | Commit (interactive) | `doit commit` | `git commit` without format |
+| Create a worktree | `doit worktree --branch=<branch>` | `git worktree add` by hand |
 | Install/add packages | `uv add <pkg>` | `pip install` |
-| Sync dependencies | `uv sync` | `pip install -r` |
+| Sync dependencies | `doit install_dev` | plain `uv sync`, `pip install -r` |
 | Run Python scripts | `uv run <script>` | `python` directly |
 | Run a specific test file | `uv run pytest tests/test_foo.py` | `pytest` directly |
+| Run a single test | `uv run pytest tests/test_foo.py::test_name` | `pytest` directly |
 | Read issues/PRs/comments | `gh issue view`, `gh pr view`, `gh api` | `WebFetch` on GitHub URLs |
 | GitHub API queries | `gh api` | `curl` to GitHub API |
 | Build docs | `doit docs_build` | `mkdocs build` directly |
@@ -211,15 +225,6 @@ The tool hierarchy (prefer higher over lower):
 | Tag after release PR merge | `doit release_tag` | Manual tag + push |
 | Mutation testing | `doit mutate` | `mutmut` directly |
 | Generate SBOM | `doit sbom` | `cyclonedx-py` directly |
-
-### Discovering Available Tasks
-
-List all available `doit` tasks before assuming one doesn't exist:
-
-```bash
-doit list          # Show all tasks with descriptions
-doit help <task>   # Show detailed help for a specific task
-```
 
 ### When Raw Commands Are Appropriate
 
@@ -312,13 +317,15 @@ Where `<agent-type>` is one of: `claude`, `copilot`, `codex`, `antigravity`, or 
 
 **Exception:** `tmp/checkpoints/` is the one location outside `tmp/agents/<agent-type>/`. Checkpoints written by `/checkpoint` are portable project-state captures meant to be readable by any agent — Claude can write a checkpoint and Codex or Copilot can restore from it.
 
+**Worktrees are not temporary files.** A worktree lives until its PR merges, so it goes in `worktrees/` (gitignored), never under `tmp/`, which `doit cleanup` empties. Create one with `doit worktree`. Inside it, run commands through `uv run` and never pass `--active`, which installs the worktree into the main checkout's `.venv`. Merge its PR from the main checkout with `uv run doit pr_merge --pr=<number>`, which removes the worktree.
+
 ## Token Efficiency
 - **Be Concise:** Minimal text output.
 - **Use Local Tools:** Prefer native file tools over sub-agents (see [AI Agent File Operations](#ai-agent-file-operations)).
 - **No Speculation:** Don't read files you don't need.
 
 ## Critical Reminders
-- **Flow:** Issue (`doit issue`) -> **`git checkout main && git pull`** -> Branch -> Commit -> PR (`doit pr`) -> Merge (`doit pr_merge`). NEVER commit to main. Pull `main` before branching — local `main` may be behind the remote (e.g., after dependabot PRs merged via the web UI). `doit pr` enforces this by aborting if the branch is behind `origin/main`; pass `--no-update-check` to override.
+- **Flow:** Issue (`doit issue`) -> **`git checkout main && git pull`** -> Branch -> Commit -> PR (`doit pr`) -> Merge (`doit pr_merge`). NEVER commit to main. Pull `main` before branching — local `main` may be behind the remote (e.g., after dependabot PRs merged via the web UI). `doit pr` enforces this by aborting if the branch is behind `origin/main`; pass `--no-update-check` to override. Saying "implement issue N" runs this whole flow through branch, commit, and PR in one go via the `implement-issue` skill — it still never touches `main` or the merge step.
 - **Scope:** Never mix refactoring, features, and docs in one PR. Create separate branches.
 - **Verify:** Check file paths (`ls`) and branch (`git status`) before assuming they exist.
 - **Security:** NEVER bypass security checks (e.g., `--no-verify`, ignoring secrets).
@@ -329,7 +336,7 @@ Where `<agent-type>` is one of: `claude`, `copilot`, `codex`, `antigravity`, or 
 - **Tests:** Creating code = Creating tests. No exceptions. Never modify a failing test to make it pass — stop, explain why it broke, and discuss with the user whether the code or the test should change.
 - **Commits:** One logical change per commit. Use conventional commits.
 - **Releases:** Never run `doit release` without explicit command.
-- **PRs:** Use `doit pr` to create PRs and `doit pr_merge` to merge with proper commit format. Issues are not automatically closed. Ask the user if they would like the related issue closed — pass `--auto-close` to `doit pr_merge` to close linked issues in one step.
+- **PRs:** Use `doit pr` to create PRs and `doit pr_merge` to merge with proper commit format. Issues are not automatically closed. Ask the user if they would like the related issue closed — pass `--auto-close` to `doit pr_merge` to close linked issues in one step. The `implement-issue` skill commits with `git commit` (not `doit commit`, which is interactive) and opens the PR itself with `doit pr` — it never applies `ready-to-merge`, merges, or closes the issue those steps remain the user's.
 - **The Merge Gate action:** is a manual action for the user to add to a PR. It requires the ready-to-merge label and should never be added by automation. Exception: the dependabot auto-merge workflow (`.github/workflows/dependabot-automerge.yml`) applies the `ready-to-merge` label to qualifying dependabot PRs only. AI agents may apply the label only when the human has set `ALLOW_AI_READY_TO_MERGE=1` in the shell that launched the AI CLI (see `docs/development/ai/command-blocking.md`).
 - **Issues:** Use `doit issue --type=<type>` to create issues (types: feature, bug, refactor, docs, chore). Labels are auto-applied. Manually close after PR merge with comment "Addressed in PR #XXX". Issues are not closed automatically when PRs are merged.
 - **ADRs:** When implementing architectural decisions (typically `feat` or `refactor`, rarely `fix`), update related ADRs in `docs/decisions/` to add the issue link. Create new ADRs for significant decisions using `doit adr`. Every ADR must link to the documentation in `docs/` that describes the implementation. Doc and chore issues do not need ADRs. Issues with the `needs-adr` label require an ADR before the PR can be merged.

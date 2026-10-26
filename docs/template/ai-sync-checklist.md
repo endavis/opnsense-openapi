@@ -31,6 +31,15 @@ This checklist guides an AI agent through synchronizing a downstream project wit
 
 ## Pre-Flight
 
+- [ ] Check this checklist and skill against the upstream copy:
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/endavis/pyproject-template/main/.agents/skills/template-sync/SKILL.md \
+    -o tmp/agents/<agent>/template-sync-upstream-SKILL.md
+  diff tmp/agents/<agent>/template-sync-upstream-SKILL.md .agents/skills/template-sync/SKILL.md
+  ```
+  If they differ, follow the fetched version for this sync instead of this checklist's copy. The
+  local skill copy is adopted later through the normal drift triage (Phase 2 onward), not by
+  overwriting it here — `manage.py check` only warns about it and never writes it.
 - [ ] Verify on `main` branch and clean working tree (`git status`)
 - [ ] Run `doit check` to confirm current state passes
 - [ ] Create a GitHub Issue for the sync work:
@@ -66,6 +75,13 @@ template version it was fetched with. If your local tooling is older than the te
 comparing against, the checker may miss or misreport differences. Always run `bootstrap --sync` before running
 the drift check.
 
+**Why the Pre-Flight step 0 above matters:** `bootstrap --sync` refreshes `tools/pyproject_template/`
+but not this checklist or the `template-sync` skill copies themselves — those are downstream-owned
+and only adopted through triage. Without the fetch-and-diff in Pre-Flight, a sync follows whatever
+procedure the *previous* sync adopted, so a change to the sync procedure itself only takes effect one
+sync late. `manage.py check` (Phase 2) backs this up: it warns, before the drift report, when either
+local `SKILL.md` copy is stale, but it never writes those files.
+
 **Template-owned tests:** The files listed in `TEMPLATE_OWNED_TEST_FILES` are excluded from the drift
 report and shed by `cleanup --setup`; you do not need to adopt or maintain them. A test is
 template-owned when **its target does not survive configuration** (ADR-9017) — which is broader than
@@ -81,6 +97,7 @@ drift checker will offer them:
 | File | Adopt? |
 | :--- | :--- |
 | `tests/agent_roster.py` | Yes — a helper, not a test. Required by the roster-aware tests below. |
+| `tests/doc_scan.py` | Yes — a helper, not a test. Required by `test_markdown_links.py`, `test_documented_paths.py` and `test_instruction_pointers.py` below; adopt it together with them. |
 | `tests/test_cross_agent_contract.py` | Yes if you wire more than one AI agent; it derives its scope from the roster and checks nothing for agents you dropped. |
 | `tests/test_instruction_pointers.py` | Yes — catches instruction files pointing at sections and commands that do not exist. |
 | `tests/test_workflow_action_pinning.py` | Yes if you keep `.github/workflows/`. |
@@ -261,6 +278,9 @@ AI coding assistants (Claude Code, Copilot, Codex, Antigravity) use hooks to blo
 
 - [ ] Compare `.claude/settings.json` for Claude Code hook configuration
 - [ ] Compare `.codex/config.toml` for Codex CLI approval policies
+- [ ] Compare `.codex/rules/*.rules` for Codex CLI exec-policy allow rules — a separate mechanism
+      from `.codex/config.toml`'s hooks/approval policy; see
+      [Command Blocking — Codex CLI](../development/ai/command-blocking.md#codex-cli)
 - [ ] **Review pinned model IDs.** `.claude/settings.json` pins
       `CLAUDE_CODE_SUBAGENT_MODEL`, and `tools/hooks/ai/precompact-checkpoint.py`
       passes a model to `claude -p`. Nothing in the update-check machinery looks at

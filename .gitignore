@@ -35,6 +35,8 @@ env/
 htmlcov/
 .tox/
 .hypothesis/
+# mutmut's working copy, made by `doit mutate` at the repository root.
+/mutants/
 
 # Type checking and linting
 .mypy_cache/
@@ -70,6 +72,12 @@ dmypy.json
 tmp/*
 !tmp/.gitkeep
 .cache/
+
+# Git worktrees made by `doit worktree`. Not temporary: each lives until its PR merges.
+# Anchored to the root, so a directory named `worktrees` elsewhere stays tracked (#860).
+/worktrees/
+# Claude Code's built-in worktree tool (EnterWorktree) creates worktrees here.
+.claude/worktrees/
 
 # Documentation
 site/

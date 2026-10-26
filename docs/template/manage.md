@@ -58,6 +58,9 @@ Compares your project against the latest template:
 2. Shows files that differ from the template
 3. Provides diff commands for reviewing changes
 4. Shows GitHub compare URL for commit history
+5. Warns — before the drift report — if your local `template-sync` skill copy (`.agents/` or
+   `.claude/`) is older than the template just downloaded, naming the upstream `SKILL.md` URL to
+   re-read before triaging. It only warns; it never writes those files.
 
 **When to use:** You want to see what improvements have been made to the template since you last synced.
 
@@ -98,6 +101,12 @@ exclude = [
 - This file is **separate** from `settings.toml` on purpose: `settings.toml`
   is rewritten by `manage.py sync`, which would clobber any user-managed
   excludes. `sync-exclude.toml` is never touched by automation.
+- Three shipped tests also read it: `tests/test_markdown_links.py`,
+  `tests/test_documented_paths.py` and `tests/test_instruction_pointers.py` skip a link or
+  documented-path target that matches a pattern here, so adopting a shared skill or ADR that
+  names an excluded upstream file does not fail `doit check` (ADR-9026). They discover markdown
+  through `git ls-files` rather than walking the filesystem, so a git-ignored file is never read
+  in the first place.
 
 ### [4] Update repository settings
 
