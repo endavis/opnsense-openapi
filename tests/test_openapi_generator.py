@@ -1,6 +1,9 @@
 """Tests for OpenAPI generator."""
 
 import json
+import os
+import subprocess  # nosec B404 - runs the generator in a child interpreter
+import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -186,3 +189,68 @@ def test_generate_with_models_directory() -> None:
         # Verify schema was created
         assert "components" in spec
         assert "schemas" in spec["components"]
+
+
+_DETERMINISM_SCRIPT = """
+import sys
+from pathlib import Path
+
+from opnsense_openapi.generator.openapi_generator import OpenApiGenerator
+from opnsense_openapi.parser import ControllerParser
+
+source, models, output = (Path(arg) for arg in sys.argv[1:4])
+controllers = ControllerParser().parse_directory(source)
+OpenApiGenerator(output).generate(controllers, "24.7", models_dir=models)
+"""
+
+
+def test_generate_is_byte_identical_across_hash_seeds(tmp_path: Path) -> None:
+    """The same source yields the same bytes regardless of PYTHONHASHSEED (#138).
+
+    Set iteration order follows string hashing, so a spec built from a set
+    differs between runs. Generating in two interpreters with different seeds
+    catches any such ordering, not only the enum case fixed in #138.
+    """
+    source = tmp_path / "controllers"
+    models = tmp_path / "models"
+    for module in ("Firewall", "Interfaces", "Routes"):
+        api_dir = source / "OPNsense" / module / "Api"
+        api_dir.mkdir(parents=True)
+        (api_dir / "SettingsController.php").write_text(
+            f"""<?php
+namespace OPNsense\\{module}\\Api;
+use OPNsense\\Base\\ApiMutableModelControllerBase;
+
+class SettingsController extends ApiMutableModelControllerBase
+{{
+    public function getAction() {{}}
+    public function setAction() {{}}
+}}
+"""
+        )
+        model_dir = models / "OPNsense" / module
+        model_dir.mkdir(parents=True)
+        options = "".join(f"<opt{i}>Option {i}</opt{i}>" for i in range(20))
+        (model_dir / "Settings.xml").write_text(
+            f"""<?xml version="1.0"?>
+<model>
+    <mount>//OPNsense/{module}/Settings</mount>
+    <items>
+        <mode type="OptionField"><OptionValues>{options}</OptionValues></mode>
+    </items>
+</model>
+"""
+        )
+
+    outputs = []
+    for seed in ("1", "2"):
+        output = tmp_path / f"out-{seed}"
+        subprocess.run(  # nosec B603 - fixed interpreter and arguments, no shell
+            [sys.executable, "-c", _DETERMINISM_SCRIPT, str(source), str(models), str(output)],
+            check=True,
+            env={**os.environ, "PYTHONHASHSEED": seed},
+        )
+        outputs.append((output / "opnsense-24.7.json").read_bytes())
+
+    assert b'"opt19"' in outputs[0], "fixture must exercise enum generation"
+    assert outputs[0] == outputs[1]

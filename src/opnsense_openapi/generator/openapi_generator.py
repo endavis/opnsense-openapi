@@ -284,7 +284,9 @@ class OpenApiGenerator:
                         # because it can be read as an object map of options
                         string_variant = {
                             "type": "string",
-                            "enum": list(set(enum_values)),
+                            # De-duplicate keeping first-seen (model XML) order;
+                            # set() order varies per run (#138).
+                            "enum": list(dict.fromkeys(enum_values)),
                             "description": OPTION_FIELD_ENUM_SCHEMA["description"],
                         }
                         prop_def = {
