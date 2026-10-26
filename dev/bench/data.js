@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792976409366,
+  "lastUpdate": 1793009740648,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1064,6 +1064,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00002971747702829049",
             "extra": "mean: 778.3662763531714 usec\nrounds: 702"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f0c77b184da8a8f370059b3b46669568e0f28ad",
+          "message": "chore: synchronize with pyproject-template (step 1 of 2) (merges PR #122, addresses #113)\n\nSyncs template e3d32ea -> 0b60a90 (2026-09-06). Step 2 (0b60a90 -> main)\nfollows in a separate PR.\n\nSyncs the following template improvements:\n- endavis/pyproject-template#641, #642, #643, #673 (Antigravity CLI support)\n- endavis/pyproject-template#714 (remove Gemini CLI support)\n- endavis/pyproject-template#699, #706, #707, #722 (dangerous-command and Codex hook fixes)\n- endavis/pyproject-template#705, #709, #732 (wider doit check, config-driven coverage gate)\n- endavis/pyproject-template#711, #786 (per-stack rule files, loaded)\n- endavis/pyproject-template#715, #716, #717, #776 (strict docs, link/path tests)\n- endavis/pyproject-template#720 (model pins), #723 (secret-exposure controls)\n- endavis/pyproject-template#733, #734, #735 (template-owned tests, roster-aware agent tests)\n- endavis/pyproject-template#737 (no Hypothesis deadline in CI)\n- endavis/pyproject-template#740 (download integrity), #742 (SHA-pinned actions)\n- endavis/pyproject-template#745, #746 (hermetic test suite)\n- endavis/pyproject-template#747, #771 (commit issue-ref hook, pre-commit owns hook types)\n- endavis/pyproject-template#755, #758 (AGENTS.md trimmed to pointers)\n- endavis/pyproject-template#780, #782, #809, #812 (template version pinning, sync/migrate skills)\n- endavis/pyproject-template#1014 (doc-scan tests honor sync-exclude.toml; pulled forward)\n\nProject-specific:\n- Ran cleanup --setup to shed template-owned tests and setup files\n- Coverage now measures opnsense_openapi + tools/; fail_under 77 (measured 80.02%)\n- mypy scope is src/ tools/; tests/ deferred to #114\n- Recovered the spec path routing docs lost in PR #49 into\n  docs/development/spec-path-routing.md\n- Fixed stale doc references found by the new path/anchor tests\n- tests/ added to pytest pythonpath (tests/ is a package here)\n\nAddresses #113\n\n\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T10:14:59Z",
+          "tree_id": "85ae0579375ecf997efb263ccc312740dcab5bcb",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/4f0c77b184da8a8f370059b3b46669568e0f28ad"
+        },
+        "date": 1793009739774,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1547.473036236077,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0026286674874338493",
+            "extra": "mean: 646.2148138182123 usec\nrounds: 1375"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 2580.4049170919516,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000011382842632674862",
+            "extra": "mean: 387.5360775265355 usec\nrounds: 1148"
           }
         ]
       }
