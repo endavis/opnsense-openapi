@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793014334690,
+  "lastUpdate": 1793015278554,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1178,6 +1178,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00005253554373221975",
             "extra": "mean: 788.5634115045058 usec\nrounds: 1356"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fdc7f6005b87c8b78bdf2899f89825451ed4b31e",
+          "message": "chore(deps): bump twine from 6.2.0 to 7.0.0 (merges PR #129)\n\nBumps [twine](https://github.com/pypa/twine) from 6.2.0 to 7.0.0.\n- [Release notes](https://github.com/pypa/twine/releases)\n- [Changelog](https://github.com/pypa/twine/blob/main/docs/changelog.rst)\n- [Commits](https://github.com/pypa/twine/compare/6.2.0...7.0.0)\n\n---\nupdated-dependencies:\n- dependency-name: twine\n  dependency-version: 7.0.0\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-26T11:47:09Z",
+          "tree_id": "c49c29611be18c61bb3c165f099749b52b0936ba",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/fdc7f6005b87c8b78bdf2899f89825451ed4b31e"
+        },
+        "date": 1793015277850,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 953.4240761508262,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000022995578179336584",
+            "extra": "mean: 1.0488512142856836 msec\nrounds: 994"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1458.5788938054668,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000015427451205864802",
+            "extra": "mean: 685.5988416169772 usec\nrounds: 1509"
           }
         ]
       }
