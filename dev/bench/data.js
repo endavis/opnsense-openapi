@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793018899681,
+  "lastUpdate": 1793019568971,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1292,6 +1292,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003113401009678164",
             "extra": "mean: 544.7158902821668 usec\nrounds: 1914"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c549e656b601533e07806b36efdf0e92a87f4215",
+          "message": "feat: add specs for OPNsense 26.7 through 26.7.7 (merges PR #141, addresses #137)\n\nBundle specs for the eight stable 26.7 releases. With no 26.7 spec,\nfloor matching (which stays within major.minor) found nothing and\n`find_best_matching_spec(\"26.7.x\")` raised FileNotFoundError, so users\non the current OPNsense series got an error rather than a client.\n\nEach spec was generated twice under different PYTHONHASHSEED values\n(byte-identical), and every path was checked against that version's\nOPNsense source with the spec path routing lint: 756-763 paths per\nversion, none unresolved. The generator needed no changes for the new\nseries. Pre-release tags (26.7.a/.b/.r/.r1/.r2) are deliberately omitted.\n\nAddresses #137\n\n\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T12:58:44Z",
+          "tree_id": "c849f1486135e68401d318427dd43b16b314bb40",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/c549e656b601533e07806b36efdf0e92a87f4215"
+        },
+        "date": 1793019567820,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1694.2930446492635,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00007228092295011203",
+            "extra": "mean: 590.216670698197 usec\nrounds: 1819"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 2445.403049318644,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000022235398732218704",
+            "extra": "mean: 408.9305443037814 usec\nrounds: 2528"
           }
         ]
       }
