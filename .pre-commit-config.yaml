@@ -24,8 +24,9 @@ repos:
         stages: [pre-commit]
       - id: check-added-large-files
         stages: [pre-commit]
-        # Add project-specific exclusions for large data/generated directories:
-        # exclude: ^(vendor/|fixtures/|data/)
+        # Bundled OpenAPI specs are generated data, ~1.3 MB each (they compress
+        # ~30x in git and the wheel). The 500 KB guard still covers everything else.
+        exclude: ^src/opnsense_openapi/specs/
       - id: check-toml
         stages: [pre-commit]
       - id: check-merge-conflict
