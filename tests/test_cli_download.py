@@ -1,5 +1,8 @@
 """Tests for CLI commands."""
 
+from pathlib import Path
+
+import pytest
 from typer.testing import CliRunner
 
 from opnsense_openapi import __version__
@@ -9,11 +12,11 @@ from opnsense_openapi.parser import ApiController, ApiEndpoint
 runner = CliRunner()
 
 
-def test_download_command_success(tmp_path, monkeypatch):
+def test_download_command_success(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     controllers_path = tmp_path / "24.1" / "src"
     controllers_path.mkdir(parents=True)
 
-    def fake_download(self, version: str, force: bool = False):
+    def fake_download(self: object, version: str, force: bool = False) -> Path:
         assert version == "24.1"
         return controllers_path
 
@@ -26,8 +29,8 @@ def test_download_command_success(tmp_path, monkeypatch):
     assert str(controllers_path) in result.stdout
 
 
-def test_download_command_failure(tmp_path, monkeypatch):
-    def fake_download(self, version: str, force: bool = False):
+def test_download_command_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_download(self: object, version: str, force: bool = False) -> Path:
         raise RuntimeError("boom")
 
     monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)
@@ -38,22 +41,22 @@ def test_download_command_failure(tmp_path, monkeypatch):
     assert "boom" in result.stderr
 
 
-def test_version_option():
+def test_version_option() -> None:
     """Test --version option."""
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
     assert __version__ in result.stdout
 
 
-def test_generate_command_success(tmp_path, monkeypatch):
+def test_generate_command_success(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test generate command success."""
     controllers_path = tmp_path / "controllers"
     controllers_path.mkdir()
 
-    def fake_download(self, version: str, force: bool = False):
+    def fake_download(self: object, version: str, force: bool = False) -> Path:
         return controllers_path
 
-    def fake_parse_directory(self, path):
+    def fake_parse_directory(self: object, path: Path) -> list[ApiController]:
         return [
             ApiController(
                 module="Test",
@@ -75,10 +78,10 @@ def test_generate_command_success(tmp_path, monkeypatch):
     assert "Generated" in result.stdout
 
 
-def test_generate_command_download_failure(tmp_path, monkeypatch):
+def test_generate_command_download_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Test generate command when download fails."""
 
-    def fake_download(self, version: str, force: bool = False):
+    def fake_download(self: object, version: str, force: bool = False) -> Path:
         raise RuntimeError("download failed")
 
     monkeypatch.setattr("opnsense_openapi.cli.SourceDownloader.download", fake_download)

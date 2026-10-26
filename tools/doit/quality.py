@@ -41,11 +41,10 @@ def task_format_check() -> dict[str, Any]:
 
 def task_type_check() -> dict[str, Any]:
     """Run mypy type checking (uses pyproject.toml configuration)."""
-    # Covers tools/, not just tools/doit/: narrower scopes let real errors in
-    # tools/hooks/ pass a green `doit check`. See #700. The template also covers
-    # tests/; this project adds it once its tests are annotated (#114).
+    # Covers tools/ and tests/, not just tools/doit/: narrower scopes let real
+    # errors in tools/hooks/ and tests/ pass a green `doit check`. See #700.
     return {
-        "actions": ["uv run mypy src/ tools/" + optional_root_files("bootstrap.py")],
+        "actions": ["uv run mypy src/ tools/ tests/" + optional_root_files("bootstrap.py")],
         "title": title_with_actions,
         "verbosity": 0,
     }

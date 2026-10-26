@@ -122,7 +122,9 @@ class TestController extends ApiMutableModelControllerBase
 
         # Parse controller
         parser = ControllerParser()
-        controllers = [parser.parse_controller_file(controller_php)]
+        controller = parser.parse_controller_file(controller_php)
+        assert controller is not None
+        controllers = [controller]
 
         # Generate spec with response inference
         output_dir = Path(tmpdir) / "output"

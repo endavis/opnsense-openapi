@@ -245,10 +245,6 @@ class TestQualityGateScope:
     again.
     """
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason="type_check excludes tests/ until they are annotated (#114)",
-    )
     def test_type_check_covers_tools_and_tests(self) -> None:
         """``type_check`` must check all of ``src/``, ``tools/`` and ``tests/``."""
         action = task_type_check()["actions"][0]

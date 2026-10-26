@@ -73,7 +73,8 @@ def _load_spec_for_version(version: str) -> dict[str, Any] | None:
     spec_path: Path = get_specs_dir() / f"opnsense-{version}.json"
     if not spec_path.is_file():
         return None
-    return json.loads(spec_path.read_text(encoding="utf-8"))
+    spec: dict[str, Any] = json.loads(spec_path.read_text(encoding="utf-8"))
+    return spec
 
 
 def _is_read_only_path(path: str) -> bool:
