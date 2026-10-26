@@ -673,3 +673,77 @@ def test_redirect_fires_only_on_a_commit_heredoc(
     """Scoped to the shape that has a better path available."""
     command = template.format(flag=_BLOCKED_FLAG)
     assert hook._is_commit_message_heredoc(command) is redirected
+
+
+# ---------------------------------------------------------------------------
+# The merge rule reads each command on its own (#894)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("command", "expected"),
+    [
+        # Read-only: `git` and `merge` in different commands, or merge as an argument.
+        ("git log --oneline --grep merge -5", 0),
+        ("git diff HEAD~1 -- tools/doit/github.py | grep -n merge", 0),
+        ("git grep -n pr_merge -- tools/doit; echo merge", 0),
+        ("git merge-base HEAD origin/main", 0),
+        # `--ff-only` in another command does not make the merge fast-forward only.
+        ("git merge origin/main; echo --ff-only", 2),
+        ("git merge origin/main && echo --ff-only", 2),
+        ("git merge origin/main;echo --ff-only", 2),
+        # Still a merge wherever it sits on the line.
+        ("git merge origin/main", 2),
+        ("git -C . merge origin/main", 2),
+        ("git status && git merge origin/main", 2),
+        ("git merge --ff-only origin/main", 0),
+        ("git merge --ff-only origin/main; echo merge", 0),
+        ("git merge --ff-only;echo done", 0),
+        # Gap 5 (#1007): a newline or a `#` comment does not end the command for
+        # shlex, so `--ff-only` on the next line or inside a comment used to
+        # count as an argument to the `git merge` before it.
+        ("git merge feature\necho --ff-only", 2),
+        ("git merge feature # --ff-only", 2),
+        ("git merge feature #--ff-only", 2),
+        ("git merge feature # c\n--ff-only", 2),
+        # A `#` mid-word, or quoted, is not a comment, so the merge after it runs.
+        ("x#y; git merge feature", 2),
+        ("echo '#' ; git merge feature", 2),
+        ("x\\ #; git merge feature", 2),
+        # A quoted string spanning lines stays one word, and a glued `&&`
+        # still ends the command before it.
+        ('echo "x\n# y" ; git merge feature', 2),
+        ('echo "a\nb"&&git merge feature', 2),
+        ('echo "unterminated\n&&git merge feature', 2),
+        # A backslash-newline continuation is still one command.
+        ("git \\\nmerge feature", 2),
+        ("git merge feature \\\n--ff-only", 0),
+        # A real `--ff-only` elsewhere on the same command still allows.
+        ("git merge feature $(echo --ff-only)", 2),
+        ("git merge feature && git pull --ff-only", 2),
+        # Gap 6 (#1007): `--attr-source` and `--config-env` are global options
+        # that take a separate value; missing them from
+        # `_GIT_GLOBAL_OPTS_WITH_VALUE` let their value be mistaken for the
+        # subcommand, so the merge rule never fired.
+        ("git --attr-source HEAD merge feature", 2),
+        ("git --config-env foo.bar=baz merge feature", 2),
+        # Gap 3 (#1011): the merge rule used to lex the whole command,
+        # heredoc bodies included. An unbalanced `"` in a body opened a quote
+        # that swallowed the `git merge` after the terminator. Passing the
+        # merge rule the command with heredoc bodies already stripped fixes
+        # it.
+        ("cat <<'EOF'\n\"\nEOF\ngit merge feature \"", 2),
+        # A merge in a heredoc body is still seen when the hook does not
+        # recognise the receiver as running it (#1011): bodies are skipped
+        # only in addition to the full scan, never instead of it.
+        ("env -i bash <<EOF\ngit merge feature\nEOF", 2),
+    ],
+)
+def test_merge_rule_on_main_reads_each_command(
+    hook: types.ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+    command: str,
+    expected: int,
+) -> None:
+    """Matching `git`, `merge` and `--ff-only` anywhere on the line got both ways wrong (#894)."""
+    assert _run(hook, monkeypatch, command, branch="main") == expected

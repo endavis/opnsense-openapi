@@ -13,6 +13,7 @@ from tools.doit.templates import (
     ISSUE_TYPE_TO_FILE,
     AdrTemplate,
     IssueTemplate,
+    _parse_adr_template,
     clear_template_cache,
     get_adr_all_sections,
     get_adr_required_sections,
@@ -197,6 +198,10 @@ class TestGetPrTemplate:
         result = get_pr_template()
         assert "## Checklist" in result
 
+    def test_asks_for_no_changelog_edit(self) -> None:
+        """`doit release` writes CHANGELOG.md, so every PR left that checkbox unticked (#890)."""
+        assert "CHANGELOG" not in get_pr_template()
+
     def test_caching_returns_same_instance(self) -> None:
         """Multiple calls should return cached result."""
         result1 = get_pr_template()
@@ -272,6 +277,31 @@ class TestGetAdrTemplate:
         result = get_adr_template()
         assert result.editor_template
         assert "# Lines starting with #" in result.editor_template
+
+    def test_has_frontmatter_for_every_adr(self) -> None:
+        """Every ADR starts from this block, with the title and date filled in (#841)."""
+        result = get_adr_template()
+        assert result.frontmatter.startswith("---\n")
+        assert result.frontmatter.endswith("---\n")
+        assert 'title: "ADR-NNNN: Title"\n' in result.frontmatter
+        assert "date: YYYY-MM-DD\n" in result.frontmatter
+
+    def test_has_placeholder_description(self) -> None:
+        """The description an ADR must replace is the one the template's frontmatter holds."""
+        result = get_adr_template()
+        assert result.placeholder_description
+        assert f"description: {result.placeholder_description}\n" in result.frontmatter
+
+    def test_template_without_frontmatter(self, tmp_path: Path) -> None:
+        """A downstream template without frontmatter still parses, with nothing to copy."""
+        template = tmp_path / "adr-template.md"
+        template.write_text("# ADR-NNNN: Title\n\n## Status\n<!-- Required -->\n", encoding="utf-8")
+
+        result = _parse_adr_template(template)
+
+        assert result.frontmatter == ""
+        assert result.placeholder_description == ""
+        assert result.required_sections == ["Status"]
 
     def test_has_required_sections(self) -> None:
         """Should have required sections list."""

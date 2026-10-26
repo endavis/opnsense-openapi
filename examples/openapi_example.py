@@ -64,7 +64,7 @@ def main() -> None:
             if "firewall" in path.lower()
         ]
         print(f"Found {len(firewall_endpoints)} firewall endpoints")
-        for path, method, summary in firewall_endpoints[:5]:
+        for path, method, _summary in firewall_endpoints[:5]:
             print(f"  {method:7} {path}")
 
         # Example 3: Get detailed endpoint information

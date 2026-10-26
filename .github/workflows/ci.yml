@@ -91,11 +91,11 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: "latest"
 
@@ -141,7 +141,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == needs.setup.outputs.newest && matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           files: ./tmp/coverage.xml
           flags: unittests
@@ -160,11 +160,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ needs.setup.outputs.newest }}
 
-      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: "latest"
 
@@ -192,11 +192,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ needs.setup.outputs.newest }}
 
-      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: "latest"
 
@@ -209,25 +209,42 @@ jobs:
             ${{ runner.os }}-uv-
 
       - name: Install dependencies
+        id: install
         run: uv sync --all-extras --dev
 
+      # Each check runs whether or not the one before it failed, so a PR shows
+      # every failing check at once instead of one per push (#952).
       - name: Check code formatting
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: uv run doit format_check
 
       - name: Run linting
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: uv run doit lint
 
       - name: Run type checking
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: uv run doit type_check
 
+      - name: Find dead code
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: uv run doit deadcode
+
       - name: Run security scan
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: uv run doit security
 
       - name: Run spell check
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: uv run doit spell_check
 
       - name: Run dependency audit
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: uv run doit audit
+
+      - name: Check the built wheel
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: uv run doit wheel_check
 
   ci-complete:
     if: always()

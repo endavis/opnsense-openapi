@@ -14,9 +14,12 @@ per the plan.
 from __future__ import annotations
 
 import io
+import json
 import os
+import re
 import subprocess
 import sys
+from datetime import date
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
@@ -25,11 +28,18 @@ from rich.console import Console
 
 from tools.doit.base import run_streamed, run_teed
 from tools.doit.release import (
+    ChangelogFormatError,
     _build_cz_get_next_cmd,
+    _bump_handwritten_changelog,
+    _changelog_is_handwritten_enabled,
     _extract_next_version_from_cz_output,
     _extract_version_from_release_pr,
     _get_pypi_name_from_pyproject,
+    _major_version,
+    _major_version_zero_enabled,
     _repo_has_version_tags,
+    _version_files_from_pyproject,
+    _version_provider_is_scm,
     task_release,
     task_release_tag,
     validate_issue_links,
@@ -41,6 +51,142 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from _pytest.monkeypatch import MonkeyPatch
+
+
+class TestVersionProviderIsScm:
+    """Reads ``[tool.commitizen].version_provider`` from the cwd's ``pyproject.toml`` (#971)."""
+
+    @pytest.mark.parametrize(
+        ("pyproject", "expected"),
+        [
+            ('[tool.commitizen]\nversion_provider = "scm"\n', True),
+            ('[tool.commitizen]\nversion_provider = "pep621"\n', False),
+            ('[tool.commitizen]\nname = "cz_conventional_commits"\n', True),
+            ('[project]\nname = "my-pkg"\n', True),
+        ],
+    )
+    def test_reads_the_setting(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch, pyproject: str, expected: bool
+    ) -> None:
+        (tmp_path / "pyproject.toml").write_text(pyproject, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        assert _version_provider_is_scm() is expected
+
+    def test_a_missing_pyproject_counts_as_scm(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        assert _version_provider_is_scm() is True
+
+
+class TestChangelogIsHandwrittenEnabled:
+    """Reads ``[tool.commitizen].update_changelog_on_bump`` from ``pyproject.toml`` (#971)."""
+
+    @pytest.mark.parametrize(
+        ("pyproject", "expected"),
+        [
+            ("[tool.commitizen]\nupdate_changelog_on_bump = false\n", True),
+            ("[tool.commitizen]\nupdate_changelog_on_bump = true\n", False),
+            # A missing key is commitizen's default, False, so it counts as hand-written.
+            ('[tool.commitizen]\nname = "cz_conventional_commits"\n', True),
+            ('[project]\nname = "my-pkg"\n', True),
+        ],
+    )
+    def test_reads_the_setting(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch, pyproject: str, expected: bool
+    ) -> None:
+        (tmp_path / "pyproject.toml").write_text(pyproject, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        assert _changelog_is_handwritten_enabled() is expected
+
+    def test_a_missing_pyproject_counts_as_generated(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        assert _changelog_is_handwritten_enabled() is False
+
+
+class TestVersionFilesFromPyproject:
+    """Reads ``[tool.commitizen].version_files`` from ``pyproject.toml``, paths only (#971)."""
+
+    def test_strips_the_pattern_suffix(self, tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+        pyproject = (
+            "[tool.commitizen]\n"
+            'version_files = ["src/mypkg/__init__.py:__version__", "Makefile:VERSION"]\n'
+        )
+        (tmp_path / "pyproject.toml").write_text(pyproject, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        assert _version_files_from_pyproject() == ["src/mypkg/__init__.py", "Makefile"]
+
+    def test_missing_key_returns_empty_list(self, tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+        (tmp_path / "pyproject.toml").write_text(
+            '[tool.commitizen]\nname = "cz_conventional_commits"\n', encoding="utf-8"
+        )
+        monkeypatch.chdir(tmp_path)
+        assert _version_files_from_pyproject() == []
+
+    def test_missing_pyproject_returns_empty_list(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        assert _version_files_from_pyproject() == []
+
+    def test_non_list_value_returns_empty_list(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        (tmp_path / "pyproject.toml").write_text(
+            '[tool.commitizen]\nversion_files = "not-a-list"\n', encoding="utf-8"
+        )
+        monkeypatch.chdir(tmp_path)
+        assert _version_files_from_pyproject() == []
+
+
+class TestBumpHandwrittenChangelog:
+    """Unit tests for ``_bump_handwritten_changelog`` (#971)."""
+
+    _CHANGELOG_WITH_ENTRIES = (
+        "# Changelog\n\n"
+        "## [Unreleased]\n\n"
+        "### Added\n"
+        "- A hand-written entry\n\n"
+        "## [0.1.0] - 2026-01-01\n\n"
+        "### Added\n"
+        "- First release\n"
+    )
+
+    def test_renames_unreleased_and_inserts_new_empty_section(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        (tmp_path / "CHANGELOG.md").write_text(self._CHANGELOG_WITH_ENTRIES, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+
+        _bump_handwritten_changelog("0.2.0")
+
+        result = (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8")
+        today = date.today().isoformat()
+        assert f"## [Unreleased]\n\n## [0.2.0] - {today}" in result
+        assert "- A hand-written entry" in result
+        assert "## [0.1.0] - 2026-01-01" in result
+        assert "- First release" in result
+
+    def test_raises_when_unreleased_heading_missing(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        (tmp_path / "CHANGELOG.md").write_text("# Changelog\n\nNothing here.\n", encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+
+        with pytest.raises(ChangelogFormatError, match=r"no '## \[Unreleased\]' heading"):
+            _bump_handwritten_changelog("0.2.0")
+
+    def test_raises_when_unreleased_section_is_empty(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        changelog = "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-01-01\n\n- x\n"
+        (tmp_path / "CHANGELOG.md").write_text(changelog, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+
+        with pytest.raises(ChangelogFormatError, match="section is empty"):
+            _bump_handwritten_changelog("0.2.0")
 
 
 class TestRunStreamed:
@@ -549,6 +695,26 @@ class TestValidateMergeCommits:
 
         assert validate_merge_commits(self._silent_console()) is False
 
+    def test_prints_a_bracketed_subject_verbatim(self, monkeypatch: MonkeyPatch) -> None:
+        """A subject is text, not markup: `[/tmp]` crashed `doit release` here (#900).
+
+        Escaped, it still lost the backslash before `[1]` and turned `:sparkles:` into an emoji
+        (#914).
+        """
+        windows = r"def5678 :sparkles: read C:\notes\[1].md"
+        _, fake = self._fake_run(
+            describe_returncode=0,
+            describe_stdout="v0.1.0\n",
+            log_stdout=f"abc1234 Merge [tool.x] from [/tmp] into main\n{windows}",
+        )
+        monkeypatch.setattr("tools.doit.release.subprocess.run", fake)
+        console = self._silent_console()
+
+        assert validate_merge_commits(console) is False
+        output = console.file.getvalue()  # type: ignore[attr-defined]
+        assert "abc1234 Merge [tool.x] from [/tmp] into main" in output
+        assert windows in output
+
 
 class TestExtractNextVersionFromCzOutput:
     """Tests for ``_extract_next_version_from_cz_output`` (issue #641).
@@ -841,6 +1007,40 @@ class TestCreateReleasePrValidation:
         with pytest.raises(SystemExit):
             action(prerelease="gamma")
 
+    @pytest.mark.parametrize("increment", ["major", "Minor", "PATCH"])
+    def test_accepts_an_increment_in_any_case(
+        self, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str], increment: str
+    ) -> None:
+        """The task upper-cases ``--increment`` for cz, so any case passes the check (#917).
+
+        A rejected value is printed by the check itself; see
+        ``TestCreateReleasePrGuards.test_prints_a_rejected_increment_verbatim``.
+
+        Here the helper returns a marker command instead of raising, so the flow
+        passes the print and stops at the cz call.
+        """
+        from tools.doit.release import task_release
+
+        self._patch_precz_subprocess_calls(monkeypatch)
+        monkeypatch.setattr("tools.doit.release._build_cz_get_next_cmd", lambda *_: ["cz-next"])
+
+        def run(
+            cmd: list[str], *_args: object, **_kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
+            if cmd == ["cz-next"]:
+                raise _ReachedCzBuild
+            stdout = "main\n" if cmd[:3] == ["git", "branch", "--show-current"] else ""
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout=stdout, stderr="")
+
+        monkeypatch.setattr("tools.doit.release.subprocess.run", run)
+        action = task_release()["actions"][0]
+
+        with pytest.raises(_ReachedCzBuild):
+            action(increment=increment)
+
+        out = _ANSI.sub("", capsys.readouterr().out)
+        assert f"Forcing {increment.upper()} version bump" in out
+
 
 class TestGetPypiNameFromPyproject:
     """Tests for ``_get_pypi_name_from_pyproject`` (issue #478).
@@ -1050,21 +1250,118 @@ class TestCreateReleasePrGuards:
 
         assert exc.value.code == 1
 
-    @pytest.mark.parametrize("value", ["alpha", "beta", "rc"])
-    def test_accepts_the_documented_prerelease_values(self, value: str) -> None:
-        """These must get past validation — a guard that rejects everything is useless."""
+    @pytest.mark.parametrize("value", ["[x]", "[/x]", r"rc\[1]", ":memo:"])
+    def test_prints_a_rejected_prerelease_verbatim(
+        self, capsys: pytest.CaptureFixture[str], value: str
+    ) -> None:
+        """The value is text, not markup: Rich would drop `[x]` and crash on `[/x]` (#907).
+
+        Escaped, it still lost the backslash before `[1]` and turned `:memo:` into an emoji (#914).
+        """
         with (
             patch(
                 "tools.doit.release.subprocess.run",
                 return_value=MagicMock(stdout="main\n", returncode=0),
             ),
-            patch("tools.doit.release.validate_merge_commits", return_value=False),
             pytest.raises(SystemExit) as exc,
         ):
             _release_action()(prerelease=value)
 
-        # Exits on the *later* validation gate, not the prerelease check.
         assert exc.value.code == 1
+        assert f"Invalid prerelease value '{value}'" in _ANSI.sub("", capsys.readouterr().out)
+
+    @pytest.mark.parametrize("value", ["minr", "micro", "1", "major minor"])
+    def test_rejects_an_unknown_increment_value(self, value: str) -> None:
+        """cz takes only MAJOR, MINOR or PATCH, so the task stops before it pulls (#917).
+
+        It used to pull and run `doit check` first, and only cz's own parser caught the value.
+        """
+        with (
+            patch(
+                "tools.doit.release.subprocess.run",
+                return_value=MagicMock(stdout="main\n", returncode=0),
+            ) as mock_run,
+            patch("tools.doit.release.run_streamed") as mock_streamed,
+            pytest.raises(SystemExit) as exc,
+        ):
+            _release_action()(increment=value)
+
+        assert exc.value.code == 1
+        assert [c.args[0] for c in mock_run.call_args_list] == [["git", "branch", "--show-current"]]
+        mock_streamed.assert_not_called()
+
+    @pytest.mark.parametrize("value", ["[x]", "[/x]", r"x\[1]", ":memo:"])
+    def test_prints_a_rejected_increment_verbatim(
+        self, capsys: pytest.CaptureFixture[str], value: str
+    ) -> None:
+        """The value is text, not markup (#907), and keeps its backslash and `:memo:` (#914).
+
+        The check prints it as typed. Before #917 it reached the `Forcing ... version bump`
+        line instead, upper-cased.
+        """
+        with (
+            patch(
+                "tools.doit.release.subprocess.run",
+                return_value=MagicMock(stdout="main\n", returncode=0),
+            ),
+            pytest.raises(SystemExit) as exc,
+        ):
+            _release_action()(increment=value)
+
+        assert exc.value.code == 1
+        assert f"Invalid increment value '{value}'" in _ANSI.sub("", capsys.readouterr().out)
+
+    @pytest.mark.parametrize("value", ["alpha", "beta", "rc"])
+    def test_accepts_the_documented_prerelease_values(self, value: str) -> None:
+        """These must get past validation — a guard that rejects everything is useless.
+
+        The run stops at the governance gate, after the clean-tree check and the pull. It used
+        to stop at the clean-tree check, which exits 1 just as a rejected value does, so the
+        test passed even when the prerelease check rejected all three values (#919).
+        """
+
+        def fake_run(cmd: list[str], *_args: object, **_kwargs: object) -> MagicMock:
+            stdout = "" if cmd[:3] == ["git", "status", "-s"] else "main\n"
+            return MagicMock(stdout=stdout, returncode=0)
+
+        with (
+            patch("tools.doit.release.subprocess.run", side_effect=fake_run),
+            patch("tools.doit.release._repo_has_version_tags", return_value=True),
+            patch("tools.doit.release.run_streamed"),
+            patch("tools.doit.release.validate_merge_commits", return_value=False) as governance,
+            pytest.raises(SystemExit) as exc,
+        ):
+            _release_action()(prerelease=value)
+
+        assert exc.value.code == 1
+        governance.assert_called_once()
+
+    def test_prints_uncommitted_paths_verbatim(self, capsys: pytest.CaptureFixture[str]) -> None:
+        """`git status -s` output is text, not markup: a `[/x]` path crashed this guard (#900).
+
+        Escaped, it still lost a backslash before `[1]` and turned `:memo:` into an emoji (#914).
+        git quotes a path holding a backslash, and doubles the backslash.
+        """
+        quoted = r'?? "notes\\[1].md"'
+        status = f"?? docs/[draft].md\n?? [/x]\n{quoted}\n?? :memo:.md"
+
+        def fake_run(cmd: list[str], *_args: object, **_kwargs: object) -> MagicMock:
+            stdout = status if cmd[:3] == ["git", "status", "-s"] else "main\n"
+            return MagicMock(stdout=stdout, returncode=0)
+
+        with (
+            patch("tools.doit.release.subprocess.run", side_effect=fake_run),
+            pytest.raises(SystemExit) as exc,
+        ):
+            _release_action()()
+
+        assert exc.value.code == 1
+        out = _ANSI.sub("", capsys.readouterr().out)
+        assert "Uncommitted changes detected" in out
+        assert "?? docs/[draft].md" in out
+        assert "?? [/x]" in out
+        assert quoted in out
+        assert "?? :memo:.md" in out
 
 
 class TestCreateReleaseTag:
@@ -1100,3 +1397,444 @@ class TestCreateReleaseTag:
 
         assert exc.value.code == 1
         assert "Error pulling latest changes" in capsys.readouterr().out
+
+    @staticmethod
+    def _patch_happy_path(monkeypatch: MonkeyPatch) -> None:
+        """Walk the action from entry to the final "Next steps" printout.
+
+        Mocks ``subprocess.run`` for every call `create_release_tag` makes
+        after the main-branch check: finding the merged release PR via
+        ``gh pr list``, the existing-tag check, and ``git tag``. ``run_streamed``
+        (``git pull``, ``git push``) is a no-op.
+        """
+
+        def fake_run(
+            cmd: list[str], *_args: object, **_kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
+            if cmd[:3] == ["git", "branch", "--show-current"]:
+                stdout = "main\n"
+            elif cmd[:2] == ["gh", "pr"]:
+                stdout = json.dumps(
+                    [
+                        {
+                            "title": "release: v1.2.3",
+                            "mergedAt": "2024-01-01T00:00:00Z",
+                            "headRefName": "release/v1.2.3",
+                        }
+                    ]
+                )
+            else:
+                # Covers ``git tag -l <tag>`` (no existing tag) and
+                # ``git tag <tag>`` (create).
+                stdout = ""
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout=stdout, stderr="")
+
+        monkeypatch.setattr("tools.doit.release.subprocess.run", fake_run)
+        monkeypatch.setattr("tools.doit.release.run_streamed", lambda *a, **kw: None)
+
+    def test_next_steps_mention_pypi_and_actions_with_release_workflow(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """With ``.github/workflows/release.yml``, the three original steps print."""
+        workflows_dir = tmp_path / ".github" / "workflows"
+        workflows_dir.mkdir(parents=True)
+        (workflows_dir / "release.yml").write_text("name: release\n", encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        self._patch_happy_path(monkeypatch)
+
+        _tag_action()()
+
+        out = capsys.readouterr().out
+        assert "Monitor GitHub Actions" in out
+        assert "Check TestPyPI" in out
+        assert "Check PyPI" in out
+
+    def test_next_steps_say_tag_is_the_release_without_release_workflow(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Without ``.github/workflows/release.yml``, no step names PyPI or Actions (#993)."""
+        monkeypatch.chdir(tmp_path)
+        self._patch_happy_path(monkeypatch)
+
+        _tag_action()()
+
+        out = capsys.readouterr().out
+        assert "PyPI" not in out
+        assert "GitHub Actions" not in out
+        assert "tag is the release" in out
+
+
+class TestMajorVersionZeroEnabled:
+    """Reads ``[tool.commitizen].major_version_zero`` from the cwd's ``pyproject.toml`` (#881)."""
+
+    @pytest.mark.parametrize(
+        ("pyproject", "expected"),
+        [
+            ("[tool.commitizen]\nmajor_version_zero = true\n", True),
+            ("[tool.commitizen]\nmajor_version_zero = false\n", False),
+            ('[tool.commitizen]\nname = "cz_conventional_commits"\n', False),
+            ('[project]\nname = "my-pkg"\n', False),
+        ],
+    )
+    def test_reads_the_setting(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch, pyproject: str, expected: bool
+    ) -> None:
+        (tmp_path / "pyproject.toml").write_text(pyproject, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        assert _major_version_zero_enabled() is expected
+
+    def test_a_missing_pyproject_counts_as_off(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        assert _major_version_zero_enabled() is False
+
+
+class TestMajorVersion:
+    @pytest.mark.parametrize(
+        ("version", "major"),
+        [("0.4.0", 0), ("1.0.0", 1), ("1.0.0a0", 1), ("2.0.0rc1", 2), ("10.1.0", 10)],
+    )
+    def test_reads_the_leading_number(self, version: str, major: int) -> None:
+        assert _major_version(version) == major
+
+
+class _ReachedBranchCreation(Exception):  # noqa: N818 - sentinel, not a runtime error
+    """Sentinel raised at ``git checkout -b`` to prove the flow got past the version checks."""
+
+
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+
+
+class TestReleaseRefusesMajorVersionZeroFromOne:
+    """`doit release` stops at 1.0 or later while major_version_zero is on (#881).
+
+    commitizen applies the setting at every version, so from 1.0 on every breaking
+    change would bump MINOR. The check runs once the next version is known, before
+    the release branch exists.
+    """
+
+    @staticmethod
+    def _walk_to_branch_creation(monkeypatch: MonkeyPatch, next_version: str) -> list[list[str]]:
+        """Fake every step up to ``git checkout -b``, with cz answering *next_version*."""
+        calls: list[list[str]] = []
+
+        def fake_run(
+            cmd: list[str], *_args: object, **_kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
+            calls.append(cmd)
+            if cmd[:3] == ["git", "checkout", "-b"]:
+                raise _ReachedBranchCreation
+            if cmd[:3] == ["git", "branch", "--show-current"]:
+                stdout = "main\n"
+            elif "--get-next" in cmd:
+                stdout = f"{next_version}\n"
+            else:
+                stdout = ""
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout=stdout, stderr="")
+
+        monkeypatch.setattr("tools.doit.release.subprocess.run", fake_run)
+        monkeypatch.setattr("tools.doit.release.run_streamed", lambda *a, **kw: None)
+        monkeypatch.setattr("tools.doit.release.validate_merge_commits", lambda _console: True)
+        monkeypatch.setattr("tools.doit.release.validate_issue_links", lambda _console: True)
+        return calls
+
+    def test_refuses_1_0_while_the_setting_is_on(
+        self, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        calls = self._walk_to_branch_creation(monkeypatch, "1.0.0")
+        monkeypatch.setattr("tools.doit.release._major_version_zero_enabled", lambda: True)
+
+        with pytest.raises(SystemExit) as exc:
+            _release_action()(increment="major")
+
+        assert exc.value.code == 1
+        assert not any(cmd[:3] == ["git", "checkout", "-b"] for cmd in calls)
+        out = _ANSI.sub("", capsys.readouterr().out)
+        assert "major_version_zero = true in [tool.commitizen]" in out
+
+    @pytest.mark.parametrize(
+        ("next_version", "enabled"),
+        [("0.4.0", True), ("1.3.0", False), ("2.0.0", False)],
+    )
+    def test_releases_below_1_0_or_with_the_setting_off(
+        self, monkeypatch: MonkeyPatch, next_version: str, enabled: bool
+    ) -> None:
+        self._walk_to_branch_creation(monkeypatch, next_version)
+        monkeypatch.setattr("tools.doit.release._major_version_zero_enabled", lambda: enabled)
+
+        with pytest.raises(_ReachedBranchCreation):
+            _release_action()()
+
+
+class TestCreateReleasePrStaticVersionAndChangelogOptIns:
+    """Integration tests for the two opt-in branches `create_release_pr` gained for #971:
+    bumping a static version (`version_provider` != "scm") and renaming a hand-written
+    changelog (`update_changelog_on_bump = false`). Each walks the full action, in a
+    `tmp_path` cwd carrying a real `pyproject.toml`/`CHANGELOG.md`, so the config-reading
+    helpers and `_bump_handwritten_changelog` exercise real file I/O; only `subprocess.run`,
+    `run_streamed`, and the two governance validators are faked.
+    """
+
+    _NEXT_VERSION = "1.2.0"
+
+    _DEFAULT_CHANGELOG = (
+        "# Changelog\n\n"
+        "## [Unreleased]\n\n"
+        "### Added\n"
+        "- A hand-written entry\n\n"
+        "## [0.1.0] - 2026-01-01\n\n"
+        "### Added\n"
+        "- First release\n"
+    )
+
+    def _patch(
+        self,
+        monkeypatch: MonkeyPatch,
+        tmp_path: Path,
+        pyproject: str,
+        changelog: str | None = None,
+        fail_on: list[str] | None = None,
+    ) -> tuple[list[list[str]], list[list[str]]]:
+        """Write real config/changelog files into ``tmp_path`` and fake the subprocess layer.
+
+        Returns ``(subprocess_calls, streamed_calls)`` — every command list passed to
+        ``subprocess.run`` and ``run_streamed`` respectively, in call order.
+        """
+        (tmp_path / "pyproject.toml").write_text(pyproject, encoding="utf-8")
+        (tmp_path / "CHANGELOG.md").write_text(
+            changelog if changelog is not None else self._DEFAULT_CHANGELOG, encoding="utf-8"
+        )
+        monkeypatch.chdir(tmp_path)
+
+        subprocess_calls: list[list[str]] = []
+        streamed_calls: list[list[str]] = []
+
+        def fake_run(
+            cmd: list[str], *_args: object, **_kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
+            subprocess_calls.append(cmd)
+            if fail_on is not None and cmd[: len(fail_on)] == fail_on:
+                raise subprocess.CalledProcessError(1, cmd)
+            if cmd[:3] == ["git", "branch", "--show-current"]:
+                stdout = "main\n"
+            elif cmd[:3] == ["git", "status", "-s"]:
+                stdout = ""
+            elif "--get-next" in cmd:
+                stdout = f"{self._NEXT_VERSION}\n"
+            else:
+                stdout = ""
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout=stdout, stderr="")
+
+        def fake_streamed(cmd: list[str], **_kwargs: object) -> None:
+            streamed_calls.append(cmd)
+            return None
+
+        monkeypatch.setattr("tools.doit.release.subprocess.run", fake_run)
+        monkeypatch.setattr("tools.doit.release.run_streamed", fake_streamed)
+        monkeypatch.setattr("tools.doit.release.validate_merge_commits", lambda _console: True)
+        monkeypatch.setattr("tools.doit.release.validate_issue_links", lambda _console: True)
+        return subprocess_calls, streamed_calls
+
+    def test_template_default_is_unchanged(self, tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+        """Criterion 3: ``scm`` provider + generated changelog -> no bump, cz changelog runs.
+
+        Regression guard: this is the template's own configuration.
+        """
+        pyproject = '[tool.commitizen]\nversion_provider = "scm"\nupdate_changelog_on_bump = true\n'
+        subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        assert not any("--files-only" in cmd for cmd in streamed_calls)
+        assert ["uv", "run", "cz", "changelog", "--incremental"] in streamed_calls
+        git_add_calls = [c for c in subprocess_calls if c[:2] == ["git", "add"]]
+        assert git_add_calls == [["git", "add", "CHANGELOG.md"]]
+
+    def test_static_version_bumps_files_and_lock(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """Criterion 1: every version file and ``uv.lock`` are bumped and committed."""
+        pyproject = (
+            "[tool.commitizen]\n"
+            'version_provider = "pep621"\n'
+            'version_files = ["src/mypkg/__init__.py:__version__", "Makefile:VERSION"]\n'
+        )
+        subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        assert [
+            "uv",
+            "run",
+            "cz",
+            "bump",
+            "--files-only",
+            "--yes",
+            self._NEXT_VERSION,
+        ] in streamed_calls
+        assert ["uv", "lock"] in streamed_calls
+        git_add_calls = [c for c in subprocess_calls if c[:2] == ["git", "add"]]
+        assert len(git_add_calls) == 1
+        assert set(git_add_calls[0][2:]) == {
+            "CHANGELOG.md",
+            "pyproject.toml",
+            "src/mypkg/__init__.py",
+            "Makefile",
+            "uv.lock",
+        }
+
+    def test_handwritten_changelog_is_renamed_not_generated(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """Criterion 2: every existing Unreleased entry survives under the new heading."""
+        pyproject = "[tool.commitizen]\nupdate_changelog_on_bump = false\n"
+        subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        assert not any(cmd[-3:] == ["cz", "changelog", "--incremental"] for cmd in streamed_calls)
+        result = (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8")
+        today = date.today().isoformat()
+        assert f"## [Unreleased]\n\n## [{self._NEXT_VERSION}] - {today}" in result
+        assert "- A hand-written entry" in result
+        git_add_calls = [c for c in subprocess_calls if c[:2] == ["git", "add"]]
+        assert git_add_calls == [["git", "add", "CHANGELOG.md"]]
+
+    def test_handwritten_changelog_check_aborts_before_the_branch_exists(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """A missing/empty Unreleased section aborts before any branch or bump is made."""
+        pyproject = (
+            '[tool.commitizen]\nversion_provider = "pep621"\nupdate_changelog_on_bump = false\n'
+        )
+        empty_changelog = "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-01-01\n\n- x\n"
+        subprocess_calls, streamed_calls = self._patch(
+            monkeypatch, tmp_path, pyproject, changelog=empty_changelog
+        )
+
+        with pytest.raises(SystemExit) as exc:
+            _release_action()()
+
+        assert exc.value.code == 1
+        assert not any(cmd[:3] == ["git", "checkout", "-b"] for cmd in subprocess_calls)
+        assert not any("--files-only" in cmd for cmd in streamed_calls)
+        assert (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8") == empty_changelog
+
+    def test_a_missing_key_is_treated_as_handwritten(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """Commitizen's default for the key is False, so no key means hand-written."""
+        _subprocess_calls, streamed_calls = self._patch(
+            monkeypatch, tmp_path, '[tool.commitizen]\nname = "cz_conventional_commits"\n'
+        )
+
+        _release_action()()
+
+        assert not any(cmd[-3:] == ["cz", "changelog", "--incremental"] for cmd in streamed_calls)
+        result = (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8")
+        assert f"## [{self._NEXT_VERSION}] - {date.today().isoformat()}" in result
+
+    def test_static_version_with_generated_changelog_skips_cz_changelog(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """The bump already wrote the changelog; ``cz changelog --incremental`` would exit 16."""
+        pyproject = (
+            '[tool.commitizen]\nversion_provider = "pep621"\nupdate_changelog_on_bump = true\n'
+        )
+        _subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        assert any("--files-only" in cmd for cmd in streamed_calls)
+        assert not any(cmd[-3:] == ["cz", "changelog", "--incremental"] for cmd in streamed_calls)
+
+    def test_abort_after_a_version_bump_discards_it_before_leaving_the_branch(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """A failure after the bump must not carry the bumped files onto ``main``."""
+        pyproject = (
+            '[tool.commitizen]\nversion_provider = "pep621"\nupdate_changelog_on_bump = false\n'
+        )
+        subprocess_calls, streamed_calls = self._patch(
+            monkeypatch, tmp_path, pyproject, fail_on=["git", "add"]
+        )
+
+        with pytest.raises(SystemExit):
+            _release_action()()
+
+        assert any("--files-only" in cmd for cmd in streamed_calls)
+        restore = subprocess_calls.index(["git", "checkout", "--", "."])
+        assert subprocess_calls.index(["git", "reset", "--quiet", "HEAD"]) < restore
+        assert restore < subprocess_calls.index(["git", "checkout", "main"])
+        branch_name = f"release/v{self._NEXT_VERSION}"
+        assert ["git", "branch", "-D", branch_name] in subprocess_calls
+
+    @staticmethod
+    def _pr_body(streamed_calls: list[list[str]]) -> str:
+        create = next(cmd for cmd in streamed_calls if cmd[:3] == ["gh", "pr", "create"])
+        return create[create.index("--body") + 1]
+
+    def test_issue_param_writes_addresses_line(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        """``--issue`` puts the line ``doit pr_merge`` and the issue-link check look for."""
+        pyproject = '[tool.commitizen]\nversion_provider = "scm"\nupdate_changelog_on_bump = true\n'
+        _subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()(issue="#304")
+
+        assert re.search(r"^Addresses #304$", self._pr_body(streamed_calls), re.MULTILINE)
+
+    def test_no_issue_param_writes_no_addresses_line(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        pyproject = '[tool.commitizen]\nversion_provider = "scm"\nupdate_changelog_on_bump = true\n'
+        _subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        assert "Addresses" not in self._pr_body(streamed_calls)
+
+    def test_invalid_issue_param_aborts_before_anything_runs(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        pyproject = '[tool.commitizen]\nversion_provider = "scm"\nupdate_changelog_on_bump = true\n'
+        subprocess_calls, _streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        with pytest.raises(SystemExit) as exc:
+            _release_action()(issue="abc")
+
+        assert exc.value.code == 1
+        assert not any(cmd[:2] == ["git", "pull"] for cmd in subprocess_calls)
+
+    def test_static_version_body_lists_every_bumped_file(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch
+    ) -> None:
+        pyproject = (
+            "[tool.commitizen]\n"
+            'version_provider = "pep621"\n'
+            'version_files = ["src/mypkg/__init__.py:__version__"]\n'
+        )
+        _subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        body = self._pr_body(streamed_calls)
+        assert "in pyproject.toml" in body
+        assert "in src/mypkg/__init__.py" in body
+        assert "uv.lock" in body
+
+    @pytest.mark.parametrize(("has_workflow", "mentions_workflow"), [(True, True), (False, False)])
+    def test_body_mentions_the_release_workflow_only_when_it_exists(
+        self, tmp_path: Path, monkeypatch: MonkeyPatch, has_workflow: bool, mentions_workflow: bool
+    ) -> None:
+        pyproject = '[tool.commitizen]\nversion_provider = "scm"\nupdate_changelog_on_bump = true\n'
+        if has_workflow:
+            (tmp_path / ".github" / "workflows").mkdir(parents=True)
+            (tmp_path / ".github" / "workflows" / "release.yml").write_text("", encoding="utf-8")
+        _subprocess_calls, streamed_calls = self._patch(monkeypatch, tmp_path, pyproject)
+
+        _release_action()()
+
+        assert ("release workflow" in self._pr_body(streamed_calls)) is mentions_workflow

@@ -1,3 +1,12 @@
+---
+title: "ADR-0001: Spec matching: floor over highest, module path keyed by resolved spec version"
+description: "Match a requested OPNsense version to the highest bundled spec at or below it, and key the generated-client module by the resolved spec version"
+audience:
+  - contributors
+tags:
+  - adr
+---
+
 # ADR-0001: Spec matching: floor over highest, module path keyed by resolved spec version
 
 ## Status
@@ -69,4 +78,3 @@ description and changelog flag it explicitly.
   `_version_key`, `version_from_spec_path`.
 - `src/opnsense_openapi/client/base.py` — `_resolved_module_dir`,
   `_auto_generate_client`, `OPNsenseClient.api`.
-

@@ -22,6 +22,7 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
+import re
 import subprocess
 import sys
 import types
@@ -33,9 +34,8 @@ import pytest
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-HOOK_PATH = (
-    Path(__file__).resolve().parents[1] / "tools" / "hooks" / "ai" / "block-dangerous-commands.py"
-)
+REPO_ROOT = Path(__file__).resolve().parents[1]
+HOOK_PATH = REPO_ROOT / "tools" / "hooks" / "ai" / "block-dangerous-commands.py"
 
 # Branch the hook sees. The migrated cases were authored against a feature
 # branch; see the module docstring.
@@ -563,6 +563,31 @@ BASH_CASES = [
         "ALLOW",
         "python -c print var name only",
     ),
+    # A separator glued to the next command still ends the one before it (#1023).
+    # `shlex.split` keeps `true;git` as one word, so the checks that look for a
+    # `git` or `gh` token missed every command glued to `;`, `&&`, `||`, `|` or `&`.
+    ("true;git push --force origin main", "BLOCK", "force push glued to ;"),
+    ("true;git push -f origin main", "BLOCK", "short force push glued to ;"),
+    ("true&&git push --force origin main", "BLOCK", "force push glued to &&"),
+    (
+        "true&&git push --force-with-lease origin main",
+        "BLOCK",
+        "force-with-lease push glued to &&",
+    ),
+    ("true||git push --force origin main", "BLOCK", "force push glued to ||"),
+    ("true|git push --force origin main", "BLOCK", "force push glued to |"),
+    ("true&git push --force origin main", "BLOCK", "force push glued to &"),
+    ("true;git push origin main", "BLOCK", "push to main glued to ;"),
+    ("true;git push origin --delete main", "BLOCK", "delete main glued to ;"),
+    ("true;git branch -D main", "BLOCK", "branch -D main glued to ;"),
+    ("true;gh pr create --fill", "BLOCK", "gh pr create glued to ;"),
+    (
+        "true;gh pr edit 123 --add-label ready-to-merge",
+        "BLOCK",
+        "governance label glued to ;",
+    ),
+    ("true;git push origin feature", "ALLOW", "push to a feature branch glued to ;"),
+    ("true;git status", "ALLOW", "safe command glued to ;"),
 ]
 
 # --- Governance label bypass cases (ALLOW_AI_READY_TO_MERGE=1 injected) ---
@@ -783,6 +808,60 @@ AGY_EDIT_CASES: list[tuple[str, str, str, str]] = [
     ),
 ]
 
+# --- Antigravity edit_file / write_file cases (#1006) ---
+#
+# Shapes observed from a live `agy` 1.4.3 session through a logging hook:
+#   edit_file  -> {"Path": ..., "Target": ..., "Replacement": ...}
+#   write_file -> {"Path": ..., "Content": ..., "Overwrite": true}
+# Neither reached the hook before #1006: `.agents/hooks.json` matched only
+# `run_command|write_to_file`, and `agy` 1.4.3 never called `write_to_file`.
+AGY_EDIT_FILE_CASES: list[tuple[str, dict[str, object], str, str]] = [
+    (
+        "edit_file",
+        {
+            "Path": "/home/x/.bashrc",
+            "Target": "# end",
+            "Replacement": "export ALLOW_AI_READY_TO_MERGE=1",
+        },
+        "BLOCK",
+        "edit_file .bashrc rtm var",
+    ),
+    (
+        "edit_file",
+        {"Path": ".envrc", "Target": "x", "Replacement": "export ALLOW_AI_READY_TO_MERGE=1"},
+        "BLOCK",
+        "edit_file .envrc rtm var",
+    ),
+    (
+        "edit_file",
+        {"Path": "/tmp/scratch.txt", "Target": "x", "Replacement": "ALLOW_AI_READY_TO_MERGE=1"},
+        "ALLOW",
+        "edit_file non-protected target",
+    ),
+    (
+        "edit_file",
+        {"Path": "/home/x/.bashrc", "Target": "x", "Replacement": "export PATH=$PATH:/opt"},
+        "ALLOW",
+        "edit_file .bashrc no var",
+    ),
+    (
+        "write_file",
+        {
+            "Path": "/home/x/.zshrc",
+            "Content": "export ALLOW_AI_READY_TO_MERGE=1\n",
+            "Overwrite": True,
+        },
+        "BLOCK",
+        "write_file .zshrc rtm var",
+    ),
+    (
+        "write_file",
+        {"Path": "/tmp/notes.txt", "Content": "ALLOW_AI_READY_TO_MERGE", "Overwrite": True},
+        "ALLOW",
+        "write_file non-protected target",
+    ),
+]
+
 
 def _load_hook() -> types.ModuleType:
     """Load the hook script as a fresh module instance.
@@ -953,6 +1032,49 @@ def test_antigravity_write_to_file(
     assert _outcome_stdout(hook, monkeypatch, capsys, payload, "decision") == expected, description
 
 
+@pytest.mark.parametrize(
+    ("tool", "args", "expected", "description"),
+    AGY_EDIT_FILE_CASES,
+    ids=_ids(AGY_EDIT_FILE_CASES, 3),
+)
+def test_antigravity_edit_file_and_write_file(
+    hook: types.ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    tool: str,
+    args: dict[str, object],
+    expected: str,
+    description: str,
+) -> None:
+    """Antigravity's edit_file and write_file use Path / Replacement / Content (#1006)."""
+    payload = json.dumps({"toolCall": {"name": tool, "args": args}})
+    assert _outcome_stdout(hook, monkeypatch, capsys, payload, "decision") == expected, description
+
+
+# Every tool name `agy` uses for a shell command or a file write, as observed from
+# a live `agy` 1.4.3 session (#1006). `write_to_file` is kept for older releases.
+_AGY_GUARDED_TOOLS = ("run_command", "write_to_file", "write_file", "edit_file")
+
+
+@pytest.mark.parametrize("tool", _AGY_GUARDED_TOOLS)
+def test_antigravity_hooks_json_matcher_reaches_every_guarded_tool(tool: str) -> None:
+    """The `.agents/hooks.json` matcher is the premise the agy checks rest on (#1006).
+
+    A tool the matcher misses never reaches the hook, however well the hook
+    handles its payload.
+    """
+    hooks = json.loads((REPO_ROOT / ".agents" / "hooks.json").read_text(encoding="utf-8"))
+    matchers = [
+        entry["matcher"]
+        for config in hooks.values()
+        for entry in config.get("PreToolUse", [])
+        if "block-dangerous-commands" in json.dumps(entry)
+    ]
+    assert any(re.fullmatch(matcher, tool) for matcher in matchers), (
+        f"no .agents/hooks.json matcher for the shared hook matches agy's {tool!r} tool"
+    )
+
+
 # --- Subprocess smoke tests -------------------------------------------------
 #
 # The parametrized cases above run in-process, which is fast and reports
@@ -1064,6 +1186,26 @@ APPLY_PATCH_CASES: list[tuple[str, str, str]] = [
         "BLOCK",
         "apply_patch envelope carrying a dangerous flag",
     ),
+    (
+        # Gap 1 (#1007): a `*** Move to:` destination must be checked too, not
+        # just the original `*** Update File:` path.
+        _patch(
+            "*** Update File: src/old.py\n"
+            "*** Move to: ~/.bashrc\n"
+            "+export ALLOW_AI_READY_TO_MERGE=1\n"
+        ),
+        "BLOCK",
+        "apply_patch move target is protected",
+    ),
+    (
+        _patch(
+            "*** Update File: src/old.py\n"
+            "*** Move to: src/new.py\n"
+            "+export ALLOW_AI_READY_TO_MERGE=1\n"
+        ),
+        "ALLOW",
+        "apply_patch move target is ordinary",
+    ),
 ]
 
 
@@ -1160,6 +1302,103 @@ SECRET_EXPOSURE_CASES: list[tuple[str, str, str]] = [
     # Blocking $VAR interpolation gives false assurance while being trivially
     # avoided, and legitimate uses are common.
     ("echo $PYPI_TOKEN", "ALLOW", "var interpolation is deliberately not blocked"),
+    # Gap 4 (#1007): a redirection token ends a *write*, not the whole credential
+    # scan -- a reader can still take a credential path as a plain argument
+    # after redirecting its output elsewhere.
+    (
+        "cat /dev/null > /tmp/x ~/.pypirc",
+        "BLOCK",
+        "credential path follows a standalone redirect and its target",
+    ),
+    (
+        "cat foo >/tmp/x ~/.netrc",
+        "BLOCK",
+        "credential path follows a glued redirect",
+    ),
+    # A here-string or heredoc marker does not end the reader's arguments
+    # either: the shell still reads the file named after it.
+    ("cat <<<x ~/.pypirc", "BLOCK", "credential path follows a here-string"),
+    ("cat <<EOF ~/.netrc\nhi\nEOF", "BLOCK", "credential path follows a heredoc marker"),
+    (
+        "cat >> notes.md <<EOF\ncat ~/.netrc\nEOF",
+        "ALLOW",
+        "a credential read written to a file by a data heredoc is not run",
+    ),
+    # Gap 1 (#1011, regression from #1010): a quoted `<<WORD` was mistaken for
+    # a real heredoc marker, so `_without_heredoc_bodies` dropped the lines
+    # after it -- the credential read following the quoted `"<<EOF"` was never
+    # scanned.
+    (
+        'echo "<<EOF" ;\ncat ~/.netrc',
+        "BLOCK",
+        "a quoted heredoc marker does not hide the read after it",
+    ),
+    # Gap 2 (#1011, predates #1010): `_command_start_indices`'s callers got
+    # `tokenize()` tokens, which treat a newline as whitespace and keep a
+    # glued `;` stuck to its neighbour -- so a command position after either
+    # was invisible to the credential-read and env-dump checks.
+    ("echo hi; cat ~/.netrc", "BLOCK", "credential read after a glued semicolon"),
+    ("echo hi\ncat ~/.netrc", "BLOCK", "credential read after an unquoted newline"),
+    (
+        'echo "<<EOF"\ncat ~/.netrc',
+        "BLOCK",
+        "credential read after a newline, with a quoted << earlier on the line",
+    ),
+    ("true\nprintenv", "BLOCK", "bare printenv after an unquoted newline"),
+    # Should still block after the tokenizer swap to `_structural_tokens`:
+    # that tokenizer splits `2>&1` into `2>`, `&`, `1`, so the redirect-skip
+    # logic in `check_credential_file_read` must still see `2>` as a single
+    # redirect token and the env-dump command-start scan must still treat `&`
+    # as a separator rather than part of a word.
+    ("cat foo 2>&1 ~/.netrc", "BLOCK", "credential path survives a 2>&1 redirect"),
+    (
+        "cat foo 2>&1 && printenv MY_API_KEY",
+        "BLOCK",
+        "env dump survives a 2>&1 redirect before it",
+    ),
+    # `&>` is one redirect, not a background `&` followed by `>` (#1011). The
+    # structural tokenizer splits it, so the tokenize() pass has to catch it.
+    ("cat &>/tmp/x ~/.netrc", "BLOCK", "credential path follows a glued &> redirect"),
+    ("cat &> /tmp/x ~/.netrc", "BLOCK", "credential path follows a standalone &> redirect"),
+    ("cat &>>/tmp/x ~/.netrc", "BLOCK", "credential path follows a glued &>> redirect"),
+    # A `<<EOF` that closes a quote opened on an earlier line is not a marker,
+    # so the line after it is still a command (#1011).
+    ('echo "x\n<<EOF"\ncat ~/.netrc\nEOF', "BLOCK", "marker closes a multi-line double quote"),
+    ("echo 'x\n<<EOF'\ncat ~/.netrc\nEOF", "BLOCK", "marker closes a multi-line single quote"),
+    (
+        'echo "a\nb"\ncat >> notes.md <<EOF\ncat ~/.netrc\nEOF',
+        "ALLOW",
+        "a closed multi-line quote does not hide a real data heredoc after it",
+    ),
+    # A marker line that ends inside a quote leaves where the body starts
+    # unclear, so nothing after it is stripped (#1011).
+    (
+        'cat <<EOF "\nx\nEOF\n"<<EOF\ncat ~/.netrc\nEOF',
+        "BLOCK",
+        "marker line ends inside a double quote",
+    ),
+    (
+        "cat <<EOF '\nx\nEOF\n'<<EOF\ncat ~/.netrc\nEOF",
+        "BLOCK",
+        "marker line ends inside a single quote",
+    ),
+    # A command substitution inside a double quote nests its own quotes, so
+    # nothing after it is stripped as a heredoc body (#1011).
+    (
+        'echo "$(echo "x\n<<EOF")"\ncat ~/.netrc\nEOF',
+        "BLOCK",
+        "marker inside a quote nested in a command substitution",
+    ),
+    (
+        'echo "`echo "x\n<<EOF"`"\ncat ~/.netrc\nEOF',
+        "BLOCK",
+        "marker inside a quote nested in a backtick substitution",
+    ),
+    (
+        'echo "${x:-"x\n<<EOF"}"\ncat ~/.netrc\nEOF',
+        "BLOCK",
+        "marker inside a quote nested in a parameter expansion",
+    ),
 ]
 
 
@@ -1229,6 +1468,37 @@ HEREDOC_BODY_CASES: list[tuple[str, str, str]] = [
     ("bash <<EOF\necho hello", "ALLOW", "unterminated heredoc, benign body"),
     ("cat > n.md <<EOF\nEOF is the delimiter\nEOF", "ALLOW", "delimiter word inside the body"),
     ('python3 -c "print(1)"', "ALLOW", "the -c path is untouched by heredoc handling"),
+    # Gap 2 (#1007): a plain `<<` body ends only on a line that exactly equals
+    # the delimiter -- a real shell does not strip the terminator line, so an
+    # indented false terminator must not end the body early.
+    (
+        "bash <<EOF\n  EOF\ncat ~/.netrc\nEOF",
+        "BLOCK",
+        "indented false terminator does not end a plain << body",
+    ),
+    (
+        "bash <<\\EOF\ncat ~/.netrc\nEOF",
+        "BLOCK",
+        "backslash-escaped delimiter form (<<\\WORD)",
+    ),
+    # Gap 3 (#1007): a wrapper before the interpreter, or a value-taking shell
+    # option, must not hide the interpreter from `_reads_stdin_as_code`.
+    ("env bash <<EOF\ncat ~/.netrc\nEOF", "BLOCK", "env-wrapped interpreter"),
+    ("sudo sh <<EOF\ncat ~/.netrc\nEOF", "BLOCK", "sudo-wrapped interpreter"),
+    ("nice bash <<EOF\ncat ~/.netrc\nEOF", "BLOCK", "nice-wrapped interpreter"),
+    ("command bash <<EOF\ncat ~/.netrc\nEOF", "BLOCK", "command-wrapped interpreter"),
+    (
+        "env FOO=1 bash <<EOF\ncat ~/.netrc\nEOF",
+        "BLOCK",
+        "env with an assignment before the interpreter",
+    ),
+    ("bash -o errexit <<EOF\ncat ~/.netrc\nEOF", "BLOCK", "-o takes a separate value"),
+    ("bash --rcfile foo <<EOF\ncat ~/.netrc\nEOF", "BLOCK", "--rcfile takes a separate value"),
+    (
+        "fish <<EOF\ncat ~/.netrc\nEOF",
+        "ALLOW",
+        "an interpreter not in _STDIN_INTERPRETERS is left alone",
+    ),
 ]
 
 

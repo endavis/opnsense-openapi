@@ -57,10 +57,7 @@ def main() -> None:
     for method, module, controller, command in test_endpoints:
         url = f"{base_url.rstrip('/')}/api/{module}/{controller}/{command}"
         try:
-            if method == "GET":
-                response = client.get(url)
-            else:  # POST
-                response = client.post(url)
+            response = client.get(url) if method == "GET" else client.post(url)
 
             status = response.status_code
 
