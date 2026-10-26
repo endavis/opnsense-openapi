@@ -29,6 +29,33 @@ Stay in sync with improvements to the pyproject-template.
 > can use `manage.py`, `check_template_updates.py`, and the rest of the
 > sync tooling described below.
 
+## Which template version you get
+
+`bootstrap.py` resolves the ref once, up front, and fetches every file from that single commit.
+A run is therefore internally consistent: `main` moving mid-run cannot give you half of one commit
+and half of another.
+
+It prints the commit it pinned to:
+
+```
+  Pinned to commit 4ef5b9c1a2b3 (from 'main')
+```
+
+**Record that SHA.** It is the answer to "which template version is this project synced against",
+and it is what makes a sync reproducible.
+
+To pin deliberately — reviewing an update before taking it, or reproducing an earlier sync — set
+`PYPROJECT_TEMPLATE_REF` to a branch, tag or full SHA:
+
+```bash
+PYPROJECT_TEMPLATE_REF=4ef5b9c... curl -sSL https://raw.githubusercontent.com/endavis/pyproject-template/main/bootstrap.py | python3 - --sync
+```
+
+If `api.github.com` is unreachable or rate-limited, the run **warns and continues** against the
+moving ref rather than failing. Pinning is a consistency improvement; refusing to bootstrap because
+an API call failed would trade a small gain for a hard outage. Set `GITHUB_TOKEN` if you are being
+rate-limited.
+
 ## When to Update
 
 Consider checking for template updates when:
@@ -45,7 +72,7 @@ The `check_template_updates.py` script compares your project against the latest 
 ### Basic Usage
 
 ```bash
-python tools/pyproject_template/check_template_updates.py
+python tools/pyproject_template/manage.py check
 ```
 
 ### What It Does
@@ -62,15 +89,25 @@ python tools/pyproject_template/check_template_updates.py
 ### CLI Options
 
 ```bash
-# Compare against specific version
-python tools/pyproject_template/check_template_updates.py --template-version v2.2.0
-
-# Skip opening CHANGELOG in editor
-python tools/pyproject_template/check_template_updates.py --skip-changelog
-
-# Keep downloaded template for manual inspection
-python tools/pyproject_template/check_template_updates.py --keep-template
+# Compare against a specific template release instead of the latest
+python tools/pyproject_template/manage.py check --template-version v2.2.0
 ```
+
+`--template-version` accepts a **tag, a branch, or a commit SHA**; the default is `main`. Whatever
+you give it is resolved to a commit before anything is downloaded, so a check runs against one
+fixed snapshot rather than a branch that can move underneath it:
+
+```
+i Comparing against template ref: main
+i Downloading from https://github.com/endavis/pyproject-template/archive/5853ced….zip...
+```
+
+That is the same identity `bootstrap.py` pins, so the SHA it prints can be passed straight to
+`manage.py check --template-version <sha>` to diff against exactly what you synced. See
+[ADR-9020](../decisions/9020-a-template-version-is-a-commit-sha.md).
+
+`--skip-changelog` and `--keep-template` are not exposed: `manage.py` already sets both, keeping the
+downloaded template so you can run your own diffs and not opening an editor mid-run.
 
 ### Example Output
 
@@ -120,6 +157,13 @@ These files typically should be kept in sync:
 - `dodo.py` - New tasks or improvements
 - `tools/pyproject_template/*.py` - Template tooling
 
+### Breaking and behaviour changes
+
+Before adopting drift, read **[Consumer Notes](consumer-notes.md)** — changes that arrive through
+the sync path and need action. It currently carries a breaking change to `install_tools`
+(`sha256` is now mandatory for non-GitHub hosts), a hook re-install that must be run once, and the
+behaviour changes a project will notice without explanation.
+
 ### Files to Review Carefully
 
 These may have project-specific customizations:
@@ -128,6 +172,8 @@ These may have project-specific customizations:
 - `mkdocs.yml` - Your navigation differs
 - `README.md` - Your content differs
 - `.github/CONTRIBUTING.md` - May have project-specific rules
+- `tools/doit/install_tools.py` - Adopting this requires `sha256=` for any non-GitHub
+  download; see [Consumer Notes](consumer-notes.md#install_tools-requires-sha256-for-untrusted-hosts)
 
 ### Files to Usually Skip
 
@@ -144,8 +190,9 @@ These are project-specific:
 
 1. **Run the comparison**:
    ```bash
-   python tools/pyproject_template/check_template_updates.py --keep-template
+   python tools/pyproject_template/manage.py check
    ```
+   The downloaded template is kept under `tmp/` so you can diff against it.
 
 2. **Review the CHANGELOG** to understand what changed and why
 
@@ -183,7 +230,24 @@ code --diff your_file.py tmp/pyproject-template-*/your_file.py
 
 ## AI Agent Workflow
 
-If you're using an AI agent (Claude, Codex, etc.) to perform the synchronization, see the **[AI Sync Checklist](ai-sync-checklist.md)** for a structured, step-by-step guide covering all phases from pre-flight through commit.
+Every supported agent ships a `template-sync` command that drives this whole page:
+
+| Agent | Invocation |
+| :--- | :--- |
+| Claude Code | `/template-sync [ref]` |
+| GitHub Copilot CLI | `/template-sync` |
+| Codex CLI | `$template-sync` |
+| Antigravity CLI | describe the task; the skill activates on its description |
+
+It opens a tracking issue, refreshes the management suite, runs the drift check, asks you about
+the judgment calls it cannot settle from the repo, and posts its triage as a **plan comment on the
+issue for you to approve before it changes anything**. Only after approval does it apply, run
+`doit check`, and mark the sync point. See
+[Slash Commands and Workflows](../development/ai/slash-commands.md#template-sync-ref).
+
+The command follows the **[AI Sync Checklist](ai-sync-checklist.md)**, which remains the
+authoritative step-by-step reference — read it when a step is ambiguous, or when driving a sync by
+hand.
 
 ## Best Practices
 

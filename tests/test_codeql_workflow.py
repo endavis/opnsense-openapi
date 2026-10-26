@@ -10,6 +10,7 @@ GitHub's "default setup" to this advanced workflow file).
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -28,7 +29,10 @@ def _load_workflow() -> dict[Any, Any]:
     default ``locale.getpreferredencoding()`` is cp1252 and chokes on any
     non-ASCII content in the workflow file (lesson from issue #430).
     """
-    return yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))
+    # Bind to an annotated local first: yaml.safe_load returns Any,
+    # and returning Any from a typed function trips warn_return_any.
+    data: dict[Any, Any] = yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8"))
+    return data
 
 
 def _analyze_steps() -> list[dict[str, Any]]:
@@ -162,30 +166,89 @@ class TestAnalyzeJob:
         job = workflow["jobs"]["analyze"]
         assert job["strategy"]["fail-fast"] is False
 
-    def test_analyze_uses_checkout_v6(self) -> None:
-        """``actions/checkout`` should be pinned to ``@v6`` (repo convention)."""
+    def test_analyze_pins_checkout_to_a_sha(self) -> None:
+        """``actions/checkout`` must be pinned to a commit SHA.
+
+        The exact major version is intentionally not asserted. Dependabot bumps
+        ``actions/checkout`` routinely; pinning this test to a specific number
+        turns every such bump into a false CI failure (see #625). The repo
+        convention this guards is that the action is pinned to a version tag,
+        not a floating ref/branch.
+        """
         steps = _analyze_steps()
         checkout_steps = [s for s in steps if s.get("uses", "").startswith("actions/checkout@")]
         assert checkout_steps, "expected an actions/checkout step"
-        assert checkout_steps[0]["uses"] == "actions/checkout@v6"
+        uses = checkout_steps[0]["uses"]
+        assert re.fullmatch(r"actions/checkout@[0-9a-f]{40}", uses), (
+            f"expected actions/checkout pinned to a commit SHA, got {uses!r}"
+        )
 
-    def test_analyze_uses_codeql_init_v4(self) -> None:
-        """``github/codeql-action/init`` should be pinned to ``@v4``."""
+    def test_analyze_pins_codeql_init_to_a_sha(self) -> None:
+        """``github/codeql-action/init`` must be pinned to a commit SHA.
+
+        The exact major version is intentionally not asserted. Dependabot bumps
+        ``github/codeql-action`` routinely; pinning this test to a specific
+        number turns every such bump into a false CI failure (see #626). The
+        SHA-pinning superseded major-tag pinning in #695. The general rule is
+        enforced by tests/test_workflow_action_pinning.py; this asserts only
+        that the right action is the one pinned.
+        """
         steps = _analyze_steps()
         init_steps = [
             s for s in steps if s.get("uses", "").startswith("github/codeql-action/init@")
         ]
         assert init_steps, "expected a github/codeql-action/init step"
-        assert init_steps[0]["uses"] == "github/codeql-action/init@v4"
+        uses = init_steps[0]["uses"]
+        assert re.fullmatch(r"github/codeql-action/init@[0-9a-f]{40}", uses), (
+            f"expected github/codeql-action/init pinned to a commit SHA, got {uses!r}"
+        )
 
-    def test_analyze_uses_codeql_analyze_v4(self) -> None:
-        """``github/codeql-action/analyze`` should be pinned to ``@v4``."""
+    def test_analyze_pins_codeql_analyze_to_a_sha(self) -> None:
+        """``github/codeql-action/analyze`` must be pinned to a commit SHA.
+
+        See ``test_analyze_pins_codeql_init_to_a_sha`` for the rationale
+        (#626): the exact major version is intentionally not asserted so routine
+        dependabot bumps don't turn into false CI failures.
+        """
         steps = _analyze_steps()
         analyze_steps = [
             s for s in steps if s.get("uses", "").startswith("github/codeql-action/analyze@")
         ]
         assert analyze_steps, "expected a github/codeql-action/analyze step"
-        assert analyze_steps[0]["uses"] == "github/codeql-action/analyze@v4"
+        uses = analyze_steps[0]["uses"]
+        assert re.fullmatch(r"github/codeql-action/analyze@[0-9a-f]{40}", uses), (
+            f"expected github/codeql-action/analyze pinned to a commit SHA, got {uses!r}"
+        )
+
+    def test_codeql_init_and_analyze_pinned_to_same_sha(self) -> None:
+        """``init`` and ``analyze`` must be pinned to the *same* commit SHA.
+
+        These are two dependencies to dependabot but one unit to CodeQL:
+        ``init`` writes a config file stamped with its own version, and
+        ``analyze`` refuses to load a config written by a different one --
+        ``Loaded a configuration file for version '4.37.8', but running
+        version '4.37.9'``. Ungrouped dependabot bumps split the pair across
+        two PRs, each of which fails and neither of which can unblock the
+        other (PRs #794 and #795, issue #799).
+
+        The upstream prevention is the ``codeql-action`` group in
+        ``.github/dependabot.yml``, guarded by
+        ``tests/test_dependabot_config.py``. This is the assert on the
+        outcome: whatever route a bump takes, the two pins must agree.
+        """
+        steps = _analyze_steps()
+        pins = {}
+        for prefix in ("init", "analyze"):
+            step = next(
+                s for s in steps if s.get("uses", "").startswith(f"github/codeql-action/{prefix}@")
+            )
+            pins[prefix] = step["uses"].split("@", 1)[1]
+
+        assert pins["init"] == pins["analyze"], (
+            "github/codeql-action/init and /analyze must be pinned to the same "
+            f"SHA; got init={pins['init']} analyze={pins['analyze']}. A version "
+            "mismatch fails CodeQL at the analyze step (#799)"
+        )
 
     def test_analyze_init_passes_matrix_language(self) -> None:
         """The init step must receive the matrix language via ``with.languages``."""

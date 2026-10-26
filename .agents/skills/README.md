@@ -16,9 +16,16 @@ session than a paragraph buried in a large reference file.
 > `@import` directive or glob-import mechanism. Write the `description:` so that it matches only the
 > tasks where the self-checks apply (e.g., "Use when generating typed Python from a YANG schema").
 >
-> This is the Codex equivalent of `.claude/rules/` (Claude Code) and `.gemini/rules/` (Gemini CLI).
-> For the Claude and Gemini variants, see those directories. For the GitHub Copilot variant, see
+> This is the Codex equivalent of `.claude/rules/` (Claude Code). For the Claude variant, see that
+> directory. For the GitHub Copilot variant, see
 > [`.github/instructions/README.md`](../../.github/instructions/README.md).
+
+> **Shared with Antigravity CLI (`agy`):** This `.agents/skills/` directory is also read by
+> Antigravity, which uses the identical `SKILL.md` format (`name`/`description` frontmatter,
+> description-gated activation). The `antigravity-*` workflow skills live here alongside the
+> `codex-*` skills, and any rule-shaped skill added here is discovered by both CLIs. Because both
+> read this directory, each sees the other's skills (the same bleed dynamic noted for Copilot);
+> Antigravity-side suppression via `.agents/skills.json` `exclude` is planned for a later phase.
 
 ## When to author a rule-shaped skill
 
@@ -130,12 +137,10 @@ four CLIs even though the file format and load mechanism differ:
 | CLI | Directory | Load mechanism |
 | :--- | :--- | :--- |
 | Claude Code | `.claude/rules/` | `@./rules/*.md` in `.claude/CLAUDE.md` |
-| Gemini CLI | `.gemini/rules/` | One `@./.gemini/rules/<name>.md` line per rule file in `GEMINI.md` (literal paths only) |
 | GitHub Copilot | `.github/instructions/` | Native auto-discovery (no directive needed) |
 | Codex CLI | `.agents/skills/<name>/` | `description:` frontmatter is the skill-gate trigger |
 
-See [`.claude/rules/README.md`](../../.claude/rules/README.md),
-[`.gemini/rules/README.md`](../../.gemini/rules/README.md), and
+See [`.claude/rules/README.md`](../../.claude/rules/README.md) and
 [`.github/instructions/README.md`](../../.github/instructions/README.md) for the other CLI variants.
 
 ## What NOT to put in a rule-shaped skill
@@ -149,3 +154,20 @@ See [`.claude/rules/README.md`](../../.claude/rules/README.md),
   violated, the rule-shaped skill is not ready to be written yet.
 - **Workflow logic** — do not mix rule-shaped skills (self-check checklists) with workflow skills
   (multi-step instructions like `codex-plan`). Keep them in separate subdirectories.
+
+## Shipped rule: `typing-branch-narrowing`
+
+This template ships one rule file, mirrored across all three agent rule surfaces because every
+agent in the delegation matrix edits this codebase. The checklist body is identical everywhere;
+only the frontmatter and the loading mechanism differ.
+
+| Surface | Path |
+| :--- | :--- |
+| Claude | `.claude/rules/typing-branch-narrowing.md` |
+| Copilot | `.github/instructions/typing-branch-narrowing.instructions.md` |
+| Codex / Antigravity | `.agents/skills/typing-branch-narrowing/SKILL.md` |
+
+**When you change one, change all three.** A rule that disagrees with itself across agents is worse
+than no rule, because whichever agent is driving decides which version applies.
+`tests/template/test_rule_files.py` enforces that each rule's three bodies stay identical. See
+[`.claude/rules/README.md`](../../.claude/rules/README.md) for the authoring discipline.

@@ -104,69 +104,23 @@ When a Python version starts failing CI:
 
 ## Pipeline Details (GitHub Actions)
 
-### Recommended Workflow Structure
+### The pipeline that ships
 
-Create `.github/workflows/tests.yml`:
+`ci.yml` is the pipeline. It is not a starting point to copy — it is the workflow this template
+installs, and it already does what a hand-rolled `tests.yml` would:
 
-```yaml
-name: Tests
+| | |
+| :--- | :--- |
+| **Matrix** | derived from `.github/python-versions.json` via `.github/actions/python-versions`, not hardcoded — so a version policy change moves one file |
+| **Platforms** | `ubuntu-latest`, `windows-latest`, `macos-latest` |
+| **Checks** | `doit` tasks (`format_check`, `lint`, `type_check`, `test`), so CI and a local run cannot diverge |
+| **Coverage** | `package_name` **and** `tools/`, gated by `fail_under` in `pyproject.toml` |
+| **Actions** | pinned to commit SHAs with a `# vX.Y.Z` comment (see [Action pinning](#action-pinning-and-workflow-permissions)) |
 
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12", "3.14"]  # Bookend strategy: oldest + newest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v1
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          uv sync --dev
-
-      - name: Run format check
-        run: uv run doit format_check
-
-      - name: Run linter
-        run: uv run doit lint
-
-      - name: Run type checker
-        run: uv run doit type_check
-        continue-on-error: true  # Optional: make non-blocking
-
-      - name: Run tests with coverage
-        run: uv run pytest --cov=src --cov-report=xml --cov-report=html
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        if: matrix.python-version == '3.12'
-        with:
-          file: ./coverage.xml
-          fail_ci_if_error: true
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
-        if: matrix.python-version == '3.12'
-        with:
-          name: coverage-report
-          path: htmlcov/
-```
+Read `.github/workflows/ci.yml` for the current definition. This page previously carried a ~60-line
+`tests.yml` sample to copy; it drifted from the real file in every dimension above — hardcoded
+versions, raw `pytest` instead of `doit`, and mutable action tags this project's own tests forbid
+(#772). A second pipeline alongside `ci.yml` was never the intent.
 
 ### Pipeline Jobs
 
@@ -176,9 +130,7 @@ jobs:
 code-quality:
   runs-on: ubuntu-latest
   steps:
-    - uses: actions/checkout@v4
-    - name: Install uv
-      uses: astral-sh/setup-uv@v1
+    # checkout + uv setup, SHA-pinned — see .github/workflows/ci.yml
     - name: Install dependencies
       run: uv sync --dev
     - name: Format check
@@ -196,9 +148,7 @@ code-quality:
 security:
   runs-on: ubuntu-latest
   steps:
-    - uses: actions/checkout@v4
-    - name: Install uv
-      uses: astral-sh/setup-uv@v1
+    # checkout + uv setup, SHA-pinned — see .github/workflows/ci.yml
     - name: Install security tools
       run: uv sync --extra security
     - name: Run security audit
@@ -218,23 +168,133 @@ docs:
   needs: setup
   runs-on: ubuntu-latest
   steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-python@v6
-      with:
-        python-version: ${{ needs.setup.outputs.newest }}
-    - uses: astral-sh/setup-uv@v7
+    # checkout, setup-python (at needs.setup.outputs.newest) and uv setup —
+    # all SHA-pinned; see .github/workflows/ci.yml for the current pins
     - name: Install dependencies
       run: uv sync --all-extras --dev
     - name: Build documentation
       run: uv run doit docs_build
 ```
 
+### Tests of shipped assets must fit the project, not the template
+
+The template wires four AI agents; most projects spawned from it keep one. Tests
+that assert on agent wiring therefore derive the roster from what is on disk
+rather than hardcoding all four:
+
+```python
+from agent_roster import present_agents, agent_is_present, skip_if_absent
+
+AGENTS = present_agents()          # size a matrix to this project
+skip_if_absent("codex")            # or skip a whole agent-specific test
+```
+
+`tests/agent_roster.py` keys presence on each agent's self-action skill directory,
+not its config root — `.agents/` is read by both Codex and Antigravity, so its
+existence cannot distinguish them.
+
+Before this, `test_delegation_matrix.py` and four other files asserted that all
+68 delegation files existed, so a project that dropped an unused agent got 56
+failures on its first run (#690). Dropping an agent should narrow what the suite
+checks, never red it.
+
+The same principle does **not** license shedding these tests. They cover
+`tools/doit/`, `tools/hooks/`, workflows and agent assets — code that ships to and
+runs in the project, and that the gate below measures. Shedding them was measured
+at 40.73% total and 8.27% on `tools/hooks/`, well under `fail_under` (#731).
+
+### Action pinning and workflow permissions
+
+**Every external action is pinned to a commit SHA**, with a `# vX.Y.Z` comment so the
+file stays readable:
+
+```yaml
+- uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+```
+
+A major tag such as `@v7` is a moving pointer the publisher can re-aim at any commit, so
+`uses: some/action@v7` is a standing instruction to run whatever they decide to put
+there. A 40-character SHA is not re-pointable. Dependabot is configured for the
+`github-actions` ecosystem, so pins are bumped through a reviewable PR rather than
+changing silently — that trade is the point, and it is why pinning does not mean falling
+behind.
+
+First-party `actions/*` are pinned too. "GitHub publishes it" is not a security boundary,
+and exempting them would leave most of the surface unpinned for no gain.
+
+**One deliberate exemption:** `pypa/gh-action-pypi-publish@release/v1`. PyPA documents
+that branch as the supported reference for trusted publishing and ships security fixes to
+it, and the workflows using it hold `id-token: write`. The exemption and its reason live
+in `PINNING_EXEMPT` in `tests/test_workflow_action_pinning.py`, which fails if it is ever
+added to without a reason or left in place after the action stops being used.
+
+**Permissions are least-privilege, and write is never reachable from a pull request.** A
+same-repo PR branch runs its own code; if a write-capable `GITHUB_TOKEN` is in scope,
+that code can use it — and workflow-scope `permissions:` apply to every trigger,
+including `pull_request`. So a job needing write declares it at *job* scope and gates
+itself on `github.event_name == 'push'`. `benchmark.yml` is the worked example: a
+read-only `benchmark` job that runs everywhere, and a `store` job holding the only write
+grant, gated on pushes to main.
+
+`tests/test_benchmark_workflow.py` and `tests/test_workflow_action_pinning.py` enforce
+both properties.
+
 ### Coverage Requirements
 
-- **Recommended threshold**: ≥70%
-- **Configuration**: Set in `pyproject.toml` and pytest command
+- **Enforced threshold**: `fail_under = 70` in `pyproject.toml`
+- **Measured scope**: `package_name` **and** `tools/`
 - **Artifacts**: Upload HTML coverage reports for review
 - **Integration**: Use Codecov or similar service for tracking
+
+#### What the gate measures, and why
+
+The gate covers `tools/` as well as the package. `src/package_name/` is the skeleton every
+downstream project deletes and replaces; `tools/` is the code that runs releases, creates PRs and
+blocks dangerous commands. Gating only the package produced a healthy-looking number over ~66
+statements while several thousand statements of tooling went unmeasured.
+
+The threshold is deliberately set to what the codebase actually achieves rather than to an
+aspirational number pointed at the wrong target. **Ratchet it upward** as tooling coverage
+improves; treat lowering it as a change that needs justification in the PR.
+
+One directory is omitted: `tools/pyproject_template/`. It is the template's own management
+suite, deleted by both spawn routes, so leaving it in scope measured code downstream that is
+never tested there — which put a spawned project 19 points under the gate (#731). Its tests
+still run in template CI. Nothing else is omitted.
+
+#### Template vs downstream
+
+`cleanup --setup` / `--all` deletes `tools/pyproject_template/`, so the two shapes once measured
+different code and reported different numbers.
+
+**They no longer do.** #731 omitted that directory from the gate precisely so both shapes measure
+the same statements with the same tests: a spawned project now sees the number this repository
+sees, rather than one 19 points lower that it had no way to raise. There is one figure to track,
+not two.
+
+Run `doit coverage` for the current value. The gate is `fail_under` in `pyproject.toml` — 70 at the
+time of writing — and CI fails below it.
+
+Statement counts and percentages are deliberately **not** quoted here. They move with every merge:
+the figures this section used to carry were stale within days, and a number in prose that no test
+reads is a number that will be wrong (#754). `pyproject.toml` holds the threshold, `doit coverage`
+reports the measurement, and both are checked.
+
+#### Keep coverage hermetic
+
+These figures are reproducible on any machine. They were not always: tests reached
+`setup_repo._check_token_permissions()` through the *real* `gh auth status`, so the branch that
+runs depended on the developer's GitHub auth state — a machine holding a fine-grained PAT
+measured 34 more covered statements than CI did, a 0.54pp swing.
+
+When a test reaches an interactive or shell-dependent function only incidentally, the gate stops
+being reproducible and a tight threshold becomes unreliable. Mock the subprocess or the input and
+cover the branches deliberately.
+
+Shedding `tools/pyproject_template/` *raises* the measured percentage, so a consumer inherits a
+gate that already passes — one threshold holds in both shapes and `cleanup` needs no
+coverage-specific rewrite. A downstream project that wants a stricter gate over its own code can
+narrow `source` back to its package and raise `fail_under`.
 
 **Example pytest configuration in `pyproject.toml`:**
 ```toml
@@ -254,16 +314,18 @@ addopts = [
 
 ### PR Comments
 
-Add coverage comments to PRs using GitHub Actions:
+This template does **not** post coverage comments on PRs, and no workflow here uses a
+coverage-comment action. Coverage is reported by `doit coverage` locally and by the CI job's
+output; the gate is `fail_under` in `pyproject.toml`.
 
-```yaml
-- name: Coverage comment
-  uses: py-cov-action/python-coverage-comment-action@v3
-  with:
-    GITHUB_TOKEN: ${{ github.token }}
-    MINIMUM_GREEN: 80
-    MINIMUM_ORANGE: 70
-```
+If you add one to your own project, pin it to a commit SHA like every other external action — see
+[Action pinning](#action-pinning-and-workflow-permissions). A previous version of this page
+suggested `py-cov-action/python-coverage-comment-action@v3`, which was both unused here and
+unpinned (#772).
+
+Related: PRs no longer receive an automated benchmark regression comment either — that required
+`contents: write` on the pull-request path and was removed with it. The benchmark still runs and
+uploads its JSON.
 
 ## Local Development Workflow
 
