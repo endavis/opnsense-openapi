@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793015278554,
+  "lastUpdate": 1793017519983,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1216,6 +1216,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000015427451205864802",
             "extra": "mean: 685.5988416169772 usec\nrounds: 1509"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4daf131f532adf18893ba4ab7faeec9e675c90a8",
+          "message": "fix: make spec generator output deterministic (merges PR #139, addresses #138)\n\n* fix: make spec generator output deterministic\n\nGenerating the same OPNsense version twice produced byte-different specs:\nOptionField enums were built with `list(set(...))`, whose order follows\nstring hashing and changes every run, and controllers were read in\n`rglob` filesystem order, which differs between machines. Content was\ncorrect; only the ordering varied.\n\n- Iterate controller files in sorted path order\n- De-duplicate enum values with `dict.fromkeys`, keeping the order the\n  options appear in the model XML\n- Tests: parse_directory returns sorted order under a reversed rglob;\n  enum de-duplication keeps first-seen order; generating the same source\n  under PYTHONHASHSEED=1 and =2 yields byte-identical output. All three\n  fail against the previous code.\n\nAddresses #138\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n* chore: skip generated specs in the codespell pre-commit hook\n\nThe bundled specs carry OPNsense's own model text, typos included\n(e.g. \"Permisssion\"), which the project cannot fix. `doit spell_check`\nalready skips src/opnsense_openapi/specs and generated via\n[tool.codespell] in pyproject.toml; the pre-commit hook passes files\nexplicitly and ignored that skip. Exclude the same paths in the hook.\n\nAddresses #138\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n* fix: end generated specs with a trailing newline\n\nThe generator wrote the spec with `json.dump` and no final newline, so the\nend-of-file-fixer hook rewrote every committed spec and the committed\nbytes could never match the generator's output. Write a newline after the\nJSON so the two agree and the hook passes.\n\nTest: the generated spec ends with exactly one newline.\n\nAddresses #138\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n* chore: regenerate committed specs in canonical order\n\nRegenerate all 56 bundled specs (24.1 through 26.1.6) with the\ndeterministic generator, so a future regeneration produces no diff\nunless the API actually changed.\n\nReordering plus the trailing newline only: each regenerated spec was\nverified equal to the committed one with every list and dict sorted\nbefore it replaced it, and a fresh 26.1.6 generated under a different\nPYTHONHASHSEED is byte-identical to the committed file.\n\nAddresses #138\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n* fix: write specs with LF line endings on every platform\n\nThe generator opened the spec in text mode, which writes CRLF on Windows,\nso a spec generated there differed byte-for-byte from one generated on\nLinux or macOS. Open with newline=\"\\n\". The committed specs were\ngenerated on Linux and are already LF.\n\nCaught by test_generated_spec_ends_with_a_single_newline on the Windows\nCI runners; the test now also asserts there is no CRLF anywhere.\n\nAddresses #138\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T12:24:26Z",
+          "tree_id": "e491f9dac95df629ddecb52167b992298a84fc41",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/4daf131f532adf18893ba4ab7faeec9e675c90a8"
+        },
+        "date": 1793017518996,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 879.4938516361735,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000017619654844073368",
+            "extra": "mean: 1.137017613186996 msec\nrounds: 910"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1316.2592598149874,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003451700026318664",
+            "extra": "mean: 759.7287483778534 usec\nrounds: 1387"
           }
         ]
       }
