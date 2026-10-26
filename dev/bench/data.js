@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793011709565,
+  "lastUpdate": 1793014334690,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1140,6 +1140,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003901088347598414",
             "extra": "mean: 403.27364791363846 usec\nrounds: 2684"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ae852915bd8216d2f8787522750a10c09a84ba49",
+          "message": "chore: annotate tests and widen mypy to tests/ (merges PR #135, addresses #114)\n\nAnnotate the project's tests so `mypy src/ tools/ tests/` is clean, then\nwiden `doit type_check` and the pre-commit mypy hook to include tests/,\nmatching pyproject-template.\n\n- Add parameter and return annotations to test_cli_comprehensive,\n  test_cli_download, test_openapi_generator_advanced, test_validator and\n  the benchmarks; annotate spec dicts and narrow Optional returns\n  (`root.find`, `parse_controller_file`) with asserts\n- Mark the deliberate MagicMock method replacements with\n  `type: ignore[method-assign]`\n- Remove tests/__init__.py to match the template's layout, so the shared\n  helpers (agent_roster, doc_scan) resolve for mypy; drop the \"tests\"\n  pytest pythonpath workaround added in the sync\n- tools/doit/quality.py and tests/template/test_doit_quality.py match the\n  template again; the strict xfail is removed. The pre-commit hook omits\n  bootstrap.py, which this project shed in cleanup\n\nAddresses #114\n\n\nClaude-Session: https://claude.ai/code/session_01Kkq89c2Xe2tWGtfzY1S3Xx\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-26T11:31:22Z",
+          "tree_id": "accd733abbbf95225c976783829a28612933246a",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/ae852915bd8216d2f8787522750a10c09a84ba49"
+        },
+        "date": 1793014334001,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 864.7357435404098,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000027963995773738253",
+            "extra": "mean: 1.1564226498904624 msec\nrounds: 914"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1268.1288345500243,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00005253554373221975",
+            "extra": "mean: 788.5634115045058 usec\nrounds: 1356"
           }
         ]
       }
