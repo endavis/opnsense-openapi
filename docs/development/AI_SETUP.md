@@ -12,7 +12,7 @@ tags:
 
 # AI Agent Setup Guide
 
-This template is designed primarily for **Claude Code**, which is the only agent that ships the full slash-command workflow and acts as the orchestrator in single-agent and multi-agent flows. **GitHub Copilot CLI** is supported as a standalone alternative whose workflow is discovered as skills from `.github/skills/`. **Codex CLI** is supported as a standalone alternative without slash commands. **Antigravity CLI** (`agy`) is supported as a standalone alternative that shares the `.agents/` customization root with Codex. See the comparison table below for the per-agent breakdown.
+This project is designed primarily for **Claude Code**, which is the only agent that ships the full slash-command workflow and acts as the orchestrator in single-agent and multi-agent flows. **GitHub Copilot CLI** is supported as a standalone alternative whose workflow is discovered as skills from `.github/skills/`. **Codex CLI** is supported as a standalone alternative without slash commands. **Antigravity CLI** (`agy`) is supported as a standalone alternative that shares the `.agents/` customization root with Codex. See the comparison table below for the per-agent breakdown.
 
 > **New here?** Start with the [First 5 Minutes walkthrough](ai/first-5-minutes.md) for a narrative tour of the AI agent workflow. This page is the configuration reference.
 
@@ -69,7 +69,7 @@ trust](ai/command-blocking.md#codex-cli) for the measured behavior.
 - [Configuring Codex](https://developers.openai.com/codex/local-config/)
 - [Codex Security Guide](https://developers.openai.com/codex/security/)
 
-**Codex parity status:** Codex does not use repo-defined slash commands in this template. Instead, it uses repo-scoped workflow skills checked into `.agents/skills/` and invoked through Codex's built-in skill surface such as `/skills` or explicit mentions like `$codex-review`, `$codex-adversarial-review`, and `$implement-issue`. LSP integration is not documented for Codex here. Codex works as a standalone alternative for contributors who prefer the OpenAI CLI. The shared dangerous-command hook at `tools/hooks/ai/block-dangerous-commands.py` applies to Codex via `.codex/config.toml`, and the approval-policy rules remain a secondary defense layer. For the broader workflow picture, see [Slash Commands and Workflows](ai/slash-commands.md).
+**Codex parity status:** Codex does not use repo-defined slash commands in this project. Instead, it uses repo-scoped workflow skills checked into `.agents/skills/` and invoked through Codex's built-in skill surface such as `/skills` or explicit mentions like `$codex-review`, `$codex-adversarial-review`, and `$implement-issue`. LSP integration is not documented for Codex here. Codex works as a standalone alternative for contributors who prefer the OpenAI CLI. The shared dangerous-command hook at `tools/hooks/ai/block-dangerous-commands.py` applies to Codex via `.codex/config.toml`, and the approval-policy rules remain a secondary defense layer. For the broader workflow picture, see [Slash Commands and Workflows](ai/slash-commands.md).
 
 ### 2. Claude Code (Anthropic)
 
@@ -137,8 +137,8 @@ For complete setup instructions and troubleshooting, see `.claude/lsp-setup.md` 
 | Var | Value | Effect | Risk |
 | :--- | :--- | :--- | :--- |
 | `ENABLE_PROMPT_CACHING_1H` | `1` | Extends prompt cache TTL from 5 minutes to 1 hour. Cuts cost on repeated reads of the same context within a session. | None — pure efficiency flag. |
-| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `50` | Auto-compaction triggers at 50% of the context window instead of the default (~92%). Sessions compact earlier, leaving more headroom for the post-compact continuation. | More frequent compaction churn; mitigated by the [PreCompact handoff hook](ai/auto-checkpoint-hook.md) which preserves context across compaction events. |
-| `CLAUDE_CODE_SUBAGENT_MODEL` | `claude-sonnet-5` | Subagents (e.g. `implement-worker`, spawned by the `implement-issue` skill) default to Sonnet 5 instead of inheriting the parent's Opus model. | Subagent output quality drops below Opus on hard reasoning tasks. Mitigate per-agent (see below). |
+| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | `50` | Auto-compaction triggers at 50% of the context window instead of the default (~92%). Sessions compact earlier, leaving more headroom for the post-compact continuation. | More frequent compaction churn; native compaction already re-reads the project-root CLAUDE.md and recently used files, and `/checkpoint` is available for a manual checkpoint before a deliberate `/compact`. |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | `claude-sonnet-5-5` | Subagents (e.g. `implement-worker`, spawned by the `implement-issue` skill) default to Sonnet 5.5 instead of inheriting the parent's Opus model. | Subagent output quality drops below Opus on hard reasoning tasks. Mitigate per-agent (see below). |
 
 **Per-agent model overrides:**
 
@@ -147,15 +147,15 @@ For complete setup instructions and troubleshooting, see `.claude/lsp-setup.md` 
 ```yaml
 ---
 name: high-stakes-reviewer
-model: claude-opus-5   # overrides the env-var default for this agent only
+model: claude-opus-5-5   # overrides the env-var default for this agent only
 ---
 ```
 
-Agents without a `model:` line inherit the env-var default. This template's `.claude/agents/implement-worker.md` deliberately does not override — implement-worker runs on Sonnet 5 as an explicit cost/quality trade-off. Future high-stakes subagents (e.g. design review, security review) can opt into Opus on a per-file basis.
+Agents without a `model:` line inherit the env-var default. This project's `.claude/agents/implement-worker.md` deliberately does not override — implement-worker runs on Sonnet 5.5 as an explicit cost/quality trade-off. Future high-stakes subagents (e.g. design review, security review) can opt into Opus on a per-file basis.
 
 **Per-developer overrides:**
 
-To opt out or tune values for your local environment, override them in `.claude/settings.local.json` (already gitignored, used elsewhere in this template for personal config). Example:
+To opt out or tune values for your local environment, override them in `.claude/settings.local.json` (already gitignored, used elsewhere in this project for personal config). Example:
 
 ```json
 {
@@ -167,7 +167,7 @@ To opt out or tune values for your local environment, override them in `.claude/
 
 **Cross-references:**
 
-- The 50% autocompact threshold is paired with the [PreCompact handoff hook](ai/auto-checkpoint-hook.md) — earlier compaction has lower cost because the hook preserves context across compaction events automatically.
+- For a manual checkpoint before compaction, use `/checkpoint` and `/restore` — see [Slash Commands and Workflows](ai/slash-commands.md).
 - For operators who need more aggressive token reduction, see [AI Agent Token-Efficiency Add-Ons](ai/token-efficiency-add-ons.md) — a catalogue of opt-in external tools (RTK, Headroom, Caveman) with tipping-point guidance and trust caveats.
 
 ### 3. GitHub Copilot CLI
@@ -247,7 +247,7 @@ The `AGENTS.md` file serves as general-purpose documentation for any AI coding a
 - **Codeium**: Reference in project settings
 - **Tabnine**: Reference in configuration
 
-> **Note**: For the slash commands and dual-agent workflow this template ships with, see [Slash Commands and Workflows](ai/slash-commands.md).
+> **Note**: For the slash commands and dual-agent workflow this project ships with, see [Slash Commands and Workflows](ai/slash-commands.md).
 
 ## AGENTS.md - Universal Context File
 
@@ -267,7 +267,7 @@ This file is:
 
 ## Context files and precedence
 
-This template ships several files that influence agent behavior. They fall into two categories: **context/instruction files** (markdown) and **settings/config files** (JSON or TOML). Knowing which is which — and which one wins on conflict — matters when adapting the template for a new project.
+This project ships several files that influence agent behavior. They fall into two categories: **context/instruction files** (markdown) and **settings/config files** (JSON or TOML). Knowing which is which — and which one wins on conflict — matters when adapting the template for a new project.
 
 **File inventory:**
 
@@ -292,7 +292,7 @@ This template ships several files that influence agent behavior. They fall into 
 
 ### For Your Project
 
-When using this template for a new project:
+When setting up a new project:
 
 1. **Update AGENTS.md**: Customize project-specific details
 2. **Adjust permissions**: Modify `.codex/config.toml` and `.claude/settings.local.json` as needed
@@ -340,7 +340,7 @@ Copilot CLI does not use a per-command allowlist — the dangerous-command hook 
 
 All configuration files are set up with security in mind.
 
-> **Note**: This template enforces security rules in code and settings, not just instructions. See [AI Enforcement Principles](ai/enforcement-principles.md) for details.
+> **Note**: This project enforces security rules in code and settings, not just instructions. See [AI Enforcement Principles](ai/enforcement-principles.md) for details.
 
 > **Note**: For the architectural rules AI agents must follow when generating code, see [Architectural Conventions](ai/architectural-conventions.md).
 
