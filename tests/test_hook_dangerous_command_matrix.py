@@ -509,9 +509,14 @@ BASH_CASES = [
         "rtm var to non-protected file",
     ),
     (
+        # Flipped from ALLOW on purpose (#1037, decision b): any confirmed
+        # write to an ENV_PERSISTENCE_TARGETS file is now blocked whatever its
+        # content, not only when the literal var name is present -- otherwise
+        # a runtime-assembled name (`v=ALLOW_AI_; echo "...${v}..." >>
+        # ~/.bashrc`) would still slip through the old literal-string check.
         'echo "PATH=/foo" >> ~/.bashrc',
-        "ALLOW",
-        "no var name write to .bashrc",
+        "BLOCK",
+        "unrelated write still blocked: any write to .bashrc is now blocked",
     ),
     (
         'git add .claude/settings.json && git commit -m "doc: mention ALLOW_AI_READY_TO_MERGE"',
@@ -562,6 +567,112 @@ BASH_CASES = [
         "python -c \"print('ALLOW_AI_READY_TO_MERGE')\"",
         "ALLOW",
         "python -c print var name only",
+    ),
+    (
+        # Issue #1037's reproduction for the literal-string gap: no token
+        # contains "ALLOW_AI_READY_TO_MERGE", only a runtime-assembled "v"
+        # variable the shell concatenates. Blocked because any confirmed
+        # write to an ENV_PERSISTENCE_TARGETS file is now blocked whatever
+        # its content (decision b), not because the name was found.
+        "bash -c 'v=ALLOW_AI_; echo \"export ${v}READY_TO_MERGE=1\" >> ~/.bashrc'",
+        "BLOCK",
+        "runtime-assembled var name write to .bashrc",
+    ),
+    (
+        # A documented, legitimate setup step (docs/development/AI_SETUP.md)
+        # that must stay allowed: config.toml is an _AI_CLI_SETTINGS_TARGETS
+        # file, which (unlike ENV_PERSISTENCE_TARGETS) still requires the
+        # literal var name, and this command has none.
+        "cp .codex/config.toml ~/.codex/config.toml",
+        "ALLOW",
+        "cp codex config.toml is a documented setup step",
+    ),
+    (
+        # .envrc sources .envrc.local, so persisting the var there is the
+        # issue's own repro (#1037).
+        "printf 'export ALLOW_AI_READY_TO_MERGE=1' > .envrc.local",
+        "BLOCK",
+        "var name write to .envrc.local",
+    ),
+    (
+        # Issue #1051's repro: the name is assembled at run time, so no token
+        # contains it. A confirmed write to .envrc.local is blocked whatever
+        # its content, like .envrc.
+        'v=ALLOW_AI_READY_TO; echo "export ${v}_MERGE=1" >> .envrc.local',
+        "BLOCK",
+        "runtime-assembled var name write to .envrc.local",
+    ),
+    (
+        'printf "export ALLOW_AI_READY_TO%s=1\\n" _MERGE >> .envrc.local',
+        "BLOCK",
+        "printf-assembled var name write to .envrc.local",
+    ),
+    ("echo hi >> .envrc.local", "BLOCK", "undocumented write to .envrc.local"),
+    (
+        # A shell function defined earlier in the same command could change
+        # what an allowed write produces, so only the whole command is allowed.
+        "echo(){ printf x; }; echo 'export ENABLE_LSP_TOOL=1' >> .envrc.local",
+        "BLOCK",
+        "documented .envrc.local write preceded by other commands",
+    ),
+    (
+        # Documented agent-runnable steps (AI_SETUP.md, README) that must
+        # stay allowed: each is a whole-command allowlist entry.
+        "echo 'export ENABLE_LSP_TOOL=1' >> .envrc.local",
+        "ALLOW",
+        "documented ENABLE_LSP_TOOL line to .envrc.local",
+    ),
+    (
+        'echo "export ENABLE_LSP_TOOL=1" >> .envrc.local',
+        "ALLOW",
+        "documented ENABLE_LSP_TOOL line with double quotes",
+    ),
+    ("cp .envrc.local.example .envrc.local", "ALLOW", "copy envrc.local example"),
+    (
+        # The allowlist applies only to the top-level command: a wrapper can
+        # export a function into its payload first (`export -f`).
+        "f(){ printf x; }; export -f f; bash -c 'cp .envrc.local.example .envrc.local'",
+        "BLOCK",
+        "documented .envrc.local write inside bash -c after export -f",
+    ),
+    (
+        "bash -c 'cp .envrc.local.example .envrc.local'",
+        "BLOCK",
+        "documented .envrc.local write inside bash -c",
+    ),
+    # Write forms the hook did not see before #1051: link, install and rsync
+    # onto a protected file, and redirects spelled `>|`, with an fd prefix,
+    # `&>`, or glued to the word before them.
+    ("ln -sf /tmp/x .envrc.local.example", "BLOCK", "ln over .envrc.local.example"),
+    ("ln -sf /tmp/x ~/.bashrc", "BLOCK", "ln over .bashrc"),
+    ("install -m644 x .envrc.local", "BLOCK", "install onto .envrc.local"),
+    ("rsync x ~/.bashrc", "BLOCK", "rsync onto .bashrc"),
+    ("echo hi >| ~/.bashrc", "BLOCK", "noclobber-override redirect to .bashrc"),
+    ("echo hi 1>> ~/.bashrc", "BLOCK", "fd-prefixed append to .bashrc"),
+    ("echo hi &> .envrc", "BLOCK", "&> redirect to .envrc"),
+    ("echo hi>~/.bashrc", "BLOCK", "redirect glued to the word before it"),
+    ("echo hi|tee ~/.bashrc", "BLOCK", "tee glued to a pipe"),
+    (
+        # A quoted `>>` is text, not a redirect.
+        'git commit -m "docs: append >> .envrc"',
+        "ALLOW",
+        "quoted redirect text naming .envrc",
+    ),
+    ("echo hi 2>&1 | grep x", "ALLOW", "fd duplication is not a file write"),
+    ("cat ~/.bashrc > tmp/agents/claude/rc-copy.txt", "ALLOW", "redirect from a protected file"),
+    (
+        # The example file is the allowed `cp`'s source, so writing it first
+        # would carry any content into .envrc.local.
+        'v=ALLOW_AI_READY_TO; echo "export ${v}_MERGE=1" >> .envrc.local.example',
+        "BLOCK",
+        "runtime-assembled var name write to .envrc.local.example",
+    ),
+    (
+        # The interpreter heuristic only *might* write; mentioning a target
+        # basename with no var name present stays allowed.
+        "python -c \"print('.bashrc')\"",
+        "ALLOW",
+        "python -c mentions target basename only, no var name",
     ),
     # A separator glued to the next command still ends the one before it (#1023).
     # `shlex.split` keeps `true;git` as one word, so the checks that look for a
@@ -629,6 +740,44 @@ EDIT_CASES: list[tuple[str, dict, str, str]] = [
     ),
     (
         "Write",
+        {"file_path": ".envrc.local", "content": "export ALLOW_AI_READY_TO_MERGE=1\n"},
+        "BLOCK",
+        "Write .envrc.local adding rtm var (#1037 repro)",
+    ),
+    (
+        # direnv runs .envrc.local as bash, so any content can assemble the
+        # var name at load time: a file edit is blocked whatever it writes,
+        # as the Bash path is (#1051).
+        "Write",
+        {"file_path": ".envrc.local", "content": "export ENABLE_LSP_TOOL=1\n"},
+        "BLOCK",
+        "Write .envrc.local unrelated content",
+    ),
+    (
+        "Write",
+        {
+            "file_path": ".envrc.local",
+            "content": "v=ALLOW_AI_READY_TO; export ${v}_MERGE=1\n",
+        },
+        "BLOCK",
+        "Write .envrc.local runtime-assembled var name",
+    ),
+    (
+        "Write",
+        {"file_path": ".envrc.local.example", "content": "export ENABLE_LSP_TOOL=1\n"},
+        "BLOCK",
+        "Write .envrc.local.example, the allowed cp's source",
+    ),
+    (
+        # AI CLI settings files are JSON/TOML, not run by a shell, so they
+        # stay content-gated: no var name, no block.
+        "Write",
+        {"file_path": ".claude/settings.local.json", "content": '{"env": {"FOO": "1"}}'},
+        "ALLOW",
+        "Write claude settings.local.json unrelated content",
+    ),
+    (
+        "Write",
         {
             "file_path": ".claude/settings.local.json",
             "content": '{"env": {"ALLOW_AI_READY_TO_MERGE": "1"}}',
@@ -643,7 +792,7 @@ EDIT_CASES: list[tuple[str, dict, str, str]] = [
             "old_string": "",
             "new_string": "export PATH=$PATH:/usr/local/bin",
         },
-        "ALLOW",
+        "BLOCK",
         "Edit .bashrc unrelated content",
     ),
     (
@@ -693,26 +842,31 @@ EDIT_CASES: list[tuple[str, dict, str, str]] = [
 ]
 
 # --- File-edit cases (Copilot format) ---
+#
+# "create"/"edit" with a "path" key are Copilot's real tool names, from the
+# shipped SDK docs (not a live probe -- #1037); its content key is not
+# confirmed, so the hook scans every string value instead of a guessed key.
 COPILOT_EDIT_CASES: list[tuple[str, dict, str, str]] = [
     (
-        "Edit",
-        {
-            "file_path": "~/.bashrc",
-            "old_string": "",
-            "new_string": "export ALLOW_AI_READY_TO_MERGE=1",
-        },
+        "create",
+        {"path": "~/.bashrc", "content": "export ALLOW_AI_READY_TO_MERGE=1"},
         "BLOCK",
-        "Copilot Edit .bashrc adding rtm var",
+        "Copilot create .bashrc adding rtm var",
     ),
     (
-        "Edit",
-        {
-            "file_path": "~/.bashrc",
-            "old_string": "",
-            "new_string": "export PATH=$PATH:/usr/local/bin",
-        },
-        "ALLOW",
-        "Copilot Edit .bashrc unrelated content",
+        "edit",
+        {"path": "~/.bashrc", "content": "export PATH=$PATH:/usr/local/bin"},
+        "BLOCK",
+        "Copilot edit .bashrc unrelated content",
+    ),
+    (
+        # The content key is not confirmed: the var name lands under a key
+        # name this hook has never seen, and the scan-all-values path still
+        # has to catch it.
+        "edit",
+        {"path": "~/.bashrc", "body": "export ALLOW_AI_READY_TO_MERGE=1"},
+        "BLOCK",
+        "Copilot edit .bashrc var under unexpected content key",
     ),
 ]
 
@@ -803,7 +957,7 @@ AGY_EDIT_CASES: list[tuple[str, str, str, str]] = [
     (
         "~/.bashrc",
         "export PATH=$PATH:/usr/local/bin",
-        "ALLOW",
+        "BLOCK",
         "write_to_file .bashrc no var",
     ),
 ]
@@ -841,7 +995,7 @@ AGY_EDIT_FILE_CASES: list[tuple[str, dict[str, object], str, str]] = [
     (
         "edit_file",
         {"Path": "/home/x/.bashrc", "Target": "x", "Replacement": "export PATH=$PATH:/opt"},
-        "ALLOW",
+        "BLOCK",
         "edit_file .bashrc no var",
     ),
     (
@@ -990,6 +1144,48 @@ def test_file_edit_copilot_format(
     payload = json.dumps({"toolName": tool_name, "toolArgs": json.dumps(tool_input)})
     outcome = _outcome_stdout(hook, monkeypatch, capsys, payload, "permissionDecision")
     assert outcome == expected, description
+
+
+# --- Shape-based fallback for a tool name this hook doesn't recognise (#1037) ---
+#
+# A new or renamed edit tool is not in `_FILE_EDIT_TOOL_NAMES`; before this it
+# fell through to `return 0` -- allowed -- however dangerous its payload. The
+# fallback instead checks the *shape* of `tool_input`: a path key plus a
+# content key is a write, whatever the tool is called.
+UNKNOWN_TOOL_EDIT_CASES: list[tuple[str, dict, str, str]] = [
+    (
+        "write_text",
+        {"file_path": "~/.bashrc", "content": "export ALLOW_AI_READY_TO_MERGE=1"},
+        "BLOCK",
+        "unrecognised write-shaped tool against a protected target",
+    ),
+    (
+        # A path key with no content key is read-shaped (Read, Grep, Glob, a
+        # `view` tool) -- it must not be treated as a write.
+        "view",
+        {"file_path": "~/.bashrc"},
+        "ALLOW",
+        "unrecognised read-shaped tool",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("tool_name", "tool_input", "expected", "description"),
+    UNKNOWN_TOOL_EDIT_CASES,
+    ids=_ids(UNKNOWN_TOOL_EDIT_CASES, 3),
+)
+def test_file_edit_unrecognised_tool_name(
+    hook: types.ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+    tool_name: str,
+    tool_input: dict,
+    expected: str,
+    description: str,
+) -> None:
+    """An unrecognised tool is checked by the shape of its input, not allowed by default."""
+    payload = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
+    assert _outcome_exit_code(hook, monkeypatch, payload) == expected, description
 
 
 @pytest.mark.parametrize(
@@ -1228,9 +1424,13 @@ def test_codex_shell_tool_uses_the_default_schema() -> None:
     """Codex's shell tool name and payload shape, as observed from a live session.
 
     Recorded as a test rather than a comment because it is the premise the
-    `^Bash$` matcher in `.codex/config.toml` rests on.
+    `^Bash$` matcher in `.codex/config.toml` rests on. Tool names are matched
+    case-insensitively (#1037), so the set itself holds the lower-case name;
+    the real "Bash" sent by Codex matches ``main()``'s ``tool_name.lower()``
+    comparison, which every case in BASH_CASES above exercises against the
+    literal "Bash" tool name.
     """
-    assert "Bash" in _load_hook()._BASH_TOOL_NAMES
+    assert "bash" in _load_hook()._BASH_TOOL_NAMES
 
 
 # --- Secret exposure cases (issue #682) ------------------------------------
@@ -1262,6 +1462,18 @@ SECRET_EXPOSURE_CASES: list[tuple[str, str, str]] = [
     ("cat ~/.pypirc", "BLOCK", "reads the PyPI credential store"),
     ("cat ~/.aws/credentials", "BLOCK", "reads AWS credentials"),
     ("cp ~/.docker/config.json /tmp/x", "BLOCK", "copies the docker credential store"),
+    ("cat ~/.copilot/config.json", "BLOCK", "reads Copilot's OAuth token store (#1043)"),
+    ("head -c 300 ~/.copilot/config.json", "BLOCK", "the read that leaked a token (#1043)"),
+    ("cp ~/.copilot/config.json /tmp/x", "BLOCK", "copies Copilot's OAuth token store"),
+    ("cat config.json", "ALLOW", "a bare 'config.json' outside .docker and .copilot"),
+    ("cat ~/.codex/auth.json", "BLOCK", "reads Codex's auth store"),
+    ("cat auth.json", "ALLOW", "a bare 'auth.json' outside .codex"),
+    ("tail ~/.claude/.credentials.json", "BLOCK", "reads Claude Code's credential store"),
+    (
+        "cat ~/.gemini/antigravity-cli/antigravity-oauth-token",
+        "BLOCK",
+        "reads Antigravity's OAuth token",
+    ),
     ("cat credentials", "ALLOW", "a bare 'credentials' file outside .aws"),
     ("grep -rn pypirc docs/", "ALLOW", "searching for the name is not reading the file"),
     ("cat README.md", "ALLOW", "an ordinary file read"),
@@ -1498,6 +1710,30 @@ HEREDOC_BODY_CASES: list[tuple[str, str, str]] = [
         "fish <<EOF\ncat ~/.netrc\nEOF",
         "ALLOW",
         "an interpreter not in _STDIN_INTERPRETERS is left alone",
+    ),
+    # A here-string or an arithmetic `<<` is no heredoc, so the lines after it
+    # are checked like any other command (#1025).
+    ("cat <<<EOF\ncat ~/.netrc", "BLOCK", "here-string glued to its word"),
+    ("cat <<< x\ncat ~/.netrc", "BLOCK", "here-string with a space"),
+    ("cat <<<EOF\nprintenv", "BLOCK", "here-string then an env dump"),
+    ("echo $((1<<EOF))\ncat ~/.netrc", "BLOCK", "arithmetic shift by a name"),
+    ("echo $((1<<X))\nprintenv", "BLOCK", "arithmetic shift then an env dump"),
+    ("echo $((1<<2))\ncat ~/.netrc", "BLOCK", "arithmetic shift by a digit"),
+    ("((x = 1<<EOF))\ncat ~/.netrc", "BLOCK", "arithmetic command"),
+    ("echo $(( (1<<EOF) ))\ncat ~/.netrc", "BLOCK", "nested parentheses in arithmetic"),
+    ("cat <<<EOF\ngit push --force origin main", "BLOCK", "here-string then a force push"),
+    ("echo $((1<<EOF\ncat ~/.netrc", "BLOCK", "arithmetic left open fails closed"),
+    ('cat <<< "$x"', "ALLOW", "a here-string alone"),
+    ("echo $((1<<4))", "ALLOW", "an arithmetic shift alone"),
+    (
+        "cat <<<x\ncat > notes.md <<EOF\ncat ~/.netrc\nEOF",
+        "ALLOW",
+        "a real data heredoc after a here-string is still data",
+    ),
+    (
+        "echo $((1<<2)) && cat > notes.md <<EOF\ncat ~/.netrc\nEOF",
+        "ALLOW",
+        "a real data heredoc after arithmetic on the same line is still data",
     ),
 ]
 
