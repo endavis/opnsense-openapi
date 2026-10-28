@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793185140912,
+  "lastUpdate": 1793202471809,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1444,6 +1444,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000056984830133612426",
             "extra": "mean: 775.05902777803 usec\nrounds: 1368"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec18141d6508a74049207e5666de1eb29182b902",
+          "message": "chore: synchronize with pyproject-template 4cadf97 (merges PR #149, addresses #148)\n\nSyncs template 2fafe38 -> 4cadf97 with the following improvements:\n- endavis/pyproject-template#1060 (template sync pins the target SHA in issue and PR titles)\n- endavis/pyproject-template#1063 (add merge-pr skill for merging green PRs and closing addressed issues)\n- endavis/pyproject-template#1064 (close glob-source, sed operand, broad pathspec and dd of= gaps in the env-file write guard)\n- endavis/pyproject-template#1068 (file unfixed security review findings as private draft advisories)\n\nAddresses #148\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1seVbVAH6YsDNzT7nDR\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T15:47:03Z",
+          "tree_id": "0ff30ce79ee1fe1710c8e6c136b4a8335eecd65c",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/ec18141d6508a74049207e5666de1eb29182b902"
+        },
+        "date": 1793202469702,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1029.6499822186809,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0022117156340679925",
+            "extra": "mean: 971.2038238909194 usec\nrounds: 1465"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 2138.2374229813677,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011483664492205114",
+            "extra": "mean: 467.6749126416884 usec\nrounds: 2381"
           }
         ]
       }
