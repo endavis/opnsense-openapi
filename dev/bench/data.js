@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793019568971,
+  "lastUpdate": 1793175351978,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1330,6 +1330,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000022235398732218704",
             "extra": "mean: 408.9305443037814 usec\nrounds: 2528"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "efa921a8d6252794c557c03e5fb369b40fc81f87",
+          "message": "fix: bump msgpack to 1.2.4 to resolve CVE-2026-114613 (merges PR #143, addresses #142)\n\nmsgpack is a dev-only transitive dependency (security extra ->\npip-audit[filecache] -> cachecontrol -> msgpack). 1.2.1 failed the\ndoit check audit task. Lockfile-only change.\n\nAddresses #142\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1sbUsz7CB9xFgXahtTj\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T08:15:04Z",
+          "tree_id": "4b1a289deb6828f186ee1f32fdc5b4cef9b83cc4",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/efa921a8d6252794c557c03e5fb369b40fc81f87"
+        },
+        "date": 1793175351137,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 841.1909986161153,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000023370833290171624",
+            "extra": "mean: 1.188790657110156 msec\nrounds: 872"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1301.2747551360826,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002189528946435978",
+            "extra": "mean: 768.4772151715366 usec\nrounds: 1371"
           }
         ]
       }
