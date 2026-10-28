@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793175351978,
+  "lastUpdate": 1793177385785,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1368,6 +1368,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00002189528946435978",
             "extra": "mean: 768.4772151715366 usec\nrounds: 1371"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0eacd2515b2fbdf971e64bbf16d950187e9e4e46",
+          "message": "chore: synchronize with pyproject-template (merges PR #145, addresses #144)\n\nSyncs template 21a1094 -> 556e130 with the following improvements:\n- endavis/pyproject-template#1028, #1029 (drift-check ref pinning, single API request helper)\n- endavis/pyproject-template#1030, #1039, #1047, #1049, #1050, #1054 (dangerous-command hook fixes)\n- endavis/pyproject-template#1032 (\"this project\" wording in shipped docs)\n- endavis/pyproject-template#1038 (remove Claude hooks redundant with native features)\n- endavis/pyproject-template#1044 (drop post-checkout/post-merge hooks; add env_check)\n- endavis/pyproject-template#1045 (labels sync helper, repo settings fixes)\n- endavis/pyproject-template#1046 (Claude 5.5 model pins)\n- endavis/pyproject-template#1053 (implement-issue approval wording)\n\nAddresses #144\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1sbhT3XRBEkF9PkHYzL\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T08:48:59Z",
+          "tree_id": "631305059c8b8e57150a4a7af8e3114bbb76ff7a",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/0eacd2515b2fbdf971e64bbf16d950187e9e4e46"
+        },
+        "date": 1793177384947,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1028.463288097185,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00010005784194022539",
+            "extra": "mean: 972.3244490818465 usec\nrounds: 1198"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1924.600680355408,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000051530614794590396",
+            "extra": "mean: 519.5883022421743 usec\nrounds: 2230"
           }
         ]
       }
