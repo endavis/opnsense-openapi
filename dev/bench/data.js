@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793177385785,
+  "lastUpdate": 1793185140912,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1406,6 +1406,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000051530614794590396",
             "extra": "mean: 519.5883022421743 usec\nrounds: 2230"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a237c1c7d50e44d3051a28aa72ca08c8654f49e",
+          "message": "chore: synchronize with pyproject-template (merges PR #147, addresses #146)\n\nSyncs template 556e130 -> 2fafe38 with the following improvements:\n- endavis/pyproject-template#1057 (block shell-expanded write targets and git replacement of .envrc.local.example)\n- endavis/pyproject-template#1058 (AI agents commit with git commit, not doit commit)\n\nAddresses #146\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1sbhT3XRBEkF9PkHYzL\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-28T10:58:09Z",
+          "tree_id": "779351daf5469cf6117a7a99d207e0f088f8adca",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/8a237c1c7d50e44d3051a28aa72ca08c8654f49e"
+        },
+        "date": 1793185139820,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 845.1259098214618,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000026150714807016524",
+            "extra": "mean: 1.1832556408207344 msec\nrounds: 877"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1290.22431087196,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000056984830133612426",
+            "extra": "mean: 775.05902777803 usec\nrounds: 1368"
           }
         ]
       }
