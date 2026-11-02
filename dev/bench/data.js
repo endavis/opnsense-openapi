@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793202471809,
+  "lastUpdate": 1793640671365,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1482,6 +1482,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00011483664492205114",
             "extra": "mean: 467.6749126416884 usec\nrounds: 2381"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3653e92d3a90a99317ab6189853da5654c48f723",
+          "message": "chore: raise mkdocstrings floor to 1.0.7 for pymdown-extensions 12 (merges PR #157, addresses #156)\n\npymdown-extensions 12.2 made `md` a required argument to Highlight, which\nbreaks the docs build on mkdocstrings < 1.0.7 (mkdocstrings/mkdocstrings#829).\nRaise the floor and upgrade the lock from 1.0.4 to 1.0.8 so dependabot PR #152\ncan land.\n\nAddresses #156\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1sfWx85f6NyVCdqqGwZ\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T17:30:24Z",
+          "tree_id": "8bb2409c06a53b02f5ebde2b86ab8ba15e19250b",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/3653e92d3a90a99317ab6189853da5654c48f723"
+        },
+        "date": 1793640670906,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 723.2593912896023,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0005604603009359763",
+            "extra": "mean: 1.382629817245729 msec\nrounds: 777"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1253.6119694871222,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002014197031900425",
+            "extra": "mean: 797.6949999999761 usec\nrounds: 1320"
           }
         ]
       }
