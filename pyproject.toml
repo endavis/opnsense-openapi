@@ -338,6 +338,7 @@ pytest_add_cli_args_test_selection = [
     "tests/test_client.py",
     "tests/test_client_auto_generate.py",
     "tests/test_client_base.py",
+    "tests/test_endpoints.py",
     "tests/test_generated_api.py",
     "tests/test_live_opnsense.py",
     "tests/test_logging.py",

@@ -13,6 +13,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [CLI Guide](usage/cli.md) - The application's user-facing command-line interface and how to extend it
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
+- [Endpoint Lookup](usage/endpoint-lookup.md) - Check whether OPNsense API endpoints exist for a version, without a connection
 - [Examples](examples/README.md) - OPNsense-specific example scripts that ship with this project
 - [Generated Client Usage](usage/generated-client.md) - Use generated OPNsense clients with automatic version detection
 - [GitHub Repository Settings](development/github-repository-settings.md) - Complete reference for all GitHub repository settings the template expects
@@ -168,6 +169,7 @@ Complete index of all documentation, organized by audience and as a full alphabe
 - [Dependabot Auto-merge](development/dependabot-automerge.md) - How the dependabot auto-merge workflow evaluates, enables, and skips PRs
 - [Development Deployment Guide](deployment/development.md) - Guide for setting up and running the application in development environments
 - [Doit Tasks Reference](development/doit-tasks-reference.md) - Complete reference for all doit automation tasks
+- [Endpoint Lookup](usage/endpoint-lookup.md) - Check whether OPNsense API endpoints exist for a version, without a connection
 - [Examples](examples/README.md) - OPNsense-specific example scripts that ship with this project
 - [First 5 Minutes with an AI Agent](development/ai/first-5-minutes.md) - Narrative walkthrough of the AI agent workflow from issue to merge
 - [Generated Client Usage](usage/generated-client.md) - Use generated OPNsense clients with automatic version detection

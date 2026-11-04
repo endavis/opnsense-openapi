@@ -103,6 +103,7 @@ nav:
       - Basics: usage/basics.md
       - CLI Guide: usage/cli.md
       - Generated Client: usage/generated-client.md
+      - Endpoint Lookup: usage/endpoint-lookup.md
   - Development:
       - Coding Standards: development/coding-standards.md
       - Architecture: development/architecture.md

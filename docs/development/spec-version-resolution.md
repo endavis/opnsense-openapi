@@ -70,6 +70,22 @@ If no spec is at or below the requested version under floor mode, the
 resolver raises `FileNotFoundError` rather than silently picking a spec
 above the box.
 
+## Coverage helpers
+
+Floor matching silently resolves a version that has no spec of its own. Two
+helpers in `specs.py` let callers detect that:
+
+- `newest_spec_version(major_minor=None)` returns the newest bundled version,
+  optionally restricted to an `X.Y` series. It raises `ValueError` for a
+  malformed series and `FileNotFoundError` when nothing matches.
+- `is_version_covered(version)` is `True` only when a spec exists for exactly
+  that version (`_N` suffixes ignored). It never raises.
+
+The connection-free lookup in `endpoints.py` (`endpoint_exists`,
+`list_spec_endpoints`) resolves versions with floor mode and raises
+`FileNotFoundError` when no spec can be resolved. See the
+[endpoint lookup guide](../usage/endpoint-lookup.md).
+
 ## Why these defaults
 
 In direct-API integrations (the use case that drives this project), an
@@ -85,7 +101,8 @@ box.
 - [ADR-0001: Spec matching: floor over highest, module path keyed by resolved spec version](../decisions/0001-spec-matching-floor-over-highest-module-path-keyed-by-resolved-spec-version.md) (Accepted)
 - Issue #34 — the bug report and discussion that drove this rule.
 - `src/opnsense_openapi/specs.py` — `find_best_matching_spec`,
-  `_version_key`, `version_from_spec_path`.
+  `_version_key`, `version_from_spec_path`, `newest_spec_version`,
+  `is_version_covered`.
 - `src/opnsense_openapi/client/base.py` — `_resolved_module_dir`, the
   helper that ties the generated-client path to the resolved spec
   version.
