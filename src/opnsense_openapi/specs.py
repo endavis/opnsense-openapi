@@ -184,13 +184,67 @@ def _version_key(version: str) -> tuple[int, ...]:
     Returns:
         Tuple of integers for sorting (e.g., ``(24, 7, 1)`` or ``(26, 1, 6)``).
     """
-    parts = version.split(".")
-    if not parts:
-        return ()
-    # Strip a trailing _N suffix from the last component only. The OPNsense
-    # surface does not differ between security patches.
-    last = parts[-1]
+    return tuple(int(p) for p in _normalize_version(version).split("."))
+
+
+def _normalize_version(version: str) -> str:
+    """Strip a trailing ``_N`` security-patch suffix from a version string.
+
+    Args:
+        version: Version string like ``"26.1.6_2"``.
+
+    Returns:
+        The version without the suffix (e.g., ``"26.1.6"``).
+    """
+    head, sep, last = version.rpartition(".")
     underscore_idx = last.find("_")
     if underscore_idx != -1:
-        parts[-1] = last[:underscore_idx]
-    return tuple(int(p) for p in parts)
+        last = last[:underscore_idx]
+    return f"{head}{sep}{last}"
+
+
+def newest_spec_version(major_minor: str | None = None) -> str:
+    """Return the newest bundled spec version.
+
+    Args:
+        major_minor: Optional ``"X.Y"`` series (e.g., ``"26.1"``) to restrict
+            the search to. When ``None``, the newest spec overall is returned.
+
+    Returns:
+        The newest matching version string (e.g., ``"26.1.11"``).
+
+    Raises:
+        ValueError: If ``major_minor`` is not of the form ``X.Y``.
+        FileNotFoundError: If no bundled spec matches.
+    """
+    available = list_available_specs()
+    if major_minor is not None:
+        if not re.fullmatch(r"\d+\.\d+", major_minor):
+            raise ValueError(f"major_minor must look like 'X.Y', got {major_minor!r}")
+        available = [v for v in available if v == major_minor or v.startswith(f"{major_minor}.")]
+    if not available:
+        raise FileNotFoundError(
+            f"No bundled spec found for {major_minor or 'any version'}. "
+            f"Available versions: {', '.join(list_available_specs())}"
+        )
+    return available[-1]
+
+
+def is_version_covered(version: str) -> bool:
+    """Check whether a spec is bundled for exactly this OPNsense version.
+
+    A ``_N`` security-patch suffix is ignored. Versions between two bundled
+    specs, or newer than all of them, are not covered even though lookups
+    resolve them to a floor spec. This never raises.
+
+    Args:
+        version: OPNsense version string (e.g., ``"26.1.6_2"``).
+
+    Returns:
+        ``True`` if a spec exists for exactly this version.
+    """
+    try:
+        key = _version_key(version)
+    except ValueError:
+        return False
+    return any(_version_key(v) == key for v in list_available_specs())

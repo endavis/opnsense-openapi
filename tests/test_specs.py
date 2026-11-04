@@ -175,3 +175,63 @@ def test_find_best_matching_spec_exact_short_circuits_in_both_modes(tmp_path: Pa
         floor = find_best_matching_spec("25.7.5", mode="floor")
         highest = find_best_matching_spec("25.7.5", mode="highest")
         assert floor.name == highest.name == "opnsense-25.7.5.json"
+
+
+# --- newest_spec_version / is_version_covered (#159) ---
+
+
+def test_newest_spec_version_overall() -> None:
+    from opnsense_openapi import newest_spec_version
+
+    assert newest_spec_version() == list_available_specs()[-1]
+
+
+def test_newest_spec_version_for_series() -> None:
+    from opnsense_openapi import newest_spec_version
+
+    available = list_available_specs()
+    series = ".".join(available[0].split(".")[:2])
+    expected = [v for v in available if v == series or v.startswith(f"{series}.")][-1]
+    assert newest_spec_version(series) == expected
+
+
+@pytest.mark.parametrize("bad", ["26", "26.1.6", "x.y", ""])
+def test_newest_spec_version_bad_input(bad: str) -> None:
+    from opnsense_openapi import newest_spec_version
+
+    with pytest.raises(ValueError):
+        newest_spec_version(bad)
+
+
+def test_newest_spec_version_no_match() -> None:
+    from opnsense_openapi import newest_spec_version
+
+    with pytest.raises(FileNotFoundError):
+        newest_spec_version("1.1")
+
+
+def test_is_version_covered_exact_and_suffix() -> None:
+    from opnsense_openapi import is_version_covered
+
+    version = list_available_specs()[-1]
+    assert is_version_covered(version)
+    assert is_version_covered(f"{version}_2")
+
+
+def test_is_version_covered_between_and_newer(tmp_path: Path) -> None:
+    from opnsense_openapi import is_version_covered
+
+    for v in ("30.1.1", "30.1.5"):
+        (tmp_path / f"opnsense-{v}.json").write_text("{}")
+    with patch("opnsense_openapi.specs.get_specs_dir", return_value=tmp_path):
+        assert is_version_covered("30.1.5")
+        assert not is_version_covered("30.1.3")
+        assert not is_version_covered("30.1.99")
+        assert not is_version_covered("31.1.1")
+
+
+@pytest.mark.parametrize("bad", ["", "garbage", "26.x.1", "26..1"])
+def test_is_version_covered_malformed(bad: str) -> None:
+    from opnsense_openapi import is_version_covered
+
+    assert is_version_covered(bad) is False

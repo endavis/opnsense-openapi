@@ -39,6 +39,16 @@ Helpers for locating bundled OpenAPI specs by OPNsense version.
       show_root_heading: true
       show_root_full_path: true
 
+## Endpoints
+
+Connection-free endpoint lookup against the bundled specs. See the
+[endpoint lookup guide](../usage/endpoint-lookup.md).
+
+::: opnsense_openapi.endpoints
+    options:
+      show_root_heading: true
+      show_root_full_path: true
+
 ## Validator
 
 Runtime validation of generated clients against bundled specs.
