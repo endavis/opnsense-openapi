@@ -15,6 +15,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/username/package_name/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/username/package_name/releases/tag/v0.1.0
 
+## Unreleased
+
+### BREAKING CHANGE
+
+- generated-client function names follow the new
+operationIds. The full-signature path keeps the existing operationId and
+each shorter variant gets a _p<k> suffix. A no-argument call to an action
+that used to be bare but has a defaulted parameter, for example
+routing_settings_get_gateway(), is now routing_settings_get_gateway_p0().
+Regenerate clients from the new specs and rename such calls.
+
+### Fix
+
+- derive spec path parameters from controller action signatures (merges PR #169, addresses #168)
+
 ## v0.7.0 (2026-11-04)
 
 ### Feat
