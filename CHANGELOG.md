@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Feat
 
+- add specs for OPNsense 26.7 through 26.7.7 (merges PR #141, addresses #137)
+- add specs for OPNsense 26.1.7 through 26.1.11 (merges PR #140, addresses #136)
+
+### Fix
+
+- bump msgpack to 1.2.4 to resolve CVE-2026-114613 (merges PR #143, addresses #142)
+- make spec generator output deterministic (merges PR #139, addresses #138)
+
+## v0.5.0 (2026-06-04)
+
+### Feat
+
 - expose proxy/transport configuration on OPNsenseClient (merges PR #69, addresses #63)
 
 ## v0.4.0 (2026-05-01)
