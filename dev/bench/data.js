@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793811163132,
+  "lastUpdate": 1793812051986,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1710,6 +1710,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000013234708598085916",
             "extra": "mean: 594.2514358380603 usec\nrounds: 1730"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6eb9d53b53719221fd991161daac50bb4f5283b",
+          "message": "feat: add opt-in strict endpoint validation to OPNsenseClient (merges PR #166, addresses #161)\n\nAdd validate_endpoints (default False). When enabled, get() and post()\ncheck the endpoint and method against the box's resolved spec before\nsending, raising UnknownEndpointError (an APIResponseError subclass)\nwith the endpoint, method, version, spec file and close-match\nsuggestions. A version newer than every bundled spec warns once and\nvalidates against the highest spec at or below it.\n\nAddresses #161\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1sdwWRis578QLuZEHVi\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T17:06:33Z",
+          "tree_id": "67c84a723c7f4ee9aa32216b42b50271bfebe390",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/a6eb9d53b53719221fd991161daac50bb4f5283b"
+        },
+        "date": 1793812049653,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 444.7475633705764,
+            "unit": "iter/sec",
+            "range": "stddev: 0.008660309144173128",
+            "extra": "mean: 2.248466506306121 msec\nrounds: 1110"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1773.3320857783704,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003820265215368369",
+            "extra": "mean: 563.9101711516538 usec\nrounds: 1858"
           }
         ]
       }
