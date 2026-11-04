@@ -334,7 +334,7 @@ def build_client(
 ) -> None:
     """Generate a Python client library from the OpenAPI spec using openapi-python-client."""
     import shutil
-    import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
+    import subprocess  # nosec B404  # invoked only via shutil.which-validated entry point
 
     # Check if openapi-python-client is installed
     if not shutil.which("openapi-python-client"):
@@ -463,7 +463,7 @@ def setup(
     Use this when setting up a new OPNsense version for the first time.
     """
     import shutil
-    import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
+    import subprocess  # nosec B404  # invoked only via shutil.which-validated entry point
 
     typer.echo("=" * 70)
     typer.echo(f"Setting up OPNsense {version}")

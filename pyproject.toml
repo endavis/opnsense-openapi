@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.29.0", "hatch-vcs>=0.5.0"]
+requires = ["hatchling>=1.32.4", "hatch-vcs>=0.5.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -39,37 +39,37 @@ socks = [
 ]
 dev = [
     "doit>=0.36.0",
-    "pytest>=9.0.3",
+    "pytest>=9.1.1",
     "pytest-cov>=5.0",
     "pytest-xdist>=3.5",
-    "pytest-benchmark>=4.0",
-    "ruff>=0.15.12",
-    "mypy>=1.20.2",
-    "pre-commit>=3.7.0",
-    "mkdocs-material>=9.5",
-    "mkdocstrings[python]>=1.0.7",
-    "pymdown-extensions>=10.21.3",
-    "codespell>=2.2",
-    "pyproject-fmt>=2.21.2",
-    "commitizen>=4.16.2",
-    "pyright>=1.1.0",
+    "pytest-benchmark>=5.3.0",
+    "ruff>=0.17.2",
+    "mypy>=2.4.0",
+    "pre-commit>=4.7.0",
+    "mkdocs-material>=9.8.0",
+    "mkdocstrings[python]>=1.0.8",
+    "pymdown-extensions>=12.3",
+    "codespell>=2.4.3",
+    "pyproject-fmt>=2.30.3",
+    "commitizen>=4.19.3",
+    "pyright>=1.1.414",
     "pyyaml>=6.0",
-    "types-pyyaml>=6.0.12.20260518",
+    "types-pyyaml>=6.0.12.20260906",
     "types-jsonschema>=4.21.0",
     "vulture>=2.11",
     "radon>=6.0",
-    "mutmut>=3.0",
-    "hypothesis>=6.152.11",
+    "mutmut>=3.8.0",
+    "hypothesis>=6.170.11",
     "build>=1.0.0",
     "twine>=5.0.0",
     "pygments>=2.20",
 ]
 security = [
-    "pip-audit>=2.6",
+    "pip-audit>=2.10.1",
     "bandit>=1.7",
-    "pip>=26.1.1",
+    "pip>=26.2.2",
     "pip-licenses>=4.0",
-    "cyclonedx-bom>=4.0",
+    "cyclonedx-bom>=7.5.0",
 ]
 ui = [
     "flask>=3.1.0",

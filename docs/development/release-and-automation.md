@@ -165,7 +165,7 @@ uv run doit release_tag
 2. ✅ Pulls latest changes
 3. ✅ Finds the most recently merged `release: vX.Y.Z` PR
 4. ✅ Extracts the version from the PR title (falls back to the branch name)
-5. ✅ Creates the git tag `vX.Y.Z` on `main`
+5. ✅ Creates the git tag `vX.Y.Z` on the release PR's merge commit, saying so when `main` has moved past it
 6. ✅ Pushes the tag, which triggers the publish workflow
 
 ### Pre-releases (TestPyPI)
@@ -882,7 +882,7 @@ direnv allow
 
 Once configured, direnv automatically:
 - Activates the virtual environment
-- Sets cache directories (UV_CACHE_DIR, RUFF_CACHE_DIR, etc.)
+- Sets cache directories (RUFF_CACHE_DIR, MYPY_CACHE_DIR, etc.); uv keeps its shared default cache
 - Loads project-specific environment variables
 - Creates tmp/ directory structure
 
@@ -895,7 +895,7 @@ Without direnv:
 source .venv/bin/activate
 
 # Set cache directories (optional but recommended)
-export UV_CACHE_DIR="$(pwd)/tmp/.uv_cache"
+# uv keeps its default cache, shared by every checkout; see "uv cache" below
 export RUFF_CACHE_DIR="$(pwd)/tmp/.ruff_cache"
 export MYPY_CACHE_DIR="$(pwd)/tmp/.mypy_cache"
 export COVERAGE_FILE="$(pwd)/tmp/.coverage"
@@ -906,11 +906,10 @@ mkdir -p tmp
 
 ### Cache Management
 
-All cache files are stored in `tmp/` to keep the project root clean:
+The ruff, mypy and coverage caches are stored in `tmp/` to keep the project root clean:
 
 ```
 tmp/
-├── .uv_cache/         # uv package cache
 ├── .ruff_cache/       # ruff linter cache
 ├── .mypy_cache/       # mypy type checker cache
 ├── .coverage          # coverage data
@@ -924,6 +923,21 @@ The `tmp/` directory is gitignored and can be safely deleted:
 rm -rf tmp/
 doit cleanup  # Also removes build artifacts
 ```
+
+#### uv cache
+
+The uv cache is not in `tmp/`. uv uses its default, `$XDG_CACHE_HOME/uv` or `~/.cache/uv`, so every
+checkout, worktree and project on the machine shares one cache through hard links. `doit cleanup`
+does not touch it.
+
+- A `UV_CACHE_DIR` you set is honoured. It must be an absolute path on the same filesystem as the
+  checkouts, or uv falls back to copying instead of hard-linking.
+- Never edit files under `site-packages` in place. Installed files are hard links into the shared
+  cache, so an edit changes every environment that links the same file.
+- `uv cache prune` removes unused entries. `uv cache clean` empties the cache for every project;
+  `uv cache clean <package>` clears one package.
+
+See [ADR-9022](../decisions/9022-worktrees-live-in-worktrees-each-with-its-own-environment.md).
 
 ## Quick Reference
 

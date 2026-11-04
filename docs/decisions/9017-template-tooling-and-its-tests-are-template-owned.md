@@ -27,7 +27,7 @@ That membership test resolves the question `tests/template/` had grown ambiguous
 | test target | owner | why |
 | :--- | :--- | :--- |
 | `tools/pyproject_template/` | **template** | Both spawn routes delete the suite; a downstream that keeps it holds tests for a namespace that no longer exists. |
-| `configure.py`, `README.template.md` | **template** | Consumed by configuration itself — `configure.py` self-destructs, `README.template.md` is renamed onto `README.md`. |
+| `configure.py`, `README.template.md` | **template** | Consumed by configuration itself — `configure.py` is shed by `doit template_clean` rather than removing itself, `README.template.md` is renamed onto `README.md`. |
 | `tools/doit/`, `tools/hooks/` | **downstream** | This code ships to the spawned project, runs there (`doit check`, `doit pr`, the dangerous-command hook), and is measured by the project's own coverage gate. |
 | `.claude/`, `.agents/`, `.github/` assets | **downstream** | Ship with the project and are the project's to maintain. |
 
@@ -93,6 +93,7 @@ that test.
 - Issue #731: `configure.py`/`setup_repo.py` shed tests the spawned project's coverage gate
   depends on (PR #732) — established the membership test recorded above
 - Issue #691: `configure.py` and `cleanup.py` disagree on what is template-owned
+- Issue #1090: `tools/doit/upstream.py` is a second shipped copy of `TEMPLATE_REPO` (the first is the update-check hook, #1086); the template-owned `tests/template/test_utils.py` keeps both equal to `tools/pyproject_template/utils.py`
 
 ## Related Documentation
 - [Template Tooling](../template/tools-reference.md)
