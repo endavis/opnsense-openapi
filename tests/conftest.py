@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import os
-import subprocess  # nosec B404 - guarding subprocess use, not invoking it
+import subprocess  # nosec B404  # guarding subprocess use, not invoking it
 import sys
 from collections.abc import Callable, Iterator
 from pathlib import Path

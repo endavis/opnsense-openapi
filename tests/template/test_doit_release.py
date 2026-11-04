@@ -1398,20 +1398,31 @@ class TestCreateReleaseTag:
         assert exc.value.code == 1
         assert "Error pulling latest changes" in capsys.readouterr().out
 
+    MERGE_OID = "a" * 40
+
     @staticmethod
-    def _patch_happy_path(monkeypatch: MonkeyPatch) -> None:
+    def _patch_happy_path(
+        monkeypatch: MonkeyPatch,
+        *,
+        merge_commit: object = {"oid": "a" * 40},
+        head: str = "a" * 40,
+    ) -> list[list[str]]:
         """Walk the action from entry to the final "Next steps" printout.
 
         Mocks ``subprocess.run`` for every call `create_release_tag` makes
         after the main-branch check: finding the merged release PR via
         ``gh pr list``, the existing-tag check, and ``git tag``. ``run_streamed``
-        (``git pull``, ``git push``) is a no-op.
+        (``git pull``, ``git push``) is a no-op. Returns every command run.
         """
+        calls: list[list[str]] = []
 
         def fake_run(
             cmd: list[str], *_args: object, **_kwargs: object
         ) -> subprocess.CompletedProcess[str]:
-            if cmd[:3] == ["git", "branch", "--show-current"]:
+            calls.append(cmd)
+            if cmd[:2] == ["git", "rev-parse"]:
+                stdout = f"{head}\n"
+            elif cmd[:3] == ["git", "branch", "--show-current"]:
                 stdout = "main\n"
             elif cmd[:2] == ["gh", "pr"]:
                 stdout = json.dumps(
@@ -1420,17 +1431,60 @@ class TestCreateReleaseTag:
                             "title": "release: v1.2.3",
                             "mergedAt": "2024-01-01T00:00:00Z",
                             "headRefName": "release/v1.2.3",
+                            "mergeCommit": merge_commit,
                         }
                     ]
                 )
             else:
-                # Covers ``git tag -l <tag>`` (no existing tag) and
-                # ``git tag <tag>`` (create).
+                # Covers ``git tag -l <tag>`` (no existing tag),
+                # ``git cat-file -e`` and ``git tag <tag> <oid>`` (create).
                 stdout = ""
             return subprocess.CompletedProcess(args=cmd, returncode=0, stdout=stdout, stderr="")
 
         monkeypatch.setattr("tools.doit.release.subprocess.run", fake_run)
         monkeypatch.setattr("tools.doit.release.run_streamed", lambda *a, **kw: None)
+        return calls
+
+    def test_tag_command_receives_merge_commit_oid(self, monkeypatch: MonkeyPatch) -> None:
+        """The tag is created on the PR's merge commit, not implicit HEAD (#1192)."""
+        calls = self._patch_happy_path(monkeypatch)
+
+        _tag_action()()
+
+        assert ["git", "tag", "v1.2.3", self.MERGE_OID] in calls
+
+    def test_tags_merge_commit_and_notes_when_head_moved(
+        self, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        calls = self._patch_happy_path(monkeypatch, head="b" * 40)
+
+        _tag_action()()
+
+        assert ["git", "tag", "v1.2.3", self.MERGE_OID] in calls
+        assert "main has moved past the release PR's merge commit" in " ".join(
+            capsys.readouterr().out.split()
+        )
+
+    def test_no_note_when_head_is_merge_commit(
+        self, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        self._patch_happy_path(monkeypatch)
+
+        _tag_action()()
+
+        assert "moved past" not in capsys.readouterr().out
+
+    @pytest.mark.parametrize("merge_commit", [None, {}, {"oid": ""}, {"oid": None}])
+    def test_missing_merge_commit_exits_without_tagging(
+        self, monkeypatch: MonkeyPatch, merge_commit: object
+    ) -> None:
+        calls = self._patch_happy_path(monkeypatch, merge_commit=merge_commit)
+
+        with pytest.raises(SystemExit) as exc:
+            _tag_action()()
+
+        assert exc.value.code == 1
+        assert not [c for c in calls if c[:2] == ["git", "tag"] and "-l" not in c]
 
     def test_next_steps_mention_pypi_and_actions_with_release_workflow(
         self, tmp_path: Path, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
@@ -1537,6 +1591,9 @@ class TestReleaseRefusesMajorVersionZeroFromOne:
         monkeypatch.setattr("tools.doit.release.run_streamed", lambda *a, **kw: None)
         monkeypatch.setattr("tools.doit.release.validate_merge_commits", lambda _console: True)
         monkeypatch.setattr("tools.doit.release.validate_issue_links", lambda _console: True)
+        # These tests are about major_version_zero, not the changelog: keep the result
+        # independent of the cwd's pyproject.toml and CHANGELOG.md (#1188).
+        monkeypatch.setattr("tools.doit.release._changelog_is_handwritten_enabled", lambda: False)
         return calls
 
     def test_refuses_1_0_while_the_setting_is_on(
@@ -1562,6 +1619,24 @@ class TestReleaseRefusesMajorVersionZeroFromOne:
     ) -> None:
         self._walk_to_branch_creation(monkeypatch, next_version)
         monkeypatch.setattr("tools.doit.release._major_version_zero_enabled", lambda: enabled)
+
+        with pytest.raises(_ReachedBranchCreation):
+            _release_action()()
+
+    def test_reaches_branch_creation_with_a_handwritten_changelog_and_empty_unreleased(
+        self, monkeypatch: MonkeyPatch, tmp_path: Path
+    ) -> None:
+        """A hand-written changelog with an empty Unreleased must not stop this flow (#1188)."""
+        (tmp_path / "pyproject.toml").write_text(
+            "[tool.commitizen]\nupdate_changelog_on_bump = false\n", encoding="utf-8"
+        )
+        (tmp_path / "CHANGELOG.md").write_text(
+            "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-01-01\n\n### Added\n- First\n",
+            encoding="utf-8",
+        )
+        monkeypatch.chdir(tmp_path)
+        self._walk_to_branch_creation(monkeypatch, "0.4.0")
+        monkeypatch.setattr("tools.doit.release._major_version_zero_enabled", lambda: True)
 
         with pytest.raises(_ReachedBranchCreation):
             _release_action()()

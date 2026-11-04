@@ -1,9 +1,8 @@
 """Release-related doit tasks."""
 
 import json
-import os
 import re
-import subprocess  # nosec B404 - subprocess is required for doit tasks
+import subprocess  # nosec B404  # subprocess is required for doit tasks
 import sys
 import tomllib
 from datetime import date
@@ -13,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 from doit.tools import title_with_actions
 from rich.console import Console
 
-from .base import UV_CACHE_DIR, run_streamed, verbatim
+from .base import run_streamed, verbatim
 
 if TYPE_CHECKING:
     from rich.console import Console as ConsoleType
@@ -623,7 +622,6 @@ def task_release() -> dict[str, Any]:
                 console.print(f"[dim]Pre-release type: {prerelease}[/dim]")
             result = subprocess.run(
                 get_next_cmd,
-                env={**os.environ, "UV_CACHE_DIR": UV_CACHE_DIR},
                 check=True,
                 capture_output=True,
                 text=True,
@@ -699,7 +697,6 @@ def task_release() -> dict[str, Any]:
             try:
                 run_streamed(
                     ["uv", "run", "cz", "bump", "--files-only", "--yes", next_version],
-                    env={**os.environ, "UV_CACHE_DIR": UV_CACHE_DIR},
                 )
                 run_streamed(["uv", "lock"])
                 version_files = _version_files_from_pyproject()
@@ -730,7 +727,6 @@ def task_release() -> dict[str, Any]:
                 changelog_cmd = ["uv", "run", "cz", "changelog", "--incremental"]
                 run_streamed(
                     changelog_cmd,
-                    env={**os.environ, "UV_CACHE_DIR": UV_CACHE_DIR},
                 )
                 console.print("[green]✓ CHANGELOG.md updated.[/green]")
             except subprocess.CalledProcessError:
@@ -921,7 +917,7 @@ def task_release_tag() -> dict[str, Any]:
                     "--limit",
                     "1",
                     "--json",
-                    "title,mergedAt,headRefName",
+                    "title,mergedAt,headRefName,mergeCommit",
                 ],
                 check=True,
                 capture_output=True,
@@ -938,6 +934,16 @@ def task_release_tag() -> dict[str, Any]:
             pr = prs[0]
             pr_title = pr["title"]
             branch_name = pr["headRefName"]
+
+            # The tag belongs on the release PR's merge commit, not on whatever
+            # HEAD is after the pull: main may have moved past it (#1192).
+            merge_commit = pr.get("mergeCommit") or {}
+            merge_oid = merge_commit.get("oid") if isinstance(merge_commit, dict) else None
+            if not isinstance(merge_oid, str) or not merge_oid.strip():
+                console.print("[bold red]❌ Release PR has no merge commit.[/bold red]")
+                console.print(verbatim(f"PR title: {pr_title}", "yellow"))
+                sys.exit(1)
+            merge_oid = merge_oid.strip()
 
             # Extract version from PR title (format: "release: vX.Y.Z[suffix]"),
             # falling back to the branch name (format: "release/vX.Y.Z[suffix]").
@@ -967,11 +973,38 @@ def task_release_tag() -> dict[str, Any]:
             console.print(f"[bold red]❌ Tag {tag_name} already exists.[/bold red]")
             sys.exit(1)
 
+        # The merge commit must exist locally to be tagged.
+        oid_check = subprocess.run(
+            ["git", "cat-file", "-e", f"{merge_oid}^{{commit}}"],
+            capture_output=True,
+            text=True,
+        )
+        if oid_check.returncode != 0:
+            console.print(
+                "[bold red]❌ Release PR merge commit is not available locally.[/bold red]"
+            )
+            console.print(verbatim(f"Merge commit: {merge_oid}", "yellow"))
+            sys.exit(1)
+
+        head_oid = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        if head_oid != merge_oid:
+            console.print(
+                verbatim(
+                    f"Note: main has moved past the release PR's merge commit "
+                    f"({head_oid[:12]}); tagging the merge commit {merge_oid[:12]}.",
+                    "yellow",
+                )
+            )
+
         # Create tag
         console.print(f"\n[cyan]Creating tag {tag_name}...[/cyan]")
         try:
             subprocess.run(
-                ["git", "tag", tag_name],
+                ["git", "tag", tag_name, merge_oid],
                 check=True,
                 capture_output=True,
                 text=True,

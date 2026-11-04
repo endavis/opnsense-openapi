@@ -2,7 +2,7 @@
 
 import json
 import os
-import subprocess  # nosec B404 - runs the generator in a child interpreter
+import subprocess  # nosec B404  # runs the generator in a child interpreter
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -245,7 +245,7 @@ class SettingsController extends ApiMutableModelControllerBase
     outputs = []
     for seed in ("1", "2"):
         output = tmp_path / f"out-{seed}"
-        subprocess.run(  # nosec B603 - fixed interpreter and arguments, no shell
+        subprocess.run(  # nosec B603  # fixed interpreter and arguments, no shell
             [sys.executable, "-c", _DETERMINISM_SCRIPT, str(source), str(models), str(output)],
             check=True,
             env={**os.environ, "PYTHONHASHSEED": seed},

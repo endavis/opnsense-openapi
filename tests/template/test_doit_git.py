@@ -1,8 +1,8 @@
 """Tests for tools/doit/git.py task wiring.
 
 Verifies that ``task_commit``, ``task_bump``, and ``task_changelog`` gate
-their ``cz`` invocations on ``uv pip show commitizen`` (via
-``install_check_or_skip``) so real failures — pre-commit hook rejections,
+their ``cz`` invocations on an import probe of ``commitizen`` in the
+project venv (via ``install_check_or_skip``) so real failures — pre-commit hook rejections,
 tag/version bump failures, changelog generation failures — propagate
 instead of being swallowed by the legacy ``|| echo 'not installed'`` pattern.
 
@@ -54,7 +54,7 @@ _PATH_NAMES = [
 
 
 class TestGitTaskGates:
-    """Each git task gates ``cz`` via ``uv pip show commitizen``.
+    """Each git task gates ``cz`` by importing ``commitizen`` in the project venv.
 
     The package name is ``commitizen`` (CLI is ``cz``). All three tasks
     share the same gating package; the underlying ``cz`` subcommand differs.
@@ -63,7 +63,7 @@ class TestGitTaskGates:
     def test_commit_gates_on_commitizen_package(self) -> None:
         action = task_commit()["actions"][0]
         assert isinstance(action, str)
-        assert "uv pip show commitizen" in action
+        assert 'uv run --no-sync python -c "import commitizen"' in action
         assert "commitizen not installed. Run: doit install_dev" in action
         assert "uv run cz commit" in action
         # Bug-fix invariant: the bare-swallow pattern must be gone.
@@ -72,7 +72,7 @@ class TestGitTaskGates:
     def test_bump_gates_on_commitizen_package(self) -> None:
         action = task_bump()["actions"][0]
         assert isinstance(action, str)
-        assert "uv pip show commitizen" in action
+        assert 'uv run --no-sync python -c "import commitizen"' in action
         assert "commitizen not installed. Run: doit install_dev" in action
         assert "uv run cz bump" in action
         assert "|| echo 'commitizen not installed" not in action
@@ -80,7 +80,7 @@ class TestGitTaskGates:
     def test_changelog_gates_on_commitizen_package(self) -> None:
         action = task_changelog()["actions"][0]
         assert isinstance(action, str)
-        assert "uv pip show commitizen" in action
+        assert 'uv run --no-sync python -c "import commitizen"' in action
         assert "commitizen not installed. Run: doit install_dev" in action
         assert "uv run cz changelog" in action
         assert "|| echo 'commitizen not installed" not in action
@@ -223,7 +223,7 @@ class TestWorktree:
         tmp_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        """base.py's relative default would otherwise resolve inside the new worktree."""
+        """A user-set relative value would otherwise resolve inside the new worktree."""
         _, mock_sync = mocks
         monkeypatch.chdir(tmp_path)
         monkeypatch.setenv("UV_CACHE_DIR", "tmp/.uv_cache")
@@ -231,6 +231,18 @@ class TestWorktree:
 
         env = mock_sync.call_args.kwargs["env"]
         assert env["UV_CACHE_DIR"] == str((tmp_path / "tmp" / ".uv_cache").resolve())
+
+    def test_an_unset_uv_cache_stays_unset(
+        self,
+        mocks: tuple[MagicMock, MagicMock],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """No UV_CACHE_DIR is injected, so uv uses its shared default cache (#1094)."""
+        _, mock_sync = mocks
+        monkeypatch.delenv("UV_CACHE_DIR", raising=False)
+        self._create(self.BRANCH)
+
+        assert "UV_CACHE_DIR" not in mock_sync.call_args.kwargs["env"]
 
     def test_prints_how_to_work_there_and_how_to_remove_it(
         self,
@@ -397,6 +409,29 @@ def test_worktrees_directory_is_gitignored() -> None:
         cwd=REPO_ROOT,
         check=False,
     )
+    assert result.returncode == 0
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        ".doit.db",
+        ".doit.db.db",
+        ".doit.db.dat",
+        ".doit.db.dir",
+        ".doit.db.bak",
+        ".doit.db-wal",
+        ".doit.db-shm",
+    ],
+)
+def test_doit_state_database_is_gitignored(name: str) -> None:
+    """Every name a `dbm` backend gives doit's state database is ignored (#1069, #1186).
+
+    Python 3.13+ prefers `dbm.sqlite3`, which writes `.doit.db` as given, plus
+    SQLite's `.doit.db-wal` and `.doit.db-shm` files in WAL mode (#1186);
+    `dbm.ndbm` appends `.db` and `dbm.dumb` writes `.dat`/`.dir`/`.bak`.
+    """
+    result = subprocess.run(["git", "check-ignore", "-q", name], cwd=REPO_ROOT, check=False)
     assert result.returncode == 0
 
 
@@ -584,6 +619,52 @@ class TestRemoveMergedWorktree:
         assert f"  {status}" in lines
         assert f"  git worktree remove {path}" in lines
         assert f"  git branch -D {self.BRANCH}" in lines
+
+    def test_an_ignored_directory_holding_only_rebuildable_files_does_not_keep_it(
+        self, main_checkout: Path
+    ) -> None:
+        """git reports `!! tmp/agents/` as one entry; only its __pycache__ is inside (#1112)."""
+        path, head = _add_worktree(main_checkout, self.BRANCH)
+        cache = path / "tmp" / "agents" / "claude" / "__pycache__"
+        cache.mkdir(parents=True)
+        (cache / "old-hook.cpython-312.pyc").write_bytes(b"")
+
+        out = self._remove(path, self.BRANCH, head)
+
+        assert not path.exists()
+        assert not _has_branch(main_checkout, self.BRANCH)
+        assert "Removed worktree" in out
+
+    def test_a_real_file_in_an_ignored_directory_keeps_it(self, main_checkout: Path) -> None:
+        """A plan under `tmp/agents/` is work; it is listed by its own path (#1112)."""
+        path, head = _add_worktree(main_checkout, self.BRANCH)
+        agent = path / "tmp" / "agents" / "claude"
+        (agent / "__pycache__").mkdir(parents=True)
+        (agent / "__pycache__" / "x.cpython-312.pyc").write_bytes(b"")
+        (agent / "plan-1112.md").write_text("plan\n", encoding="utf-8")
+
+        out = self._remove(path, self.BRANCH, head)
+
+        assert (agent / "plan-1112.md").exists()
+        assert _has_branch(main_checkout, self.BRANCH)
+        lines = out.splitlines()
+        assert "  !! tmp/agents/claude/plan-1112.md" in lines
+        assert not any("__pycache__" in line for line in lines)
+
+    def test_a_symlinked_directory_in_an_ignored_directory_keeps_it(
+        self, main_checkout: Path, tmp_path: Path
+    ) -> None:
+        """A symlink is not walked, so what it points at is not judged; it is listed (#1112)."""
+        path, head = _add_worktree(main_checkout, self.BRANCH)
+        target = tmp_path / "elsewhere"
+        target.mkdir()
+        (path / "tmp" / "agents").mkdir(parents=True)
+        (path / "tmp" / "agents" / "linked").symlink_to(target, target_is_directory=True)
+
+        out = self._remove(path, self.BRANCH, head)
+
+        assert path.exists()
+        assert "  !! tmp/agents/linked" in out.splitlines()
 
     def test_a_branch_that_moved_past_the_merged_commit_is_kept(self, main_checkout: Path) -> None:
         """`-D` would drop the commit the PR never merged."""

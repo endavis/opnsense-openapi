@@ -6,7 +6,7 @@ import contextlib
 import json
 import logging
 import shutil
-import subprocess  # nosec B404 - invoked only via shutil.which-validated entry point
+import subprocess  # nosec B404  # invoked only via shutil.which-validated entry point
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Any, cast
