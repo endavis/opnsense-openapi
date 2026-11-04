@@ -14,9 +14,15 @@ from urllib.parse import urljoin
 
 import httpx
 
+from opnsense_openapi.endpoints import (
+    _lookup,
+    resolve_validation_spec,
+    suggest_endpoints,
+)
 from opnsense_openapi.openapi import APIWrapper, SuggestedParameters
 from opnsense_openapi.specs import (
     find_best_matching_spec,
+    is_version_covered,
     list_available_specs,
     version_from_spec_path,
 )
@@ -30,6 +36,35 @@ class APIResponseError(Exception):
     def __init__(self, message: str, response_text: str) -> None:
         super().__init__(message)
         self.response_text = response_text
+
+
+class UnknownEndpointError(APIResponseError):
+    """Raised in strict mode when an endpoint is not in the box's spec.
+
+    Attributes:
+        method: HTTP method of the rejected call.
+        path: Endpoint path without the ``/api/`` prefix.
+        version: The box's OPNsense version.
+        spec_path: Spec file the call was checked against.
+        suggestions: Closest known paths in the same module.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        method: str,
+        path: str,
+        version: str,
+        spec_path: Path,
+        suggestions: list[str],
+    ) -> None:
+        super().__init__(message, "")
+        self.method = method
+        self.path = path
+        self.version = version
+        self.spec_path = spec_path
+        self.suggestions = suggestions
 
 
 def _resolved_module_dir(version: str) -> tuple[Path, str, Path]:
@@ -197,6 +232,7 @@ class OPNsenseClient:
         transport: httpx.BaseTransport | None = None,
         mounts: dict[str, httpx.BaseTransport | None] | None = None,
         session: httpx.Client | None = None,
+        validate_endpoints: bool = False,
     ) -> None:
         """Initialize OPNsense API client.
 
@@ -242,6 +278,12 @@ class OPNsenseClient:
                 headers are applied onto the injected session only when they carry
                 non-empty values.  The caller retains ownership: ``close()`` and
                 the context-manager exit do **not** close an injected session.
+            validate_endpoints: Strict mode. When ``True``, ``get()`` and ``post()``
+                check the endpoint and HTTP method against the box's spec before
+                sending and raise :class:`UnknownEndpointError` on a miss. The
+                spec comes from ``spec_version`` or the detected version; a
+                version newer than every bundled spec logs one warning and
+                validates against the floor spec. Defaults to ``False``.
 
         httpx precedence rules (when building a new client):
             1. A custom ``transport`` overrides ``proxy``, ``mounts``, and
@@ -288,6 +330,9 @@ class OPNsenseClient:
         self._openapi: APIWrapper | None = None
         self._detected_version: str | None = None
         self._spec_version = spec_version
+        self.validate_endpoints = validate_endpoints
+        self._validation_spec: Path | None = None
+        self._verified_endpoints: set[tuple[str, str]] = set()
 
         # Auto-detect version if requested
         if auto_detect_version and spec_version is None:
@@ -333,7 +378,17 @@ class OPNsenseClient:
         Raises:
             httpx.HTTPError: On HTTP errors
             APIResponseError: If response is not valid JSON
+            UnknownEndpointError: In strict mode, if the endpoint or method is
+                not in the box's spec (raised before any request is sent)
+            RuntimeError: In strict mode, if no spec can be resolved
         """
+        self._check_endpoint("GET", module, controller, command, params)
+        return self._send_get(module, controller, command, *params, **query)
+
+    def _send_get(
+        self, module: str, controller: str, command: str, *params: str, **query: Any
+    ) -> dict[str, Any]:
+        """Send a GET request without endpoint validation."""
         url: str = self._build_url(module, controller, command, *params)
         response: httpx.Response = self._client.get(url, params=query)
         response.raise_for_status()
@@ -365,7 +420,22 @@ class OPNsenseClient:
         Raises:
             httpx.HTTPError: On HTTP errors
             APIResponseError: If response is not valid JSON
+            UnknownEndpointError: In strict mode, if the endpoint or method is
+                not in the box's spec (raised before any request is sent)
+            RuntimeError: In strict mode, if no spec can be resolved
         """
+        self._check_endpoint("POST", module, controller, command, params)
+        return self._send_post(module, controller, command, *params, json=json)
+
+    def _send_post(
+        self,
+        module: str,
+        controller: str,
+        command: str,
+        *params: str,
+        json: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Send a POST request without endpoint validation."""
         url: str = self._build_url(module, controller, command, *params)
         # Set Content-Type header for POST requests with JSON body
         headers: dict[str, str] = {"Content-Type": "application/json"} if json else {}
@@ -375,6 +445,75 @@ class OPNsenseClient:
             return cast(dict[str, Any], response.json())
         except JSONDecodeError as e:
             raise APIResponseError(f"Invalid JSON response from {url}: {e}", response.text) from e
+
+    def _validation_spec_path(self) -> Path:
+        """Resolve (once) the spec used for strict-mode validation.
+
+        Returns:
+            Path to the spec file.
+
+        Raises:
+            RuntimeError: If no version is known or no spec can be resolved.
+        """
+        if self._validation_spec is not None:
+            return self._validation_spec
+        version: str | None = self._spec_version or self._detected_version
+        if version is None:
+            raise RuntimeError(
+                "No OPNsense version available for endpoint validation. Either specify "
+                "spec_version or enable auto_detect_version."
+            )
+        spec_path = resolve_validation_spec(version)
+        if not is_version_covered(version):
+            logger.warning(
+                f"No bundled spec for OPNsense {version}; validating endpoints against "
+                f"{spec_path.name}"
+            )
+        self._validation_spec = spec_path
+        return spec_path
+
+    def _check_endpoint(
+        self, method: str, module: str, controller: str, command: str, params: tuple[str, ...]
+    ) -> None:
+        """Reject a call whose endpoint or method is not in the box's spec.
+
+        Does nothing unless ``validate_endpoints`` is on.
+
+        Raises:
+            UnknownEndpointError: If the endpoint or method is not in the spec.
+            RuntimeError: If no spec can be resolved.
+        """
+        if not self.validate_endpoints:
+            return
+        spec_path = self._validation_spec_path()
+        path = "/".join([module, controller, command, *params])
+        found = _lookup(path, spec_path)
+        if found is not None and (found[0], method) in self._verified_endpoints:
+            return
+        version = self._spec_version or self._detected_version or ""
+        if found is not None and method in found[1]:
+            self._verified_endpoints.add((found[0], method))
+            return
+        if found is not None:
+            allowed = ", ".join(sorted(found[1]))
+            message = (
+                f"{method} {path} is in the OPNsense {version} spec ({spec_path.name}) "
+                f"but does not accept {method} (allowed: {allowed})"
+            )
+            suggestions: list[str] = []
+        else:
+            suggestions = suggest_endpoints(path, spec_path)
+            message = f"{method} {path} is not in the OPNsense {version} spec ({spec_path.name})"
+            if suggestions:
+                message += f"; did you mean: {', '.join(suggestions)}"
+        raise UnknownEndpointError(
+            message,
+            method=method,
+            path=path,
+            version=version,
+            spec_path=spec_path,
+            suggestions=suggestions,
+        )
 
     def close(self) -> None:
         """Close the HTTP client.
@@ -418,7 +557,7 @@ class OPNsenseClient:
         last_error: Exception | None = None
         for module, controller, command in version_endpoints:
             try:
-                response: dict[str, Any] = self.get(module, controller, command)
+                response: dict[str, Any] = self._send_get(module, controller, command)
 
                 # Check for product_version at root level
                 if "product_version" in response:

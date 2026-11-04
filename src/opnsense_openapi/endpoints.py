@@ -5,13 +5,19 @@ spec is parsed once per process. Versions resolve with floor matching (see
 [`docs/development/spec-version-resolution.md`](../../docs/development/spec-version-resolution.md)).
 """
 
+import difflib
 import json
 import re
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
 
-from opnsense_openapi.specs import find_best_matching_spec
+from opnsense_openapi.specs import (
+    _version_key,
+    find_best_matching_spec,
+    get_spec_path,
+    list_available_specs,
+)
 
 _REPEATED_SLASH_RE = re.compile(r"/{2,}")
 
@@ -149,13 +155,83 @@ def endpoint_exists(path: str, method: str = "GET", *, version: str) -> bool:
         FileNotFoundError: If the version cannot be resolved to a bundled spec.
     """
     spec_path = _resolve_spec_path(version)
+    found = _lookup(path, spec_path)
+    if found is None:
+        return False
+    return method.strip().upper() in found[1]
+
+
+def _lookup(path: str, spec_path: Path) -> tuple[str, frozenset[str]] | None:
+    """Match a user-supplied path against one spec file.
+
+    Args:
+        path: Endpoint path in any form ``endpoint_exists`` accepts.
+        spec_path: Spec file to match against.
+
+    Returns:
+        ``(spec path template, allowed methods)``, or ``None`` if nothing matches.
+    """
     normalized = _normalize_path(path)
     if not normalized:
-        return False
+        return None
     matched = _match_template(normalized, spec_path)
     if matched is None:
-        return False
-    return method.strip().upper() in _load_spec_paths(spec_path)[matched]
+        return None
+    return matched, _load_spec_paths(spec_path)[matched]
+
+
+def resolve_validation_spec(version: str) -> Path:
+    """Resolve the spec used to validate calls against a box of ``version``.
+
+    Uses floor matching inside the box's ``major.minor`` series. When that
+    series has no spec at or below the version (a box newer than every bundled
+    series, or in a series with no bundled spec), falls back to the highest
+    bundled spec at or below the version across all series.
+
+    Args:
+        version: OPNsense version string (``_N`` suffix ignored).
+
+    Returns:
+        Path to the spec file.
+
+    Raises:
+        RuntimeError: If the version is malformed or older than every bundled spec.
+    """
+    try:
+        return _resolve_spec_path(version)
+    except FileNotFoundError:
+        pass
+    try:
+        key = _version_key(version)
+    except ValueError as exc:
+        raise RuntimeError(f"Cannot validate endpoints: invalid version {version!r}") from exc
+    below = [v for v in list_available_specs() if _version_key(v) <= key]
+    if not below:
+        raise RuntimeError(
+            f"Cannot validate endpoints: no bundled spec at or below version {version!r}"
+        )
+    return get_spec_path(below[-1])
+
+
+def suggest_endpoints(path: str, spec_path: Path, limit: int = 3) -> list[str]:
+    """Suggest the closest known paths in the same module as ``path``.
+
+    Args:
+        path: Endpoint path the caller used.
+        spec_path: Spec file to draw suggestions from.
+        limit: Maximum number of suggestions.
+
+    Returns:
+        Spec paths without the ``/api/`` prefix, closest first. Empty if the
+        module is unknown or nothing is close.
+    """
+    normalized = _normalize_path(path)
+    parts = normalized.split("/")
+    if len(parts) < 3:
+        return []
+    prefix = f"/api/{parts[2]}/"
+    candidates = [p[len("/api/") :] for p in _load_spec_paths(spec_path) if p.startswith(prefix)]
+    return difflib.get_close_matches(normalized[len("/api/") :], candidates, n=limit)
 
 
 def _endpoint_set(spec_path: Path) -> set[tuple[str, str]]:

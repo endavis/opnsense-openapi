@@ -156,3 +156,37 @@ def test_package_root_exports() -> None:
     ):
         assert callable(getattr(opnsense_openapi, name))
         assert name in opnsense_openapi.__all__
+
+
+def test_resolve_validation_spec_in_series_floor() -> None:
+    assert endpoints_mod.resolve_validation_spec("26.1.6_2").name == "opnsense-26.1.6.json"
+
+
+def test_resolve_validation_spec_cross_series_fallback(
+    fake_specs: Callable[[dict[str, dict[str, dict[str, object]]]], Path],
+) -> None:
+    specs_dir = fake_specs({"33.1.1": {"/api/a/b": {"get": {}}}, "33.7.2": {"/api/a/c": {}}})
+    with patch("opnsense_openapi.specs.get_specs_dir", return_value=specs_dir):
+        assert endpoints_mod.resolve_validation_spec("33.7.9").name == "opnsense-33.7.2.json"
+        assert endpoints_mod.resolve_validation_spec("33.4.1").name == "opnsense-33.1.1.json"
+        assert endpoints_mod.resolve_validation_spec("34.1.1").name == "opnsense-33.7.2.json"
+
+
+@pytest.mark.parametrize("version", ["1.0.0", "garbage", "", "26.x.1"])
+def test_resolve_validation_spec_unresolvable(version: str) -> None:
+    with pytest.raises(RuntimeError):
+        endpoints_mod.resolve_validation_spec(version)
+
+
+def test_lookup_and_suggest_endpoints() -> None:
+    spec = find_best_matching_spec(VERSION)
+    assert endpoints_mod._lookup("core/tunables/setItem/x", spec) == (
+        "/api/core/tunables/setItem/{uuid}",
+        frozenset({"POST"}),
+    )
+    assert endpoints_mod._lookup("", spec) is None
+    assert endpoints_mod._lookup("core/nope/nope", spec) is None
+    assert "core/firmware/install" in endpoints_mod.suggest_endpoints("core/firmware/inastll", spec)
+    assert endpoints_mod.suggest_endpoints("nomodule/x/y", spec) == []
+    assert endpoints_mod.suggest_endpoints("core", spec) == []
+    assert len(endpoints_mod.suggest_endpoints("core/firmware/inastll", spec, limit=1)) == 1

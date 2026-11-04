@@ -86,6 +86,17 @@ The connection-free lookup in `endpoints.py` (`endpoint_exists`,
 `FileNotFoundError` when no spec can be resolved. See the
 [endpoint lookup guide](../usage/endpoint-lookup.md).
 
+## Strict mode fallback
+
+`OPNsenseClient(validate_endpoints=True)` resolves its spec with
+`resolve_validation_spec(version)` in `endpoints.py`. It first uses floor matching as
+above. Floor matching stays inside the box's `major.minor` series, so a box in a series
+with no bundled spec (for example `27.1.2` when the newest bundled series is `26.7`)
+would fail. Strict mode then falls back to the highest bundled spec at or below the
+version across all series, and raises `RuntimeError` if there is none or the version is
+malformed. `find_best_matching_spec` itself is unchanged. The client logs one warning
+when `is_version_covered(version)` is false.
+
 ## Why these defaults
 
 In direct-API integrations (the use case that drives this project), an

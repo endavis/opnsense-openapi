@@ -85,3 +85,31 @@ opnsense-openapi diff 26.1.6 26.1.11 --module core --format json
 Endpoints are `(path, METHOD)` pairs. A path that differs only in case shows up as one
 removed and one added endpoint. Changed parameters or request bodies are not reported.
 An unknown version or module exits with status 1; a non-empty diff still exits 0.
+
+## Strict mode on the client
+
+`OPNsenseClient(validate_endpoints=True)` checks every `get()` and `post()` against the
+box's spec before sending. The spec comes from `spec_version` or the detected version.
+A miss raises `UnknownEndpointError` (a subclass of `APIResponseError`) and sends no request:
+
+```python
+from opnsense_openapi import OPNsenseClient, UnknownEndpointError
+
+client = OPNsenseClient(
+    "https://fw.example", api_key="...", api_secret="...", validate_endpoints=True
+)
+try:
+    client.post("core", "firmware", "frobnicate")
+except UnknownEndpointError as exc:
+    print(exc)  # POST core/firmware/frobnicate is not in the OPNsense 26.1.6 spec (...)
+    print(exc.suggestions)  # closest known paths in the same module
+```
+
+- Templated endpoints such as `core/tunables/setItem/<uuid>` pass. A known path with the
+  wrong method raises and lists the allowed methods.
+- A box version with no exact bundled spec logs one warning and validates against the
+  floor spec, so calls are not failed for being newer than the library.
+- With no known version, or a version older than every bundled spec, a validated call
+  raises `RuntimeError`.
+- The default is `False`: nothing is validated and no spec is loaded. Version detection
+  is never validated.
