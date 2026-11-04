@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793806887468,
+  "lastUpdate": 1793807102295,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1634,6 +1634,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000009717899489640566",
             "extra": "mean: 430.2763101266671 usec\nrounds: 2370"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6fcf15e5cb8280ab557a2902d74dcda98f3b149",
+          "message": "feat: add connection-free endpoint lookup and spec coverage helpers (merges PR #162, addresses #159)\n\nAdd opnsense_openapi.endpoints with endpoint_exists() and\nlist_spec_endpoints(), which check paths and methods against the bundled\nspecs without a client or box. Paths accept an optional /api/ prefix and\nmatch templated {param} segments; each spec is parsed once per process.\n\nAdd newest_spec_version() and is_version_covered() to specs, so callers\ncan detect a box newer than the bundled specs instead of silently using\nthe floor spec.\n\nAddresses #159\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1scN6V62Aso7bAGXpHF\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T15:44:18Z",
+          "tree_id": "726257b74dca553ddd838026da3785d7d514457c",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/f6fcf15e5cb8280ab557a2902d74dcda98f3b149"
+        },
+        "date": 1793807101651,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 717.8232344416255,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0004642992033003212",
+            "extra": "mean: 1.3931006298199191 msec\nrounds: 778"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1265.1486467802258,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00004649299060973752",
+            "extra": "mean: 790.4209537313872 usec\nrounds: 1340"
           }
         ]
       }
