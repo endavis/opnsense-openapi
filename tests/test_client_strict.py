@@ -83,9 +83,9 @@ def test_method_mismatch_lists_allowed() -> None:
 def test_suggestions_same_module_only() -> None:
     client, _ = make_client()
     with pytest.raises(UnknownEndpointError) as exc_info:
-        client.post("core", "firmware", "inastll")
+        client.post("core", "firmware", "rebot")
     err = exc_info.value
-    assert "core/firmware/install" in err.suggestions
+    assert "core/firmware/reboot" in err.suggestions
     assert all(s.startswith("core/") for s in err.suggestions)
     assert "did you mean: " in str(err)
 

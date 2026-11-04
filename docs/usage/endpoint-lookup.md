@@ -20,13 +20,14 @@ from opnsense_openapi import endpoint_exists, list_spec_endpoints
 endpoint_exists("core/tunables/addItem", "POST", version="26.1.6")  # True
 endpoint_exists("system/general/get", "GET", version="26.1.6")      # False
 endpoint_exists("core/tunables/setItem/some-uuid", "POST", version="26.1.6")  # True
+endpoint_exists("core/firmware/install/os-helloworld", "POST", version="26.1.6")  # True
 
 list_spec_endpoints("26.1.6")  # [("/api/core/...", "GET"), ...]
 ```
 
 Path handling: the leading slash and `api/` prefix are optional, a trailing
-slash, repeated slashes and a query string are ignored, and `{uuid}`-style
-segments match any non-empty value. Methods are case-insensitive.
+slash, repeated slashes and a query string are ignored, and templated
+segments (any `{name}`, such as `core/firmware/install/{pkg_name}`) match any non-empty value. Methods are case-insensitive.
 
 Versions resolve with floor matching, and `_N` security-patch suffixes are
 ignored (see [spec version resolution](../development/spec-version-resolution.md)).

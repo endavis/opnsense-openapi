@@ -54,7 +54,7 @@ The OPNsense API Generator is a lightweight Python tool that automatically gener
 │  ┌────────────────────────────────────────────────────────┐    │
 │  │ 2. Heuristic Schema Inference                          │    │
 │  │    - Pattern matching on action names                  │    │
-│  │    - UUID path parameter detection                     │    │
+│  │    - Path parameters from PHP signatures               │    │
 │  │    - Fallback schemas for common operations            │    │
 │  └────────────────────────────────────────────────────────┘    │
 │  Output: OpenAPI 3.0.3 JSON specification                       │
@@ -90,7 +90,8 @@ class ApiEndpoint:
     name: str           # e.g., "searchAction" -> "search"
     method: str         # HTTP method (POST for most)
     description: str    # From PHPDoc @return or method doc
-    parameters: list[str]  # Extracted from method signature
+    parameters: list[str]  # Extracted from method signature, in order
+    optional_parameters: list[str]  # Trailing parameters with a PHP default
 
 @dataclass
 class ApiController:
@@ -132,7 +133,8 @@ ApiController(
     base_class="ApiMutableModelControllerBase",
     endpoints=[
         ApiEndpoint(name="search", method="POST", description="Search aliases", parameters=[]),
-        ApiEndpoint(name="get", method="POST", description="", parameters=["uuid"])
+        ApiEndpoint(name="get", method="POST", description="", parameters=["uuid"],
+                    optional_parameters=["uuid"])
     ],
     model_class="Alias"
 )
@@ -159,7 +161,7 @@ The generator uses pattern-based heuristics to infer response schemas based on:
 For each endpoint:
     1. Parse associated XML model (if exists)
     2. Check action name against pattern hierarchy
-    3. Determine UUID path parameter requirement
+    3. Build path(s) from the PHP signature parameters
     4. Select appropriate response schema
     5. Generate request body (if mutation operation)
 ```
@@ -301,28 +303,18 @@ When no model exists, generic schemas are provided:
 | `get` | Generic object with additionalProperties |
 | `add`, `set`, `update`, `delete`, `remove`, `toggle` | StatusResponse |
 
-### UUID Path Parameter Detection
+### Path Parameters
 
-**Heuristic**: Endpoints with certain verbs + nouns likely require a UUID
-
-**Detection Logic:**
-```python
-target_verbs = ['get', 'set', 'del', 'toggle', 'start', 'stop',
-                'restart', 'kill', 'drop', 'disconnect', 'connect']
-target_nouns = ['item', 'rule', 'server', 'client', 'job',
-                'route', 'alias', 'certificate', 'ca', 'session',
-                'key', 'vessel']
-exceptions = ['add', 'search', 'list', 'match', 'export',
-              'import', 'options']
-
-requires_uuid = has_verb AND has_noun AND NOT exception
-```
+Path segments come from the PHP signature, not a name heuristic: each parameter becomes one
+`/{name}` segment in order. Trailing defaulted parameters are optional, so one path is
+emitted per valid prefix length. A parameter named `uuid` gets `format: uuid`. The
+full-signature path keeps the base operation ID; shorter variants add `_p{k}`. See
+[Heuristics - Path Parameters](heuristics.md#path-parameters).
 
 **Examples:**
-- `getItem` → `/api/firewall/alias/getItem/{uuid}` ✅
-- `deleteRule` → `/api/firewall/filter/deleteRule/{uuid}` ✅
-- `searchItem` → `/api/firewall/alias/searchItem` ❌ (exception)
-- `addItem` → `/api/firewall/alias/addItem` ❌ (exception)
+- `getAction($uuid = null)` → `/api/firewall/alias/get` and `/api/firewall/alias/get/{uuid}`
+- `installAction($pkg_name)` → `/api/core/firmware/install/{pkg_name}`
+- `searchItemAction()` → `/api/firewall/alias/searchItem`
 
 ## XML Model Parsing
 
@@ -496,9 +488,9 @@ print(f"Generated: {spec_path}")
 
 ### Understanding Generated Paths
 
-**Example Endpoint**: `Firewall/Alias/getItem`
+**Example Endpoint**: `Firewall/Alias/getItem` (`getItemAction($uuid = null)`)
 
-**Generated Path**: `/api/firewall/alias/getItem/{uuid}`
+**Generated Paths**: `/api/firewall/alias/getItem` (operation ID `..._p0`) and `/api/firewall/alias/getItem/{uuid}` (shown below)
 
 **OpenAPI Operation:**
 ```json

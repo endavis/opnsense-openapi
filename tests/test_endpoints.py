@@ -42,14 +42,17 @@ def test_templated_paths() -> None:
     assert endpoint_exists("core/tunables/getItem/abc-123", "GET", version=VERSION)
     assert not endpoint_exists("core/tunables/getItem/abc-123", "POST", version=VERSION)
     assert not endpoint_exists("core/tunables/getItem/a/b", "GET", version=VERSION)
-    assert not endpoint_exists("core/tunables/getItem", "GET", version=VERSION)
+    # getItemAction($uuid = null): the bare path is valid too (#168)
+    assert endpoint_exists("core/tunables/getItem", "GET", version=VERSION)
+    # setItemAction($uuid): the uuid segment is required
+    assert not endpoint_exists("core/tunables/setItem", "POST", version=VERSION)
 
 
 def test_method_handling() -> None:
-    assert not endpoint_exists("core/firmware/install", "GET", version=VERSION)
-    assert endpoint_exists("core/firmware/install", " post ", version=VERSION)
-    assert not endpoint_exists("core/firmware/install", "PATCH", version=VERSION)
-    assert not endpoint_exists("core/firmware/install", "", version=VERSION)
+    assert not endpoint_exists("core/firmware/reboot", "GET", version=VERSION)
+    assert endpoint_exists("core/firmware/reboot", " post ", version=VERSION)
+    assert not endpoint_exists("core/firmware/reboot", "PATCH", version=VERSION)
+    assert not endpoint_exists("core/firmware/reboot", "", version=VERSION)
 
 
 @pytest.mark.parametrize("path", ["", "/", "///", "?x=1"])
@@ -186,7 +189,30 @@ def test_lookup_and_suggest_endpoints() -> None:
     )
     assert endpoints_mod._lookup("", spec) is None
     assert endpoints_mod._lookup("core/nope/nope", spec) is None
-    assert "core/firmware/install" in endpoints_mod.suggest_endpoints("core/firmware/inastll", spec)
+    assert "core/firmware/reboot" in endpoints_mod.suggest_endpoints("core/firmware/rebot", spec)
     assert endpoints_mod.suggest_endpoints("nomodule/x/y", spec) == []
     assert endpoints_mod.suggest_endpoints("core", spec) == []
-    assert len(endpoints_mod.suggest_endpoints("core/firmware/inastll", spec, limit=1)) == 1
+    assert len(endpoints_mod.suggest_endpoints("core/firmware/rebot", spec, limit=1)) == 1
+
+
+# === Path parameters from PHP signatures (#168), checked against 26.7.7 ===
+
+SIGNATURE_VERSION = "26.7.7"
+
+
+def test_required_path_parameter_without_uuid_name() -> None:
+    assert endpoint_exists("core/firmware/install/os-helloworld", "POST", version=SIGNATURE_VERSION)
+    assert not endpoint_exists("core/firmware/install", "POST", version=SIGNATURE_VERSION)
+
+
+def test_optional_path_parameter_accepts_bare_and_parameterised() -> None:
+    assert endpoint_exists("routing/settings/getGateway/abc", "GET", version=SIGNATURE_VERSION)
+    assert endpoint_exists("routing/settings/getGateway", "GET", version=SIGNATURE_VERSION)
+
+
+def test_operation_ids_are_unique() -> None:
+    from opnsense_openapi import get_spec_path
+
+    spec = json.loads(get_spec_path(SIGNATURE_VERSION).read_text(encoding="utf-8"))
+    ids = [op["operationId"] for item in spec["paths"].values() for op in item.values()]
+    assert len(ids) == len(set(ids))

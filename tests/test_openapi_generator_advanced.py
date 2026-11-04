@@ -467,9 +467,17 @@ def _process_with_endpoint(
     controller_class: str = "DemoController",
     action: str = "run",
     method: str = "GET",
+    parameters: list[str] | None = None,
+    optional_parameters: list[str] | None = None,
 ) -> None:
     """Helper: process a controller carrying a single endpoint with the given action."""
-    endpoint = ApiEndpoint(name=action, method=method, description="", parameters=[])
+    endpoint = ApiEndpoint(
+        name=action,
+        method=method,
+        description="",
+        parameters=parameters or [],
+        optional_parameters=optional_parameters or [],
+    )
     controller = ApiController(
         module=module,
         controller=controller_class,
@@ -643,10 +651,10 @@ def test_add_path_get_no_schema_fallback(generator: OpenApiGenerator) -> None:
 
 
 def test_add_path_get_with_uuid_no_schema_fallback(generator: OpenApiGenerator) -> None:
-    """A 'getRule' action triggers UUID heuristic and uses generic get response."""
-    # 'getRule' contains a noun ('rule') but doesn't end with 'item' or contain
-    # 'search'/'find', so it falls into the generic get-response branch.
-    _process_with_endpoint(generator, action="getRule")
+    """A 'getRule' action with a uuid parameter uses the generic get response."""
+    # 'getRule' doesn't end with 'item' or contain 'search'/'find', so it falls
+    # into the generic get-response branch.
+    _process_with_endpoint(generator, action="getRule", parameters=["uuid"])
     path = generator.spec["paths"]["/api/test/demo/getRule/{uuid}"]
     schema = path["get"]["responses"]["200"]["content"]["application/json"]["schema"]
     assert schema["additionalProperties"] is True
@@ -790,3 +798,87 @@ def test_module_level_get_xml_tag_text_returns_none_when_missing() -> None:
 
     elem = ET.fromstring("<root/>")
     assert _get_xml_tag_text(elem, "name") is None
+
+
+# === Path parameters from PHP signatures (#168) ===
+
+
+def test_required_parameter_emits_only_parameterised_path(generator: OpenApiGenerator) -> None:
+    """A required non-uuid parameter yields only /{name}, as a plain string."""
+    _process_with_endpoint(generator, action="install", method="POST", parameters=["pkg_name"])
+    paths = generator.spec["paths"]
+    assert list(paths) == ["/api/test/demo/install/{pkg_name}"]
+    op = paths["/api/test/demo/install/{pkg_name}"]["post"]
+    assert op["operationId"] == "Test_Demo_install"
+    assert op["parameters"][0]["name"] == "pkg_name"
+    assert op["parameters"][0]["required"] is True
+    assert op["parameters"][0]["schema"] == {"type": "string"}
+
+
+def test_optional_uuid_emits_bare_and_parameterised(generator: OpenApiGenerator) -> None:
+    """An optional uuid emits the bare path (_p0) and /{uuid} (base id, uuid format)."""
+    _process_with_endpoint(
+        generator, action="getThing", parameters=["uuid"], optional_parameters=["uuid"]
+    )
+    paths = generator.spec["paths"]
+    assert paths["/api/test/demo/getThing"]["get"]["operationId"] == "Test_Demo_getThing_p0"
+    assert paths["/api/test/demo/getThing"]["get"]["parameters"] == []
+    full = paths["/api/test/demo/getThing/{uuid}"]["get"]
+    assert full["operationId"] == "Test_Demo_getThing"
+    assert full["parameters"][0]["schema"] == {"type": "string", "format": "uuid"}
+
+
+def test_required_then_optional_does_not_emit_bare(generator: OpenApiGenerator) -> None:
+    """(uuid, enabled = null) emits /{uuid} and /{uuid}/{enabled} only."""
+    _process_with_endpoint(
+        generator,
+        action="toggle",
+        method="POST",
+        parameters=["uuid", "enabled"],
+        optional_parameters=["enabled"],
+    )
+    assert set(generator.spec["paths"]) == {
+        "/api/test/demo/toggle/{uuid}",
+        "/api/test/demo/toggle/{uuid}/{enabled}",
+    }
+
+
+def test_three_optionals_emit_four_unique_paths(generator: OpenApiGenerator) -> None:
+    """Three trailing optionals emit four paths with unique operation IDs."""
+    _process_with_endpoint(
+        generator,
+        action="query",
+        parameters=["a", "b", "c"],
+        optional_parameters=["a", "b", "c"],
+    )
+    paths = generator.spec["paths"]
+    assert set(paths) == {
+        "/api/test/demo/query",
+        "/api/test/demo/query/{a}",
+        "/api/test/demo/query/{a}/{b}",
+        "/api/test/demo/query/{a}/{b}/{c}",
+    }
+    ids = [op["get"]["operationId"] for op in paths.values()]
+    assert len(set(ids)) == 4
+    assert "Test_Demo_query" in ids
+    assert "Test_Demo_query_p2" in ids
+
+
+def test_no_parameters_emits_only_bare_path(generator: OpenApiGenerator) -> None:
+    """getRule with no parameters no longer gets a uuid heuristic path."""
+    _process_with_endpoint(generator, action="getRule")
+    assert list(generator.spec["paths"]) == ["/api/test/demo/getRule"]
+
+
+def test_response_identical_across_variants(generator: OpenApiGenerator) -> None:
+    """Response heuristics do not depend on the path variant."""
+    _process_with_endpoint(generator, action="getArp", parameters=["x"], optional_parameters=["x"])
+    paths = generator.spec["paths"]
+    assert (
+        paths["/api/test/demo/getArp"]["get"]["responses"]
+        == paths["/api/test/demo/getArp/{x}"]["get"]["responses"]
+    )
+    assert (
+        paths["/api/test/demo/getArp"]["get"]["responses"]
+        is not paths["/api/test/demo/getArp/{x}"]["get"]["responses"]
+    )

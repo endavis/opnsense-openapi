@@ -1,5 +1,6 @@
 "Generate OpenAPI JSON specification from parsed API controllers."
 
+import copy
 import json
 import logging
 import xml.etree.ElementTree as ET  # nosec B405  # parses local OPNsense source model XML files
@@ -116,7 +117,7 @@ class OpenApiGenerator:
                 "version": version,
                 "description": (
                     f"Auto-generated OpenAPI specification for OPNsense {version}. "
-                    "Includes Enum resolution and UUID path parameters."
+                    "Includes Enum resolution and path parameters taken from controller signatures."
                 ),
             },
             "servers": [
@@ -186,6 +187,8 @@ class OpenApiGenerator:
             action_name = endpoint.name if hasattr(endpoint, "name") else str(endpoint)
             http_method = endpoint.method if hasattr(endpoint, "method") else "POST"
             description = endpoint.description if hasattr(endpoint, "description") else ""
+            path_parameters = list(getattr(endpoint, "parameters", []) or [])
+            optional_parameters = list(getattr(endpoint, "optional_parameters", []) or [])
             self._add_path_to_spec(
                 module,
                 ctrl_name,
@@ -194,6 +197,8 @@ class OpenApiGenerator:
                 http_method,
                 description,
                 response_wrapper,
+                path_parameters=path_parameters,
+                optional_parameters=optional_parameters,
             )
 
     def _find_and_parse_model(
@@ -406,51 +411,13 @@ class OpenApiGenerator:
         http_method: str = "POST",
         description: str = "",
         response_wrapper: str | None = None,
+        path_parameters: list[str] | None = None,
+        optional_parameters: list[str] | None = None,
     ) -> None:
         """Constructs the OpenAPI Operation object with correct paths and parameters."""
         # Use CamelCase for action in URL (standard OPNsense routing)
         # But we check logic using lowercase
         act_lower = action.lower()
-
-        # === UUID HEURISTIC ===
-        # Detect if this endpoint likely acts on a specific resource ID
-        target_verbs = [
-            "get",
-            "set",
-            "del",
-            "toggle",
-            "start",
-            "stop",
-            "restart",
-            "kill",
-            "drop",
-            "disconnect",
-            "connect",
-        ]
-        target_nouns = [
-            "item",
-            "rule",
-            "server",
-            "client",
-            "job",
-            "route",
-            "alias",
-            "certificate",
-            "ca",
-            "session",
-            "key",
-            "vessel",
-        ]
-
-        has_verb = any(v in act_lower for v in target_verbs)
-        has_noun = any(n in act_lower for n in target_nouns)
-        # Exempt list-based actions
-        is_exception = any(
-            e in act_lower
-            for e in ["add", "search", "list", "match", "export", "import", "options"]
-        )
-
-        requires_uuid = has_verb and has_noun and not is_exception
 
         # Build Path
         # Controller segment uses snake_case to match OPNsense Mvc/Router.php
@@ -458,21 +425,12 @@ class OpenApiGenerator:
         # str_replace('_', '', ucwords($element, '_')) . 'Controller'.
         # Module segment stays lowercase: OPNsense's Router does case-insensitive
         # directory matching for the namespace as a backwards-compat fallback.
+        # Path parameters come from the PHP signature: one "/{name}" segment per
+        # parameter, in order. Trailing defaulted parameters are optional, so one
+        # path is emitted per valid prefix length (Mvc/Dispatcher.php).
         path_base = f"/api/{module.lower()}/{to_snake_case(controller)}/{action}"
-        if requires_uuid:
-            url = f"{path_base}/{{uuid}}"
-            parameters = [
-                {
-                    "name": "uuid",
-                    "in": "path",
-                    "required": True,
-                    "schema": {"type": "string", "format": "uuid"},
-                    "description": "Unique ID of the resource",
-                }
-            ]
-        else:
-            url = path_base
-            parameters = []
+        all_parameters = list(path_parameters or [])
+        required_count = len(all_parameters) - len(optional_parameters or [])
 
         # === RESPONSE/REQUEST LOGIC ===
         response_schema: dict[str, Any] = {"description": "Successful response"}
@@ -756,14 +714,40 @@ class OpenApiGenerator:
         if method_key == "get":
             request_body = None
 
-        self.spec["paths"][url] = {
-            method_key: {
-                "tags": [module],
-                "summary": action,
-                "description": description if description else action,
-                "operationId": f"{module}_{controller}_{action}",
-                "parameters": parameters,
-                "requestBody": request_body,
-                "responses": {"200": response_schema},
+        base_operation_id = f"{module}_{controller}_{action}"
+        for count in range(required_count, len(all_parameters) + 1):
+            url = path_base + "".join(f"/{{{name}}}" for name in all_parameters[:count])
+            operation_id = (
+                base_operation_id
+                if count == len(all_parameters)
+                else f"{base_operation_id}_p{count}"
+            )
+            self.spec["paths"][url] = {
+                method_key: {
+                    "tags": [module],
+                    "summary": action,
+                    "description": description if description else action,
+                    "operationId": operation_id,
+                    "parameters": [
+                        self._path_parameter(name, action) for name in all_parameters[:count]
+                    ],
+                    "requestBody": copy.deepcopy(request_body),
+                    "responses": {"200": copy.deepcopy(response_schema)},
+                }
             }
+
+    @staticmethod
+    def _path_parameter(name: str, action: str) -> dict[str, Any]:
+        """Build the OpenAPI path parameter object for a signature parameter."""
+        schema: dict[str, Any] = {"type": "string"}
+        if name == "uuid":
+            schema["format"] = "uuid"
+        return {
+            "name": name,
+            "in": "path",
+            "required": True,
+            "schema": schema,
+            "description": (
+                "Unique ID of the resource" if name == "uuid" else f"{name} argument of {action}"
+            ),
         }
