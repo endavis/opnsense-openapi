@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793807102295,
+  "lastUpdate": 1793811163132,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1672,6 +1672,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00004649299060973752",
             "extra": "mean: 790.4209537313872 usec\nrounds: 1340"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2820866a7b19c284130a3bb1185b466a9e994fa1",
+          "message": "feat: add spec diff command between opnsense versions (merges PR #165, addresses #160)\n\nAdd diff_specs()/SpecDiff and `opnsense-openapi diff <from> <to>` with\n--format json and --module. Versions resolve like the #159 helpers.\nEndpoint `changed` reporting is left for a follow-up.\n\nAddresses #160\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1sdwWRis578QLuZEHVi\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T16:51:36Z",
+          "tree_id": "3058e96d41eec4310e24c77af1156b5dde6bba28",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/2820866a7b19c284130a3bb1185b466a9e994fa1"
+        },
+        "date": 1793811161292,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 779.8723091333305,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00024393840272766206",
+            "extra": "mean: 1.2822611962095394 msec\nrounds: 897"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1682.7893711181716,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000013234708598085916",
+            "extra": "mean: 594.2514358380603 usec\nrounds: 1730"
           }
         ]
       }
