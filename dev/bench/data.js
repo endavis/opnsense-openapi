@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793802044122,
+  "lastUpdate": 1793806887468,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1596,6 +1596,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000035709479130861925",
             "extra": "mean: 798.9627263795385 usec\nrounds: 1323"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3255cdc09557cd42fd5f284518ce6a6eea3280f4",
+          "message": "chore: synchronize with pyproject-template 71ff6cb (merges PR #164, addresses #163)\n\nSyncs the following template improvements (4cadf97...71ff6cb):\n- endavis/pyproject-template#1191 (run macOS only on releases, the full-matrix label and a nightly run)\n- endavis/pyproject-template#1080 (keep doit task failure output short)\n- endavis/pyproject-template#1072, #1073, #1187 (bare doit and doit state database fixes)\n- endavis/pyproject-template#1074 (bootstrap.py --sync --yes)\n- endavis/pyproject-template#1077, #1082 (implement-planner and implement-worker agents)\n- endavis/pyproject-template#1083, #1085 (nosec ID list ends before the reason; drop no-op nosec)\n- endavis/pyproject-template#1087, #1152 (session-start template update notice)\n- endavis/pyproject-template#1092 (development-tooling advisory track)\n- endavis/pyproject-template#1096 (uv uses its shared default cache)\n- endavis/pyproject-template#1098, #1126, #1129, #1135, #1147, #1169, #1170, #1173 (implement-issue in a per-issue worktree and plan/coder changes)\n- endavis/pyproject-template#1101 (doit issue --upstream and report-template-bug)\n- endavis/pyproject-template#1127, #1140, #1144, #1166 (implement-issues)\n- endavis/pyproject-template#1153, #1154 (per-user agent roles config)\n- endavis/pyproject-template#1100 to #1148 (dangerous-command hook parsing fixes)\n- endavis/pyproject-template#1171, #1195 (doc pointer anchors, install_check_or_skip)\n\nProject-side changes the sync required:\n- Raise dev and build dependency floors to the template's values; uv.lock\n  specifiers regenerated (no resolved version changes)\n- Rewrite ten `# nosec <ID> - reason` comments to `# nosec <ID>  # reason`\n  (template #1083 convention)\n- Add tests/template/test_utils.py to sync-exclude.toml: it is template-owned\n  and shed here, and adopted ADR-9017 names it\n- Record sync point 71ff6cb in .config/pyproject_template/settings.toml\n\nAddresses #163\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1scN6V62Aso7bAGXpHF\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T15:40:33Z",
+          "tree_id": "9250508a23ce452f0d71e7d6b8c8098e023cbc62",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/3255cdc09557cd42fd5f284518ce6a6eea3280f4"
+        },
+        "date": 1793806886236,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 1223.499502662538,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000729631738351336",
+            "extra": "mean: 817.3276718329955 usec\nrounds: 1484"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 2324.087978967781,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000009717899489640566",
+            "extra": "mean: 430.2763101266671 usec\nrounds: 2370"
           }
         ]
       }
