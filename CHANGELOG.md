@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Feat
 
+- add opt-in strict endpoint validation to OPNsenseClient (merges PR #166, addresses #161)
+- add spec diff command between opnsense versions (merges PR #165, addresses #160)
+- add connection-free endpoint lookup and spec coverage helpers (merges PR #162, addresses #159)
+
+## v0.6.0 (2026-11-04)
+
+### Feat
+
 - add specs for OPNsense 26.7 through 26.7.7 (merges PR #141, addresses #137)
 - add specs for OPNsense 26.1.7 through 26.1.11 (merges PR #140, addresses #136)
 
