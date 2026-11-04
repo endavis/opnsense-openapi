@@ -62,3 +62,26 @@ if not is_version_covered("26.1.99"):
 ```
 
 `newest_spec_version("26.1")` restricts the answer to one series.
+
+## Compare two versions
+
+```python
+from opnsense_openapi import diff_specs
+
+result = diff_specs("26.1.6", "26.1.11", module="core")
+for path, method in result.added:
+    print(f"+ {method} {path}")
+for path, method in result.removed:
+    print(f"- {method} {path}")
+```
+
+From the command line:
+
+```bash
+opnsense-openapi diff 26.1.6 26.1.11
+opnsense-openapi diff 26.1.6 26.1.11 --module core --format json
+```
+
+Endpoints are `(path, METHOD)` pairs. A path that differs only in case shows up as one
+removed and one added endpoint. Changed parameters or request bodies are not reported.
+An unknown version or module exits with status 1; a non-empty diff still exits 0.

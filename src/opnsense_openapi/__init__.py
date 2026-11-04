@@ -1,7 +1,7 @@
 """OPNsense API Python wrapper generator and client."""
 
 from opnsense_openapi.client import OPNsenseClient
-from opnsense_openapi.endpoints import endpoint_exists, list_spec_endpoints
+from opnsense_openapi.endpoints import SpecDiff, diff_specs, endpoint_exists, list_spec_endpoints
 from opnsense_openapi.specs import (
     find_best_matching_spec,
     get_spec_path,
@@ -22,6 +22,8 @@ SPECS_DIR = get_specs_dir()
 __all__ = [
     "SPECS_DIR",
     "OPNsenseClient",
+    "SpecDiff",
+    "diff_specs",
     "endpoint_exists",
     "find_best_matching_spec",
     "get_spec_path",
