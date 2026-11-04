@@ -285,56 +285,33 @@ When no model exists but action matches common patterns:
 
 **Code Location**: Line 408-455
 
-## UUID Path Parameter Detection
+## Path Parameters
 
-**Heuristic Algorithm**:
-```python
-has_verb = any(verb in action_lower
-               for verb in ['get', 'set', 'del', 'toggle', 'start',
-                           'stop', 'restart', 'kill', 'drop',
-                           'disconnect', 'connect'])
+Path parameters are not inferred from the action name. They come from the parsed PHP
+signature of each `*Action` method.
 
-has_noun = any(noun in action_lower
-               for noun in ['item', 'rule', 'server', 'client',
-                           'job', 'route', 'alias', 'certificate',
-                           'ca', 'session', 'key', 'vessel'])
-
-is_exception = any(exc in action_lower
-                   for exc in ['add', 'search', 'list', 'match',
-                              'export', 'import', 'options'])
-
-requires_uuid = has_verb AND has_noun AND NOT is_exception
-```
-
-**Path Generation**:
-```
-Without UUID: /api/{module}/{controller}/{action}
-With UUID:    /api/{module}/{controller}/{action}/{uuid}
-```
-
-**UUID Parameter Schema**:
-```json
-{
-  "name": "uuid",
-  "in": "path",
-  "required": true,
-  "schema": {"type": "string", "format": "uuid"},
-  "description": "Unique ID of the resource"
-}
-```
+**Rules**:
+- Each PHP parameter becomes one `/{name}` segment, in signature order.
+- Trailing parameters with a PHP default are optional (`Mvc/Dispatcher.php` only rejects a
+  request with fewer segments than non-optional parameters). One path is emitted per valid
+  prefix length, always including the required-only path (the bare path when every
+  parameter has a default).
+- Operation IDs: the full-signature path keeps `{module}_{controller}_{action}`; each
+  shorter variant gets `_p{k}`, where `k` is the number of path parameters in that variant
+  (for example `Routing_Settings_getGateway_p0` for the bare path).
+- Schema: a parameter named `uuid` is `{"type": "string", "format": "uuid"}`; every other
+  parameter is `{"type": "string"}`. All path parameters are `required: true`.
 
 **Examples**:
 
-| Action | Path | UUID? | Reason |
-|--------|------|-------|--------|
-| `getItem` | `/api/firewall/alias/getItem/{uuid}` | ✅ | verb + noun |
-| `setRule` | `/api/firewall/filter/setRule/{uuid}` | ✅ | verb + noun |
-| `deleteServer` | `/api/proxy/server/deleteServer/{uuid}` | ✅ | verb + noun |
-| `searchItem` | `/api/firewall/alias/searchItem` | ❌ | exception |
-| `addItem` | `/api/firewall/alias/addItem` | ❌ | exception |
-| `list` | `/api/firewall/alias/list` | ❌ | no verb+noun |
+| PHP signature | Paths |
+|---------------|-------|
+| `installAction($pkg_name)` | `/api/core/firmware/install/{pkg_name}` |
+| `getGatewayAction($uuid = null)` | `/api/routing/settings/getGateway`, `/api/routing/settings/getGateway/{uuid}` |
+| `toggleAction($uuid, $enabled = null)` | `.../toggle/{uuid}`, `.../toggle/{uuid}/{enabled}` |
+| `searchItemAction()` | `.../searchItem` |
 
-**Code Location**: Line 228-254
+**Code Location**: `OpenApiGenerator._add_path_to_spec` and `ControllerParser._parse_signature`
 
 ## Adding New Heuristics
 
@@ -495,7 +472,7 @@ When adding a new pattern, verify:
 - [ ] Pattern doesn't override higher-priority patterns unintentionally
 - [ ] Response schema matches actual API responses
 - [ ] Request body schema (if applicable) is correct
-- [ ] UUID detection works correctly
+- [ ] Path parameters match the PHP signature
 - [ ] Test case added
 - [ ] Documentation updated
 - [ ] Coverage improvement verified
@@ -561,7 +538,7 @@ logger = logging.getLogger(__name__)
 logger.debug(f"Processing {module}/{controller}/{action}")
 logger.debug(f"Action (lower): {act_lower}")
 logger.debug(f"Has model: {schema_name is not None}")
-logger.debug(f"Requires UUID: {requires_uuid}")
+logger.debug(f"Path parameters: {path_parameters}")
 ```
 
 Run with debug logging:

@@ -350,6 +350,7 @@ pytest_add_cli_args_test_selection = [
     "tests/test_source_downloader.py",
     "tests/test_spec_diff.py",
     "tests/test_spec_path_routing.py",
+    "tests/test_spec_signatures.py",
     "tests/test_specs.py",
     "tests/test_utils.py",
     "tests/test_validator.py",

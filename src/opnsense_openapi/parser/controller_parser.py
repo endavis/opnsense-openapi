@@ -1,7 +1,7 @@
 """Parse PHP controller files to extract API endpoint definitions."""
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -12,7 +12,9 @@ class ApiEndpoint:
     name: str  # Method name without 'Action' suffix
     method: str  # HTTP method (GET or POST)
     description: str  # Extracted from docblock
-    parameters: list[str]  # Method parameters
+    parameters: list[str]  # Method parameters, in signature order
+    # Trailing parameters with a PHP default; always a suffix of ``parameters``
+    optional_parameters: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -127,6 +129,7 @@ class ControllerParser:
 
             # Parse parameters
             parameters = self._parse_parameters(params_str)
+            optional_parameters = self._parse_optional_parameters(params_str)
 
             # Determine HTTP method (heuristic: methods with parameters often use POST)
             # Methods like 'get', 'search', 'find', 'list' are typically GET
@@ -141,10 +144,25 @@ class ControllerParser:
                     method=http_method,
                     description=description,
                     parameters=parameters,
+                    optional_parameters=optional_parameters,
                 )
             )
 
         return endpoints
+
+    @staticmethod
+    def _parse_signature(params_str: str) -> list[tuple[str, bool]]:
+        """Parse a signature into ``(name, has_default)`` pairs in order.
+
+        Args:
+            params_str: Parameter string from method signature
+
+        Returns:
+            List of (parameter name, has PHP default) tuples
+        """
+        return [
+            (m.group(1), m.group(2) is not None) for m in re.finditer(r"\$(\w+)\s*(=)?", params_str)
+        ]
 
     def _parse_parameters(self, params_str: str) -> list[str]:
         """Parse method parameters from parameter string.
@@ -155,19 +173,24 @@ class ControllerParser:
         Returns:
             List of parameter names
         """
-        if not params_str:
-            return []
+        return [name for name, _ in self._parse_signature(params_str)]
 
-        params = []
-        for param in params_str.split(","):
-            param = param.strip()
-            if param:
-                # Extract parameter name (after $)
-                match = re.search(r"\$(\w+)", param)
-                if match:
-                    params.append(match.group(1))
+    def _parse_optional_parameters(self, params_str: str) -> list[str]:
+        """Return the longest trailing run of parameters that have a PHP default.
 
-        return params
+        Args:
+            params_str: Parameter string from method signature
+
+        Returns:
+            List of optional parameter names, in signature order
+        """
+        optional: list[str] = []
+        for name, has_default in reversed(self._parse_signature(params_str)):
+            if not has_default:
+                break
+            optional.append(name)
+        optional.reverse()
+        return optional
 
     def _guess_http_method(self, endpoint_name: str, parameters: list[str]) -> str:
         """Guess HTTP method based on endpoint name and parameters.

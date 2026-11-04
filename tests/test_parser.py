@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from opnsense_openapi.parser import ControllerParser
+from opnsense_openapi.parser import ApiEndpoint, ControllerParser
 from opnsense_openapi.utils import to_snake_case
 
 
@@ -304,3 +304,55 @@ function someFunction() {}
 
         controller = parser.parse_controller_file(controller_file)
         assert controller is None
+
+
+def _endpoints_for(php_signature: str) -> list[ApiEndpoint]:
+    """Parse a one-action controller with the given signature text."""
+    content = (
+        "<?php\nnamespace OPNsense\\Test\\Api;\n"
+        "class DemoController extends ApiControllerBase\n{\n"
+        f"    public function fooAction({php_signature})\n    {{}}\n}}\n"
+    )
+    return ControllerParser()._extract_endpoints(content)
+
+
+def test_required_parameter() -> None:
+    (ep,) = _endpoints_for("$pkg_name")
+    assert ep.parameters == ["pkg_name"]
+    assert ep.optional_parameters == []
+
+
+def test_defaulted_parameter_is_optional() -> None:
+    (ep,) = _endpoints_for("$uuid = null")
+    assert ep.parameters == ["uuid"]
+    assert ep.optional_parameters == ["uuid"]
+
+
+def test_trailing_optional_only() -> None:
+    (ep,) = _endpoints_for("$uuid, $enabled = null")
+    assert ep.parameters == ["uuid", "enabled"]
+    assert ep.optional_parameters == ["enabled"]
+
+
+def test_default_before_required_is_not_optional() -> None:
+    (ep,) = _endpoints_for("$a = null, $b")
+    assert ep.parameters == ["a", "b"]
+    assert ep.optional_parameters == []
+
+
+def test_typed_default_parameter() -> None:
+    (ep,) = _endpoints_for("string $type = 'secret'")
+    assert ep.parameters == ["type"]
+    assert ep.optional_parameters == ["type"]
+
+
+def test_default_literal_containing_comma() -> None:
+    (ep,) = _endpoints_for("$a = 'x,y', $b = 0")
+    assert ep.parameters == ["a", "b"]
+    assert ep.optional_parameters == ["a", "b"]
+
+
+def test_multiline_signature() -> None:
+    (ep,) = _endpoints_for("\n        $a = '',\n        $b = 0,\n        $c = -1\n    ")
+    assert ep.parameters == ["a", "b", "c"]
+    assert ep.optional_parameters == ["a", "b", "c"]
