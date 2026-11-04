@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import os
+from collections import defaultdict
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -14,6 +16,7 @@ from .downloader import SourceDownloader
 
 # ENFORCE: Ensure your generator file is named 'generator.py'
 # or update this import to 'from .openapi_generator import OpenApiGenerator'
+from .endpoints import _endpoint_module, diff_specs
 from .generator import OpenApiGenerator
 from .logging import LogLevel, setup_logging
 from .parser import ControllerParser
@@ -817,3 +820,56 @@ def serve_docs(
     typer.echo("\n💡 Tip: Use Ctrl+C to stop the server\n")
 
     flask_app.run(host=host, port=port, debug=False)  # pragma: no cover - blocking server
+
+
+@app.command()
+def diff(
+    from_version: Annotated[str, typer.Argument(help="Baseline OPNsense version.")],
+    to_version: Annotated[str, typer.Argument(help="Target OPNsense version.")],
+    output_format: Annotated[
+        Literal["text", "json"],
+        typer.Option("--format", "-f", help="Output format: text or json."),
+    ] = "text",
+    module: Annotated[
+        str | None,
+        typer.Option("--module", "-m", help="Only compare one module (e.g., 'core')."),
+    ] = None,
+) -> None:
+    """Show endpoints added and removed between two bundled spec versions."""
+    try:
+        result = diff_specs(from_version, to_version, module=module)
+    except FileNotFoundError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        typer.echo(f"Available versions: {', '.join(list_available_specs())}", err=True)
+        raise typer.Exit(1) from exc
+    except ValueError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(1) from exc
+
+    if output_format == "json":
+        payload = {
+            "from": {"version": from_version, "spec": result.from_spec.name},
+            "to": {"version": to_version, "spec": result.to_spec.name},
+            "module": module,
+            "added": [{"method": m, "path": p} for p, m in result.added],
+            "removed": [{"method": m, "path": p} for p, m in result.removed],
+        }
+        typer.echo(json.dumps(payload, indent=2))
+        return
+
+    header = f"Comparing {result.from_spec.name} -> {result.to_spec.name}"
+    if module is not None:
+        header += f" (module: {module})"
+    typer.echo(header)
+    if result.is_empty:
+        typer.echo("No endpoint changes.")
+        return
+    by_module: dict[str, list[str]] = defaultdict(list)
+    for sign, entries in (("+", result.added), ("-", result.removed)):
+        for path, method in entries:
+            by_module[_endpoint_module(path)].append(f"  {sign} {method} {path}")
+    for name in sorted(by_module):
+        typer.echo(f"{name}:")
+        for line in by_module[name]:
+            typer.echo(line)
+    typer.echo(f"{len(result.added)} added, {len(result.removed)} removed")

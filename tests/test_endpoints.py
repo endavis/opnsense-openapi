@@ -16,18 +16,6 @@ from opnsense_openapi.specs import find_best_matching_spec
 VERSION = "26.1.6"
 
 
-@pytest.fixture
-def fake_specs(tmp_path: Path) -> Callable[[dict[str, dict[str, dict[str, object]]]], Path]:
-    """Return a factory that writes fixture specs and points the resolver at them."""
-
-    def make(specs: dict[str, dict[str, dict[str, object]]]) -> Path:
-        for version, paths in specs.items():
-            (tmp_path / f"opnsense-{version}.json").write_text(json.dumps({"paths": paths}))
-        return tmp_path
-
-    return make
-
-
 def test_issue_examples() -> None:
     assert endpoint_exists("core/tunables/addItem", "POST", version=VERSION) is True
     assert endpoint_exists("system/general/get", "GET", version=VERSION) is False

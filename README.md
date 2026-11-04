@@ -204,6 +204,18 @@ Options:
 - Customize the generation options (meta type, output path)
 - Regenerate/overwrite an existing client
 
+### Diff Specs
+
+```bash
+opnsense-openapi diff FROM TO [OPTIONS]
+
+Options:
+  -f, --format TEXT    Output format: text or json (default: text)
+  -m, --module TEXT    Only compare one module (e.g., 'core')
+```
+
+Lists the endpoints added and removed between two bundled specs.
+
 ### Serve Documentation
 
 ```bash

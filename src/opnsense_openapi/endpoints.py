@@ -7,6 +7,7 @@ spec is parsed once per process. Versions resolve with floor matching (see
 
 import json
 import re
+from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
 
@@ -157,6 +158,19 @@ def endpoint_exists(path: str, method: str = "GET", *, version: str) -> bool:
     return method.strip().upper() in _load_spec_paths(spec_path)[matched]
 
 
+def _endpoint_set(spec_path: Path) -> set[tuple[str, str]]:
+    """Return every ``(path, METHOD)`` pair of a spec file as a fresh set."""
+    paths = _load_spec_paths(spec_path)
+    return {(path, method) for path, methods in paths.items() for method in methods}
+
+
+def _endpoint_module(path: str) -> str:
+    """Return the lowercase module (first segment after ``/api/``), or ``""``."""
+    if not path.startswith("/api/"):
+        return ""
+    return path.split("/")[2].lower()
+
+
 def list_spec_endpoints(version: str) -> list[tuple[str, str]]:
     """List every ``(path, METHOD)`` pair in the spec for an OPNsense version.
 
@@ -170,5 +184,70 @@ def list_spec_endpoints(version: str) -> list[tuple[str, str]]:
     Raises:
         FileNotFoundError: If the version cannot be resolved to a bundled spec.
     """
-    paths = _load_spec_paths(_resolve_spec_path(version))
-    return sorted((path, method) for path, methods in paths.items() for method in methods)
+    return sorted(_endpoint_set(_resolve_spec_path(version)))
+
+
+@dataclass(frozen=True)
+class SpecDiff:
+    """Endpoints added and removed between two bundled specs.
+
+    Attributes:
+        from_version: Version requested as the baseline.
+        to_version: Version requested as the target.
+        from_spec: Resolved baseline spec file.
+        to_spec: Resolved target spec file.
+        added: Sorted ``(path, METHOD)`` pairs present only in the target.
+        removed: Sorted ``(path, METHOD)`` pairs present only in the baseline.
+    """
+
+    from_version: str
+    to_version: str
+    from_spec: Path
+    to_spec: Path
+    added: list[tuple[str, str]]
+    removed: list[tuple[str, str]]
+
+    @property
+    def is_empty(self) -> bool:
+        """Whether no endpoint was added or removed."""
+        return not self.added and not self.removed
+
+
+def diff_specs(from_version: str, to_version: str, *, module: str | None = None) -> SpecDiff:
+    """Compare the endpoints of two bundled specs.
+
+    Endpoints are ``(path, METHOD)`` pairs. A path whose only difference is its
+    case is reported as one removal plus one addition. Changes to parameters or
+    request bodies are not reported.
+
+    Args:
+        from_version: Baseline OPNsense version (resolved with floor matching).
+        to_version: Target OPNsense version (resolved with floor matching).
+        module: Restrict the diff to one module, the first segment after
+            ``/api/`` (case-insensitive).
+
+    Returns:
+        The diff, with sorted ``added`` and ``removed`` lists.
+
+    Raises:
+        FileNotFoundError: If either version cannot be resolved to a bundled spec.
+        ValueError: If ``module`` is given and appears in neither spec.
+    """
+    from_spec = _resolve_spec_path(from_version)
+    to_spec = _resolve_spec_path(to_version)
+    old = _endpoint_set(from_spec)
+    new = _endpoint_set(to_spec)
+    if module is not None:
+        wanted = module.strip().lower()
+        if not any(_endpoint_module(path) == wanted for path, _ in old | new):
+            raise ValueError(f"Unknown module {module!r}: not present in either spec")
+        old = {e for e in old if _endpoint_module(e[0]) == wanted}
+        new = {e for e in new if _endpoint_module(e[0]) == wanted}
+    return SpecDiff(
+        from_version=from_version,
+        to_version=to_version,
+        from_spec=from_spec,
+        to_spec=to_spec,
+        added=sorted(new - old),
+        removed=sorted(old - new),
+    )

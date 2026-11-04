@@ -363,3 +363,15 @@ def _hermetic_path(
         )
 
     monkeypatch.setenv("PATH", f"{bin_dir}{os.pathsep}{os.environ['PATH']}")
+
+
+@pytest.fixture
+def fake_specs(tmp_path: Path) -> Callable[[dict[str, dict[str, dict[str, object]]]], Path]:
+    """Return a factory that writes fixture specs and points the resolver at them."""
+
+    def make(specs: dict[str, dict[str, dict[str, object]]]) -> Path:
+        for version, paths in specs.items():
+            (tmp_path / f"opnsense-{version}.json").write_text(json.dumps({"paths": paths}))
+        return tmp_path
+
+    return make
