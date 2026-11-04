@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793814518350,
+  "lastUpdate": 1793819563867,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1786,6 +1786,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0000814424770312374",
             "extra": "mean: 847.4764457010871 usec\nrounds: 1326"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b86602b20a745956c8b7404cd621621b2b073492",
+          "message": "fix: derive spec path parameters from controller action signatures (merges PR #169, addresses #168)\n\nThe generator decided whether a path took a parameter with a verb/noun\nheuristic on the action name and only ever emitted {uuid}. Most actions\nthat take PHP parameters, such as installAction($pkg_name), got no path\nsegment at all, so endpoint_exists and strict mode rejected valid calls.\n\n- ControllerParser records the trailing PHP-defaulted parameters in a\n  new ApiEndpoint.optional_parameters field, and parses signatures with\n  one regex instead of splitting on commas.\n- The generator emits one /{name} segment per signature parameter and\n  one path per valid prefix length, so a defaulted parameter also keeps\n  the bare path. The name heuristic is removed.\n- All 69 bundled specs are regenerated; only paths and info.description\n  change.\n- New tests compare parsed signatures with the generated paths, and\n  fixtures built on the old heuristic are updated.\n\nAddresses #168\n\nBREAKING CHANGE: generated-client function names follow the new\noperationIds. The full-signature path keeps the existing operationId and\neach shorter variant gets a _p<k> suffix. A no-argument call to an action\nthat used to be bare but has a defaulted parameter, for example\nrouting_settings_get_gateway(), is now routing_settings_get_gateway_p0().\nRegenerate clients from the new specs and rename such calls.\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1seRPitzi3fUnFhzJGo\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T19:11:45Z",
+          "tree_id": "711f7e212f7aea547750ece35f4a6b157f859e13",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/b86602b20a745956c8b7404cd621621b2b073492"
+        },
+        "date": 1793819562764,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 273.76250481358124,
+            "unit": "iter/sec",
+            "range": "stddev: 0.020608831994623572",
+            "extra": "mean: 3.652801177725016 msec\nrounds: 844"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1702.4051803577395,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000021385330411439954",
+            "extra": "mean: 587.4042275822154 usec\nrounds: 1762"
           }
         ]
       }
