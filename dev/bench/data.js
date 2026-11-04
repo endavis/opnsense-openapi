@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793812051986,
+  "lastUpdate": 1793814518350,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1748,6 +1748,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003820265215368369",
             "extra": "mean: 563.9101711516538 usec\nrounds: 1858"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f8e36ef8c7c4069da34ad8d2288b66880796375",
+          "message": "release: v0.7.0 (merges PR #167)\n\n* chore: update changelog for v0.7.0\n\n* chore: title v0.7.0 changelog section with its version\n\ncz changelog --incremental ran before the v0.7.0 tag existed and without\n--unreleased-version, so the new entries landed under \"## Unreleased\".\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01NXu1sdwWRis578QLuZEHVi\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-04T17:46:53Z",
+          "tree_id": "d15c10692464d4d94932ca925e695fbace2c9570",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/3f8e36ef8c7c4069da34ad8d2288b66880796375"
+        },
+        "date": 1793814516355,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 721.9763589975283,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00029801511462322806",
+            "extra": "mean: 1.3850869042145788 msec\nrounds: 783"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1179.9737975876553,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000814424770312374",
+            "extra": "mean: 847.4764457010871 usec\nrounds: 1326"
           }
         ]
       }
