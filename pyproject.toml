@@ -332,6 +332,7 @@ source_paths = ["src/"]
 # tests/test_mutmut_config.py fails when a test that imports the package is
 # missing from this list.
 pytest_add_cli_args_test_selection = [
+    "tests/test_bundled_spec_regressions.py",
     "tests/test_cli_comprehensive.py",
     "tests/test_cli_download.py",
     "tests/test_cli_serve_docs.py",

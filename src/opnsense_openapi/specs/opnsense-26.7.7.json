@@ -36,6 +36,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "search",
+        "description": "Class GroupController",
+        "operationId": "Auth_Group_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseAuthGroupSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/auth/group/get": {
@@ -275,6 +295,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "search",
+        "description": "Class PrivController",
+        "operationId": "Auth_Priv_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseAuthPrivSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/auth/priv/getItem/{id}": {
@@ -426,6 +466,26 @@
         "summary": "search",
         "description": "Class UserController",
         "operationId": "Auth_User_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseAuthUserSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "search",
+        "description": "Class UserController",
+        "operationId": "Auth_User_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -731,6 +791,26 @@
         "summary": "searchApiKey",
         "description": "Class UserController",
         "operationId": "Auth_User_searchApiKey",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseAuthUserSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "searchApiKey",
+        "description": "Class UserController",
+        "operationId": "Auth_User_searchApiKey_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -1288,6 +1368,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "CaptivePortal"
+        ],
+        "summary": "search",
+        "description": "search through connected clients",
+        "operationId": "CaptivePortal_Session_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseCaptivePortalSessionSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/captiveportal/session/zones": {
@@ -1693,6 +1793,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "CaptivePortal"
+        ],
+        "summary": "searchZones",
+        "description": "search captive portal zones",
+        "operationId": "CaptivePortal_Settings_searchZones_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseCaptivePortalSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/captiveportal/settings/get": {
@@ -1767,6 +1887,30 @@
         "summary": "searchTemplates",
         "description": "searchTemplates",
         "operationId": "CaptivePortal_Template_searchTemplates",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Export data or file content"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "CaptivePortal"
+        ],
+        "summary": "searchTemplates",
+        "description": "searchTemplates",
+        "operationId": "CaptivePortal_Template_searchTemplates_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -4145,6 +4289,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "search",
+        "description": "search menu items",
+        "operationId": "Core_Menu_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/core/menu/setFavorite": {
@@ -4187,6 +4370,45 @@
         "summary": "search",
         "description": "Search service entries",
         "operationId": "Core_Service_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "search",
+        "description": "Search service entries",
+        "operationId": "Core_Service_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -4561,6 +4783,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "search",
+        "description": "search snapshots",
+        "operationId": "Core_Snapshots_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/core/snapshots/get": {
@@ -4898,6 +5159,26 @@
         "summary": "searchItem",
         "description": "searchItem",
         "operationId": "Core_Tunables_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseCoreTunablesSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Core_Tunables_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -5532,6 +5813,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Cron"
+        ],
+        "summary": "searchJobs",
+        "description": "search cron jobs",
+        "operationId": "Cron_Settings_searchJobs_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseCronSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/cron/settings/get": {
@@ -5643,6 +5944,26 @@
         "summary": "searchRelay",
         "description": "searchRelay",
         "operationId": "DHCRelay_Settings_searchRelay",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDHCRelaySettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "DHCRelay"
+        ],
+        "summary": "searchRelay",
+        "description": "searchRelay",
+        "operationId": "DHCRelay_Settings_searchRelay_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -5923,6 +6244,26 @@
         "summary": "searchDest",
         "description": "searchDest",
         "operationId": "DHCRelay_Settings_searchDest",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDHCRelaySettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "DHCRelay"
+        ],
+        "summary": "searchDest",
+        "description": "searchDest",
+        "operationId": "DHCRelay_Settings_searchDest_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -6734,6 +7075,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Diagnostics"
+        ],
+        "summary": "searchArp",
+        "description": "search wrapper around getArpAction",
+        "operationId": "Diagnostics_Interface_searchArp_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/diagnostics/interface/flushArp": {
@@ -6796,6 +7176,45 @@
         "summary": "searchNdp",
         "description": "search wrapper around getNdpAction",
         "operationId": "Diagnostics_Interface_searchNdp",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Diagnostics"
+        ],
+        "summary": "searchNdp",
+        "description": "search wrapper around getNdpAction",
+        "operationId": "Diagnostics_Interface_searchNdp_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -7201,6 +7620,26 @@
         "summary": "searchItem",
         "description": "searchItem",
         "operationId": "Diagnostics_Lvtemplate_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDiagnosticsLvtemplateSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Diagnostics"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Diagnostics_Lvtemplate_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -9031,6 +9470,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Diagnostics"
+        ],
+        "summary": "searchJobs",
+        "description": "search current capture jobs",
+        "operationId": "Diagnostics_PacketCapture_searchJobs_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDiagnosticsPacketCaptureSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/diagnostics/packet_capture/get": {
@@ -9218,6 +9677,26 @@
         "summary": "searchJobs",
         "description": "search current ping jobs",
         "operationId": "Diagnostics_Ping_searchJobs",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDiagnosticsPingSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Diagnostics"
+        ],
+        "summary": "searchJobs",
+        "description": "search current ping jobs",
+        "operationId": "Diagnostics_Ping_searchJobs_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -10057,6 +10536,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "search",
+        "description": "search",
+        "operationId": "Dnsmasq_Leases_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqLeasesSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/dnsmasq/service/start": {
@@ -10279,6 +10778,26 @@
         "summary": "searchHost",
         "description": "searchHost",
         "operationId": "Dnsmasq_Settings_searchHost",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "searchHost",
+        "description": "searchHost",
+        "operationId": "Dnsmasq_Settings_searchHost_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -10544,6 +11063,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "searchDomain",
+        "description": "searchDomain",
+        "operationId": "Dnsmasq_Settings_searchDomain_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/dnsmasq/settings/getDomain": {
@@ -10737,6 +11276,26 @@
         "summary": "searchTag",
         "description": "searchTag",
         "operationId": "Dnsmasq_Settings_searchTag",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "searchTag",
+        "description": "searchTag",
+        "operationId": "Dnsmasq_Settings_searchTag_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -10954,6 +11513,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "searchRange",
+        "description": "searchRange",
+        "operationId": "Dnsmasq_Settings_searchRange_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/dnsmasq/settings/getRange": {
@@ -11159,6 +11738,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "searchOption",
+        "description": "searchOption",
+        "operationId": "Dnsmasq_Settings_searchOption_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/dnsmasq/settings/getOption": {
@@ -11352,6 +11951,26 @@
         "summary": "searchBoot",
         "description": "searchBoot",
         "operationId": "Dnsmasq_Settings_searchBoot",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseDnsmasqSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Dnsmasq"
+        ],
+        "summary": "searchBoot",
+        "description": "searchBoot",
+        "operationId": "Dnsmasq_Settings_searchBoot_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -11618,6 +12237,26 @@
         "summary": "searchItem",
         "description": "search aliases",
         "operationId": "Firewall_Alias_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseFirewallAliasSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchItem",
+        "description": "search aliases",
+        "operationId": "Firewall_Alias_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -12529,6 +13168,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchItem",
+        "description": "search categories",
+        "operationId": "Firewall_Category_searchItem_p0_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseFirewallCategorySearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/firewall/category/searchItem/{add_empty}": {
@@ -12539,6 +13198,36 @@
         "summary": "searchItem",
         "description": "search categories",
         "operationId": "Firewall_Category_searchItem",
+        "parameters": [
+          {
+            "name": "add_empty",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "add_empty argument of searchItem"
+          }
+        ],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseFirewallCategorySearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchItem",
+        "description": "search categories",
+        "operationId": "Firewall_Category_searchItem_get",
         "parameters": [
           {
             "name": "add_empty",
@@ -12852,6 +13541,26 @@
         "summary": "searchRule",
         "description": "searchRule",
         "operationId": "Firewall_DNat_searchRule",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseFirewallDNatSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchRule",
+        "description": "searchRule",
+        "operationId": "Firewall_DNat_searchRule_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -13422,6 +14131,26 @@
         "summary": "searchRule",
         "description": "Retrieves and merges firewall rules from model and internal sources, then paginates them.",
         "operationId": "Firewall_Filter_searchRule",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseFirewallFilterSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchRule",
+        "description": "Retrieves and merges firewall rules from model and internal sources, then paginates them.",
+        "operationId": "Firewall_Filter_searchRule_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -14078,6 +14807,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchItem",
+        "description": "search groups",
+        "operationId": "Firewall_Group_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseFirewallGroupSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/firewall/group/setItem/{uuid}": {
@@ -14488,6 +15237,45 @@
         "summary": "searchRule",
         "description": "searchRule",
         "operationId": "Firewall_Npt_searchRule",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchRule",
+        "description": "searchRule",
+        "operationId": "Firewall_Npt_searchRule_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -15059,6 +15847,45 @@
         "summary": "searchRule",
         "description": "searchRule",
         "operationId": "Firewall_OneToOne_searchRule",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchRule",
+        "description": "searchRule",
+        "operationId": "Firewall_OneToOne_searchRule_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -15719,6 +16546,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Firewall"
+        ],
+        "summary": "searchRule",
+        "description": "set/get only affect general settings",
+        "operationId": "Firewall_SourceNat_searchRule_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/firewall/source_nat/setRule/{uuid}": {
@@ -16201,6 +17067,45 @@
         "summary": "search",
         "description": "search",
         "operationId": "Hostdiscovery_Service_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Hostdiscovery"
+        ],
+        "summary": "search",
+        "description": "search",
+        "operationId": "Hostdiscovery_Service_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -17421,6 +18326,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IDS"
+        ],
+        "summary": "searchUserRule",
+        "description": "Search user defined rules",
+        "operationId": "IDS_Settings_searchUserRule_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIDSSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ids/settings/setUserRule/{uuid}": {
@@ -17701,6 +18626,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IDS"
+        ],
+        "summary": "searchPolicy",
+        "description": "Search policy",
+        "operationId": "IDS_Settings_searchPolicy_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIDSSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ids/settings/setPolicy/{uuid}": {
@@ -17969,6 +18914,26 @@
         "summary": "searchPolicyRule",
         "description": "Search policy rule adjustment",
         "operationId": "IDS_Settings_searchPolicyRule",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIDSSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IDS"
+        ],
+        "summary": "searchPolicyRule",
+        "description": "Search policy rule adjustment",
+        "operationId": "IDS_Settings_searchPolicyRule_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -18342,6 +19307,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchConnection",
+        "description": "searchConnection",
+        "operationId": "IPsec_Connections_searchConnection_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/StatusResponse"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/connections/setConnection": {
@@ -18625,6 +19610,26 @@
         "summary": "searchLocal",
         "description": "searchLocal",
         "operationId": "IPsec_Connections_searchLocal",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecConnectionsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchLocal",
+        "description": "searchLocal",
+        "operationId": "IPsec_Connections_searchLocal_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -18952,6 +19957,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchRemote",
+        "description": "searchRemote",
+        "operationId": "IPsec_Connections_searchRemote_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecConnectionsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/connections/getRemote": {
@@ -19255,6 +20280,26 @@
         "summary": "searchChild",
         "description": "searchChild",
         "operationId": "IPsec_Connections_searchChild",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecConnectionsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchChild",
+        "description": "searchChild",
+        "operationId": "IPsec_Connections_searchChild_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -19751,6 +20796,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchItem",
+        "description": "Search key pairs",
+        "operationId": "IPsec_KeyPairs_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecKeyPairsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/key_pairs/setItem": {
@@ -20104,6 +21169,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "search",
+        "description": "Search leases",
+        "operationId": "IPsec_Leases_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecLeasesSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/leases/pools": {
@@ -20200,6 +21285,26 @@
         "summary": "search",
         "description": "Class ManualSpd",
         "operationId": "IPsec_ManualSpd_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecManualSpdSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "search",
+        "description": "Class ManualSpd",
+        "operationId": "IPsec_ManualSpd_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -20527,6 +21632,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "search",
+        "description": "Class PoolsController",
+        "operationId": "IPsec_Pools_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecPoolsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/pools/set": {
@@ -20842,6 +21967,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchItem",
+        "description": "Search preSharedKeys",
+        "operationId": "IPsec_PreSharedKeys_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecPreSharedKeysSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/pre_shared_keys/setItem": {
@@ -21132,6 +22277,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "search",
+        "description": "Search SAD entries",
+        "operationId": "IPsec_Sad_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecSadSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/sad/delete/{id}": {
@@ -21369,6 +22534,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchPhase1",
+        "description": "Search phase 1 session entries",
+        "operationId": "IPsec_Sessions_searchPhase1_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecSessionsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/sessions/searchPhase2": {
@@ -21379,6 +22564,26 @@
         "summary": "searchPhase2",
         "description": "Search phase 2 session entries",
         "operationId": "IPsec_Sessions_searchPhase2",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecSessionsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchPhase2",
+        "description": "Search phase 2 session entries",
+        "operationId": "IPsec_Sessions_searchPhase2_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -21541,6 +22746,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "search",
+        "description": "Search SPD entries",
+        "operationId": "IPsec_Spd_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecSpdSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/spd/delete/{id}": {
@@ -21595,6 +22820,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchPhase1",
+        "description": "search phase 1 entries in legacy config returning a standard structure as we use in the mvc variant",
+        "operationId": "IPsec_Tunnel_searchPhase1_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecTunnelSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/ipsec/tunnel/searchPhase2": {
@@ -21605,6 +22850,26 @@
         "summary": "searchPhase2",
         "description": "search phase 2 entries in legacy config returning a standard structure as we use in the mvc variant",
         "operationId": "IPsec_Tunnel_searchPhase2",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecTunnelSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "searchPhase2",
+        "description": "search phase 2 entries in legacy config returning a standard structure as we use in the mvc variant",
+        "operationId": "IPsec_Tunnel_searchPhase2_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -21891,6 +23156,26 @@
         "summary": "search",
         "description": "Class VtiController",
         "operationId": "IPsec_Vti_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseIPsecVtiSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "IPsec"
+        ],
+        "summary": "search",
+        "description": "Class VtiController",
+        "operationId": "IPsec_Vti_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -22206,6 +23491,45 @@
         "summary": "searchItem",
         "description": "searchItem",
         "operationId": "Interfaces_Assignment_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Interfaces_Assignment_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -22645,6 +23969,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "search bridges",
+        "operationId": "Interfaces_BridgeSettings_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/interfaces/bridge_settings/setItem/{uuid}": {
@@ -23008,6 +24371,45 @@
         "summary": "searchItem",
         "description": "search gifs",
         "operationId": "Interfaces_GifSettings_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "search gifs",
+        "operationId": "Interfaces_GifSettings_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -23458,6 +24860,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "search gres",
+        "operationId": "Interfaces_GreSettings_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/interfaces/gre_settings/setItem/{uuid}": {
@@ -23846,6 +25287,45 @@
         "summary": "searchItem",
         "description": "search laggs",
         "operationId": "Interfaces_LaggSettings_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "search laggs",
+        "operationId": "Interfaces_LaggSettings_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -24270,6 +25750,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Interfaces_LoopbackSettings_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/interfaces/loopback_settings/setItem/{uuid}": {
@@ -24633,6 +26152,45 @@
         "summary": "searchItem",
         "description": "searchItem",
         "operationId": "Interfaces_NeighborSettings_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Interfaces_NeighborSettings_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -25379,6 +26937,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "remap subnet and subnet_bits to network (which represents combined field)",
+        "operationId": "Interfaces_VipSettings_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/interfaces/vip_settings/setItem/{uuid}": {
@@ -25741,6 +27338,45 @@
         "summary": "searchItem",
         "description": "searchItem",
         "operationId": "Interfaces_VlanSettings_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Interfaces_VlanSettings_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -26165,6 +27801,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Interfaces_VxlanSettings_searchItem_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/interfaces/vxlan_settings/setItem/{uuid}": {
@@ -26528,6 +28203,45 @@
         "summary": "searchItem",
         "description": "searchItem",
         "operationId": "Interfaces_WirelessSettings_searchItem",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Interfaces"
+        ],
+        "summary": "searchItem",
+        "description": "searchItem",
+        "operationId": "Interfaces_WirelessSettings_searchItem_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -27094,6 +28808,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchSubnet",
+        "description": "searchSubnet",
+        "operationId": "Kea_Dhcpv4_searchSubnet_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/kea/dhcpv4/setSubnet/{uuid}": {
@@ -27275,6 +29028,45 @@
         "summary": "searchReservation",
         "description": "searchReservation",
         "operationId": "Kea_Dhcpv4_searchReservation",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchReservation",
+        "description": "searchReservation",
+        "operationId": "Kea_Dhcpv4_searchReservation_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -27566,6 +29358,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchOption",
+        "description": "searchOption",
+        "operationId": "Kea_Dhcpv4_searchOption_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/kea/dhcpv4/setOption/{uuid}": {
@@ -27747,6 +29578,45 @@
         "summary": "searchPeer",
         "description": "searchPeer",
         "operationId": "Kea_Dhcpv4_searchPeer",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchPeer",
+        "description": "searchPeer",
+        "operationId": "Kea_Dhcpv4_searchPeer_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -28048,6 +29918,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchSubnet",
+        "description": "searchSubnet",
+        "operationId": "Kea_Dhcpv6_searchSubnet_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/kea/dhcpv6/setSubnet/{uuid}": {
@@ -28229,6 +30138,45 @@
         "summary": "searchReservation",
         "description": "searchReservation",
         "operationId": "Kea_Dhcpv6_searchReservation",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchReservation",
+        "description": "searchReservation",
+        "operationId": "Kea_Dhcpv6_searchReservation_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -28520,6 +30468,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchOption",
+        "description": "searchOption",
+        "operationId": "Kea_Dhcpv6_searchOption_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/kea/dhcpv6/setOption/{uuid}": {
@@ -28732,6 +30719,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchPdPool",
+        "description": "searchPdPool",
+        "operationId": "Kea_Dhcpv6_searchPdPool_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/kea/dhcpv6/setPdPool/{uuid}": {
@@ -28913,6 +30939,45 @@
         "summary": "searchPeer",
         "description": "searchPeer",
         "operationId": "Kea_Dhcpv6_searchPeer",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "searchPeer",
+        "description": "searchPeer",
+        "operationId": "Kea_Dhcpv6_searchPeer_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -29188,6 +31253,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "search",
+        "description": "search",
+        "operationId": "Kea_Leases4_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/kea/leases4/delLease": {
@@ -29252,6 +31356,45 @@
         "summary": "search",
         "description": "search",
         "operationId": "Kea_Leases6_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Kea"
+        ],
+        "summary": "search",
+        "description": "search",
+        "operationId": "Kea_Leases6_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -29908,6 +32051,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Monit"
+        ],
+        "summary": "searchAlert",
+        "description": "Search monit alerts",
+        "operationId": "Monit_Settings_searchAlert_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseMonitSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/monit/settings/toggleAlert/{uuid}": {
@@ -30176,6 +32339,26 @@
         "summary": "searchService",
         "description": "Search monit services",
         "operationId": "Monit_Settings_searchService",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseMonitSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Monit"
+        ],
+        "summary": "searchService",
+        "description": "Search monit services",
+        "operationId": "Monit_Settings_searchService_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -30468,6 +32651,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Monit"
+        ],
+        "summary": "searchTest",
+        "description": "Search monit services",
+        "operationId": "Monit_Settings_searchTest_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseMonitSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/monit/settings/getGeneral": {
@@ -30720,6 +32923,26 @@
         "summary": "search",
         "description": "Class ClientOverwritesController",
         "operationId": "OpenVPN_ClientOverwrites_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseOpenVPNClientOverwritesSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OpenVPN"
+        ],
+        "summary": "search",
+        "description": "Class ClientOverwritesController",
+        "operationId": "OpenVPN_ClientOverwrites_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -31332,6 +33555,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "OpenVPN"
+        ],
+        "summary": "search",
+        "description": "Class InstancesController",
+        "operationId": "OpenVPN_Instances_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseOpenVPNInstancesSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/openvpn/instances/get": {
@@ -31647,6 +33890,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "OpenVPN"
+        ],
+        "summary": "searchStaticKey",
+        "description": "static key administration",
+        "operationId": "OpenVPN_Instances_searchStaticKey_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseOpenVPNInstancesSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/openvpn/instances/getStaticKey": {
@@ -31931,6 +34194,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "OpenVPN"
+        ],
+        "summary": "searchSessions",
+        "description": "Search sessions",
+        "operationId": "OpenVPN_Service_searchSessions_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseOpenVPNServiceSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/openvpn/service/searchRoutes": {
@@ -31941,6 +34224,26 @@
         "summary": "searchRoutes",
         "description": "Search routes",
         "operationId": "OpenVPN_Service_searchRoutes",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseOpenVPNServiceSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OpenVPN"
+        ],
+        "summary": "searchRoutes",
+        "description": "Search routes",
+        "operationId": "OpenVPN_Service_searchRoutes_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -32445,6 +34748,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Radvd"
+        ],
+        "summary": "searchEntry",
+        "description": "searchEntry",
+        "operationId": "Radvd_Settings_searchEntry_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseRadvdSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/radvd/settings/setEntry/{uuid}": {
@@ -32824,6 +35147,45 @@
         "summary": "searchroute",
         "description": "search routes",
         "operationId": "Routes_Routes_searchroute",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Routes"
+        ],
+        "summary": "searchroute",
+        "description": "search routes",
+        "operationId": "Routes_Routes_searchroute_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -33274,6 +35636,45 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Routing"
+        ],
+        "summary": "search",
+        "description": "search",
+        "operationId": "Routing_GroupSettings_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/routing/group_settings/get": {
@@ -33523,6 +35924,45 @@
         "summary": "searchGateway",
         "description": "searchGateway",
         "operationId": "Routing_Settings_searchGateway",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Routing"
+        ],
+        "summary": "searchGateway",
+        "description": "searchGateway",
+        "operationId": "Routing_Settings_searchGateway_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -34112,6 +36552,26 @@
         "summary": "searchDestinations",
         "description": "Search syslog destinations",
         "operationId": "Syslog_Settings_searchDestinations",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseSyslogSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Syslog"
+        ],
+        "summary": "searchDestinations",
+        "description": "Search syslog destinations",
+        "operationId": "Syslog_Settings_searchDestinations_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -34802,6 +37262,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "TrafficShaper"
+        ],
+        "summary": "searchPipes",
+        "description": "Search traffic shaper pipes",
+        "operationId": "TrafficShaper_Settings_searchPipes_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseTrafficShaperSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/trafficshaper/settings/searchQueues": {
@@ -34812,6 +37292,26 @@
         "summary": "searchQueues",
         "description": "Search traffic shaper queues",
         "operationId": "TrafficShaper_Settings_searchQueues",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseTrafficShaperSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "TrafficShaper"
+        ],
+        "summary": "searchQueues",
+        "description": "Search traffic shaper queues",
+        "operationId": "TrafficShaper_Settings_searchQueues_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -35092,6 +37592,26 @@
         "summary": "searchRules",
         "description": "Search traffic shaper rules",
         "operationId": "TrafficShaper_Settings_searchRules",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseTrafficShaperSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "TrafficShaper"
+        ],
+        "summary": "searchRules",
+        "description": "Search traffic shaper rules",
+        "operationId": "TrafficShaper_Settings_searchRules_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -35544,6 +38064,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Trust"
+        ],
+        "summary": "search",
+        "description": "As createCert updates the config, we need to collect that change in order to push it back",
+        "operationId": "Trust_Ca_search_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseTrustCaSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/trust/ca/get": {
@@ -35968,6 +38508,26 @@
         "summary": "search",
         "description": "private key manually offered",
         "operationId": "Trust_Cert_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseTrustCertSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Trust"
+        ],
+        "summary": "search",
+        "description": "private key manually offered",
+        "operationId": "Trust_Cert_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -36456,6 +39016,45 @@
         "summary": "search",
         "description": "Class CrlController",
         "operationId": "Trust_Crl_search",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "rowCount": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Trust"
+        ],
+        "summary": "search",
+        "description": "Class CrlController",
+        "operationId": "Trust_Crl_search_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -37082,6 +39681,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Unbound"
+        ],
+        "summary": "searchQueries",
+        "description": "searchQueries",
+        "operationId": "Unbound_Overview_searchQueries_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseUnboundOverviewSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/unbound/overview/getPolicies": {
@@ -37460,6 +40079,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Unbound"
+        ],
+        "summary": "searchForward",
+        "description": "searchForward",
+        "operationId": "Unbound_Settings_searchForward_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseUnboundSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/unbound/settings/getForward": {
@@ -37728,6 +40367,26 @@
         "summary": "searchHostOverride",
         "description": "searchHostOverride",
         "operationId": "Unbound_Settings_searchHostOverride",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseUnboundSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Unbound"
+        ],
+        "summary": "searchHostOverride",
+        "description": "searchHostOverride",
+        "operationId": "Unbound_Settings_searchHostOverride_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -38020,6 +40679,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Unbound"
+        ],
+        "summary": "searchHostAlias",
+        "description": "searchHostAlias",
+        "operationId": "Unbound_Settings_searchHostAlias_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseUnboundSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/unbound/settings/getHostAlias": {
@@ -38300,6 +40979,26 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Unbound"
+        ],
+        "summary": "searchAcl",
+        "description": "searchAcl",
+        "operationId": "Unbound_Settings_searchAcl_get",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseUnboundSettingsSearch"
+              }
+            }
+          }
+        }
       }
     },
     "/api/unbound/settings/getAcl": {
@@ -38568,6 +41267,26 @@
         "summary": "searchDnsbl",
         "description": "searchDnsbl",
         "operationId": "Unbound_Settings_searchDnsbl",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseUnboundSettingsSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Unbound"
+        ],
+        "summary": "searchDnsbl",
+        "description": "searchDnsbl",
+        "operationId": "Unbound_Settings_searchDnsbl_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -38955,6 +41674,26 @@
         "summary": "searchClient",
         "description": "searchClient",
         "operationId": "Wireguard_Client_searchClient",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseWireguardClientSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Wireguard"
+        ],
+        "summary": "searchClient",
+        "description": "searchClient",
+        "operationId": "Wireguard_Client_searchClient_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
@@ -39465,6 +42204,26 @@
         "summary": "searchServer",
         "description": "searchServer",
         "operationId": "Wireguard_Server_searchServer",
+        "parameters": [],
+        "requestBody": null,
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/OPNsenseWireguardServerSearch"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Wireguard"
+        ],
+        "summary": "searchServer",
+        "description": "searchServer",
+        "operationId": "Wireguard_Server_searchServer_get",
         "parameters": [],
         "requestBody": null,
         "responses": {
