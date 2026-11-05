@@ -21,6 +21,13 @@ class ApiEndpoint:
     parameters: list[str]  # Method parameters, in signature order
     # Trailing parameters with a PHP default; always a suffix of ``parameters``
     optional_parameters: list[str] = field(default_factory=list)
+    # All accepted HTTP methods; ``method`` is the primary one. Defaults to ``[method]``.
+    methods: list[str] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        """Default ``methods`` to the primary method."""
+        if not self.methods:
+            self.methods = [self.method]
 
 
 @dataclass
@@ -275,6 +282,11 @@ class ControllerParser:
             # Try to extract description from docblock before method
             description = self._extract_description(content, method_name)
 
+            body = self._extract_method_body(content, match.end())
+            methods = self._http_methods(endpoint_name, body, http_method)
+            if methods == ["POST"]:
+                http_method = "POST"
+
             endpoints.append(
                 ApiEndpoint(
                     name=endpoint_name,
@@ -282,10 +294,59 @@ class ControllerParser:
                     description=description,
                     parameters=parameters,
                     optional_parameters=optional_parameters,
+                    methods=methods,
                 )
             )
 
         return endpoints
+
+    @staticmethod
+    def _extract_method_body(content: str, signature_end: int) -> str:
+        """Return the brace-matched body of the method whose signature ends at ``signature_end``.
+
+        Args:
+            content: PHP file content
+            signature_end: Index just after the method signature match
+
+        Returns:
+            The body text, or an empty string for a method without a body (abstract/interface).
+            With unbalanced braces, the rest of the file is returned.
+        """
+        brace = content.find("{", signature_end)
+        semicolon = content.find(";", signature_end)
+        if brace == -1 or (semicolon != -1 and semicolon < brace):
+            return ""
+        depth = 0
+        for index in range(brace, len(content)):
+            char = content[index]
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    return content[brace : index + 1]
+        return content[brace:]
+
+    @staticmethod
+    def _http_methods(endpoint_name: str, body: str, primary: str) -> list[str]:
+        """Decide the accepted HTTP methods for an action.
+
+        ``search*`` and ``find*`` actions accept GET and POST unless their body calls
+        ``isPost(``, in which case they are POST-only. Other actions keep the primary method.
+
+        Args:
+            endpoint_name: Action name without the ``Action`` suffix
+            body: Brace-matched method body
+            primary: Method from the name-based heuristic
+
+        Returns:
+            List of HTTP methods
+        """
+        if not endpoint_name.lower().startswith(("search", "find")):
+            return [primary]
+        if "isPost(" in body:
+            return ["POST"]
+        return ["GET", "POST"]
 
     @staticmethod
     def _parse_signature(params_str: str) -> list[tuple[str, bool]]:
@@ -340,7 +401,8 @@ class ControllerParser:
             'GET' or 'POST'
         """
         # Common patterns for GET methods
-        # Removed 'search' and 'find' as they often require POST for complex parameters
+        # 'search' and 'find' are not listed: their methods come from the action body
+        # (see _http_methods), GET+POST unless the body gates on isPost().
         get_patterns = ["get", "list", "export", "show", "fetch", "info", "overview", "status"]
 
         endpoint_lower = endpoint_name.lower()

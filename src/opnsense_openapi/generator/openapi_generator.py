@@ -199,6 +199,11 @@ class OpenApiGenerator:
                 response_wrapper,
                 path_parameters=path_parameters,
                 optional_parameters=optional_parameters,
+                additional_methods=[
+                    m
+                    for m in (getattr(endpoint, "methods", None) or [http_method])
+                    if m != http_method
+                ],
             )
 
     def _find_and_parse_model(
@@ -413,8 +418,14 @@ class OpenApiGenerator:
         response_wrapper: str | None = None,
         path_parameters: list[str] | None = None,
         optional_parameters: list[str] | None = None,
+        *,
+        additional_methods: list[str] | None = None,
     ) -> None:
-        """Constructs the OpenAPI Operation object with correct paths and parameters."""
+        """Constructs the OpenAPI Operation object with correct paths and parameters.
+
+        ``http_method`` is the primary method; each entry of ``additional_methods`` adds one more
+        operation on the same path with an ``operationId`` suffixed ``_<method>``.
+        """
         # Use CamelCase for action in URL (standard OPNsense routing)
         # But we check logic using lowercase
         act_lower = action.lower()
@@ -714,6 +725,13 @@ class OpenApiGenerator:
         if method_key == "get":
             request_body = None
 
+        operations: list[tuple[str, str]] = [(method_key, "")]
+        for extra in additional_methods or []:
+            extra_key = extra.lower()
+            if extra_key == method_key:
+                continue
+            operations.append((extra_key, f"_{extra_key}"))
+
         base_operation_id = f"{module}_{controller}_{action}"
         for count in range(required_count, len(all_parameters) + 1):
             url = path_base + "".join(f"/{{{name}}}" for name in all_parameters[:count])
@@ -722,19 +740,19 @@ class OpenApiGenerator:
                 if count == len(all_parameters)
                 else f"{base_operation_id}_p{count}"
             )
-            self.spec["paths"][url] = {
-                method_key: {
+            parameters = [self._path_parameter(name, action) for name in all_parameters[:count]]
+            path_item: dict[str, Any] = {}
+            for key, suffix in operations:
+                path_item[key] = {
                     "tags": [module],
                     "summary": action,
                     "description": description if description else action,
-                    "operationId": operation_id,
-                    "parameters": [
-                        self._path_parameter(name, action) for name in all_parameters[:count]
-                    ],
-                    "requestBody": copy.deepcopy(request_body),
+                    "operationId": f"{operation_id}{suffix}",
+                    "parameters": copy.deepcopy(parameters),
+                    "requestBody": None if key == "get" else copy.deepcopy(request_body),
                     "responses": {"200": copy.deepcopy(response_schema)},
                 }
-            }
+            self.spec["paths"][url] = path_item
 
     @staticmethod
     def _path_parameter(name: str, action: str) -> dict[str, Any]:

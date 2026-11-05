@@ -544,3 +544,98 @@ def test_extends_cycle_terminates(tmp_path: Path) -> None:
     )
     controllers = _by_name(ControllerParser().parse_directory(tmp_path))
     assert [e.name for e in controllers["A"].endpoints] == ["a", "b"]
+
+
+# === HTTP methods of search/find actions (#172) ===
+
+
+def _methods(tmp_path: Path, body: str) -> dict[str, ApiEndpoint]:
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ThingController.php",
+        _php("OPNsense\\Demo\\Api", "class ThingController extends ApiControllerBase", body),
+    )
+    controllers = _by_name(ControllerParser().parse_directory(tmp_path))
+    return {e.name: e for e in controllers["Thing"].endpoints}
+
+
+def test_ungated_search_is_get_and_post(tmp_path: Path) -> None:
+    eps = _methods(tmp_path, "    public function searchItemAction() { return []; }")
+    assert eps["searchItem"].methods == ["GET", "POST"]
+    assert eps["searchItem"].method == "POST"
+
+
+def test_gated_search_and_find_are_post_only(tmp_path: Path) -> None:
+    eps = _methods(
+        tmp_path,
+        "    public function searchItemAction()\n    {\n"
+        "        if ($this->request->isPost()) { return 1; }\n    }\n"
+        "    public function findReferencesAction()\n    {\n"
+        "        if ($this->request->isPost()) { return 1; }\n    }\n",
+    )
+    assert eps["searchItem"].methods == ["POST"]
+    assert eps["findReferences"].methods == ["POST"]
+    assert eps["searchItem"].method == "POST"
+
+
+def test_ispost_in_other_action_does_not_gate(tmp_path: Path) -> None:
+    eps = _methods(
+        tmp_path,
+        "    public function searchItemAction()\n    {\n"
+        "        if (true) { $x = ['a' => ['b']]; }\n        return $x;\n    }\n"
+        "    public function setAction()\n    {\n"
+        "        if ($this->request->isPost()) { return 1; }\n    }\n",
+    )
+    assert eps["searchItem"].methods == ["GET", "POST"]
+
+
+def test_abstract_search_does_not_pick_up_next_body(tmp_path: Path) -> None:
+    eps = _methods(
+        tmp_path,
+        "    abstract public function searchFooAction();\n"
+        "    public function setAction()\n    {\n"
+        "        if ($this->request->isPost()) { return 1; }\n    }\n",
+    )
+    assert eps["searchFoo"].methods == ["GET", "POST"]
+
+
+def test_non_search_actions_keep_name_based_method(tmp_path: Path) -> None:
+    eps = _methods(
+        tmp_path,
+        "    public function getAction() { return $this->request->isPost(); }\n"
+        "    public function setAction() { return $this->request->isPost(); }\n",
+    )
+    assert eps["get"].methods == ["GET"]
+    assert eps["set"].methods == ["POST"]
+
+
+def test_inherited_search_keeps_declaring_body(tmp_path: Path) -> None:
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/BaseController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "abstract class BaseController extends ApiControllerBase",
+            "    public function searchAction() { return []; }\n"
+            "    public function searchOtherAction() { return []; }\n",
+        ),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ChildController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "class ChildController extends BaseController",
+            "    public function searchOtherAction()\n    {\n"
+            "        if ($this->request->isPost()) { return 1; }\n    }\n",
+        ),
+    )
+    child = _by_name(ControllerParser().parse_directory(tmp_path))["Child"]
+    eps = {e.name: e for e in child.endpoints}
+    assert eps["search"].methods == ["GET", "POST"]
+    assert eps["searchOther"].methods == ["POST"]
+
+
+def test_api_endpoint_methods_default() -> None:
+    ep = ApiEndpoint(name="x", method="GET", description="", parameters=[])
+    assert ep.methods == ["GET"]

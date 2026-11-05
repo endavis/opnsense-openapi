@@ -65,6 +65,31 @@ def test_generated_paths_match_signatures(tmp_path: Path) -> None:
     }
 
 
+def test_search_find_methods_end_to_end(tmp_path: Path) -> None:
+    """Search/find get GET+POST unless gated on isPost(); operationIds stay unique (#172)."""
+    api = tmp_path / "src" / "Demo" / "Api"
+    api.mkdir(parents=True)
+    (api / "ThingController.php").write_text(
+        "<?php\nnamespace OPNsense\\Demo\\Api;\n\n"
+        "class ThingController extends ApiControllerBase\n{\n"
+        "    public function searchItemAction() { return []; }\n"
+        "    public function searchGatedAction()\n    {\n"
+        "        if ($this->request->isPost()) { return []; }\n    }\n"
+        "    public function findThingAction() { return []; }\n}\n",
+        encoding="utf-8",
+    )
+    controllers = ControllerParser().parse_directory(tmp_path / "src")
+    generator = OpenApiGenerator(tmp_path / "out")
+    generator.generate(controllers, "0.0", models_dir=None)
+    spec = json.loads((tmp_path / "out" / "opnsense-0.0.json").read_text(encoding="utf-8"))
+    paths = spec["paths"]
+    assert set(paths["/api/demo/thing/searchItem"]) == {"get", "post"}
+    assert set(paths["/api/demo/thing/findThing"]) == {"get", "post"}
+    assert set(paths["/api/demo/thing/searchGated"]) == {"post"}
+    ids = [op["operationId"] for item in paths.values() for op in item.values()]
+    assert len(ids) == len(set(ids))
+
+
 @pytest.mark.requires_opnsense_source
 def test_latest_spec_matches_signatures() -> None:
     available = list_available_specs()
