@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793873668896,
+  "lastUpdate": 1793874539359,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1900,6 +1900,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000014491695186980805",
             "extra": "mean: 567.8584647122387 usec\nrounds: 1842"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "55a20ed9f7090ada4dbf7c4b03c0440b34d55aea",
+          "message": "fix: list ungated search and find actions for GET as well as POST (merges PR #175, addresses #172)\n\nControllerParser chose an action's HTTP method from its name alone, and\nsearch and find actions fell through to POST. OPNsense serves them over\nGET too: UIModelGrid and searchBase read their parameters with\n$request->get() and do not check isPost().\n\n- ApiEndpoint gains a defaulted methods field. For actions whose names\n  start with search or find, the parser reads the brace-matched action\n  body: if it calls isPost( the action is POST-only, otherwise it is\n  GET+POST. Other actions keep the name-based method.\n- An inherited action carries the result from its declaring class's\n  body, and an override's own body takes precedence.\n- The generator emits one operation per method on the same path. The\n  primary operation keeps its operationId; each extra one is suffixed\n  with _<method>, for example Firewall_Alias_searchItem_get, so no\n  existing generated-client function is renamed.\n- Tests cover body extraction (nested braces, isPost in a neighbouring\n  method, abstract methods), inheritance, generator output for every\n  _p<n> path, and operationId uniqueness from PHP to spec JSON.\n\nThe bundled specs are regenerated in #173.\n\nAddresses #172\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1scc2tJ4AN9K3GLZzgf\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-05T10:27:52Z",
+          "tree_id": "2ce962fcae9ae90da0f3b13e49abc91aa2a839bc",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/55a20ed9f7090ada4dbf7c4b03c0440b34d55aea"
+        },
+        "date": 1793874538334,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 537.9930866457212,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00032763711246562116",
+            "extra": "mean: 1.8587599447323742 msec\nrounds: 579"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 827.1297184652201,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00003866755613160803",
+            "extra": "mean: 1.2090002059840739 msec\nrounds: 869"
           }
         ]
       }
