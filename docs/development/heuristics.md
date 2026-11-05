@@ -36,7 +36,9 @@ This document provides a quick reference for understanding and extending the heu
 
 **Triggers**: `start`, `stop`, `restart`, `reconfigure`, `status`
 
-**From**: `ApiMutableServiceControllerBase` inherited methods
+**From**: `ApiMutableServiceControllerBase` inherited methods, which the parser merges into each
+subclass by resolving the `extends` chain (see
+[Architecture](architecture.md))
 
 | Action | Response | Required Fields |
 |--------|----------|----------------|

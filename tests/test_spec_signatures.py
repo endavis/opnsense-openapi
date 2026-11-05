@@ -78,3 +78,37 @@ def test_latest_spec_matches_signatures() -> None:
         pytest.skip(f"Unable to materialize OPNsense source for {latest}: {exc}")
     controllers = ControllerParser().parse_directory(controllers_root)
     assert set(spec["paths"]) == _expected_paths(list(controllers))
+
+
+def test_inherited_actions_appear_in_generated_spec(tmp_path: Path) -> None:
+    """Inherited actions are routable; abstract parents are not (#171)."""
+    base = tmp_path / "src" / "OPNsense" / "Base"
+    base.mkdir(parents=True)
+    (base / "ApiMutableModelControllerBase.php").write_text(
+        "<?php\nnamespace OPNsense\\Base;\nabstract class ApiMutableModelControllerBase\n{\n"
+        "    public function setAction() {}\n}\n",
+        encoding="utf-8",
+    )
+    api = tmp_path / "src" / "OPNsense" / "Demo" / "Api"
+    api.mkdir(parents=True)
+    (api / "ThingBaseController.php").write_text(
+        "<?php\nnamespace OPNsense\\Demo\\Api;\n"
+        "use OPNsense\\Base\\ApiMutableModelControllerBase;\n"
+        "abstract class ThingBaseController extends ApiMutableModelControllerBase\n{\n"
+        "    public function applyAction() {}\n}\n",
+        encoding="utf-8",
+    )
+    (api / "ThingController.php").write_text(
+        "<?php\nnamespace OPNsense\\Demo\\Api;\nclass ThingController extends ThingBaseController\n"
+        "{\n    public function searchRuleAction() {}\n}\n",
+        encoding="utf-8",
+    )
+    controllers = ControllerParser().parse_directory(tmp_path / "src")
+    generator = OpenApiGenerator(tmp_path / "out")
+    generator.generate(controllers, "0.0", models_dir=None)
+    spec = json.loads((tmp_path / "out" / "opnsense-0.0.json").read_text(encoding="utf-8"))
+    assert set(spec["paths"]) == {
+        "/api/demo/thing/searchRule",
+        "/api/demo/thing/set",
+        "/api/demo/thing/apply",
+    }

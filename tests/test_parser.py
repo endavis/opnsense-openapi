@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from opnsense_openapi.parser import ApiEndpoint, ControllerParser
+from opnsense_openapi.parser import ApiController, ApiEndpoint, ControllerParser
 from opnsense_openapi.utils import to_snake_case
 
 
@@ -356,3 +356,191 @@ def test_multiline_signature() -> None:
     (ep,) = _endpoints_for("\n        $a = '',\n        $b = 0,\n        $c = -1\n    ")
     assert ep.parameters == ["a", "b", "c"]
     assert ep.optional_parameters == ["a", "b", "c"]
+
+
+# --- Inheritance resolution (#171) ---------------------------------------------------------
+
+
+def _write(root: Path, rel: str, body: str) -> Path:
+    path = root / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+def _php(namespace: str, header: str, body: str = "") -> str:
+    return f"<?php\nnamespace {namespace};\n\n{header}\n{{\n{body}\n}}\n"
+
+
+@pytest.fixture
+def inheritance_tree(tmp_path: Path) -> Path:
+    """A synthetic controllers tree with Base classes, an abstract Api parent and subclasses."""
+    _write(
+        tmp_path,
+        "OPNsense/Base/ApiControllerBase.php",
+        _php("OPNsense\\Base", "class ApiControllerBase extends ControllerRoot"),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Base/ApiMutableModelControllerBase.php",
+        _php(
+            "OPNsense\\Base",
+            "abstract class ApiMutableModelControllerBase extends ApiControllerBase",
+            "    public function getAction() {}\n"
+            "    public function setAction() {}\n"
+            "    protected function searchBase() {}\n",
+        ),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Base/ApiMutableServiceControllerBase.php",
+        _php(
+            "OPNsense\\Base",
+            "abstract class ApiMutableServiceControllerBase extends ApiControllerBase",
+            "    public function reconfigureAction() {}\n    public function statusAction() {}\n",
+        ),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ThingBaseController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "abstract class ThingBaseController extends ApiMutableModelControllerBase",
+            "    protected static $internalModelName = 'thing';\n"
+            "    public function applyAction() {}\n",
+        ),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ThingController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "class ThingController extends ThingBaseController",
+            "    public function searchRuleAction() {}\n"
+            "    public function getAction($uuid = null) {}\n",
+        ),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ServiceController.php",
+        _php(
+            "OPNsense\\Demo\\Api", "class ServiceController extends ApiMutableServiceControllerBase"
+        ),
+    )
+    return tmp_path
+
+
+def _by_name(controllers: list[ApiController]) -> dict[str, ApiController]:
+    return {c.controller: c for c in controllers}
+
+
+def test_inherited_actions_all_from_parent(inheritance_tree: Path) -> None:
+    controllers = _by_name(ControllerParser().parse_directory(inheritance_tree))
+    assert [e.name for e in controllers["Service"].endpoints] == ["reconfigure", "status"]
+
+
+def test_inherited_actions_order_override_and_protected(inheritance_tree: Path) -> None:
+    thing = _by_name(ControllerParser().parse_directory(inheritance_tree))["Thing"]
+    assert [e.name for e in thing.endpoints] == ["searchRule", "get", "apply", "set"]
+    endpoints = {e.name: e for e in thing.endpoints}
+    assert endpoints["get"].parameters == ["uuid"]
+    assert endpoints["get"].optional_parameters == ["uuid"]
+    assert endpoints["set"].parameters == []
+    assert "searchBase" not in endpoints
+
+
+def test_model_name_inherited_and_own_kept(inheritance_tree: Path) -> None:
+    _write(
+        inheritance_tree,
+        "OPNsense/Demo/Api/OwnController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "class OwnController extends ThingBaseController",
+            "    protected static $internalModelName = 'own';\n",
+        ),
+    )
+    controllers = _by_name(ControllerParser().parse_directory(inheritance_tree))
+    assert controllers["Thing"].model_name == "thing"
+    assert controllers["Own"].model_name == "own"
+
+
+def test_abstract_and_base_classes_not_returned(inheritance_tree: Path) -> None:
+    controllers = ControllerParser().parse_directory(inheritance_tree)
+    assert sorted(c.controller for c in controllers) == ["Service", "Thing"]
+
+
+def test_parse_controller_file_reports_abstract_and_any_parent(inheritance_tree: Path) -> None:
+    parser = ControllerParser()
+    base = parser.parse_controller_file(
+        inheritance_tree / "OPNsense/Demo/Api/ThingBaseController.php"
+    )
+    assert base is not None
+    assert base.is_abstract is True
+    assert base.namespace == "OPNsense\\Demo\\Api"
+    thing = parser.parse_controller_file(inheritance_tree / "OPNsense/Demo/Api/ThingController.php")
+    assert thing is not None
+    assert thing.is_abstract is False
+    assert thing.base_class == "ThingBaseController"
+
+
+def test_unresolved_parent_logs_once(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    for name in ("AController", "BController"):
+        _write(
+            tmp_path,
+            f"OPNsense/Demo/Api/{name}.php",
+            _php(
+                "OPNsense\\Demo\\Api",
+                f"class {name} extends MissingBase",
+                "    public function ownAction() {}\n",
+            ),
+        )
+    with caplog.at_level("WARNING"):
+        controllers = ControllerParser().parse_directory(tmp_path)
+    assert [[e.name for e in c.endpoints] for c in controllers] == [["own"], ["own"]]
+    warnings = [r for r in caplog.records if "MissingBase" in r.getMessage()]
+    assert len(warnings) == 1
+
+
+def test_resolution_through_use_import_and_fqn(tmp_path: Path) -> None:
+    _write(
+        tmp_path,
+        "OPNsense/Base/XBase.php",
+        _php("OPNsense\\Base", "abstract class XBase", "    public function xAction() {}\n"),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ViaUseController.php",
+        "<?php\nnamespace OPNsense\\Demo\\Api;\nuse OPNsense\\Base\\XBase;\n\n"
+        "class ViaUseController extends XBase\n{\n}\n",
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/ViaFqnController.php",
+        _php("OPNsense\\Demo\\Api", "class ViaFqnController extends \\OPNsense\\Base\\XBase"),
+    )
+    controllers = _by_name(ControllerParser().parse_directory(tmp_path))
+    assert [e.name for e in controllers["ViaUse"].endpoints] == ["x"]
+    assert [e.name for e in controllers["ViaFqn"].endpoints] == ["x"]
+
+
+def test_extends_cycle_terminates(tmp_path: Path) -> None:
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/AController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "class AController extends BController",
+            "    public function aAction() {}",
+        ),
+    )
+    _write(
+        tmp_path,
+        "OPNsense/Demo/Api/BController.php",
+        _php(
+            "OPNsense\\Demo\\Api",
+            "class BController extends AController",
+            "    public function bAction() {}",
+        ),
+    )
+    controllers = _by_name(ControllerParser().parse_directory(tmp_path))
+    assert [e.name for e in controllers["A"].endpoints] == ["a", "b"]

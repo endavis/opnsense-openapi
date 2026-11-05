@@ -100,7 +100,19 @@ class ApiController:
     base_class: str     # Parent class name
     endpoints: list[ApiEndpoint]
     model_class: str | None  # Associated model if any
+    model_name: str | None   # From $internalModelName, inherited from the nearest declaring class
+    is_abstract: bool        # True for abstract bases; `parse_directory` never returns these
+    namespace: str           # Full PHP namespace, e.g. "OPNsense\\Firewall\\Api"
 ```
+
+**Inheritance resolution:** `ControllerParser.parse_directory` works in two passes. Pass 1
+indexes every `*.php` class under the controllers root (including `Base/`), recording its
+parent, `use` imports, own `*Action` endpoints and model properties. Pass 2 emits each concrete
+(non-abstract) `Api/*Controller` with its own actions first, then each ancestor's, nearest
+first. A name already present is skipped (case-insensitive), so a subclass override wins. Model
+properties come from the nearest class that declares them. Abstract classes and `Base/` classes
+are never emitted. A parent that cannot be found logs one warning per missing class and the
+walk stops with the actions merged so far (`OPNsense\Mvc\Controller` ends the chain silently).
 
 **Example PHP Controller:**
 ```php
