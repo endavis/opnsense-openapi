@@ -230,6 +230,37 @@ def newest_spec_version(major_minor: str | None = None) -> str:
     return available[-1]
 
 
+_SERIES_SPEC_RE = re.compile(r"^opnsense-(\d+)\.(\d+)(?:\.(\d+))?\.json$")
+
+
+def latest_spec_per_series(specs_dir: Path | None = None) -> list[str]:
+    """Return the highest bundled version of every ``YY.M`` release series.
+
+    Versions compare numerically, so ``24.7.12`` beats ``24.7.9``, and a bare
+    ``24.7`` counts as ``24.7.0``. Files that do not match
+    ``opnsense-<major>.<minor>[.<patch>].json`` exactly are ignored.
+
+    Args:
+        specs_dir: Directory to scan. Defaults to the bundled specs directory.
+
+    Returns:
+        One version string per series, in ascending order. Empty when no spec
+        matches.
+    """
+    directory = specs_dir if specs_dir is not None else get_specs_dir()
+    best: dict[tuple[int, int], str] = {}
+    for path in directory.glob("opnsense-*.json"):
+        match = _SERIES_SPEC_RE.match(path.name)
+        if not match:
+            continue
+        version = path.name.removeprefix("opnsense-").removesuffix(".json")
+        series = (int(match.group(1)), int(match.group(2)))
+        current = best.get(series)
+        if current is None or _version_key(version) > _version_key(current):
+            best[series] = version
+    return sorted(best.values(), key=_version_key)
+
+
 def is_version_covered(version: str) -> bool:
     """Check whether a spec is bundled for exactly this OPNsense version.
 
