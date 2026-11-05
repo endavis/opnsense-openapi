@@ -469,6 +469,7 @@ def _process_with_endpoint(
     method: str = "GET",
     parameters: list[str] | None = None,
     optional_parameters: list[str] | None = None,
+    methods: list[str] | None = None,
 ) -> None:
     """Helper: process a controller carrying a single endpoint with the given action."""
     endpoint = ApiEndpoint(
@@ -477,6 +478,7 @@ def _process_with_endpoint(
         description="",
         parameters=parameters or [],
         optional_parameters=optional_parameters or [],
+        methods=methods or [],
     )
     controller = ApiController(
         module=module,
@@ -882,3 +884,44 @@ def test_response_identical_across_variants(generator: OpenApiGenerator) -> None
         paths["/api/test/demo/getArp"]["get"]["responses"]
         is not paths["/api/test/demo/getArp/{x}"]["get"]["responses"]
     )
+
+
+# === GET+POST search actions (#172) ===
+
+
+def test_get_and_post_emitted_for_search(generator: OpenApiGenerator) -> None:
+    _process_with_endpoint(generator, action="searchItem", method="POST", methods=["GET", "POST"])
+    item = generator.spec["paths"]["/api/test/demo/searchItem"]
+    assert set(item) == {"get", "post"}
+    assert item["post"]["operationId"] == "Test_Demo_searchItem"
+    assert item["get"]["operationId"] == "Test_Demo_searchItem_get"
+    assert item["get"]["requestBody"] is None
+    assert item["get"]["responses"] == item["post"]["responses"]
+
+
+def test_get_and_post_on_every_optional_path(generator: OpenApiGenerator) -> None:
+    _process_with_endpoint(
+        generator,
+        action="searchItem",
+        method="POST",
+        parameters=["a", "b"],
+        optional_parameters=["a", "b"],
+        methods=["GET", "POST"],
+    )
+    paths = generator.spec["paths"]
+    assert len(paths) == 3
+    ids = []
+    for item in paths.values():
+        assert set(item) == {"get", "post"}
+        assert item["get"]["operationId"].endswith("_get")
+        ids += [item["get"]["operationId"], item["post"]["operationId"]]
+    assert len(set(ids)) == 6
+    assert "Test_Demo_searchItem_p0_get" in ids
+
+
+def test_post_only_and_default_unchanged(generator: OpenApiGenerator) -> None:
+    _process_with_endpoint(generator, action="searchGated", method="POST", methods=["POST"])
+    _process_with_endpoint(generator, action="searchPlain", method="POST")
+    paths = generator.spec["paths"]
+    assert set(paths["/api/test/demo/searchGated"]) == {"post"}
+    assert set(paths["/api/test/demo/searchPlain"]) == {"post"}

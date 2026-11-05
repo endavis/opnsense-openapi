@@ -495,6 +495,8 @@ Both can coexist in the same codebase!
 
 ## Handling Incorrectly Generated Endpoints
 
+Search and find functions also have a `*_get` variant (for example `search_item_get`) once a spec is regenerated, because OPNsense serves those actions over GET as well as POST.
+
 In rare cases, the OpenApi generator might misidentify an endpoint's HTTP method (e.g., generating a `GET` for an endpoint that requires `POST`) or parameters. If you encounter a 404 or 405 error for a specific function, you can bypass the generated method and use the underlying manual client methods.
 
 **Example: Forcing a POST request**

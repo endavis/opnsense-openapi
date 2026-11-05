@@ -92,6 +92,7 @@ class ApiEndpoint:
     description: str    # From PHPDoc @return or method doc
     parameters: list[str]  # Extracted from method signature, in order
     optional_parameters: list[str]  # Trailing parameters with a PHP default
+    methods: list[str]  # all accepted methods; search/find without isPost() -> GET+POST
 
 @dataclass
 class ApiController:
@@ -552,9 +553,9 @@ print(f"Generated: {spec_path}")
 - ✅ High accuracy (88.2%)
 - ✅ Easy to extend with new patterns
 
-### Why All POST Methods?
+### Why Mostly POST Methods?
 
-OPNsense API uses POST for all operations, even reads. This is the framework convention, so the generator reflects this reality.
+OPNsense API uses POST for most operations. The exception is `search*` and `find*` actions: when the action body does not call `isPost(`, OPNsense serves it over GET as well, so the parser records `methods == ["GET", "POST"]` and the generator emits both operations on the same path. The POST operation keeps its `operationId`; the GET one gets a `_get` suffix (for example `Firewall_Alias_searchItem_get`). A body that calls `isPost(` stays POST-only (#172).
 
 ### Why Generic Schemas for Unknown Patterns?
 
