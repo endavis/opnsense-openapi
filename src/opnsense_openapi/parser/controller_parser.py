@@ -1,8 +1,14 @@
 """Parse PHP controller files to extract API endpoint definitions."""
 
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+# Parent that lives outside the controllers tree; the chain ends there without a warning.
+_MVC_ROOT_CONTROLLER = "OPNsense\\Mvc\\Controller"
 
 
 @dataclass
@@ -27,6 +33,24 @@ class ApiController:
     endpoints: list[ApiEndpoint]
     model_class: str | None = None  # e.g., "OPNsense\\Firewall\\Alias"
     model_name: str | None = None  # e.g., "dnsmasq" (from $internalModelName)
+    is_abstract: bool = False  # True for abstract base controllers (never routable)
+    namespace: str = ""  # Full PHP namespace, e.g., "OPNsense\\Firewall\\Api"
+
+
+@dataclass
+class _ClassInfo:
+    """One PHP class found while indexing a controllers tree (private)."""
+
+    path: Path
+    fqn: str
+    name: str
+    namespace: str
+    is_abstract: bool
+    extends: str | None
+    uses: dict[str, str]
+    endpoints: list[ApiEndpoint]
+    model_class: str | None
+    model_name: str | None
 
 
 class ControllerParser:
@@ -44,8 +68,14 @@ class ControllerParser:
 
     # Pattern to extract class definition
     CLASS_PATTERN = re.compile(
-        r"class\s+(\w+Controller)\s+extends\s+(Api\w*(?:ControllerBase|Controller))"
+        r"^\s*(abstract\s+|final\s+)?class\s+(\w+)(?:\s+extends\s+([\\\w]+))?", re.MULTILINE
     )
+
+    # Pattern to extract any namespace
+    GENERIC_NAMESPACE_PATTERN = re.compile(r"^\s*namespace\s+([\w\\]+)\s*;", re.MULTILINE)
+
+    # Pattern to extract ``use`` imports
+    USE_PATTERN = re.compile(r"^\s*use\s+([\w\\]+)(?:\s+as\s+(\w+))?\s*;", re.MULTILINE)
 
     # Pattern to extract public methods (actions)
     METHOD_PATTERN = re.compile(r"public\s+function\s+(\w+Action)\s*\(([^)]*)\)", re.MULTILINE)
@@ -71,43 +101,150 @@ class ControllerParser:
         if not file_path.exists() or not file_path.name.endswith("Controller.php"):
             return None
 
-        content = file_path.read_text(encoding="utf-8")
-
-        # Extract namespace (module)
-        namespace_match = self.NAMESPACE_PATTERN.search(content)
-        if not namespace_match:
+        info = self._parse_class_file(file_path)
+        if info is None or info.extends is None:
             return None
-        module = namespace_match.group(1)
+        return self._to_controller(info, info.endpoints, info.model_class, info.model_name)
 
-        # Extract class name and base class
-        class_match = self.CLASS_PATTERN.search(content)
-        if not class_match:
+    def _to_controller(
+        self,
+        info: _ClassInfo,
+        endpoints: list[ApiEndpoint],
+        model_class: str | None,
+        model_name: str | None,
+    ) -> ApiController | None:
+        """Build an ApiController from an indexed class, or None if not an Api controller."""
+        module_match = self.NAMESPACE_PATTERN.fullmatch(f"namespace {info.namespace};")
+        if not module_match or info.extends is None:
             return None
-        controller_class = class_match.group(1)
-        base_class = class_match.group(2)
-
-        # Remove 'Controller' suffix from class name
-        controller_name = controller_class.replace("Controller", "")
-
-        # Extract all public action methods
-        endpoints = self._extract_endpoints(content)
-
-        # Extract model class if present
-        model_match = self.MODEL_CLASS_PATTERN.search(content)
-        model_class = model_match.group(1) if model_match else None
-
-        # Extract model name if present
-        model_name_match = self.MODEL_NAME_PATTERN.search(content)
-        model_name = model_name_match.group(1) if model_name_match else None
-
         return ApiController(
-            module=module,
-            controller=controller_name,
-            base_class=base_class,
+            module=module_match.group(1),
+            controller=info.name.replace("Controller", ""),
+            base_class=info.extends.rsplit("\\", 1)[-1],
             endpoints=endpoints,
             model_class=model_class,
             model_name=model_name,
+            is_abstract=info.is_abstract,
+            namespace=info.namespace,
         )
+
+    def _parse_class_file(self, file_path: Path) -> _ClassInfo | None:
+        """Index the class declared in a PHP file, whatever its parent or location.
+
+        Args:
+            file_path: Path to a PHP file
+
+        Returns:
+            _ClassInfo, or None when the file has no namespace or class
+        """
+        content = file_path.read_text(encoding="utf-8")
+
+        namespace_match = self.GENERIC_NAMESPACE_PATTERN.search(content)
+        if not namespace_match:
+            return None
+        namespace = namespace_match.group(1)
+
+        class_match = self.CLASS_PATTERN.search(content)
+        if not class_match:
+            return None
+
+        uses = {
+            (m.group(2) or m.group(1).rsplit("\\", 1)[-1]): m.group(1)
+            for m in self.USE_PATTERN.finditer(content)
+        }
+        model_match = self.MODEL_CLASS_PATTERN.search(content)
+        model_name_match = self.MODEL_NAME_PATTERN.search(content)
+        name = class_match.group(2)
+
+        return _ClassInfo(
+            path=file_path,
+            fqn=f"{namespace}\\{name}",
+            name=name,
+            namespace=namespace,
+            is_abstract=bool(class_match.group(1) and "abstract" in class_match.group(1)),
+            extends=class_match.group(3),
+            uses=uses,
+            endpoints=self._extract_endpoints(content),
+            model_class=model_match.group(1) if model_match else None,
+            model_name=model_name_match.group(1) if model_name_match else None,
+        )
+
+    @staticmethod
+    def _resolve_parent(info: _ClassInfo, index: dict[str, _ClassInfo]) -> str | None:
+        """Resolve a class's ``extends`` target to a fully qualified name.
+
+        Order: FQN as written, matching ``use`` import, same namespace, ``OPNsense\\Base``.
+        The first candidate present in the index wins; otherwise the most specific guess
+        is returned so the caller can report it.
+
+        Args:
+            info: The child class
+            index: All indexed classes by FQN
+
+        Returns:
+            Parent FQN, or None when the class has no parent
+        """
+        if info.extends is None:
+            return None
+        parent = info.extends
+        if "\\" in parent:
+            return parent.lstrip("\\")
+        candidates = []
+        if parent in info.uses:
+            candidates.append(info.uses[parent])
+        candidates.append(f"{info.namespace}\\{parent}")
+        candidates.append(f"OPNsense\\Base\\{parent}")
+        for candidate in candidates:
+            if candidate in index:
+                return candidate
+        return candidates[0]
+
+    def _merge_inherited(
+        self, info: _ClassInfo, index: dict[str, _ClassInfo], warned: set[str]
+    ) -> tuple[list[ApiEndpoint], str | None, str | None]:
+        """Merge a class's actions with those of its ancestors.
+
+        Own actions come first, then each ancestor's, nearest first; a name already present
+        (case-insensitive, as PHP method names are) is skipped, so overrides win. Model
+        properties come from the nearest class that declares them.
+
+        Args:
+            info: The concrete class
+            index: All indexed classes by FQN
+            warned: FQNs already reported as unresolved (updated in place)
+
+        Returns:
+            Tuple of (endpoints, model_class, model_name)
+        """
+        endpoints: list[ApiEndpoint] = []
+        seen: set[str] = set()
+        model_class: str | None = None
+        model_name: str | None = None
+        visited: set[str] = set()
+        current: _ClassInfo | None = info
+
+        while current is not None and current.fqn not in visited:
+            visited.add(current.fqn)
+            for endpoint in current.endpoints:
+                if endpoint.name.lower() not in seen:
+                    seen.add(endpoint.name.lower())
+                    endpoints.append(endpoint)
+            model_class = model_class or current.model_class
+            model_name = model_name or current.model_name
+
+            parent_fqn = self._resolve_parent(current, index)
+            if parent_fqn is None:
+                break
+            current = index.get(parent_fqn)
+            if current is None and parent_fqn != _MVC_ROOT_CONTROLLER and parent_fqn not in warned:
+                warned.add(parent_fqn)
+                logger.warning(
+                    "Parent class %s of %s not found; inherited actions are missing",
+                    parent_fqn,
+                    info.fqn,
+                )
+
+        return endpoints, model_class, model_name
 
     def _extract_endpoints(self, content: str) -> list[ApiEndpoint]:
         """Extract all action methods from controller content.
@@ -268,13 +405,26 @@ class ControllerParser:
         if not directory.exists():
             return controllers
 
-        # Find all PHP controller files. Sorted, because rglob yields filesystem
-        # order, which differs between machines and would reorder the spec (#138).
-        for php_file in sorted(directory.rglob("*Controller.php")):
-            # Only parse files in 'Api' directories
-            if "Api" in php_file.parts:
-                controller = self.parse_controller_file(php_file)
-                if controller:
-                    controllers.append(controller)
+        # Pass 1: index every class. Sorted, because rglob yields filesystem order,
+        # which differs between machines and would reorder the spec (#138).
+        index: dict[str, _ClassInfo] = {}
+        for php_file in sorted(directory.rglob("*.php")):
+            info = self._parse_class_file(php_file)
+            if info:
+                index[info.fqn] = info
+
+        # Pass 2: emit concrete Api controllers with their inherited actions merged in.
+        warned: set[str] = set()
+        for info in index.values():
+            if info.is_abstract or "Api" not in info.path.parts:
+                continue
+            if not info.path.name.endswith("Controller.php") or not info.name.endswith(
+                "Controller"
+            ):
+                continue
+            endpoints, model_class, model_name = self._merge_inherited(info, index, warned)
+            controller = self._to_controller(info, endpoints, model_class, model_name)
+            if controller:
+                controllers.append(controller)
 
         return controllers
