@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793876204053,
+  "lastUpdate": 1793883170011,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1976,6 +1976,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00004306980599809416",
             "extra": "mean: 1.1980126541102323 msec\nrounds: 876"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c48266e8c42d9aef7a2f86a7264abe6a166a4cf7",
+          "message": "feat: generate matrix tests the latest point release of every series (merges PR #179, addresses #178)\n\nThe generate-matrix workflow no longer hardcodes its versions. A setup job\nruns tools/generate_matrix_versions.py, which calls the new\nspecs.latest_spec_per_series() and prints the highest bundled point\nrelease of each YY.M series as JSON. The generate job reads that list\nthrough fromJSON.\n\nAddresses #178\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1scna8aKPPb8dvMsL8s\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-05T12:51:53Z",
+          "tree_id": "652d0a7e8944d69a6740012549f7716f02b742c4",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/c48266e8c42d9aef7a2f86a7264abe6a166a4cf7"
+        },
+        "date": 1793883169035,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 530.5188123032777,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00033638734604926314",
+            "extra": "mean: 1.8849472946273909 msec\nrounds: 577"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 844.3629671101854,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002597016399198288",
+            "extra": "mean: 1.1843247974534923 msec\nrounds: 864"
           }
         ]
       }
