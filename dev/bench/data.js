@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793819983652,
+  "lastUpdate": 1793873668896,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1862,6 +1862,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00007304301097437223",
             "extra": "mean: 902.8092535447672 usec\nrounds: 1199"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3b41c86640f38dac5434b2214951ffb870af5303",
+          "message": "fix: resolve controller inheritance so specs include inherited actions (merges PR #174, addresses #171)\n\nControllerParser read each Api controller file on its own and only\naccepted parents named Api...ControllerBase or Api...Controller. So\nconcrete controllers never got the actions they inherit (model get/set,\nservice start/stop/restart/reconfigure/status). The subclasses of\nFilterBaseController and Kea LeasesController were dropped, and those\ntwo abstract classes were emitted as routable controllers.\n\n- parse_directory now indexes every class under the controllers root,\n  OPNsense/Base included. It then emits each concrete Api controller\n  with the actions merged from its extends chain: own actions first,\n  then ancestors nearest first, so a subclass override keeps its\n  signature. Model properties come from the nearest class that\n  declares them.\n- A parent name resolves as an FQN, through a use import, in the same\n  namespace, or in OPNsense\\Base. A parent that cannot be found is\n  logged once and the chain stops there; OPNsense\\Mvc\\Controller ends\n  it silently. A guard stops on an extends cycle.\n- Abstract classes are never emitted. ApiController gains defaulted\n  is_abstract and namespace fields.\n- The bundled 26.7.7 spec is regenerated: 242 paths added and 7\n  removed, all under firewall/filter_base and kea/leases. The other 68\n  specs are regenerated in #173.\n- New tests: synthetic-tree parser tests, an end-to-end generator test,\n  and a source-backed test comparing parsed chains with an independent\n  read of the source.\n\nAddresses #171\n\n\nClaude-Session: https://claude.ai/code/session_01NXu1scc2tJ4AN9K3GLZzgf\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-05T10:13:35Z",
+          "tree_id": "0716d9dcc362a7908c3531665fbd6d0222e376f2",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/3b41c86640f38dac5434b2214951ffb870af5303"
+        },
+        "date": 1793873668131,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 968.6283435506377,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000552859928575084",
+            "extra": "mean: 1.0323877126435979 msec\nrounds: 1044"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1761.002190055841,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000014491695186980805",
+            "extra": "mean: 567.8584647122387 usec\nrounds: 1842"
           }
         ]
       }
