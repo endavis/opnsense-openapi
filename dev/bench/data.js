@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793874539359,
+  "lastUpdate": 1793876204053,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -1938,6 +1938,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00003866755613160803",
             "extra": "mean: 1.2090002059840739 msec\nrounds: 869"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "6662995+endavis@users.noreply.github.com",
+            "name": "Eric Davis",
+            "username": "endavis"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ce1f3965e1d0463b20be0ee0166190a1c8dd1fc0",
+          "message": "release: v0.8.1 (merges PR #177)\n\nchore: update changelog for v0.8.1",
+          "timestamp": "2026-11-05T10:55:58Z",
+          "tree_id": "39adfa1a9b037d42d875ff2f2a0c4af2443adeea",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/ce1f3965e1d0463b20be0ee0166190a1c8dd1fc0"
+        },
+        "date": 1793876202942,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 543.618893746824,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00019640533008309917",
+            "extra": "mean: 1.8395239965035568 msec\nrounds: 572"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 834.7157240527672,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00004306980599809416",
+            "extra": "mean: 1.1980126541102323 msec\nrounds: 876"
           }
         ]
       }
