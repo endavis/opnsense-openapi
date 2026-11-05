@@ -8,7 +8,12 @@ from unittest.mock import patch
 import pytest
 
 from opnsense_openapi import find_best_matching_spec, get_spec_path, list_available_specs
-from opnsense_openapi.specs import _version_key, version_from_spec_path
+from opnsense_openapi.specs import (
+    _version_key,
+    latest_spec_per_series,
+    newest_spec_version,
+    version_from_spec_path,
+)
 
 
 def test_list_available_specs() -> None:
@@ -235,3 +240,74 @@ def test_is_version_covered_malformed(bad: str) -> None:
     from opnsense_openapi import is_version_covered
 
     assert is_version_covered(bad) is False
+
+
+def _touch_specs(directory: Path, names: list[str]) -> None:
+    for name in names:
+        (directory / name).write_text("{}", encoding="utf-8")
+
+
+def test_latest_spec_per_series_numeric_order(tmp_path: Path) -> None:
+    """24.7.12 beats 24.7.9: ordering is numeric, not lexical."""
+    _touch_specs(
+        tmp_path, ["opnsense-24.7.9.json", "opnsense-24.7.12.json", "opnsense-24.7.2.json"]
+    )
+    assert latest_spec_per_series(tmp_path) == ["24.7.12"]
+
+
+def test_latest_spec_per_series_base_release_counts_as_zero(tmp_path: Path) -> None:
+    """A bare YY.M is .0, so any point release in the series wins over it."""
+    _touch_specs(tmp_path, ["opnsense-24.7.json", "opnsense-24.7.1.json"])
+    assert latest_spec_per_series(tmp_path) == ["24.7.1"]
+
+
+def test_latest_spec_per_series_base_release_alone(tmp_path: Path) -> None:
+    """A series with only a base release still yields it."""
+    _touch_specs(tmp_path, ["opnsense-25.1.json"])
+    assert latest_spec_per_series(tmp_path) == ["25.1"]
+
+
+def test_latest_spec_per_series_multiple_series_ascending(tmp_path: Path) -> None:
+    """One entry per series, in ascending order."""
+    _touch_specs(
+        tmp_path,
+        [
+            "opnsense-26.1.11.json",
+            "opnsense-24.7.12.json",
+            "opnsense-24.7.3.json",
+            "opnsense-25.1.json",
+            "opnsense-25.1.12.json",
+        ],
+    )
+    assert latest_spec_per_series(tmp_path) == ["24.7.12", "25.1.12", "26.1.11"]
+
+
+def test_latest_spec_per_series_ignores_non_matching_files(tmp_path: Path) -> None:
+    """Stray files do not raise and are not returned."""
+    _touch_specs(
+        tmp_path,
+        [
+            "opnsense-24.7.1.json",
+            "opnsense-latest.json",
+            "opnsense-24.7.5_2.json",
+            "opnsense-24.7.9.json.bak",
+            "opnsense-24.json",
+            "notes.json",
+        ],
+    )
+    assert latest_spec_per_series(tmp_path) == ["24.7.1"]
+
+
+def test_latest_spec_per_series_empty_dir(tmp_path: Path) -> None:
+    """An empty directory yields an empty list."""
+    assert latest_spec_per_series(tmp_path) == []
+
+
+def test_latest_spec_per_series_bundled_matches_newest_spec_version() -> None:
+    """Against the bundled specs, each entry is the newest of its series."""
+    result = latest_spec_per_series()
+    assert result
+    series = [".".join(v.split(".")[:2]) for v in result]
+    assert len(series) == len(set(series))
+    for version, major_minor in zip(result, series, strict=True):
+        assert version == newest_spec_version(major_minor)

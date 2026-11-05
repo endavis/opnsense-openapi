@@ -72,14 +72,19 @@ above the box.
 
 ## Coverage helpers
 
-Floor matching silently resolves a version that has no spec of its own. Two
-helpers in `specs.py` let callers detect that:
+Floor matching silently resolves a version that has no spec of its own. These
+helpers in `specs.py` let callers detect that and list the bundled series:
 
 - `newest_spec_version(major_minor=None)` returns the newest bundled version,
   optionally restricted to an `X.Y` series. It raises `ValueError` for a
   malformed series and `FileNotFoundError` when nothing matches.
 - `is_version_covered(version)` is `True` only when a spec exists for exactly
   that version (`_N` suffixes ignored). It never raises.
+- `latest_spec_per_series(specs_dir=None)` returns the highest bundled point
+  release of every `YY.M` series, in ascending order (a bare `24.7` counts as
+  `24.7.0`; files that do not match the spec filename shape are ignored).
+  `tools/generate_matrix_versions.py` prints it as JSON for the
+  `generate-matrix` workflow's matrix.
 
 The connection-free lookup in `endpoints.py` (`endpoint_exists`,
 `list_spec_endpoints`) resolves versions with floor mode and raises
@@ -113,7 +118,7 @@ box.
 - Issue #34 — the bug report and discussion that drove this rule.
 - `src/opnsense_openapi/specs.py` — `find_best_matching_spec`,
   `_version_key`, `version_from_spec_path`, `newest_spec_version`,
-  `is_version_covered`.
+  `is_version_covered`, `latest_spec_per_series`.
 - `src/opnsense_openapi/client/base.py` — `_resolved_module_dir`, the
   helper that ties the generated-client path to the resolved spec
   version.

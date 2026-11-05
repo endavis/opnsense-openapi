@@ -8,6 +8,8 @@ on:
       - "src/opnsense_openapi/generator/**"
       - "src/opnsense_openapi/parser/**"
       - "src/opnsense_openapi/cli.py"
+      - "src/opnsense_openapi/specs.py"
+      - "tools/generate_matrix_versions.py"
       - ".github/workflows/generate-matrix.yml"
   workflow_dispatch:
 
@@ -15,13 +17,39 @@ permissions:
   contents: read
 
 jobs:
+  versions:
+    name: Select versions
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.select.outputs.versions }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Select latest point release of every series
+        id: select
+        run: |
+          versions=$(uv run python tools/generate_matrix_versions.py)
+          echo "versions=${versions}" >> "$GITHUB_OUTPUT"
+
   generate-matrix:
+    needs: versions
     name: Test Generation (OPNsense ${{ matrix.opnsense-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        opnsense-version: ["24.7", "25.1", "25.7.6"]
+        opnsense-version: ${{ fromJSON(needs.versions.outputs.versions) }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
