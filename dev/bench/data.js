@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794825580915,
+  "lastUpdate": 1794825820307,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -2052,6 +2052,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000023568868783132185",
             "extra": "mean: 836.7008194889795 usec\nrounds: 1252"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aae7343790d5797ff394aac4b34129b3c2054411",
+          "message": "chore(deps): bump cyclonedx-bom from 7.6.0 to 8.0.1 (merges PR #192)\n\nBumps [cyclonedx-bom](https://github.com/CycloneDX/cyclonedx-python) from 7.6.0 to 8.0.1.\n- [Release notes](https://github.com/CycloneDX/cyclonedx-python/releases)\n- [Changelog](https://github.com/CycloneDX/cyclonedx-python/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/CycloneDX/cyclonedx-python/compare/v7.6.0...v8.0.1)\n\n---\nupdated-dependencies:\n- dependency-name: cyclonedx-bom\n  dependency-version: 8.0.1\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-11-16T10:42:52Z",
+          "tree_id": "bb2565b68046eee1db7d0df17e5a4a13d7578f58",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/aae7343790d5797ff394aac4b34129b3c2054411"
+        },
+        "date": 1794825819795,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 516.7092065606861,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00043590446262427",
+            "extra": "mean: 1.9353245254834701 msec\nrounds: 569"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 833.418843363568,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002472124979936336",
+            "extra": "mean: 1.1998768781902418 msec\nrounds: 862"
           }
         ]
       }
