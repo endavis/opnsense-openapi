@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793883170011,
+  "lastUpdate": 1794825580915,
   "repoUrl": "https://github.com/endavis/opnsense-openapi",
   "entries": {
     "Benchmark": [
@@ -2014,6 +2014,44 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00002597016399198288",
             "extra": "mean: 1.1843247974534923 msec\nrounds: 864"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "462e23e8961651c1a8bbcd94e12f54895363a239",
+          "message": "chore(deps): bump pymdown-extensions from 12.3 to 13.0 (merges PR #189)\n\nBumps [pymdown-extensions](https://github.com/facelessuser/pymdown-extensions) from 12.3 to 13.0.\n- [Release notes](https://github.com/facelessuser/pymdown-extensions/releases)\n- [Commits](https://github.com/facelessuser/pymdown-extensions/compare/12.3...13.0)\n\n---\nupdated-dependencies:\n- dependency-name: pymdown-extensions\n  dependency-version: '13.0'\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-11-16T10:38:51Z",
+          "tree_id": "2943a934a630a08c2042699f7c8ac88d5e899976",
+          "url": "https://github.com/endavis/opnsense-openapi/commit/462e23e8961651c1a8bbcd94e12f54895363a239"
+        },
+        "date": 1794825580102,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_bench_generator.py::test_bench_generate_spec",
+            "value": 645.6778771427931,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0012922791160893594",
+            "extra": "mean: 1.54875989312988 msec\nrounds: 786"
+          },
+          {
+            "name": "tests/benchmarks/test_bench_parser.py::test_bench_parse_directory",
+            "value": 1195.1703365257329,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000023568868783132185",
+            "extra": "mean: 836.7008194889795 usec\nrounds: 1252"
           }
         ]
       }
